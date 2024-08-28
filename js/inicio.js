@@ -30,9 +30,17 @@ function ubicacion1(){
 
 }
 
+function temperaturaAmbiente(){
+
+}
+
+function velocidadViento(){
+    
+}
+
 function masaEvaporada(){
     let {area1} = volumen();
-    
+
 }
 
 function perdidaEvaporacion(){
