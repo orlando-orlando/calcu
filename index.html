@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>calc it simple!</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>calc it simple!</h1>
+     <script src="js/inicio.js"></script>
+
+Área: <input type="text" id="area" placeholder="">
+Profundidad promedio: <input type="text" id="profProm" placeholder="">
+Rotación: <input type="text" id="rotacion" placeholder="">
+
+<div>
+    <br><label for="ubicacion">Ubicación</label>
+</div>
+<select id="ubicacion">
+    <option value="">Selecciona una opción</option>
+    <option value="guadalajara">Guadalajara</option>
+    <option value="mexicali">Mexicali</option>
+    <option value="losCabos">Los Cabos</option>
+    <option value="hermosillo">Hermosillo</option>
+    <option value="chihuahua">Chihuahua</option>
+    <option value="torreon">Torreón</option>
+    <option value="monterrey">Monterrey</option>
+    <option value="tampico">Tampico</option>
+    <option value="veracruz">Veracruz</option>
+    <option value="sanLuisPotosi">San Luis Potosí</option>
+    <option value="durango">Durango</option>
+    <option value="culiacan">Culiacán</option>
+    <option value="tepic">Tepic</option>
+    <option value="colima">Colima</option>
+    <option value="aguascalientes">Aguascalientes</option>
+    <option value="zacatecas">Zacatecas</option>
+    <option value="morelia">Morelia</option>
+    <option value="leon">León</option>
+    <option value="queretaro">Querétaro</option>
+    <option value="pachuca">Pachuca</option>
+    <option value="ciudadDeMexico">Ciudad de México</option>
+    <option value="acapulco">Acapulco</option>
+    <option value="cuernavaca">Cuernavaca</option>
+    <option value="puebla">Puebla</option>
+    <option value="tlaxcala">Tlaxcala</option>
+    <option value="oaxaca">Oaxaca</option>
+    <option value="villahermosa">Villahermosa</option>
+    <option value="tuxtlaGutierrez">Tuxtla Gutierrez</option>
+    <option value="campeche">Campeche</option>
+    <option value="merida">Mérida</option>
+    <option value="cancun">Cancún</option>
+    <option value="manzanillo">Manzanillo</option>
+    <option value="puertoVallarta">Puerto Vallarta</option>
+</select><br><br>
+
+    <!-- Pregunta de Sí o No -->
+    <label for="opcionSiNo">¿Deseas desborde infinity?</label><br>
+    <select id="opcionSiNo">
+        <option value="">Selecciona una opción</option>
+        <option value="si">Sí</option>
+        <option value="no">No</option>
+    </select><br><br>
+
+    <!-- Pregunta sobre calentamiento -->
+    <label for="calentamiento">¿Quieres calentamiento?</label><br>
+    <select id="calentamiento">
+        <option value="">Selecciona una opción</option>
+        <option value="bombaCalor">Bomba de Calor</option>
+        <option value="panelSolar">Panel Solar</option>
+        <option value="caldera">Caldera</option>
+    </select><br><br>
+
+ <!-- Botón para capturar el valor -->
+ <button onclick="volumen(), flujoVolumen(), retorno(), procesarFormulario(), ubicacion1()">Calcular</button>
+
+ <!-- Mostrar el valor capturado -->
+ <p id="volumen"></p>
+ <p id="flujoVolumen"></p>
+ <p id="flujoVolumen2"></p>
+ <p id="tuberiaRetorno1"></p>
+ <p id="numeroRetornos1"></p>
+ <p id="numeroRetornos2"></p>
+ <p id="resultadoOpcionSiNo"></p>
+ <p id="resultadoCalentamiento"></p>
+ <p id="ubicacion1"></p>
+
+
+
+ </body>
+
+
+
+
+</html> 
