@@ -30,6 +30,38 @@ function ubicacion1(){
 
 }
 
+function masaEvaporada(){
+    let {area1} = volumen();
+    
+}
+
+function perdidaEvaporacion(){
+
+}
+
+function perdidaTuberia(){
+
+}
+
+function perdidaRadiacion(){
+
+}
+
+function perdidaConveccion(){
+
+}
+
+function perdidaTransmision(){
+
+}
+
+function perdidaInfinity(){
+
+}
+
+function tablasCalor(){
+
+}
 
 
 function velocidadFlujo() {
