@@ -11,18 +11,41 @@ function flujoVolumen() {
     let rotacion1 = document.getElementById('rotacion').value;
     let flujoVolumen = parseFloat((vol * 1000 / 60 / rotacion1).toFixed(1));
     let flujoVolumen2 = parseFloat((flujoVolumen / 3.7854).toFixed(1));    
-    document.getElementById('flujoVolumen').innerText = 'Flujo Volumen: ' + flujoVolumen + ' lpm';
+    //document.getElementById('flujoVolumen').innerText = 'Flujo Volumen: ' + flujoVolumen + ' lpm';
     document.getElementById('flujoVolumen2').innerText = 'Flujo Volumen: ' + flujoVolumen2 + ' gpm';
     return flujoVolumen2;
 }
 
+function flujoInfinity(){
+    let muroInfinity2 = document.getElementById('muroInfinity').value;
+    let alturaCortina2 = document.getElementById('alturaCortina').value;
+    let flujoInfinity2 = parseFloat((36*(muroInfinity2/.3048)*((alturaCortina2/25.4)**1.5)).toFixed(1));
+    document.getElementById('flujoInfinity2').innerText = 'Flujo infinity: ' + flujoInfinity2 + ' gpm';
+}
+
+function flujoCalentamiento(){
+
+}
+
+function flujoMaximo(){
+
+}
+
 function procesarFormulario() {
     let opcionSiNo = document.getElementById('opcionSiNo').value;
-    let calentamiento = document.getElementById('calentamiento').value;
+    let calentamiento2 = document.getElementById('calentamiento').value;
 
-    document.getElementById('resultadoOpcionSiNo').innerText = 'Selección desborde: ' + opcionSiNo;
-    document.getElementById('resultadoCalentamiento').innerText = 'Selección calentamiento: ' + calentamiento;
+    if (calentamiento2 === 'bombaCalor') {
+        window.location.href = 'bdc.html';
+    }
 }
+
+// Asegúrate de llamar a esta función cuando sea necesario, por ejemplo, al enviar el formulario
+document.getElementById('miFormulario').addEventListener('submit', function(event) {
+    event.preventDefault(); // Evita el envío del formulario para manejarlo con JavaScript
+    procesarFormulario();
+});
+
 
 function ubicacion1(){
     let ubicacion1 = document.getElementById('ubicacion').value;
@@ -40,6 +63,7 @@ function velocidadViento(){
 
 function masaEvaporada(){
     let {area1} = volumen();
+    let tempAgua2 = document.getElementById('tempAgua').value;
 
 }
 
@@ -73,8 +97,9 @@ function tablasCalor(){
 
 
 function velocidadFlujo() {
-    const velocidadSuccion = 5.95;
-    const velocidadDescarga = 7.95;
+    const velocidadSuccion = 5.5;
+    const velocidadDescarga = 7.5;
+    
 }
 
 function diametroTuberia() {
