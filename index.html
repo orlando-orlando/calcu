@@ -109,32 +109,25 @@
             <option value="no">No</option>
         </select><br><br>
 
-        <form id="miFormulario">
-            <!-- Pregunta sobre calentamiento -->
-            <label for="calentamiento">¿Deseas calentamiento?</label><br>
-            <select id="calentamiento">
-                <option value="">Selecciona una opción</option>
-                <option value="bombaCalor">Bomba de Calor</option>
-                <option value="panelSolar">Panel Solar</option>
-                <option value="caldera">Caldera</option>
-            </select><br>
-            <button type="submit">Enviar</button>
-        </form>
-        
+    <!-- Pregunta sobre calentamiento -->
+    <label for="calentamiento">¿Deseas calentamiento?</label><br>
+    <select id="calentamiento">
+        <option value="">Selecciona una opción</option>
+        <option value="bombaCalor">Bomba de Calor</option>
+        <option value="panelSolar">Panel Solar</option>
+        <option value="caldera">Caldera</option>
+    </select><br>
 
     Temperatura del agua deseada: <input type="text" id="tempAgua" placeholder=""> °C
 
  <!-- Botón para capturar el valor -->
- <br><br><br><button onclick="volumen(), flujoVolumen(), retorno(), ubicacion1(), flujoInfinity()">Calcular</button>
+ <br><br><br><button onclick="volumen(), flujoVolumen(), flujoInfinity()">Calcular</button>
 
  <!-- Mostrar el valor capturado -->
  <p id="volumen"></p>
  <p id="flujoVolumen2"></p>
  <p id="flujoInfinity2"></p>
- <p id="tuberiaRetorno1"></p>
- <p id="numeroRetornos1"></p>
- <p id="numeroRetornos2"></p>
- <p id="ubicacion1"></p>
+
 
 
 
