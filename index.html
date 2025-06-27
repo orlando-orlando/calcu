@@ -1,37 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WaterLab</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>WaterLab</title>
 </head>
 <body>
-    <h1>WaterLab</h1> 
-  
-    <script src="js/inicio.js"></script>
 
-Área: <input type="text" id="area" placeholder=""> m2
-<br>Profundidad promedio: <input type="text" id="profProm" placeholder=""> m
+  <h1>WaterLab</h1>
 
-<div>
-    <label for="rotacion">Rotación:</label>
-</div>
-<select id="rotacion">
-    <option value="">Selecciona una opción</option> 
-    <option value="4">4 h</option>
-    <option value="6">6 h</option>
-    <option value="8">8 h</option>
-    <option value="12">12 h</option>
-    <option value="18">18 h</option>
-    <option value="24">24 h</option>
-</select><br><br>
-
-<div>
-    <label for="ubicacion">Ubicación proyecto:</label>
-</div>
-<select id="ubicacion">
-    <option value="">Selecciona una opción</option>
+  <label for="ciudad">Ciudad:</label>
+  <select id="ciudad">
     <option value="guadalajara">Guadalajara</option>
     <option value="mexicali">Mexicali</option>
     <option value="losCabos">Los Cabos</option>
@@ -59,81 +37,63 @@
     <option value="tlaxcala">Tlaxcala</option>
     <option value="oaxaca">Oaxaca</option>
     <option value="villahermosa">Villahermosa</option>
-    <option value="tuxtlaGutierrez">Tuxtla Gutierrez</option>
+    <option value="tuxtlaGutierrez">Tuxtla Gutiérrez</option>
     <option value="campeche">Campeche</option>
     <option value="merida">Mérida</option>
     <option value="cancun">Cancún</option>
     <option value="manzanillo">Manzanillo</option>
     <option value="puertoVallarta">Puerto Vallarta</option>
-</select><br><br>
+    <option value="huatulco">Huatulco</option>
+    <option value="mazatlan">Mazatlán</option>
+    <option value="puertoPeñasco">Puerto Peñasco</option>
+    <option value="ixtapaZihuatanejo">Ixtapa / Zihuatanejo</option>
+    <option value="saltillo">Saltillo</option>
+    
+  </select>
 
-    <!-- Pregunta de Sí o No -->
-    <label for="opcionSiNo">¿Cuenta con desborde tipo infinity?</label><br>
-    <select id="opcionSiNo">
-        <option value="">Selecciona una opción</option>
-        <option value="si">Sí</option>
-        <option value="no">No</option>
-    </select><br>
-    Largo muro desborde infinity: <input type="text" id="muroInfinity" placeholder=""> m
+  <label for="area">Área (m²):</label>
+  <input type="number" id="area" step="0.01" required>
 
-    <div>
-        <label for="alturaCortina">Altura cortina desborde infinity:</label>
-    </div>
-    <select id="alturaCortina">
-        <option value="">Selecciona una opción</option> 
-        <option value="1">1 mm</option>
-        <option value="2">2 mm</option>
-        <option value="3">3 mm</option>
-        <option value="4">4 mm</option>
-        <option value="5">5 mm (recomendado)</option>
-        <option value="6">6 mm</option>
-        <option value="7">7 mm</option>
-        <option value="8">8 mm</option>
-        <option value="9">9 mm</option>
-        <option value="10">10 mm</option>
-        <option value="15">15 mm</option>
-        <option value="20">20 mm</option>
-        <option value="25">25 mm</option>
-        <option value="30">30 mm</option>
-        <option value="35">35 mm</option>
-        <option value="40">40 mm</option>
-        <option value="45">45 mm</option>
-        <option value="50">50 mm</option>
-    </select><br><br>
+  <label for="profundidad">Profundidad promedio (m):</label>
+  <input type="number" id="profundidad" step="0.01" required>
 
-        <!-- Pregunta de Sí o No -->
-        <label for="opcionSiNo">Cuenta con canal perimetral?</label><br>
-        <select id="opcionSiNo">
-            <option value="">Selecciona una opción</option>
-            <option value="si">Sí</option>
-            <option value="no">No</option>
-        </select><br><br>
+  <label for="temperatura">Temperatura deseada (°C):</label>
+  <input type="number" id="temperatura" step="0.1" required>
 
-    <!-- Pregunta sobre calentamiento -->
-    <label for="calentamiento">¿Deseas calentamiento?</label><br>
-    <select id="calentamiento">
-        <option value="">Selecciona una opción</option>
-        <option value="bombaCalor">Bomba de Calor</option>
-        <option value="panelSolar">Panel Solar</option>
-        <option value="caldera">Caldera</option>
-    </select><br>
+  <label for="distanciaCuartoMaquinas">Distancia de cuarto de máquinas a alberca (m):</label>
+  <input type="number" id="distanciaCuartoMaquinas" step="0.1" required>
 
-    Temperatura del agua deseada: <input type="text" id="tempAgua" placeholder=""> °C
+  <label for="distanciaBombasCalor">Distancia de bombas de calor a alberca (m):</label>
+  <input type="number" id="distanciaBombasCalor" step="0.1" required>
 
- <!-- Botón para capturar el valor -->
- <br><br><br><button onclick="volumen(), flujoVolumen(), flujoInfinity()">Calcular</button>
+  <label for="tipoDesborde">¿Qué tipo de desborde tiene?</label>
+  <select id="tipoDesborde" onchange="mostrarOpcionesDesborde()">
+    <option value="">Selecciona</option>
+    <option value="infinity">Infinity</option>
+    <option value="canal">Canal perimetral</option>
+    <option value="skimmer">Desnatadores (Skimmer)</option>
+  </select>
 
- <!-- Mostrar el valor capturado -->
- <p id="volumen"></p>
- <p id="flujoVolumen2"></p>
- <p id="flujoInfinity2"></p>
+  <div id="opcionesDesborde"></div>
+
+  <label for="esTechada">¿La alberca es techada?</label>
+  <select id="esTechada">
+    <option value="no">No</option>
+    <option value="si">Sí</option>
+  </select>
+
+  <label for="cubiertaTermica">¿Tiene cubierta térmica?</label>
+  <select id="cubiertaTermica">
+    <option value="no">No</option>
+    <option value="si">Sí</option>
+  </select>
+
+  <button onclick="calcular()">Calcular</button>
+
+  <div id="resultados"></div>
 
 
+  <script src="inicio.js"></script>
 
-
- </body>
-
-
-
-
-</html> 
+</body>
+</html>

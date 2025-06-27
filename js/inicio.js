@@ -23,28 +23,9 @@ function flujoInfinity(){
     document.getElementById('flujoInfinity2').innerText = 'Flujo infinity: ' + flujoInfinity2 + ' gpm';
 }
 
-const climaMensual = {
-    "Puerto Vallarta": [
-      { mes: "Ene", tempMax: 25.6, tempMin: 16.3, vientoMax: 27.7, humedadRel: 65 },
-      { mes: "Feb", tempMax: 26.5, tempMin: 16.9, vientoMax: 25.9, humedadRel: 64 },
-      { mes: "Mar", tempMax: 26.9, tempMin: 17.9, vientoMax: 26.6, humedadRel: 65 },
-      { mes: "Abr", tempMax: 26.7, tempMin: 18.7, vientoMax: 27.1, humedadRel: 66 },
-      { mes: "May", tempMax: 26.3, tempMin: 19.2, vientoMax: 27.2, humedadRel: 71 },
-      { mes: "Jun", tempMax: 25.3, tempMin: 19.2, vientoMax: 25.7, humedadRel: 78 },
-      { mes: "Jul", tempMax: 25.0, tempMin: 19.0, vientoMax: 23.5, humedadRel: 80 },
-      { mes: "Ago", tempMax: 25.5, tempMin: 19.0, vientoMax: 23.2, humedadRel: 79 },
-      { mes: "Sep", tempMax: 26.1, tempMin: 18.8, vientoMax: 22.8, humedadRel: 78 },
-      { mes: "Oct", tempMax: 26.4, tempMin: 18.3, vientoMax: 23.9, humedadRel: 73 },
-      { mes: "Nov", tempMax: 26.0, tempMin: 17.3, vientoMax: 25.4, humedadRel: 68 },
-      { mes: "Dic", tempMax: 25.5, tempMin: 16.4, vientoMax: 26.3, humedadRel: 65 }
-    ],
-    // Agrega más ubicaciones aquí si las tienes
-  };
-
-
 const temperatura = {
     "guadalajara": {
-        mes: min: [9.5, 10.3, 12.3, 14.3, 16.4, 17.3, 16.5, 16.4, 16.5, 14.9, 12.1, 10.3],
+        min: [9.5, 10.3, 12.3, 14.3, 16.4, 17.3, 16.5, 16.4, 16.5, 14.9, 12.1, 10.3],
         max: [24.7, 26.5, 29, 31.2, 32.5, 30.5, 27.5, 27.3, 27.1, 27.1, 26.4, 24.7]
     },
     "mexicali": {
@@ -381,8 +362,54 @@ const humedad = {
     },
 };
 
-function masaEvaporada(){
-    let {area1} = volumen();
-    let tempAgua2 = document.getElementById('tempAgua').value;
+function mostrarOpcionesDesborde() {
+  const tipoDesborde = document.getElementById('tipoDesborde').value;
+  const opcionesDiv = document.getElementById('opcionesDesborde');
 
+  // Limpia el contenido previo
+  opcionesDiv.innerHTML = '';
+
+  if (tipoDesborde === 'infinity') {
+    opcionesDiv.innerHTML = `
+      <label for="largoMuroInfinity">Largo del muro infinity (m):</label>
+      <input type="number" id="largoMuroInfinity" step="0.01" required>
+
+      <label for="alturaCortina">Altura de la cortina (mm):</label>
+      <input type="number" id="alturaCortina" step="0.01" required>
+    `;
+  } else if (tipoDesborde === 'canal') {
+    opcionesDiv.innerHTML = `
+      <label for="largoCanal">Largo del canal perimetral (m):</label>
+      <input type="number" id="largoCanal" step="0.01" required>
+    `;
+  }
+  // Si es 'skimmer', no se agrega nada adicional
+}
+
+function calcular() {
+  const datos = {
+    ciudad: document.getElementById('ciudad').value,
+    area: parseFloat(document.getElementById('area').value),
+    profundidad: parseFloat(document.getElementById('profundidad').value),
+    temperatura: parseFloat(document.getElementById('temperatura').value),
+    distanciaCuartoMaquinas: parseFloat(document.getElementById('distanciaCuartoMaquinas').value),
+    distanciaBombasCalor: parseFloat(document.getElementById('distanciaBombasCalor').value),
+    tipoDesborde: document.getElementById('tipoDesborde').value,
+    esTechada: document.getElementById('esTechada').value === 'si',
+    cubiertaTermica: document.getElementById('cubiertaTermica').value === 'si',
+  };
+
+  // Añade campos según tipo de desborde
+  if (datos.tipoDesborde === 'infinity') {
+    datos.largoMuroInfinity = parseFloat(document.getElementById('largoMuroInfinity').value);
+    datos.alturaCortina = parseFloat(document.getElementById('alturaCortina').value);
+  } else if (datos.tipoDesborde === 'canal') {
+    datos.largoCanal = parseFloat(document.getElementById('largoCanal').value);
+  }
+
+  // Aquí podrías hacer cálculos con los datos obtenidos
+  document.getElementById('resultados').innerHTML = `
+    <h3>Datos capturados:</h3>
+    <pre>${JSON.stringify(datos, null, 2)}</pre>
+  `;
 }
