@@ -1,9 +1,9 @@
 function volumen() {
-    let area1 = document.getElementById('area').value;
+    let area = document.getElementById('area').value;
     let profProm = document.getElementById('profProm').value;
-    let vol = parseFloat((area1 * profProm).toFixed(1));
+    let vol = parseFloat((area * profProm).toFixed(1));
     document.getElementById('volumen').innerText = 'Volumen: ' + vol + ' m3';
-    return {vol, area1};
+    return {vol, area};
 }
 
 function flujoVolumen() {
@@ -362,54 +362,3 @@ const humedad = {
     },
 };
 
-function mostrarOpcionesDesborde() {
-  const tipoDesborde = document.getElementById('tipoDesborde').value;
-  const opcionesDiv = document.getElementById('opcionesDesborde');
-
-  // Limpia el contenido previo
-  opcionesDiv.innerHTML = '';
-
-  if (tipoDesborde === 'infinity') {
-    opcionesDiv.innerHTML = `
-      <label for="largoMuroInfinity">Largo del muro infinity (m):</label>
-      <input type="number" id="largoMuroInfinity" step="0.01" required>
-
-      <label for="alturaCortina">Altura de la cortina (mm):</label>
-      <input type="number" id="alturaCortina" step="0.01" required>
-    `;
-  } else if (tipoDesborde === 'canal') {
-    opcionesDiv.innerHTML = `
-      <label for="largoCanal">Largo del canal perimetral (m):</label>
-      <input type="number" id="largoCanal" step="0.01" required>
-    `;
-  }
-  // Si es 'skimmer', no se agrega nada adicional
-}
-
-function calcular() {
-  const datos = {
-    ciudad: document.getElementById('ciudad').value,
-    area: parseFloat(document.getElementById('area').value),
-    profundidad: parseFloat(document.getElementById('profundidad').value),
-    temperatura: parseFloat(document.getElementById('temperatura').value),
-    distanciaCuartoMaquinas: parseFloat(document.getElementById('distanciaCuartoMaquinas').value),
-    distanciaBombasCalor: parseFloat(document.getElementById('distanciaBombasCalor').value),
-    tipoDesborde: document.getElementById('tipoDesborde').value,
-    esTechada: document.getElementById('esTechada').value === 'si',
-    cubiertaTermica: document.getElementById('cubiertaTermica').value === 'si',
-  };
-
-  // Añade campos según tipo de desborde
-  if (datos.tipoDesborde === 'infinity') {
-    datos.largoMuroInfinity = parseFloat(document.getElementById('largoMuroInfinity').value);
-    datos.alturaCortina = parseFloat(document.getElementById('alturaCortina').value);
-  } else if (datos.tipoDesborde === 'canal') {
-    datos.largoCanal = parseFloat(document.getElementById('largoCanal').value);
-  }
-
-  // Aquí podrías hacer cálculos con los datos obtenidos
-  document.getElementById('resultados').innerHTML = `
-    <h3>Datos capturados:</h3>
-    <pre>${JSON.stringify(datos, null, 2)}</pre>
-  `;
-}
