@@ -1,3 +1,9 @@
+function calcular() {
+  volumen();
+  flujoVolumen();
+  flujoInfinity();
+}
+
 function volumen() {
     let area = document.getElementById('area').value;
     let profProm = document.getElementById('profProm').value;
@@ -11,7 +17,6 @@ function flujoVolumen() {
     let rotacion1 = document.getElementById('rotacion').value;
     let flujoVolumen = parseFloat((vol * 1000 / 60 / rotacion1).toFixed(1));
     let flujoVolumen2 = parseFloat((flujoVolumen / 3.7854).toFixed(1));    
-    //document.getElementById('flujoVolumen').innerText = 'Flujo Volumen: ' + flujoVolumen + ' lpm';
     document.getElementById('flujoVolumen2').innerText = 'Flujo Volumen: ' + flujoVolumen2 + ' gpm';
     return flujoVolumen2;
 }

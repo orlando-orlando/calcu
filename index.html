@@ -2,14 +2,22 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Agua control o waterbending?</title>
-  <link rel="stylesheet" href="css/style.css">
+  <title>Agua control</title>
+
 </head>
 <body>
 
-  <h1>Agua control o waterbending?</h1>
+  <h1>Agua control</h1>
 
-<fieldset>
+    <label for="area">Área (m²):</label>
+    <input type="number" id="area" min="0" step="0" placeholder="Ingresa el área en m²">
+  
+    <label for="profProm">Profundidad promedio (m):</label>
+    <input type="number" id="profProm" min="0" step="0" placeholder="Ingresa la profundidad en m">
+
+    <label for="rotacion">Tasa de rotación (h):</label>
+    <input type="number" id="rotacion" min="0" step="0" placeholder="Ingresa la rotación en horas">
+
   <legend>Ubicación</legend>
   <label for="ciudad">Ciudad:</label>
   <select id="ciudad">
@@ -53,58 +61,13 @@
     <option value="saltillo">Saltillo</option>
     
   </select>
-</fieldset>
-
-<fieldset>
-  <legend>Dimensiones de la alberca</legend>
-  <label for="area">Área (m²):</label>
-  <input type="number" id="area" step="0.01" required>
-  <label for="profundidad">Profundidad promedio (m):</label>
-  <input type="number" id="profundidad" step="0.01" required>
-</fieldset>
-
-<fieldset>
-  <legend>Temperatura deseada</legend>
-  <label for="temperatura">Temperatura deseada (°C):</label>
-  <input type="number" id="temperatura" step="0.1" required>
-</fieldset>
-
-<fieldset>
-  <legend>Distancias</legend>
-  <label for="distanciaCuartoMaquinas">Distancia de cuarto de máquinas a alberca (m):</label>
-  <input type="number" id="distanciaCuartoMaquinas" step="0.1" required>
-  <label for="distanciaBombasCalor">Distancia de bombas de calor a alberca (m):</label>
-  <input type="number" id="distanciaBombasCalor" step="0.1" required>
-</fieldset>
-
-<fieldset>
-  <legend>Características adicionales</legend>
-  <label for="techada">¿Está techada?</label>
-  <select id="techada">
-  <option value="no">No</option>
-  <option value="si">Sí</option>
-  </select>
-
-  <label for="cubierta">¿Tiene cubierta térmica?</label>
-  <select id="cubierta">
-  <option value="no">No</option>
-  <option value="si">Sí</option>
-  </select>
-
-  <label for="desborde">Tipo de desborde:</label>
-  <select id="desborde">
-  <option value="ninguno">Ninguno</option>
-  <option value="infinity">Infinity</option>
-  <option value="canal">Canal</option>
-  </select>
-</fieldset>
-
-  <button onclick="calcular()">Calcular</button>
-
-  <div id="resultados"></div>
 
 
-  <script src="inicio.js"></script>
+<button onclick="calcular()">Calcular</button>
+  <div id="volumen"></div>
+  <div id="flujoVolumen2"></div>
+
+<script src="js/inicio.js"></script>
 
 </body>
 </html>
