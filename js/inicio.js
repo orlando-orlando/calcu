@@ -4,6 +4,14 @@ function calcular() {
   flujoInfinity();
 }
 
+function mostrarCampos() {
+    const chkInfinity = document.getElementById('chkInfinity').checked;
+    const chkCanal = document.getElementById('chkCanal').checked;
+  
+    document.getElementById('campoInfinity').classList.toggle('oculto', !chkInfinity);
+    document.getElementById('campoCanal').classList.toggle('oculto', !chkCanal);
+  }
+  
 function volumen() {
     let area = document.getElementById('area').value;
     let profProm = document.getElementById('profProm').value;
