@@ -1,39 +1,76 @@
 function calcular() {
-  volumen();
-  flujoVolumen();
-  flujoInfinity();
+    const vol = volumen();
+    const flujoVol = flujoVolumen();
+    const flujoInf = flujoInfinity();
+    const nuevaVentana = window.open("", "_blank", "width=400,height=300");
+
+  nuevaVentana.document.write(`
+    <html>
+      <head>
+        <title>Resultados</title>
+            <script>
+            document.addEventListener("keydown", function(event) {
+                if (event.key === "Escape") {
+                    window.close();
+                }
+            });
+            </script>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          h2 { color: #2c3e50; }
+        </style>
+      </head>
+      <body>
+        <h2>Estos son los valores calculados:</h2>
+        <ul>
+          <li><strong>Volumen:</strong> ${vol}</li>
+          <li><strong>Flujo volumen:</strong> ${flujoVol}</li>
+          <li><strong>Flujo infinity:</strong> ${flujoInf}</li>
+
+        </ul>
+      </body>
+    </html>
+  `);
+
+  nuevaVentana.document.close();
 }
 
 function mostrarCampos() {
     const chkInfinity = document.getElementById('chkInfinity').checked;
     const chkCanal = document.getElementById('chkCanal').checked;
-  
+    const chkBombaCalor = document.getElementById('chkBombaCalor').checked;
+    const chkPanel = document.getElementById('chkPanel').checked;
+    const chkCaldera = document.getElementById('chkCaldera').checked;
     document.getElementById('campoInfinity').classList.toggle('oculto', !chkInfinity);
     document.getElementById('campoCanal').classList.toggle('oculto', !chkCanal);
+    document.getElementById('campoBombaCalor').classList.toggle('oculto', !chkBombaCalor);
+    document.getElementById('campoPanel').classList.toggle('oculto', !chkPanel);
+    document.getElementById('campoCaldera').classList.toggle('oculto', !chkCaldera);
   }
-  
+
 function volumen() {
     let area = document.getElementById('area').value;
     let profProm = document.getElementById('profProm').value;
     let vol = parseFloat((area * profProm).toFixed(1));
-    document.getElementById('volumen').innerText = 'Volumen: ' + vol + ' m3';
-    return {vol, area};
+ //   document.getElementById('volumen').innerText = 'Volumen: ' + vol + ' m3';
+    return vol;
 }
 
 function flujoVolumen() {
-    let {vol} = volumen();
+    let vol = volumen();
     let rotacion1 = document.getElementById('rotacion').value;
     let flujoVolumen = parseFloat((vol * 1000 / 60 / rotacion1).toFixed(1));
     let flujoVolumen2 = parseFloat((flujoVolumen / 3.7854).toFixed(1));    
-    document.getElementById('flujoVolumen2').innerText = 'Flujo Volumen: ' + flujoVolumen2 + ' gpm';
+  //  document.getElementById('flujoVolumen2').innerText = 'Flujo filtrado: ' + flujoVolumen2 + ' gpm';
     return flujoVolumen2;
 }
 
 function flujoInfinity(){
-    let muroInfinity2 = document.getElementById('muroInfinity').value;
-    let alturaCortina2 = document.getElementById('alturaCortina').value;
-    let flujoInfinity2 = parseFloat((36*(muroInfinity2/.3048)*((alturaCortina2/25.4)**1.5)).toFixed(1));
-    document.getElementById('flujoInfinity2').innerText = 'Flujo infinity: ' + flujoInfinity2 + ' gpm';
+    let muroInfinity = document.getElementById('largoInfinity').value;
+    let alturaCortina = document.getElementById('alturaDesborde').value;
+    let flujoInfinity = parseFloat((36*(muroInfinity/.3048)*((alturaCortina/25.4)**1.5)).toFixed(1));
+ //   document.getElementById('flujoInfinity').innerText = 'Flujo infinity: ' + flujoInfinity + ' gpm';
+    return flujoInfinity;
 }
 
 const temperatura = {

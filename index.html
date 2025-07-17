@@ -10,6 +10,8 @@
 
   <h1>Agua control</h1>
 
+    <h3>Ingresa dimensiones de la alberca</h3>
+
     <label for="area">Área (m²):</label>
     <input type="number" id="area" min="0" step="0" placeholder="Ingresa el área en m²">
   
@@ -19,23 +21,41 @@
     <label for="rotacion">Tasa de rotación (h):</label>
     <input type="number" id="rotacion" min="0" step="0" placeholder="Ingresa la rotación en horas">
 
-    <h2>¿Qué tipo de desborde llevará?</h2>
+    <h3>¿Qué tipo de desborde llevará?</h3>
 
     <label><input type="checkbox" id="chkInfinity" onchange="mostrarCampos()"> Infinity</label><br>
     <label><input type="checkbox" id="chkCanal" onchange="mostrarCampos()"> Canal perimetral</label><br>
     <label><input type="checkbox" id="chkDesnatador" onchange="mostrarCampos()"> Desnatador</label><br><br>
-  
-    <div id="campoInfinity" class="oculto">
+      <div id="campoInfinity" class="oculto">
       <label for="largoInfinity">Largo del muro Infinity (m):</label>
       <input type="number" id="largoInfinity" step="0.01"><br><br>
-    </div>
-  
-    <div id="campoCanal" class="oculto">
+      <label for="alturaDesborde">Altura desborde infinity (mm):</label>
+      <input type="number" id="alturaDesborde" step="0.01"><br><br>
+      </div>
+      <div id="campoCanal" class="oculto">
       <label for="largoCanal">Largo del canal perimetral (m):</label>
       <input type="number" id="largoCanal" step="0.01"><br><br>
-    </div>
+      </div>
 
-  <legend>Ubicación</legend>
+    <h3>¿Qué tipo de calentamiento llevará?</h3>
+
+    <label><input type="checkbox" id="chkBombaCalor" onchange="mostrarCampos()"> Bomba de calor</label><br>
+    <label><input type="checkbox" id="chkPanel" onchange="mostrarCampos()"> Panel solar</label><br>
+    <label><input type="checkbox" id="chkCaldera" onchange="mostrarCampos()"> Caldera</label><br><br>
+      <div id="campoBombaCalor" class="oculto">
+      <label for="cargaEstaticaBC">Diferencia de altura espejo de agua contra ubicación bomba de calor (m):</label>
+      <input type="number" id="cargaEstaticaBC" step="0.01"><br><br>
+      </div>
+      <div id="campoPanel" class="oculto">
+      <label for="cargaEstaticaPan">Diferencia de altura espejo de agua contra ubicación panel solar (m):</label>
+      <input type="number" id="cargaEstaticaPan" step="0.01"><br><br>
+      </div>
+      <div id="campoCaldera" class="oculto">
+      <label for="cargaEstaticaCal">Diferencia de altura espejo de agua contra ubicación caldera (m):</label>
+      <input type="number" id="cargaEstaticaCal" step="0.01"><br><br>
+      </div>
+
+  <h3>Selecciona la ubicación</h3>
   <label for="ciudad">Ciudad:</label>
   <select id="ciudad">
     <option value="guadalajara">Guadalajara</option>
@@ -76,13 +96,28 @@
     <option value="puertoPeñasco">Puerto Peñasco</option>
     <option value="ixtapaZihuatanejo">Ixtapa / Zihuatanejo</option>
     <option value="saltillo">Saltillo</option>
-    
   </select>
 
+      <h3>Selecciona tu santización</h3>
+    <label><input type="checkbox" id="chkGenerador"> Generador de cloro</label><br>
+    <label><input type="checkbox" id="chkOzonificador"> Ozonificador</label><br>
+    <label><input type="checkbox" id="chkLamparaUV"> Lámpara U.V.</label><br>
+    
+      <h3>Selecciona tu filtración</h3>
+    <label><input type="checkbox" id="chkPrefiltro"> Prefiltro</label><br>
+    <label><input type="checkbox" id="chkFiltro" onchange="mostrarCampos()"> Filtro</label><br>
 
-<button onclick="calcular()">Calcular</button>
+      <h3>¿Qué tipo de motobomba deseas?</h3>    
+    <label><input type="checkbox" id="chkMotobomba1V"> Motobomba 1 velocidad</label><br>
+    <label><input type="checkbox" id="chkMotobombaVV"> Motobomba velocidad variable</label><br>
+
+<br><br><button onclick="calcular()">Calcular</button>
+<br><br>
+<!--
   <div id="volumen"></div>
   <div id="flujoVolumen2"></div>
+  <div id="flujoInfinity"></div>
+-->
 
 <script src="js/inicio.js"></script>
 
