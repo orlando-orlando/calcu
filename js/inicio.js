@@ -2,6 +2,7 @@ function calcular() {
     const vol = volumen();
     const flujoVol = flujoVolumen();
     const flujoInf = flujoInfinity();
+    const velFlujo = velocidadFlujo();
     const nuevaVentana = window.open("", "_blank", "width=400,height=300");
 
   nuevaVentana.document.write(`
@@ -26,6 +27,7 @@ function calcular() {
           <li><strong>Volumen:</strong> ${vol}</li>
           <li><strong>Flujo volumen:</strong> ${flujoVol}</li>
           <li><strong>Flujo infinity:</strong> ${flujoInf}</li>
+          <li><strong>Velocidad flujo:</strong> ${velFlujo}</li>
 
         </ul>
       </body>
@@ -73,6 +75,43 @@ function flujoInfinity(){
     return flujoInfinity;
 }
 
+function flujoMaximo(flujoVolumen2, flujoInfinity/*, /*flujoBombaCalor, flujoPanel, flujoCaldera, flujoGenerador*/){
+    let flujoMaximo = Math.max(flujoVolumen2, flujoInfinity/*, flujoBombaCalor, flujoPanel, flujoCaldera, flujoGenerador*/);
+
+    return flujoMaximo;
+}
+
+
+function velocidadFlujo(flujoMaximo){
+    const diametroTuberia = {
+        "tuberia 0.75" : 0.81,
+        "tuberia 1.00" : 1.03,
+        "tuberia 1.50" : 1.61,
+        "tuberia 2.00" : 2.07,
+        "tuberia 2.50" : 2.47,
+        "tuberia 3.00" : 3.07,
+        "tuberia 4.00" : 4.03,
+        "tuberia 6.00" : 6.07,
+        "tuberia 8.00" : 7.98,
+        "tuberia 10.00" : 9.98,
+        "tuberia 12.00" : 11.89,
+        "tuberia 14.00" : 13.13,
+        "tuberia 16.00" : 14.94,
+        "tuberia 18.00" : 16.81
+        };
+    
+    const velocidadFlujo = {};
+    
+    for (let tuberia in diametroTuberia) {
+        const diametro = diametroTuberia[tuberia];
+
+        const velocidad = flujoMaximo * 0.408498 * Math.pow((diametro), 2);
+        velocidadFlujo[tuberia] = velocidad;
+    }
+
+    return velocidadFlujo;
+}
+    
 const temperatura = {
     "guadalajara": {
         min: [9.5, 10.3, 12.3, 14.3, 16.4, 17.3, 16.5, 16.4, 16.5, 14.9, 12.1, 10.3],
