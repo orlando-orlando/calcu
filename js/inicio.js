@@ -2,7 +2,26 @@ function calcular() {
     const vol = volumen();
     const flujoVol = flujoVolumen();
     const flujoInf = flujoInfinity();
-    const velFlujo = velocidadFlujo();
+    const flujoMax = flujoMaximo(flujoVol, flujoInf);
+    const resultadoFlujo = velocidadCargaFlujo(flujoMax);
+    const velFlujo = resultadoFlujo.velocidadFlujo;
+    const cargaFlujo = resultadoFlujo.cargaFlujo;
+    const tubSuccion = tuberiaSeleccionada(velFlujo, "succion");
+    const tubDescarga = tuberiaSeleccionada(velFlujo, "descarga");
+    
+    const retornoDatos = retornos(flujoMax, "1.5");
+let retornoHTML = "";
+retornoDatos.forEach(dato => {
+  retornoHTML += `<li>Tramo ${dato.tramo}: ${dato.flujo} gpm, ${dato.tuberia}, ${dato.velocidad} ft/s, carga: ${dato.carga} ft</li>`;
+});
+
+    
+    
+    let velFlujoTexto = "";
+    for (let tub in velFlujo) {
+        velFlujoTexto += `<li><strong>${tub}:</strong> ${velFlujo[tub].toFixed(2)} ft/s, carga: ${cargaFlujo[tub].toFixed(2)} ft hd</li>`;
+        }
+
     const nuevaVentana = window.open("", "_blank", "width=400,height=300");
 
   nuevaVentana.document.write(`
@@ -27,7 +46,14 @@ function calcular() {
           <li><strong>Volumen:</strong> ${vol}</li>
           <li><strong>Flujo volumen:</strong> ${flujoVol}</li>
           <li><strong>Flujo infinity:</strong> ${flujoInf}</li>
-          <li><strong>Velocidad flujo:</strong> ${velFlujo}</li>
+          <li><strong>Tubería seleccionada succión:</strong> ${tubSuccion}</li>
+          <li><strong>Tubería seleccionada descarga:</strong> ${tubDescarga}</li>
+            <li><strong>Velocidad flujo:</strong></li>
+            <ul>
+            ${velFlujoTexto}
+            </ul>
+<li><strong>Retornos:</strong></li>
+<ul>${retornoHTML}</ul>
 
         </ul>
       </body>
@@ -81,8 +107,7 @@ function flujoMaximo(flujoVolumen2, flujoInfinity/*, /*flujoBombaCalor, flujoPan
     return flujoMaximo;
 }
 
-
-function velocidadFlujo(flujoMaximo){
+function velocidadCargaFlujo(flujoMaximo){
     const diametroTuberia = {
         "tuberia 0.75" : 0.81,
         "tuberia 1.00" : 1.03,
@@ -101,17 +126,100 @@ function velocidadFlujo(flujoMaximo){
         };
     
     const velocidadFlujo = {};
-    
+    const cargaFlujo = {};
     for (let tuberia in diametroTuberia) {
         const diametro = diametroTuberia[tuberia];
-
-        const velocidad = flujoMaximo * 0.408498 * Math.pow((diametro), 2);
+        const velocidad = flujoMaximo * 0.408498 / Math.pow((diametro), 2);
         velocidadFlujo[tuberia] = velocidad;
+        const carga = 10.536 * 100 * Math.pow(flujoMaximo, 1.852) / (Math.pow(diametro, 4.8655) * Math.pow(150, 1.852));
+        cargaFlujo[tuberia] = carga;
+    }
+    return {velocidadFlujo, cargaFlujo};
+}
+ 
+function tuberiaSeleccionada(velocidades, tipo) {
+    const limite = tipo === "succion" ? 4.5 : 6.5;
+
+    let mejorTuberia = null;
+    let mejorVelocidad = -Infinity;
+
+    for (let tuberia in velocidades) {
+        const velocidad = velocidades[tuberia];
+        if (velocidad <= limite && velocidad > mejorVelocidad) {
+            mejorVelocidad = velocidad;
+            mejorTuberia = tuberia;
+        }
     }
 
-    return velocidadFlujo;
+    return mejorTuberia
+        ? `${mejorTuberia} (${mejorVelocidad.toFixed(2)} ft/s)`
+        : "Ninguna cumple";
 }
-    
+
+function retornos(flujoMaximo, tipoRetorno = "1.5") {
+    const area = parseFloat(document.getElementById('area').value);
+    const diametros = {
+        "tuberia 0.75": 0.81,
+        "tuberia 1.00": 1.03,
+        "tuberia 1.50": 1.61,
+        "tuberia 2.00": 2.07,
+        "tuberia 2.50": 2.47,
+        "tuberia 3.00": 3.07,
+        "tuberia 4.00": 4.03,
+        "tuberia 6.00": 6.07,
+        "tuberia 8.00": 7.98,
+        "tuberia 10.00": 9.98,
+        "tuberia 12.00": 11.89,
+        "tuberia 14.00": 13.13,
+        "tuberia 16.00": 14.94,
+        "tuberia 18.00": 16.81
+    };
+
+    const flujoPorRetorno = tipoRetorno === "2.0" ? 40 : 26;
+    const numRetornos = Math.ceil(flujoMaximo / flujoPorRetorno);
+
+    const longitudTotal = Math.sqrt(area) * 4;
+    const longitudEntreRetornos = longitudTotal / numRetornos;
+
+    const resultado = [];
+
+    let flujoRestante = flujoMaximo;
+
+    for (let i = 0; i < numRetornos; i++) {
+        // Elegir diámetro que dé velocidad ≤ 6.5 ft/s
+        let diametroSeleccionado = null;
+        let velocidadSeleccionada = Infinity;
+        let cargaSeleccionada = null;
+
+        for (let tub in diametros) {
+            const d = diametros[tub];
+            const velocidad = flujoRestante * 0.408498 / (d * d);
+            if (velocidad <= 6.5 && velocidad < velocidadSeleccionada) {
+                velocidadSeleccionada = velocidad;
+                diametroSeleccionado = tub;
+                // Haz el cálculo de carga aquí para ese flujo y diámetro
+                const carga = 10.536 * longitudEntreRetornos * Math.pow(flujoRestante, 1.852) /
+                    (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
+                cargaSeleccionada = carga;
+            }
+        }
+
+        resultado.push({
+            tramo: i + 1,
+            flujo: flujoRestante.toFixed(2),
+            tuberia: diametroSeleccionado || "Ninguna cumple",
+            velocidad: velocidadSeleccionada.toFixed(2),
+            carga: cargaSeleccionada ? cargaSeleccionada.toFixed(2) : "N/A"
+        });
+
+        flujoRestante -= flujoPorRetorno;
+        if (flujoRestante < 0) flujoRestante = 0;
+    }
+
+    return resultado;
+}
+
+
 const temperatura = {
     "guadalajara": {
         min: [9.5, 10.3, 12.3, 14.3, 16.4, 17.3, 16.5, 16.4, 16.5, 14.9, 12.1, 10.3],
