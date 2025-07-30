@@ -188,17 +188,17 @@ function retornos(flujoMaximo, tipoRetorno = "1.5") {
     for (let i = 0; i < numRetornos; i++) {
         // Elegir diámetro que dé velocidad ≤ 6.5 ft/s
         let diametroSeleccionado = null;
-        let velocidadSeleccionada = Infinity;
+        let velocidadSeleccionada = -Infinity;
         let cargaSeleccionada = null;
 
         for (let tub in diametros) {
             const d = diametros[tub];
             const velocidad = flujoRestante * 0.408498 / (d * d);
-            if (velocidad <= 6.5 && velocidad < velocidadSeleccionada) {
+            if (velocidad <= 6.5 && velocidad > velocidadSeleccionada) {
                 velocidadSeleccionada = velocidad;
                 diametroSeleccionado = tub;
                 // Haz el cálculo de carga aquí para ese flujo y diámetro
-                const carga = 10.536 * longitudEntreRetornos * Math.pow(flujoRestante, 1.852) /
+                const carga = 10.536 * (longitudEntreRetornos / 0.3048) * Math.pow(flujoRestante, 1.852) /
                     (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
                 cargaSeleccionada = carga;
             }
