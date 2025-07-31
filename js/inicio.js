@@ -191,17 +191,32 @@ function retornos(flujoMaximo, tipoRetorno = "1.5") {
         let velocidadSeleccionada = -Infinity;
         let cargaSeleccionada = null;
 
+        let mejorTub = null;
+        let mejorVel = null;
+        let mejorCarga = null;
+
         for (let tub in diametros) {
             const d = diametros[tub];
             const velocidad = flujoRestante * 0.408498 / (d * d);
+
+                // Guarda la última opción (la mayor tubería)
+            mejorTub = tub;
+            mejorVel = velocidad;
+            mejorCarga = 10.536 * (longitudEntreRetornos / 0.3048) * Math.pow(flujoRestante, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
+
+            // Si cumple, elige la más cercana a 6.5 sin pasarse
             if (velocidad <= 6.5 && velocidad > velocidadSeleccionada) {
                 velocidadSeleccionada = velocidad;
                 diametroSeleccionado = tub;
-                // Haz el cálculo de carga aquí para ese flujo y diámetro
-                const carga = 10.536 * (longitudEntreRetornos / 0.3048) * Math.pow(flujoRestante, 1.852) /
-                    (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
-                cargaSeleccionada = carga;
+                cargaSeleccionada = mejorCarga;
             }
+        }
+
+        // Si no se encontró ninguna que cumpla, usar la más grande (última iteración)
+        if (!diametroSeleccionado) {
+            diametroSeleccionado = mejorTub;
+            velocidadSeleccionada = mejorVel;
+            cargaSeleccionada = mejorCarga;
         }
 
         resultado.push({
