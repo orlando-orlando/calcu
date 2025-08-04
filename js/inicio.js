@@ -12,7 +12,7 @@ function calcular() {
     const retornoDatos = retornos(flujoMax, "1.5");
 let retornoHTML = "";
 retornoDatos.forEach(dato => {
-  retornoHTML += `<li>Tramo ${dato.tramo}: ${dato.flujo} gpm, ${dato.tuberia}, ${dato.velocidad} ft/s, carga: ${dato.carga} ft</li>`;
+  retornoHTML += `<li>Tramo ${dato.tramo}: ${dato.flujo} gpm, ${dato.tuberia}, ${dato.velocidad} ft/s, carga: ${dato.carga} ft, ${dato.accesorio}, longitud: ${dato.longitud} m</li>`;
 });
 
     
@@ -174,7 +174,55 @@ function retornos(flujoMaximo, tipoRetorno = "1.5") {
         "tuberia 16.00": 14.94,
         "tuberia 18.00": 16.81
     };
+        const teeLinea = {
+        "tuberia 0.75": 2.40,
+        "tuberia 1.00": 3.20,
+        "tuberia 1.50": 5.60,
+        "tuberia 2.00": 7.70,
+        "tuberia 2.50": 9.30,
+        "tuberia 3.00": 12.0,
+        "tuberia 4.00": 2.80,
+        "tuberia 6.00": 3.80,
+        "tuberia 8.00": 4.70,
+        "tuberia 10.00": 5.20,
+        "tuberia 12.00": 6.00,
+        "tuberia 14.00": 6.00,
+        "tuberia 16.00": 6.00,
+        "tuberia 18.00": 6.00
+    };
+        const teeBranch = {
+        "tuberia 0.75": 5.30,
+        "tuberia 1.00": 6.60,
+        "tuberia 1.50": 9.90,
+        "tuberia 2.00": 12.0,
+        "tuberia 2.50": 13.0,
+        "tuberia 3.00": 17.0,
+        "tuberia 4.00": 12.0,
+        "tuberia 6.00": 18.0,
+        "tuberia 8.00": 24.0,
+        "tuberia 10.00": 30.0,
+        "tuberia 12.00": 34.0,
+        "tuberia 14.00": 34.0,
+        "tuberia 16.00": 34.0,
+        "tuberia 18.00": 34.0
+    };
 
+        const codo = {
+        "tuberia 0.75": 4.40,
+        "tuberia 1.00": 5.20,
+        "tuberia 1.50": 7.40,
+        "tuberia 2.00": 8.50,
+        "tuberia 2.50": 9.30,
+        "tuberia 3.00": 11.0,
+        "tuberia 4.00": 5.90,
+        "tuberia 6.00": 8.90,
+        "tuberia 8.00": 12.0,
+        "tuberia 10.00": 14.0,
+        "tuberia 12.00": 17.0,
+        "tuberia 14.00": 17.0,
+        "tuberia 16.00": 17.0,
+        "tuberia 18.00": 17.0
+    };
     const flujoPorRetorno = tipoRetorno === "2.0" ? 40 : 26;
     const numRetornos = Math.ceil(flujoMaximo / flujoPorRetorno);
 
@@ -185,52 +233,69 @@ function retornos(flujoMaximo, tipoRetorno = "1.5") {
 
     let flujoRestante = flujoMaximo;
 
-    for (let i = 0; i < numRetornos; i++) {
-        // Elegir diámetro que dé velocidad ≤ 6.5 ft/s
-        let diametroSeleccionado = null;
-        let velocidadSeleccionada = -Infinity;
-        let cargaSeleccionada = null;
+for (let i = 0; i < numRetornos; i++) {
+    let flujoActual = flujoRestante;
 
-        let mejorTub = null;
-        let mejorVel = null;
-        let mejorCarga = null;
+    // Elegir diámetro que dé velocidad ≤ 6.5 ft/s
+    let diametroSeleccionado = null;
+    let velocidadSeleccionada = -Infinity;
+    let cargaSeleccionada = null;
 
-        for (let tub in diametros) {
-            const d = diametros[tub];
-            const velocidad = flujoRestante * 0.408498 / (d * d);
+    let mejorTub = null;
+    let mejorVel = null;
+    let mejorCarga = null;
 
-                // Guarda la última opción (la mayor tubería)
-            mejorTub = tub;
-            mejorVel = velocidad;
-            mejorCarga = 10.536 * (longitudEntreRetornos / 0.3048) * Math.pow(flujoRestante, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
+    for (let tub in diametros) {
+        const d = diametros[tub];
+        const velocidad = flujoActual * 0.408498 / (d * d);
 
-            // Si cumple, elige la más cercana a 6.5 sin pasarse
-            if (velocidad <= 6.5 && velocidad > velocidadSeleccionada) {
-                velocidadSeleccionada = velocidad;
-                diametroSeleccionado = tub;
-                cargaSeleccionada = mejorCarga;
-            }
-        }
+        mejorTub = tub;
+        mejorVel = velocidad;
+        mejorCarga = 10.536 * (longitudEntreRetornos / 0.3048) * Math.pow(flujoActual, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
 
-        // Si no se encontró ninguna que cumpla, usar la más grande (última iteración)
-        if (!diametroSeleccionado) {
-            diametroSeleccionado = mejorTub;
-            velocidadSeleccionada = mejorVel;
+        if (velocidad <= 6.5 && velocidad > velocidadSeleccionada) {
+            velocidadSeleccionada = velocidad;
+            diametroSeleccionado = tub;
             cargaSeleccionada = mejorCarga;
         }
-
-        resultado.push({
-            tramo: i + 1,
-            flujo: flujoRestante.toFixed(2),
-            tuberia: diametroSeleccionado || "Ninguna cumple",
-            velocidad: velocidadSeleccionada.toFixed(2),
-            carga: cargaSeleccionada ? cargaSeleccionada.toFixed(2) : "N/A"
-        });
-
-        flujoRestante -= flujoPorRetorno;
-        if (flujoRestante < 0) flujoRestante = 0;
     }
 
+    if (!diametroSeleccionado) {
+        diametroSeleccionado = mejorTub;
+        velocidadSeleccionada = mejorVel;
+        cargaSeleccionada = mejorCarga;
+    }
+
+    // ✅ Ya que tenemos diametroSeleccionado y cargaSeleccionada, ahora sí calculamos accesorio:
+    let tipoAccesorio = (i === numRetornos - 1) ? "codo" : "tee";
+    let longitudEq = 0;
+    let cargaAccesorio = 0;
+
+    const clave = teeLinea.hasOwnProperty(diametroSeleccionado)
+        ? diametroSeleccionado
+        : "tuberia 18.00";
+
+    if (tipoAccesorio === "codo") {
+        longitudEq = codo[clave] || codo["tuberia 18.00"];
+    } else {
+        longitudEq = teeLinea[clave] || teeLinea["tuberia 18.00"];
+    }
+
+    cargaAccesorio = (longitudEq * cargaSeleccionada) / 100;
+
+    resultado.push({
+        tramo: i + 1,
+        flujo: flujoActual.toFixed(2),
+        tuberia: diametroSeleccionado || "Ninguna cumple",
+        velocidad: velocidadSeleccionada.toFixed(2),
+        carga: cargaSeleccionada ? cargaSeleccionada.toFixed(2) : "N/A",
+        accesorio: `${tipoAccesorio} (${longitudEq}" eq, carga: ${cargaAccesorio.toFixed(2)} ft)`,
+        longitud: longitudEntreRetornos.toFixed(2)
+    });
+
+    flujoRestante -= flujoPorRetorno;
+    if (flujoRestante < 0) flujoRestante = 0;
+}
     return resultado;
 }
 
