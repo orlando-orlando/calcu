@@ -223,6 +223,23 @@ function retornos(flujoMaximo, tipoRetorno = "1.5") {
         "tuberia 16.00": 17.0,
         "tuberia 18.00": 17.0
     };
+
+        const reduccion = {
+        "tuberia 0.75": 8.0,
+        "tuberia 1.00": 8.0,
+        "tuberia 1.50": 10.0,
+        "tuberia 2.00": 12.0,
+        "tuberia 2.50": 12.0,
+        "tuberia 3.00": 15.0,
+        "tuberia 4.00": 20.0,
+        "tuberia 6.00": 25.0,
+        "tuberia 8.00": 30.0,
+        "tuberia 10.00": 35.0,
+        "tuberia 12.00": 40.0,
+        "tuberia 14.00": 45.0,
+        "tuberia 16.00": 50.0,
+        "tuberia 18.00": 55.0
+    };
     const flujoPorRetorno = tipoRetorno === "2.0" ? 40 : 26;
     const numRetornos = Math.ceil(flujoMaximo / flujoPorRetorno);
 
@@ -283,13 +300,17 @@ for (let i = 0; i < numRetornos; i++) {
 
     cargaAccesorio = (longitudEq * cargaSeleccionada) / 100;
 
+    const longitudEqReduccion = reduccion[diametroSeleccionado] || reduccion["tuberia 18.00"];
+    const cargaReduccion = (longitudEqReduccion * cargaSeleccionada) / 100;
+
+
     resultado.push({
         tramo: i + 1,
         flujo: flujoActual.toFixed(2),
         tuberia: diametroSeleccionado || "Ninguna cumple",
         velocidad: velocidadSeleccionada.toFixed(2),
         carga: cargaSeleccionada ? cargaSeleccionada.toFixed(2) : "N/A",
-        accesorio: `${tipoAccesorio} (${longitudEq}" eq, carga: ${cargaAccesorio.toFixed(2)} ft)`,
+        accesorio: `${tipoAccesorio} (${longitudEq}" eq, carga: ${cargaAccesorio.toFixed(2)} ft) + reducción (${longitudEqReduccion}" eq, carga: ${cargaReduccion.toFixed(2)} ft)`
         longitud: longitudEntreRetornos.toFixed(2)
     });
 
