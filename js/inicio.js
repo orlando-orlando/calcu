@@ -20,13 +20,13 @@ let retornoHTML = `
       <th>Velocidad (ft/s)</th>
       <th>Carga base (ft/100ft)</th>
       <th>Carga tramo (ft)</th>
+      <th>Longitud tramo (m)</th>
       <th>Eq Tee (")</th>
       <th>Carga Tee (ft)</th>
       <th>Eq Codo (")</th>
       <th>Carga Codo (ft)</th>
       <th>Eq Reducción (")</th>
       <th>Carga Reducción (ft)</th>
-      <th>Longitud tramo (m)</th>
       <th><strong>Carga total (ft)</strong></th>
     </tr>
   </thead>
@@ -42,13 +42,13 @@ retornoDatos.forEach(dato => {
       <td>${dato.velocidad}</td>
       <td>${dato.cargaBase}</td>
       <td>${dato.cargaTramo}</td>
+      <td>${dato.longitud}</td>
       <td>${dato.longEqTee}</td>
       <td>${dato.cargaTee}</td>
       <td>${dato.longEqCodo}</td>
       <td>${dato.cargaCodo}</td>
       <td>${dato.longEqReduccion}</td>
       <td>${dato.cargaReduccion}</td>
-      <td>${dato.longitud}</td>
       <td><strong>${dato.cargaTotal}</strong></td>
     </tr>
   `;
@@ -335,8 +335,8 @@ for (let i = 0; i < numRetornos; i++) {
     let cargaReduccion = 0;
     let cargaReduccionTexto = "";
     if (diametroAnterior && diametroAnterior !== diametroSeleccionado) {
-        const longitudEqReduccion = reduccion[diametroSeleccionado] || reduccion["tuberia 18.00"];
-        const cargaReduccion = (longitudEqReduccion * cargaSeleccionada) / 100;
+        longitudEqReduccion = reduccion[diametroSeleccionado] || reduccion["tuberia 18.00"];
+        cargaReduccion = (longitudEqReduccion * cargaSeleccionada) / 100;
         cargaReduccionTexto = ` + reducción (${longitudEqReduccion}" eq, carga: ${cargaReduccion.toFixed(4)} ft)`;
     }
     const cargaPor100ft = cargaSeleccionada; // ya viene calculada para 100 ft
