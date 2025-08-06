@@ -10,11 +10,51 @@ function calcular() {
     const tubDescarga = tuberiaSeleccionada(velFlujo, "descarga");
     
     const retornoDatos = retornos(flujoMax, "1.5");
-let retornoHTML = "";
+let retornoHTML = `
+<table border="1" cellpadding="4" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Tramo</th>
+      <th>Flujo (gpm)</th>
+      <th>Tubería</th>
+      <th>Velocidad (ft/s)</th>
+      <th>Carga base (ft/100ft)</th>
+      <th>Carga tramo (ft)</th>
+      <th>Eq Tee (")</th>
+      <th>Carga Tee (ft)</th>
+      <th>Eq Codo (")</th>
+      <th>Carga Codo (ft)</th>
+      <th>Eq Reducción (")</th>
+      <th>Carga Reducción (ft)</th>
+      <th>Longitud tramo (m)</th>
+      <th><strong>Carga total (ft)</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+`;
+
 retornoDatos.forEach(dato => {
-  retornoHTML += `<li>Tramo ${dato.tramo}: ${dato.flujo} gpm, ${dato.tuberia}, ${dato.velocidad} ft/s, carga: ${dato.carga} ft, ${dato.accesorio}, longitud: ${dato.longitud} m</li>`;
+  retornoHTML += `
+    <tr>
+      <td>${dato.tramo}</td>
+      <td>${dato.flujo}</td>
+      <td>${dato.tuberia}</td>
+      <td>${dato.velocidad}</td>
+      <td>${dato.cargaBase}</td>
+      <td>${dato.cargaTramo}</td>
+      <td>${dato.longEqTee}</td>
+      <td>${dato.cargaTee}</td>
+      <td>${dato.longEqCodo}</td>
+      <td>${dato.cargaCodo}</td>
+      <td>${dato.longEqReduccion}</td>
+      <td>${dato.cargaReduccion}</td>
+      <td>${dato.longitud}</td>
+      <td><strong>${dato.cargaTotal}</strong></td>
+    </tr>
+  `;
 });
 
+retornoHTML += `</tbody></table>`;
     
     
     let velFlujoTexto = "";
@@ -50,15 +90,15 @@ retornoDatos.forEach(dato => {
           <li><strong>Tubería seleccionada descarga:</strong> ${tubDescarga}</li>
             <li><strong>Velocidad flujo:</strong></li>
             <ul>
-            ${velFlujoTexto}
-            </ul>
-<li><strong>Retornos:</strong></li>
-<ul>${retornoHTML}</ul>
+        <ul>${velFlujoTexto}</ul>
+      </li>
+    </ul>
 
-        </ul>
-      </body>
-    </html>
-  `);
+    <h3>Retornos:</h3>
+    ${retornoHTML}
+  </body>
+</html>
+`);
 
   nuevaVentana.document.close();
 }
@@ -250,6 +290,8 @@ function retornos(flujoMaximo, tipoRetorno = "1.5") {
 
     let flujoRestante = flujoMaximo;
 
+let diametroAnterior = null;
+
 for (let i = 0; i < numRetornos; i++) {
     let flujoActual = flujoRestante;
 
@@ -268,7 +310,7 @@ for (let i = 0; i < numRetornos; i++) {
 
         mejorTub = tub;
         mejorVel = velocidad;
-        mejorCarga = 10.536 * (longitudEntreRetornos / 0.3048) * Math.pow(flujoActual, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
+        mejorCarga = 10.536 * 100 * Math.pow(flujoActual, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
 
         if (velocidad <= 6.5 && velocidad > velocidadSeleccionada) {
             velocidadSeleccionada = velocidad;
@@ -283,39 +325,49 @@ for (let i = 0; i < numRetornos; i++) {
         cargaSeleccionada = mejorCarga;
     }
 
-    // ✅ Ya que tenemos diametroSeleccionado y cargaSeleccionada, ahora sí calculamos accesorio:
+    // Accesorio (tee o codo)
     let tipoAccesorio = (i === numRetornos - 1) ? "codo" : "tee";
-    let longitudEq = 0;
-    let cargaAccesorio = 0;
+    let longitudEq = tipoAccesorio === "codo" ? codo[diametroSeleccionado] || codo["tuberia 18.00"] : teeLinea[diametroSeleccionado] || teeLinea["tuberia 18.00"];
+    let cargaAccesorio = (longitudEq * cargaSeleccionada) / 100;
 
-    const clave = teeLinea.hasOwnProperty(diametroSeleccionado)
-        ? diametroSeleccionado
-        : "tuberia 18.00";
-
-    if (tipoAccesorio === "codo") {
-        longitudEq = codo[clave] || codo["tuberia 18.00"];
-    } else {
-        longitudEq = teeLinea[clave] || teeLinea["tuberia 18.00"];
+    // Reducción (solo si hay cambio de diámetro)
+    let longitudEqReduccion = 0;
+    let cargaReduccion = 0;
+    let cargaReduccionTexto = "";
+    if (diametroAnterior && diametroAnterior !== diametroSeleccionado) {
+        const longitudEqReduccion = reduccion[diametroSeleccionado] || reduccion["tuberia 18.00"];
+        const cargaReduccion = (longitudEqReduccion * cargaSeleccionada) / 100;
+        cargaReduccionTexto = ` + reducción (${longitudEqReduccion}" eq, carga: ${cargaReduccion.toFixed(4)} ft)`;
     }
+    const cargaPor100ft = cargaSeleccionada; // ya viene calculada para 100 ft
+    const cargaTotalTramo = (longitudEntreRetornos / 0.3048) * (cargaPor100ft / 100);
 
-    cargaAccesorio = (longitudEq * cargaSeleccionada) / 100;
-
-    const longitudEqReduccion = reduccion[diametroSeleccionado] || reduccion["tuberia 18.00"];
-    const cargaReduccion = (longitudEqReduccion * cargaSeleccionada) / 100;
-
-
-    resultado.push({
+resultado.push({
         tramo: i + 1,
         flujo: flujoActual.toFixed(2),
         tuberia: diametroSeleccionado || "Ninguna cumple",
         velocidad: velocidadSeleccionada.toFixed(2),
-        carga: cargaSeleccionada ? cargaSeleccionada.toFixed(2) : "N/A",
-        accesorio: `${tipoAccesorio} (${longitudEq}" eq, carga: ${cargaAccesorio.toFixed(2)} ft) + reducción (${longitudEqReduccion}" eq, carga: ${cargaReduccion.toFixed(2)} ft)`
-        longitud: longitudEntreRetornos.toFixed(2)
+        cargaBase: cargaSeleccionada ? cargaSeleccionada.toFixed(2) : "N/A",
+        cargaTramo: cargaSeleccionada ? ((longitudEntreRetornos / 0.3048) * (cargaSeleccionada / 100)).toFixed(2) : "N/A",
+        longEqTee: tipoAccesorio === "tee" ? longitudEq.toFixed(2) : "0.00",
+        cargaTee: tipoAccesorio === "tee" ? cargaAccesorio.toFixed(2) : "0.00",
+        longEqCodo: tipoAccesorio === "codo" ? longitudEq.toFixed(2) : "0.00",
+        cargaCodo: tipoAccesorio === "codo" ? cargaAccesorio.toFixed(2) : "0.00",
+        longEqReduccion: longitudEqReduccion.toFixed(2),
+        cargaReduccion: cargaReduccion.toFixed(2),
+        longitud: longitudEntreRetornos.toFixed(2),
+        cargaTotal: (
+            parseFloat(((longitudEntreRetornos / 0.3048) * (cargaSeleccionada / 100)).toFixed(2)) +
+            parseFloat(cargaAccesorio.toFixed(2)) +
+            parseFloat(cargaReduccion.toFixed(2))
+        ).toFixed(2)
     });
 
     flujoRestante -= flujoPorRetorno;
     if (flujoRestante < 0) flujoRestante = 0;
+
+    // Guardamos el diámetro actual como "anterior" para la siguiente iteración
+    diametroAnterior = diametroSeleccionado;
 }
     return resultado;
 }
