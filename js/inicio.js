@@ -11,32 +11,43 @@ function calcular() {
     const tipoRetorno = document.getElementById("retorno").value;
     const retornoDatos = retornos(flujoMax, tipoRetorno);
 
+    const disparo = retornoDatos[0]; // o [retornoDatos.length - 1] según convenga
+    const flujoDisparo = disparo.flujoDisparo;
+    const diametroDisparo = disparo.diametroDisparo;
+    const velocidadDisparo = disparo.velocidadDisparo;
+    const cargaBaseDisparo = disparo.cargaBaseDisparo;
+    const cargaDisparo = disparo.cargaDisparo;
+    const longitudDisparo = disparo.longitudDisparo;
+    const longEqCodoDisparo = disparo.longEqCodoDisparo;
+    const cargaCodoDisparo = disparo.cargaCodoDisparo;
+    const longEqReduccionDisparo = disparo.longEqReduccionDisparo;
+    const cargaReduccionDisparo = disparo.cargaReduccionDisparo;
+    const cargaDisparoTotal = disparo.cargaDisparoTotal;
+
 let retornoHTML = `
 <table border="1" cellpadding="4" cellspacing="0">
   <thead>
     <tr>
       <th>Tramo</th>
-      <th>Flujo (gpm)</th>
-      <th>Tubería</th>
-      <th>Velocidad (ft/s)</th>
-      <th>Carga base (ft/100ft)</th>
+      <th>Flujo tramo (gpm)</th>
+      <th>Diámetro tubería tramo (in)</th>
+      <th>Velocidad tramo (ft/s)</th>
+      <th>Carga base tramo (ft/100ft)</th>
       <th>Carga tramo (ft)</th>
       <th>Longitud tramo (m)</th>
-      <th>Eq Tee (")</th>
+      <th>L. Eq. Tee (ft)</th>
       <th>Carga Tee (ft)</th>
-      <th>Eq Codo (")</th>
+      <th>L. Eq. Codo (ft)</th>
       <th>Carga Codo (ft)</th>
-      <th>Eq Reducción (")</th>
+      <th>L. Eq. Reducción (ft)</th>
       <th>Carga Reducción (ft)</th>
-      <th>Distancia disparo (m)</th>
-      <th>Codo (disparo) ft</th>
-      <th>Reducción (disparo) ft</th>
-      <th>Carga disparo total (ft)</th>
-      <th><strong>Carga total (ft)</strong></th>
+      <th><strong>Carga tramo total (ft)</strong></th>
     </tr>
   </thead>
   <tbody>
 `;
+
+let sumaCargaTotal = 0;
 
 retornoDatos.forEach(dato => {
   retornoHTML += `
@@ -54,62 +65,94 @@ retornoDatos.forEach(dato => {
       <td>${dato.cargaCodo}</td>
       <td>${dato.longEqReduccion}</td>
       <td>${dato.cargaReduccion}</td>
-      <td>${dato.distanciaDisparo}</td>
-      <td style="background-color: #ffeeba;"><strong>${dato.cargaDisparoCodo}</strong></td>
-      <td style="background-color: #ffeeba;"><strong>${dato.cargaDisparoReduccion}</strong></td>
-      <td>${dato.cargaDisparoTotal}</td>
       <td><strong>${dato.cargaTotal}</strong></td>
     </tr>
   `;
+  sumaCargaTotal += parseFloat(dato.cargaTotal);
 });
+retornoHTML += `
+  <tr>
+    <td colspan="13" style="text-align: right;"><strong>Sumatoria carga total (ft)</strong></td>
+    <td><strong>${sumaCargaTotal.toFixed(2)}</strong></td></tr>`;
 
-retornoHTML += `</tbody></table>`;
+    retornoHTML += `</tbody></table>`;
     
-    
-    let velFlujoTexto = "";
-    for (let tub in velFlujo) {
-        velFlujoTexto += `<li><strong>${tub}:</strong> ${velFlujo[tub].toFixed(2)} ft/s, carga: ${cargaFlujo[tub].toFixed(2)} ft hd</li>`;
-        }
+let disparoHTML = `
+<table border="1" cellpadding="4" cellspacing="0" style="margin-top:20px;">
+  <thead>
+    <tr>
+      <th>Flujo disparo (gpm)</th>
+      <th>Diámetro tubería disparo (in)</th>
+      <th>Velocidad disparo (ft/s)</th>
+      <th>Carga base disparo (ft/100ft)</th>
+      <th>Carga disparo (ft)</th>
+      <th>Longitud disparo (m)</th>
+      <th>L. Eq. Codo disparo (ft)</th>
+      <th>Carga Codo disparo (ft)</th>
+      <th>L. Eq. Reducción disparo (ft)</th>
+      <th>Carga Reducción disparo (ft)</th>
+      <th>Carga disparo total (ft)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>${flujoDisparo.toFixed(2)}</td>
+      <td>${diametroDisparo}</td>
+      <td>${velocidadDisparo.toFixed(2)}</td>
+      <td>${cargaBaseDisparo.toFixed(2)}</td>
+      <td>${cargaDisparo.toFixed(2)}</td>
+      <td>${longitudDisparo.toFixed(2)}</td>
+      <td>${longEqCodoDisparo.toFixed(2)}</td>
+      <td>${cargaCodoDisparo.toFixed(2)}</td>
+      <td>${longEqReduccionDisparo.toFixed(2)}</td>
+      <td>${cargaReduccionDisparo.toFixed(2)}</td>
+      <td>${cargaDisparoTotal.toFixed(2)}</td>
+    </tr>
+  </tbody>
+</table>
+`;
 
-    const nuevaVentana = window.open("", "_blank", "width=400,height=300");
+  const nuevaVentana = window.open("", "_blank", `width=${window.screen.width},height=${window.screen.height},left=0,top=0,resizable=yes,scrollbars=yes`);
 
-  nuevaVentana.document.write(`
-    <html>
-      <head>
-        <title>Resultados</title>
-            <script>
-            document.addEventListener("keydown", function(event) {
-                if (event.key === "Escape") {
-                    window.close();
-                }
-            });
-            </script>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 20px; }
-          h2 { color: #2c3e50; }
-        </style>
-      </head>
-      <body>
-        <h2>Estos son los valores calculados:</h2>
-        <ul>
-          <li><strong>Volumen:</strong> ${vol}</li>
-          <li><strong>Flujo volumen:</strong> ${flujoVol}</li>
-          <li><strong>Flujo infinity:</strong> ${flujoInf}</li>
-          <li><strong>Tubería seleccionada succión:</strong> ${tubSuccion}</li>
-          <li><strong>Tubería seleccionada descarga:</strong> ${tubDescarga}</li>
-            <li><strong>Velocidad flujo:</strong></li>
-            <ul>
-        <ul>${velFlujoTexto}</ul>
-      </li>
-    </ul>
+// --- Mostrar en la ventana ---
+nuevaVentana.document.write(`
+  <html>
+    <head>
+      <title>Resultados</title>
+      <script>
+      document.addEventListener("keydown", function(event) {
+          if (event.key === "Escape") {
+              window.close();
+          }
+      });
+      </script>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h2 { color: #2c3e50; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 4px; text-align: center; }
+        thead { background: #f5f5f5; }
+      </style>
+    </head>
+    <body>
+      <h2>Estos son los valores calculados:</h2>
+      <ul>
+        <li><strong>Volumen:</strong> ${vol}</li>
+        <li><strong>Flujo volumen:</strong> ${flujoVol}</li>
+        <li><strong>Flujo infinity:</strong> ${flujoInf}</li>
+        <li><strong>Tubería seleccionada succión:</strong> ${tubSuccion}</li>
+        <li><strong>Tubería seleccionada descarga:</strong> ${tubDescarga}</li>
+      </ul>
 
-    <h3>Retornos:</h3>
-    ${retornoHTML}
-  </body>
-</html>
+      <h3>Retornos:</h3>
+      ${retornoHTML}
+
+      <h4>Tramo de disparo de tubería principal a retorno:</h4>
+      ${disparoHTML}
+    </body>
+  </html>
 `);
-
-  nuevaVentana.document.close();
+nuevaVentana.document.close();
 }
 
 function mostrarCampos() {
@@ -299,9 +342,8 @@ function retornos(flujoMaximo, tipoRetorno) {
     const profMax = parseFloat(document.getElementById("profMax").value) || 0;
     const longitudDisparo = (profMax / 2 + 1); // en metros
     const longitudDisparoFt = longitudDisparo / 0.3048;
-    const tuberiaDisparo = "tuberia 1.50";
-    const cargaDisparoBase = 10.536 * 100 * Math.pow(flujoPorRetorno, 1.852) / 
-                            (Math.pow(diametros[tuberiaDisparo], 4.8655) * Math.pow(150, 1.852));
+    const tuberiaDisparo = tipoRetorno === "2.0" ? "tuberia 2.00" : "tuberia 1.50";
+    const cargaDisparoBase = 10.536 * 100 * Math.pow(flujoPorRetorno, 1.852) / (Math.pow(diametros[tuberiaDisparo], 4.8655) * Math.pow(150, 1.852));
     const cargaDisparoTramo = (longitudDisparoFt * cargaDisparoBase) / 100;
     const cargaDisparoCodo = (codo[tuberiaDisparo] * cargaDisparoBase) / 100;
     const cargaDisparoReduccion = (reduccion[tuberiaDisparo] * cargaDisparoBase) / 100;
@@ -314,30 +356,28 @@ function retornos(flujoMaximo, tipoRetorno) {
     let diametroSeleccionado = null;
     let velocidadSeleccionada = -Infinity;
     let cargaSeleccionada = null;
-
     let mejorTub = null;
     let mejorVel = null;
     let mejorCarga = null;
 
-    for (let tub in diametros) {
-        const d = diametros[tub];
-        const velocidad = flujoActual * 0.408498 / (d * d);
+        for (let tub in diametros) {
+            const d = diametros[tub];
+            const velocidad = flujoActual * 0.408498 / (d * d);
+            mejorTub = tub;
+            mejorVel = velocidad;
+            mejorCarga = 10.536 * 100 * Math.pow(flujoActual, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
 
-        mejorTub = tub;
-        mejorVel = velocidad;
-        mejorCarga = 10.536 * 100 * Math.pow(flujoActual, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
-
-        if (velocidad <= 6.5 && velocidad > velocidadSeleccionada) {
-            velocidadSeleccionada = velocidad;
-            diametroSeleccionado = tub;
-            cargaSeleccionada = mejorCarga;
+            if (velocidad <= 6.5 && velocidad > velocidadSeleccionada) {
+                velocidadSeleccionada = velocidad;
+                diametroSeleccionado = tub;
+                cargaSeleccionada = mejorCarga;
+            }
         }
-    }
 
-    if (!diametroSeleccionado) {
-        diametroSeleccionado = mejorTub;
-        velocidadSeleccionada = mejorVel;
-        cargaSeleccionada = mejorCarga;
+        if (!diametroSeleccionado) {
+            diametroSeleccionado = mejorTub;
+            velocidadSeleccionada = mejorVel;
+            cargaSeleccionada = mejorCarga;
     }
 
     // Accesorio (tee o codo)
@@ -356,12 +396,7 @@ function retornos(flujoMaximo, tipoRetorno) {
     }
     const cargaPor100ft = cargaSeleccionada; // ya viene calculada para 100 ft
     const cargaTotalTramo = (longitudEntreRetornos / 0.3048) * (cargaPor100ft / 100);
-    const cargaTotalFinal = (
-    parseFloat(cargaTotalTramo.toFixed(2)) +
-    parseFloat(cargaAccesorio.toFixed(2)) +
-    parseFloat(cargaReduccion.toFixed(2)) +
-    parseFloat(cargaDisparoTotal.toFixed(2))
-    ).toFixed(2);
+    const cargaTotalFinal = (parseFloat(cargaTotalTramo.toFixed(2)) + parseFloat(cargaAccesorio.toFixed(2)) + parseFloat(cargaReduccion.toFixed(2))).toFixed(2);
 
 resultado.push({
     tramo: i + 1,
@@ -370,17 +405,26 @@ resultado.push({
     velocidad: velocidadSeleccionada.toFixed(2),
     cargaBase: cargaSeleccionada ? cargaSeleccionada.toFixed(2) : "N/A",
     cargaTramo: cargaSeleccionada ? ((longitudEntreRetornos / 0.3048) * (cargaSeleccionada / 100)).toFixed(2) : "N/A",
+    longitud: longitudEntreRetornos.toFixed(2),
     longEqTee: tipoAccesorio === "tee" ? longitudEq.toFixed(2) : "0.00",
     cargaTee: tipoAccesorio === "tee" ? cargaAccesorio.toFixed(2) : "0.00",
     longEqCodo: tipoAccesorio === "codo" ? longitudEq.toFixed(2) : "0.00",
     cargaCodo: tipoAccesorio === "codo" ? cargaAccesorio.toFixed(2) : "0.00",
     longEqReduccion: longitudEqReduccion.toFixed(2),
     cargaReduccion: cargaReduccion.toFixed(2),
-    distanciaDisparo: longitudDisparo.toFixed(2),
-    cargaDisparoCodo: cargaDisparoCodo.toFixed(2),
-    cargaDisparoReduccion: cargaDisparoReduccion.toFixed(2),
-    cargaDisparoTotal: cargaDisparoTotal.toFixed(2),
-    cargaTotal: cargaTotalFinal
+    cargaTotal: cargaTotalFinal,
+
+    flujoDisparo: flujoPorRetorno,
+    diametroDisparo: tuberiaDisparo,
+    velocidadDisparo: flujoPorRetorno * 0.408498 / Math.pow(diametros[tuberiaDisparo], 2),
+    cargaBaseDisparo: cargaDisparoBase,
+    cargaDisparo: cargaDisparoTramo,
+    longitudDisparo: longitudDisparo,
+    longEqCodoDisparo: codo[tuberiaDisparo],
+    cargaCodoDisparo: cargaDisparoCodo,
+    longEqReduccionDisparo: reduccion[tuberiaDisparo],
+    cargaReduccionDisparo: cargaDisparoReduccion,
+    cargaDisparoTotal: cargaDisparoTotal
 });
 
     flujoRestante -= flujoPorRetorno;
