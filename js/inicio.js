@@ -5,13 +5,12 @@ function calcular() {
     const flujoMax = flujoMaximo(flujoVol, flujoInf);
     const resultadoFlujo = velocidadCargaFlujo(flujoMax);
     const velFlujo = resultadoFlujo.velocidadFlujo;
-    const cargaFlujo = resultadoFlujo.cargaFlujo;
     const tubSuccion = tuberiaSeleccionada(velFlujo, "succion");
     const tubDescarga = tuberiaSeleccionada(velFlujo, "descarga");
     const tipoRetorno = document.getElementById("retorno").value;
     const retornoDatos = retornos(flujoMax, tipoRetorno);
-
-    const disparo = retornoDatos[0]; // o [retornoDatos.length - 1] según convenga
+    const resultado = retornoDatos.resultado;  
+    const disparo = resultado[0];
     const flujoDisparo = disparo.flujoDisparo;
     const diametroDisparo = disparo.diametroDisparo;
     const velocidadDisparo = disparo.velocidadDisparo;
@@ -49,7 +48,7 @@ let retornoHTML = `
 
 let sumaCargaTotal = 0;
 
-retornoDatos.forEach(dato => {
+resultado.forEach(dato => {
   retornoHTML += `
     <tr>
       <td>${dato.tramo}</td>
@@ -72,8 +71,9 @@ retornoDatos.forEach(dato => {
 });
 retornoHTML += `
   <tr>
-    <td colspan="13" style="text-align: right;"><strong>Sumatoria carga total (ft)</strong></td>
-    <td><strong>${sumaCargaTotal.toFixed(2)}</strong></td></tr>`;
+    <td colspan="13" style="text-align: right;"><strong>Sumatoria total carga tramo (ft)</strong></td>
+    <td><strong>${sumaCargaTotal.toFixed(2)}</strong></td>
+    </tr>`;
 
     retornoHTML += `</tbody></table>`;
     
@@ -107,6 +107,10 @@ let disparoHTML = `
       <td>${longEqReduccionDisparo.toFixed(2)}</td>
       <td>${cargaReduccionDisparo.toFixed(2)}</td>
       <td>${cargaDisparoTotal.toFixed(2)}</td>
+    </tr>
+        <tr>
+      <td colspan="10" style="text-align: right;"><strong>Sumatoria total (carga tramo + carga disparo) (ft)</strong></td>
+      <td><strong>${(sumaCargaTotal + cargaDisparoTotal).toFixed(2)}</strong></td>
     </tr>
   </tbody>
 </table>
@@ -251,8 +255,8 @@ function tuberiaSeleccionada(velocidades, tipo) {
 function retornos(flujoMaximo, tipoRetorno) {
     const area = parseFloat(document.getElementById('area').value);
     const diametros = {
-        "tuberia 0.75": 0.81,
-        "tuberia 1.00": 1.03,
+        //"tuberia 0.75": 0.81,
+        //"tuberia 1.00": 1.03,
         "tuberia 1.50": 1.61,
         "tuberia 2.00": 2.07,
         "tuberia 2.50": 2.47,
@@ -267,8 +271,8 @@ function retornos(flujoMaximo, tipoRetorno) {
         "tuberia 18.00": 16.81
     };
         const teeLinea = {
-        "tuberia 0.75": 2.40,
-        "tuberia 1.00": 3.20,
+        //"tuberia 0.75": 2.40,
+        //"tuberia 1.00": 3.20,
         "tuberia 1.50": 5.60,
         "tuberia 2.00": 7.70,
         "tuberia 2.50": 9.30,
@@ -283,8 +287,8 @@ function retornos(flujoMaximo, tipoRetorno) {
         "tuberia 18.00": 6.00
     };
         const teeBranch = {
-        "tuberia 0.75": 5.30,
-        "tuberia 1.00": 6.60,
+        //"tuberia 0.75": 5.30,
+        //"tuberia 1.00": 6.60,
         "tuberia 1.50": 9.90,
         "tuberia 2.00": 12.0,
         "tuberia 2.50": 13.0,
@@ -300,8 +304,8 @@ function retornos(flujoMaximo, tipoRetorno) {
     };
 
         const codo = {
-        "tuberia 0.75": 4.40,
-        "tuberia 1.00": 5.20,
+        //"tuberia 0.75": 4.40,
+        //"tuberia 1.00": 5.20,
         "tuberia 1.50": 7.40,
         "tuberia 2.00": 8.50,
         "tuberia 2.50": 9.30,
@@ -317,8 +321,8 @@ function retornos(flujoMaximo, tipoRetorno) {
     };
 
         const reduccion = {
-        "tuberia 0.75": 8.0,
-        "tuberia 1.00": 8.0,
+        //"tuberia 0.75": 8.0,
+        //"tuberia 1.00": 8.0,
         "tuberia 1.50": 10.0,
         "tuberia 2.00": 12.0,
         "tuberia 2.50": 12.0,
@@ -332,11 +336,13 @@ function retornos(flujoMaximo, tipoRetorno) {
         "tuberia 16.00": 50.0,
         "tuberia 18.00": 55.0
     };
-    const flujoPorRetorno = tipoRetorno === "2.0" ? 40 : 26;
-    const numRetornos = Math.ceil(flujoMaximo / flujoPorRetorno);
+    const numRetornos = Math.ceil(flujoMaximo / (tipoRetorno === "2.0" ? 40 : 26));
+    const flujoPorRetorno = flujoMaximo / numRetornos;
     const longitudTotal = Math.sqrt(area) * 4;
     const longitudEntreRetornos = longitudTotal / numRetornos;
     const resultado = [];
+    let sumaCargaTramos = 0;  // Acumulador fuera del ciclo
+
     let flujoRestante = flujoMaximo;
     let diametroAnterior = null;
     const profMax = parseFloat(document.getElementById("profMax").value) || 0;
@@ -397,6 +403,10 @@ function retornos(flujoMaximo, tipoRetorno) {
     const cargaPor100ft = cargaSeleccionada; // ya viene calculada para 100 ft
     const cargaTotalTramo = (longitudEntreRetornos / 0.3048) * (cargaPor100ft / 100);
     const cargaTotalFinal = (parseFloat(cargaTotalTramo.toFixed(2)) + parseFloat(cargaAccesorio.toFixed(2)) + parseFloat(cargaReduccion.toFixed(2))).toFixed(2);
+    
+    const cargaTotalFinalNum = parseFloat(cargaTotalFinal); // convierte a número para sumar
+    sumaCargaTramos += cargaTotalFinalNum; // acumulas la carga total del tramo actual
+    const cargaTotal2 = cargaTotalFinalNum + cargaDisparoTotal;  // carga tramo + dispar
 
 resultado.push({
     tramo: i + 1,
@@ -424,7 +434,9 @@ resultado.push({
     cargaCodoDisparo: cargaDisparoCodo,
     longEqReduccionDisparo: reduccion[tuberiaDisparo],
     cargaReduccionDisparo: cargaDisparoReduccion,
-    cargaDisparoTotal: cargaDisparoTotal
+    cargaDisparoTotal: cargaDisparoTotal,
+
+    cargaTotal2: cargaTotal2
 });
 
     flujoRestante -= flujoPorRetorno;
@@ -433,7 +445,8 @@ resultado.push({
     // Guardamos el diámetro actual como "anterior" para la siguiente iteración
     diametroAnterior = diametroSeleccionado;
 }
-    return resultado;
+const sumaFinal = sumaCargaTramos + cargaDisparoTotal;
+return { resultado, sumaFinal };
 }
 
 
