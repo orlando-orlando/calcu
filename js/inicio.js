@@ -174,7 +174,9 @@ function mostrarCampos() {
 
 function volumen() {
     let area = document.getElementById('area').value;
-    let profProm = document.getElementById('profProm').value;
+    let profMin = parseFloat(document.getElementById('profMin').value);
+    let profMax = parseFloat(document.getElementById('profMax').value);
+    let profProm = (profMin + profMax) / 2;
     let vol = parseFloat((area * profProm).toFixed(1));
  //   document.getElementById('volumen').innerText = 'Volumen: ' + vol + ' m3';
     return vol;
@@ -384,6 +386,14 @@ function retornos(flujoMaximo, tipoRetorno) {
             diametroSeleccionado = mejorTub;
             velocidadSeleccionada = mejorVel;
             cargaSeleccionada = mejorCarga;
+    }
+    
+    // Forzar diámetro del último tramo según tipoRetorno
+        if (i === numRetornos - 1) {
+        diametroSeleccionado = (tipoRetorno === "2.0") ? "tuberia 2.00" : "tuberia 1.50";
+        const d = diametros[diametroSeleccionado];
+        velocidadSeleccionada = flujoActual * 0.408498 / (d * d);
+        cargaSeleccionada = 10.536 * 100 * Math.pow(flujoActual, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
     }
 
     // Accesorio (tee o codo)
