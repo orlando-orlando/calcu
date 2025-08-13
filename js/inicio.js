@@ -379,16 +379,15 @@ function retornos(flujoMaximo, tipoRetorno) {
     const longitudEntreRetornos = longitudTotal / numRetornos;
     const resultado = [];
     let sumaCargaTramos = 0;  // Acumulador fuera del ciclo
-
     let flujoRestante = flujoMaximo;
     let diametroAnterior = null;
     const profMax = parseFloat(document.getElementById("profMax").value) || 0;
-    const longitudDisparo = (profMax / 2 + 1); // en metros
+    const longitudDisparo = ((profMax / 2) + 1); // en metros
     const longitudDisparoFt = longitudDisparo / 0.3048;
     const tuberiaDisparo = tipoRetorno === "2.0" ? "tuberia 2.00" : "tuberia 1.50";
     const cargaDisparoBase = 10.536 * 100 * Math.pow(flujoPorRetorno, 1.852) / (Math.pow(diametros[tuberiaDisparo], 4.8655) * Math.pow(150, 1.852));
     const cargaDisparoTramo = (longitudDisparoFt * cargaDisparoBase) / 100;
-    const cargaDisparoCodo = (codo[tuberiaDisparo] * 2 * cargaDisparoBase) / 100;
+    const cargaDisparoCodo = (codo[tuberiaDisparo] * cargaDisparoBase) / 100;
     const cargaDisparoReduccion = (reduccion[tuberiaDisparo] * cargaDisparoBase) / 100;
     const cargaDisparoTotal = cargaDisparoTramo + cargaDisparoCodo + cargaDisparoReduccion;
 
@@ -437,10 +436,18 @@ function retornos(flujoMaximo, tipoRetorno) {
         cargaSeleccionada = 10.536 * 100 * Math.pow(flujoActual, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
     }
 
-    // Accesorio (tee o codo)
     let tipoAccesorio = (i === numRetornos - 1) ? "codo" : "tee";
-    let longitudEq = tipoAccesorio === "codo" ? codo[diametroSeleccionado] || codo["tuberia 18.00"] : teeLinea[diametroSeleccionado] || teeLinea["tuberia 18.00"];
-    let cargaAccesorio = (longitudEq * cargaSeleccionada) / 100;
+    let longitudEq = 0;
+    let cargaAccesorio = 0;
+
+    if (tipoAccesorio === "tee") {
+        longitudEq = teeLinea[diametroSeleccionado] || teeLinea["tuberia 18.00"];
+        cargaAccesorio = (longitudEq * cargaSeleccionada) / 100;
+    } else {
+        // Último tramo → 2 codos
+        longitudEq = (codo[diametroSeleccionado] || codo["tuberia 18.00"]) * 2;
+        cargaAccesorio = (longitudEq * cargaSeleccionada) / 100;
+    }
 
     // Reducción (solo si hay cambio de diámetro)
     let longitudEqReduccion = 0;
@@ -462,8 +469,11 @@ function retornos(flujoMaximo, tipoRetorno) {
     // === Resumen por diámetro (sumas de materiales del tramo) ===
     addDiam(diametroSeleccionado);
     resumen[diametroSeleccionado].tuberia_m += longitudEntreRetornos;
-    if (tipoAccesorio === "tee") resumen[diametroSeleccionado].tees += 1;
-    else resumen[diametroSeleccionado].codos += 1;
+if (tipoAccesorio === "tee") {
+    resumen[diametroSeleccionado].tees += 1;
+} else {
+    resumen[diametroSeleccionado].codos += 2; // Último tramo → 2 codos
+}
     if (longitudEqReduccion > 0) resumen[diametroSeleccionado].reducciones += 1;
 
     
@@ -471,7 +481,7 @@ function retornos(flujoMaximo, tipoRetorno) {
     if (i < numRetornos - 1) {
         addDiam(tuberiaDisparo);
         resumen[tuberiaDisparo].tuberia_m += longitudDisparo;
-        resumen[tuberiaDisparo].codos += 2; // cada disparo lleva 2 codos
+        resumen[tuberiaDisparo].codos += 1; // cada disparo lleva 2 codos
         resumen[tuberiaDisparo].reducciones += 1; // y una reducción
     }
     
@@ -512,13 +522,6 @@ resultado.push({
     // Guardamos el diámetro actual como "anterior" para la siguiente iteración
     diametroAnterior = diametroSeleccionado;
 }
-
-  // Contabilizar también el disparo (1 vez)
-  addDiam(tuberiaDisparo);
-  resumen[tuberiaDisparo].tuberia_m += longitudDisparo;
-  resumen[tuberiaDisparo].codos += 1;
-  resumen[tuberiaDisparo].reducciones += 1;
-
 
 const sumaFinal = sumaCargaTramos + cargaDisparoTotal;
   return { resultado, sumaFinal, resumenMateriales: resumen };
