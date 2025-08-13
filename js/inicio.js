@@ -116,30 +116,37 @@ let disparoHTML = `
 </table>
 `;
 
-  let resumenHTML = `
-  <table border="1" cellpadding="4" cellspacing="0" style="margin-top:20px;">
-    <thead>
-      <tr>
-        <th>Diámetro (")</th>
-        <th>Tubería (m)</th>
-        <th>Tees</th>
-        <th>Codos</th>
-        <th>Reducciones</th>
-      </tr>
-    </thead>
-    <tbody>`;
-  for (const diam in resumenMateriales) {
-    const r = resumenMateriales[diam];
-    resumenHTML += `
-      <tr>
-        <td>${diam.replace("tuberia ","")}</td>
-        <td>${r.tuberia_m.toFixed(2)}</td>
-        <td>${r.tees}</td>
-        <td>${r.codos}</td>
-        <td>${r.reducciones}</td>
-      </tr>`;
-  }
-  resumenHTML += `</tbody></table>`;
+let resumenHTML = `
+<table border="1" cellpadding="4" cellspacing="0" style="margin-top:20px; width:auto; table-layout:auto; border-collapse:collapse; text-align:center;">
+  <thead>
+    <tr>
+      <th style="width:120px;">Diámetro (in)</th>
+      <th style="width:120px;">Tubería (m)</th>
+      <th style="width:120px;">Tees (pza)</th>
+      <th style="width:120px;">Codos (pza)</th>
+      <th style="width:140px;">Reducciones (pza)</th>
+    </tr>
+  </thead>
+  <tbody>`;
+
+// Ordenar diametros de mayor a menor (número)
+const diametrosOrdenados = Object.entries(resumenMateriales).sort((a, b) => {
+  const numA = parseFloat(a[0].replace("tuberia ", ""));
+  const numB = parseFloat(b[0].replace("tuberia ", ""));
+  return numB - numA; // Mayor a menor
+});
+
+for (const [diam, r] of diametrosOrdenados) {
+  resumenHTML += `
+    <tr>
+      <td>${diam.replace("tuberia ", "")}</td>
+      <td>${r.tuberia_m.toFixed(2)}</td>
+      <td>${r.tees}</td>
+      <td>${r.codos}</td>
+      <td>${r.reducciones}</td>
+    </tr>`;
+}
+resumenHTML += `</tbody></table>`;
 
   const nuevaVentana = window.open("", "_blank", `width=${window.screen.width},height=${window.screen.height},left=0,top=0,resizable=yes,scrollbars=yes`);
 
@@ -179,7 +186,7 @@ nuevaVentana.document.write(`
       <h4>Tramo de disparo de tubería principal a retorno:</h4>
       ${disparoHTML}
 
-      <h4>Resumen de materiales por diámetro:</h4>
+      <h4>Explosión de materiales:</h4>
       ${resumenHTML}
     </body>
   </html>
@@ -381,7 +388,7 @@ function retornos(flujoMaximo, tipoRetorno) {
     const tuberiaDisparo = tipoRetorno === "2.0" ? "tuberia 2.00" : "tuberia 1.50";
     const cargaDisparoBase = 10.536 * 100 * Math.pow(flujoPorRetorno, 1.852) / (Math.pow(diametros[tuberiaDisparo], 4.8655) * Math.pow(150, 1.852));
     const cargaDisparoTramo = (longitudDisparoFt * cargaDisparoBase) / 100;
-    const cargaDisparoCodo = (codo[tuberiaDisparo] * cargaDisparoBase) / 100;
+    const cargaDisparoCodo = (codo[tuberiaDisparo] * 2 * cargaDisparoBase) / 100;
     const cargaDisparoReduccion = (reduccion[tuberiaDisparo] * cargaDisparoBase) / 100;
     const cargaDisparoTotal = cargaDisparoTramo + cargaDisparoCodo + cargaDisparoReduccion;
 
@@ -390,9 +397,6 @@ function retornos(flujoMaximo, tipoRetorno) {
     const addDiam = (d) => {
         if (!resumen[d]) resumen[d] = { tuberia_m: 0, tees: 0, codos: 0, reducciones: 0 };
     };
-
-    let flujoRestante = flujoMaximo;
-    let diametroAnterior = null;
 
     for (let i = 0; i < numRetornos; i++) {
     let flujoActual = flujoRestante;
@@ -455,13 +459,22 @@ function retornos(flujoMaximo, tipoRetorno) {
     sumaCargaTramos += cargaTotalFinalNum; // acumulas la carga total del tramo actual
     const cargaTotal2 = cargaTotalFinalNum + cargaDisparoTotal;  // carga tramo + dispar
 
-    // === Resumen por diámetro (sumas de materiales) ===
+    // === Resumen por diámetro (sumas de materiales del tramo) ===
     addDiam(diametroSeleccionado);
-    resumen[diametroSeleccionado].tuberia_m += longitudEntreRetornos; // metros de tubería recta
+    resumen[diametroSeleccionado].tuberia_m += longitudEntreRetornos;
     if (tipoAccesorio === "tee") resumen[diametroSeleccionado].tees += 1;
     else resumen[diametroSeleccionado].codos += 1;
     if (longitudEqReduccion > 0) resumen[diametroSeleccionado].reducciones += 1;
 
+    
+    // Agregar material del disparo para todos los retornos EXCEPTO el último
+    if (i < numRetornos - 1) {
+        addDiam(tuberiaDisparo);
+        resumen[tuberiaDisparo].tuberia_m += longitudDisparo;
+        resumen[tuberiaDisparo].codos += 2; // cada disparo lleva 2 codos
+        resumen[tuberiaDisparo].reducciones += 1; // y una reducción
+    }
+    
 resultado.push({
     tramo: i + 1,
     flujo: flujoActual.toFixed(2),
