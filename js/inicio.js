@@ -9,7 +9,7 @@ function calcular() {
     const tubDescarga = tuberiaSeleccionada(velFlujo, "descarga");
     const tipoRetorno = document.getElementById("retorno").value;
     const retornoDatos = retornos(flujoMax, tipoRetorno);
-    const { resultado, resumenMateriales } = retornoDatos;
+    const { resultado, resumenTramos, resumenDisparos } = retornoDatos;
     const disparo = resultado[0];
     const flujoDisparo = disparo.flujoDisparo;
     const diametroDisparo = disparo.diametroDisparo;
@@ -116,28 +116,22 @@ let disparoHTML = `
 </table>
 `;
 
-let resumenHTML = `
-<table border="1" cellpadding="4" cellspacing="0" style="margin-top:20px; width:auto; table-layout:auto; border-collapse:collapse; text-align:center;">
+let resumenHTMLTramos = `
+<h4>Explosión de materiales - TRAMOS:</h4>
+<table class="tabla-ajustada" border="1" cellpadding="4" cellspacing="0">
   <thead>
     <tr>
-      <th style="width:120px;">Diámetro (in)</th>
-      <th style="width:120px;">Tubería (m)</th>
-      <th style="width:120px;">Tees (pza)</th>
-      <th style="width:120px;">Codos (pza)</th>
-      <th style="width:140px;">Reducciones (pza)</th>
+      <th>Diámetro (in)</th>
+      <th>Tubería (m)</th>
+      <th>Tees</th>
+      <th>Codos</th>
+      <th>Reducciones</th>
     </tr>
   </thead>
   <tbody>`;
 
-// Ordenar diametros de mayor a menor (número)
-const diametrosOrdenados = Object.entries(resumenMateriales).sort((a, b) => {
-  const numA = parseFloat(a[0].replace("tuberia ", ""));
-  const numB = parseFloat(b[0].replace("tuberia ", ""));
-  return numB - numA; // Mayor a menor
-});
-
-for (const [diam, r] of diametrosOrdenados) {
-  resumenHTML += `
+for (const [diam, r] of Object.entries(resumenTramos)) {
+    resumenHTMLTramos += `
     <tr>
       <td>${diam.replace("tuberia ", "")}</td>
       <td>${r.tuberia_m.toFixed(2)}</td>
@@ -146,50 +140,95 @@ for (const [diam, r] of diametrosOrdenados) {
       <td>${r.reducciones}</td>
     </tr>`;
 }
-resumenHTML += `</tbody></table>`;
+resumenHTMLTramos += `</tbody></table>`;
+
+let resumenHTMLDisparos = `
+<h4>Explosión de materiales - DISPAROS (excepto último):</h4>
+<table class="tabla-ajustada" border="1" cellpadding="4" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Diámetro (in)</th>
+      <th>Tubería (m)</th>
+      <th>Codos</th>
+      <th>Reducciones</th>
+    </tr>
+  </thead>
+  <tbody>`;
+for (const [diam, r] of Object.entries(resumenDisparos)) {
+    resumenHTMLDisparos += `
+    <tr>
+      <td>${diam.replace("tuberia ", "")}</td>
+      <td>${r.tuberia_m.toFixed(2)}</td>
+      <td>${r.codos}</td>
+      <td>${r.reducciones}</td>
+    </tr>`;
+}
+resumenHTMLDisparos += `</tbody></table>`;
+
+const tablasHTML = `
+<div class="contenedor-tablas">
+  ${resumenHTMLTramos}
+  ${resumenHTMLDisparos}
+</div>`;
 
   const nuevaVentana = window.open("", "_blank", `width=${window.screen.width},height=${window.screen.height},left=0,top=0,resizable=yes,scrollbars=yes`);
 
 // --- Mostrar en la ventana ---
 nuevaVentana.document.write(`
-  <html>
-    <head>
-      <title>Resultados</title>
-      <script>
+<html>
+<head>
+  <title>Resultados</title>
+        <script>
       document.addEventListener("keydown", function(event) {
           if (event.key === "Escape") {
               window.close();
           }
       });
       </script>
-      <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        h2 { color: #2c3e50; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ccc; padding: 4px; text-align: center; }
-        thead { background: #f5f5f5; }
-      </style>
-    </head>
-    <body>
-      <h2>Estos son los valores calculados:</h2>
-      <ul>
-        <li><strong>Volumen:</strong> ${vol}</li>
-        <li><strong>Flujo volumen:</strong> ${flujoVol}</li>
-        <li><strong>Flujo infinity:</strong> ${flujoInf}</li>
-        <li><strong>Tubería seleccionada succión:</strong> ${tubSuccion}</li>
-        <li><strong>Tubería seleccionada descarga:</strong> ${tubDescarga}</li>
-      </ul>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h2 { color: #2c3e50; }
+    table { border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 4px; text-align: center; }
+    thead { background: #f5f5f5; }
 
-      <h3>Retornos:</h3>
-      ${retornoHTML}
+    /* Ajuste al contenido */
+    .tabla-ajustada {
+      table-layout: auto;
+      display: inline-table;
+      width: max-content;
+      margin: 10px;
+    }
 
-      <h4>Tramo de disparo de tubería principal a retorno:</h4>
-      ${disparoHTML}
+    /* Contenedor en Flex */
+    .contenedor-tablas {
+      display: flex;
+      gap: 20px; /* espacio entre tablas */
+      flex-wrap: wrap; /* permite que bajen si no hay espacio */
+      align-items: flex-start; /* alinear arriba */
+    }
+  </style>
+</head>
+<body>
+  <h2>Estos son los valores calculados:</h2>
+  <ul>
+    <li><strong>Volumen:</strong> ${vol}</li>
+    <li><strong>Flujo volumen:</strong> ${flujoVol}</li>
+    <li><strong>Flujo infinity:</strong> ${flujoInf}</li>
+    <li><strong>Tubería seleccionada succión:</strong> ${tubSuccion}</li>
+    <li><strong>Tubería seleccionada descarga:</strong> ${tubDescarga}</li>
+  </ul>
 
-      <h4>Explosión de materiales:</h4>
-      ${resumenHTML}
-    </body>
-  </html>
+  <h3>Retornos:</h3>
+  ${retornoHTML}
+
+  <h4>Tramo de disparo de tubería principal a retorno:</h4>
+  ${disparoHTML}
+
+  <h4>Explosión de materiales:</h4>
+  ${tablasHTML}
+</body>
+</html>
 `);
 nuevaVentana.document.close();
 }
@@ -373,6 +412,7 @@ function retornos(flujoMaximo, tipoRetorno) {
         "tuberia 16.00": 50.0,
         "tuberia 18.00": 55.0
     };
+
     const numRetornos = Math.ceil(flujoMaximo / (tipoRetorno === "2.0" ? 40 : 26));
     const flujoPorRetorno = flujoMaximo / numRetornos;
     const longitudTotal = Math.sqrt(area) * 4;
@@ -392,10 +432,12 @@ function retornos(flujoMaximo, tipoRetorno) {
     const cargaDisparoTotal = cargaDisparoTramo + cargaDisparoCodo + cargaDisparoReduccion;
 
     // === Resumen por diámetro ===
-    const resumen = {};
-    const addDiam = (d) => {
-        if (!resumen[d]) resumen[d] = { tuberia_m: 0, tees: 0, codos: 0, reducciones: 0 };
-    };
+const resumenTramos = {};
+const resumenDisparos = {};
+
+const addDiam = (obj, d) => {
+    if (!obj[d]) obj[d] = { tuberia_m: 0, tees: 0, codos: 0, reducciones: 0 };
+};
 
     for (let i = 0; i < numRetornos; i++) {
     let flujoActual = flujoRestante;
@@ -467,23 +509,23 @@ function retornos(flujoMaximo, tipoRetorno) {
     const cargaTotal2 = cargaTotalFinalNum + cargaDisparoTotal;  // carga tramo + dispar
 
     // === Resumen por diámetro (sumas de materiales del tramo) ===
-    addDiam(diametroSeleccionado);
-    resumen[diametroSeleccionado].tuberia_m += longitudEntreRetornos;
-if (tipoAccesorio === "tee") {
-    resumen[diametroSeleccionado].tees += 1;
-} else {
-    resumen[diametroSeleccionado].codos += 2; // Último tramo → 2 codos
-}
-    if (longitudEqReduccion > 0) resumen[diametroSeleccionado].reducciones += 1;
+    addDiam(resumenTramos, diametroSeleccionado);
+    resumenTramos[diametroSeleccionado].tuberia_m += longitudEntreRetornos;
+    if (tipoAccesorio === "tee") {
+        resumenTramos[diametroSeleccionado].tees += 1;
+    } else {
+        resumenTramos[diametroSeleccionado].codos += 2; // Último tramo → 2 codos
+    }
+    if (longitudEqReduccion > 0) resumenTramos[diametroSeleccionado].reducciones += 1;
 
     
     // Agregar material del disparo para todos los retornos EXCEPTO el último
-    if (i < numRetornos - 1) {
-        addDiam(tuberiaDisparo);
-        resumen[tuberiaDisparo].tuberia_m += longitudDisparo;
-        resumen[tuberiaDisparo].codos += 1; // cada disparo lleva 2 codos
-        resumen[tuberiaDisparo].reducciones += 1; // y una reducción
-    }
+if (i < numRetornos - 1) {
+    addDiam(resumenDisparos, tuberiaDisparo);
+    resumenDisparos[tuberiaDisparo].tuberia_m += longitudDisparo;
+    resumenDisparos[tuberiaDisparo].codos += 1;
+    resumenDisparos[tuberiaDisparo].reducciones += 1;
+}
     
 resultado.push({
     tramo: i + 1,
@@ -524,7 +566,7 @@ resultado.push({
 }
 
 const sumaFinal = sumaCargaTramos + cargaDisparoTotal;
-  return { resultado, sumaFinal, resumenMateriales: resumen };
+return { resultado, sumaFinal, resumenTramos, resumenDisparos };
 }
 
 
