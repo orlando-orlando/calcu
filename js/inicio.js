@@ -143,7 +143,7 @@ for (const [diam, r] of Object.entries(resumenTramos)) {
 resumenHTMLTramos += `</tbody></table>`;
 
 let resumenHTMLDisparos = `
-<h4>Explosión de materiales - DISPAROS (excepto último):</h4>
+<h4>Explosión de materiales - DISPAROS:</h4>
 <table class="tabla-ajustada" border="1" cellpadding="4" cellspacing="0">
   <thead>
     <tr>
@@ -486,8 +486,8 @@ const addDiam = (obj, d) => {
         longitudEq = teeLinea[diametroSeleccionado] || teeLinea["tuberia 18.00"];
         cargaAccesorio = (longitudEq * cargaSeleccionada) / 100;
     } else {
-        // Último tramo → 2 codos
-        longitudEq = (codo[diametroSeleccionado] || codo["tuberia 18.00"]) * 2;
+        // Último tramo → 1 codos
+        longitudEq = (codo[diametroSeleccionado] || codo["tuberia 18.00"]) * 1;
         cargaAccesorio = (longitudEq * cargaSeleccionada) / 100;
     }
 
@@ -514,18 +514,18 @@ const addDiam = (obj, d) => {
     if (tipoAccesorio === "tee") {
         resumenTramos[diametroSeleccionado].tees += 1;
     } else {
-        resumenTramos[diametroSeleccionado].codos += 2; // Último tramo → 2 codos
+        resumenTramos[diametroSeleccionado].codos += 1; // Último tramo → 1 codos
     }
     if (longitudEqReduccion > 0) resumenTramos[diametroSeleccionado].reducciones += 1;
 
-    
-    // Agregar material del disparo para todos los retornos EXCEPTO el último
-if (i < numRetornos - 1) {
+        // === Resumen de materiales del disparo ===
     addDiam(resumenDisparos, tuberiaDisparo);
     resumenDisparos[tuberiaDisparo].tuberia_m += longitudDisparo;
     resumenDisparos[tuberiaDisparo].codos += 1;
-    resumenDisparos[tuberiaDisparo].reducciones += 1;
-}
+    // Solo contabilizar reducción si diámetro del tramo ≠ diámetro del disparo
+    if (diametroSeleccionado !== tuberiaDisparo) {
+        resumenDisparos[tuberiaDisparo].reducciones += 1;
+    }
     
 resultado.push({
     tramo: i + 1,
