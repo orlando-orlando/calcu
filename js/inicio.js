@@ -32,8 +32,8 @@ let retornoHTML = `
       <th>Diámetro tubería tramo (in)</th>
       <th>Velocidad tramo (ft/s)</th>
       <th>Carga base tramo (ft/100ft)</th>
-      <th>Carga tramo (ft)</th>
       <th>Longitud tramo (m)</th>
+      <th>Carga tramo (ft)</th>
       <th>L. Eq. Tee (ft)</th>
       <th>Carga Tee (ft)</th>
       <th>L. Eq. Codo (ft)</th>
@@ -56,8 +56,8 @@ resultado.forEach(dato => {
       <td>${dato.tuberia}</td>
       <td>${dato.velocidad}</td>
       <td>${dato.cargaBase}</td>
-      <td>${dato.cargaTramo}</td>
       <td>${dato.longitud}</td>
+      <td>${dato.cargaTramo}</td>
       <td>${dato.longEqTee}</td>
       <td>${dato.cargaTee}</td>
       <td>${dato.longEqCodo}</td>
@@ -85,8 +85,8 @@ let disparoHTML = `
       <th>Diámetro tubería disparo (in)</th>
       <th>Velocidad disparo (ft/s)</th>
       <th>Carga base disparo (ft/100ft)</th>
-      <th>Carga disparo (ft)</th>
       <th>Longitud disparo (m)</th>
+      <th>Carga disparo (ft)</th>
       <th>L. Eq. Codo disparo (ft)</th>
       <th>Carga Codo disparo (ft)</th>
       <th>L. Eq. Reducción disparo (ft)</th>
@@ -100,8 +100,8 @@ let disparoHTML = `
       <td>${diametroDisparo}</td>
       <td>${velocidadDisparo.toFixed(2)}</td>
       <td>${cargaBaseDisparo.toFixed(2)}</td>
-      <td>${cargaDisparo.toFixed(2)}</td>
       <td>${longitudDisparo.toFixed(2)}</td>
+      <td>${cargaDisparo.toFixed(2)}</td>
       <td>${longEqCodoDisparo.toFixed(2)}</td>
       <td>${cargaCodoDisparo.toFixed(2)}</td>
       <td>${longEqReduccionDisparo.toFixed(2)}</td>
@@ -250,12 +250,21 @@ function mostrarCampos() {
   }
 
 function volumen() {
-    let area = document.getElementById('area').value;
-    let profMin = parseFloat(document.getElementById('profMin').value);
-    let profMax = parseFloat(document.getElementById('profMax').value);
-    let profProm = (profMin + profMax) / 2;
+    let area = parseFloat(document.getElementById('area').value) || 0;
+    let profMin = parseFloat(document.getElementById('profMin').value) || 0;
+    let profMax = parseFloat(document.getElementById('profMax').value) || 0;
+
+    let profProm = 0;
+
+    if (profMin > 0 && profMax > 0) {
+        profProm = (profMin + profMax) / 2;
+    } else if (profMin > 0) {
+        profProm = profMin;
+    } else if (profMax > 0) {
+        profProm = profMax;
+    }
+
     let vol = parseFloat((area * profProm).toFixed(1));
- //   document.getElementById('volumen').innerText = 'Volumen: ' + vol + ' m3';
     return vol;
 }
 
@@ -284,8 +293,8 @@ function flujoMaximo(flujoVolumen2, flujoInfinity/*, /*flujoBombaCalor, flujoPan
 
 function velocidadCargaFlujo(flujoMaximo){
     const diametroTuberia = {
-        "tuberia 0.75" : 0.81,
-        "tuberia 1.00" : 1.03,
+        /*"tuberia 0.75" : 0.81,
+        "tuberia 1.00" : 1.03,*/
         "tuberia 1.50" : 1.61,
         "tuberia 2.00" : 2.07,
         "tuberia 2.50" : 2.47,
@@ -424,15 +433,15 @@ function retornos(flujoMaximo, tipoRetorno) {
     let sumaCargaTramos = 0;  // Acumulador fuera del ciclo
     let flujoRestante = flujoMaximo;
     let diametroAnterior = null;
+    const profMin = parseFloat(document.getElementById("profMin").value) || 0;
     const profMax = parseFloat(document.getElementById("profMax").value) || 0;
-    const longitudDisparo = ((profMax / 2) + 1); // en metros
+    const profundidad = Math.max(profMin, profMax); 
+    const longitudDisparo = ((profundidad / 2) + 1); 
     const longitudDisparoFt = longitudDisparo / 0.3048;
     const tuberiaDisparo = tipoRetorno === "2.0" ? "tuberia 2.00" : "tuberia 1.50";
     const cargaDisparoBase = 10.536 * 100 * Math.pow(flujoPorRetorno, 1.852) / (Math.pow(diametros[tuberiaDisparo], 4.8655) * Math.pow(150, 1.852));
     const cargaDisparoTramo = (longitudDisparoFt * cargaDisparoBase) / 100;
     const cargaDisparoCodo = (codo[tuberiaDisparo] * cargaDisparoBase) / 100;
-
-    // Antes del bucle:
     let diametroMax = 0; // Guardamos el diámetro máximo encontrado
 
     // Si el diámetro del disparo es distinto al diámetro del último tramo, hay reducción
@@ -447,7 +456,6 @@ function retornos(flujoMaximo, tipoRetorno) {
     // === Resumen por diámetro ===
     const resumenTramos = {};
     const resumenDisparos = {};
-
     const addDiam = (obj, d) => {
         if (!obj[d]) obj[d] = { tuberia_m: 0, tees: 0, codos: 0, reducciones: 0 };
         };
@@ -594,7 +602,6 @@ function retornos(flujoMaximo, tipoRetorno) {
         const sumaFinal = sumaCargaTramos + cargaDisparoTotal;
         return { resultado, sumaFinal, resumenTramos, resumenDisparos };
     }
-
 
 const temperatura = {
     "guadalajara": {
