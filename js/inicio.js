@@ -480,8 +480,7 @@ function retornos(flujoMaximo, tipoRetorno) {
             const velocidad = flujoActual * 0.408498 / (d * d);
             mejorTub = tub;
             mejorVel = velocidad;
-            mejorCarga = 10.536 * 100 * Math.pow(flujoActual, 1.852) /
-                        (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
+            mejorCarga = 10.536 * 100 * Math.pow(flujoActual, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
 
             if (velocidad <= 6.5 && velocidad > velocidadSeleccionada) {
             velocidadSeleccionada = velocidad;
@@ -504,8 +503,7 @@ function retornos(flujoMaximo, tipoRetorno) {
             diametroSeleccionado = (tipoRetorno === "2.0") ? "tuberia 2.00" : "tuberia 1.50";
             const d = diametros[diametroSeleccionado];
             velocidadSeleccionada = flujoActual * 0.408498 / (d * d);
-            cargaSeleccionada = 10.536 * 100 * Math.pow(flujoActual, 1.852) /
-                                (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
+            cargaSeleccionada = 10.536 * 100 * Math.pow(flujoActual, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
         }
 
         // --- Accesorios base para esta fila ---
@@ -757,10 +755,10 @@ function desnatador(flujoMaximo, tipoDesnatador) {
     let sumaLongitudes = 0;
     let siguienteUmbral = raizArea;
 
-        for (let i = 0; i < numRetornos; i++) {
+        for (let i = 0; i < numDesnatador; i++) {
         let flujoActual = flujoRestante;
 
-        // Elegir diámetro que dé velocidad ≤ 6.5 ft/s
+        // Elegir diámetro que dé velocidad ≤ 4.5 ft/s
         let diametroSeleccionado = null;
         let velocidadSeleccionada = -Infinity;
         let cargaSeleccionada = null;
@@ -773,10 +771,9 @@ function desnatador(flujoMaximo, tipoDesnatador) {
             const velocidad = flujoActual * 0.408498 / (d * d);
             mejorTub = tub;
             mejorVel = velocidad;
-            mejorCarga = 10.536 * 100 * Math.pow(flujoActual, 1.852) /
-                        (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
+            mejorCarga = 10.536 * 100 * Math.pow(flujoActual, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
 
-            if (velocidad <= 6.5 && velocidad > velocidadSeleccionada) {
+            if (velocidad <= 4.5 && velocidad > velocidadSeleccionada) {
             velocidadSeleccionada = velocidad;
             diametroSeleccionado = tub;
             cargaSeleccionada = mejorCarga;
@@ -797,8 +794,7 @@ function desnatador(flujoMaximo, tipoDesnatador) {
             diametroSeleccionado = (tipoDesnatador === "2.0") ? "tuberia 2.00" : "tuberia 1.50";
             const d = diametros[diametroSeleccionado];
             velocidadSeleccionada = flujoActual * 0.408498 / (d * d);
-            cargaSeleccionada = 10.536 * 100 * Math.pow(flujoActual, 1.852) /
-                                (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
+            cargaSeleccionada = 10.536 * 100 * Math.pow(flujoActual, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
         }
 
         // --- Accesorios base para esta fila ---
@@ -849,7 +845,7 @@ function desnatador(flujoMaximo, tipoDesnatador) {
 
         // === Resumen por diámetro (materiales del tramo) ===
         addDiam(resumenTramos, diametroSeleccionado);
-        resumenTramos[diametroSeleccionado].tuberia_m += longitudEntreRetornos;
+        resumenTramos[diametroSeleccionado].tuberia_m += longitudEntreDesnatadores;
         if (tipoAccesorio === "tee") resumenTramos[diametroSeleccionado].tees += 1;
         else resumenTramos[diametroSeleccionado].codos += 1;      // codo base del último tramo
         resumenTramos[diametroSeleccionado].codos += extraCount;   // codos extra (0, 1, 2, ...)
@@ -897,9 +893,9 @@ function desnatador(flujoMaximo, tipoDesnatador) {
             cargaTotal: cargaTotalFilaNum.toFixed(2),
 
             // Datos del disparo
-            flujoDisparo: flujoPorRetorno,
+            flujoDisparo: flujoPorDesnatador,
             diametroDisparo: tuberiaDisparo,
-            velocidadDisparo: flujoPorRetorno * 0.408498 / Math.pow(diametros[tuberiaDisparo], 2),
+            velocidadDisparo: flujoPorDesnatador * 0.408498 / Math.pow(diametros[tuberiaDisparo], 2),
             cargaBaseDisparo: cargaDisparoBase,
             cargaDisparo: cargaDisparoTramo,
             longitudDisparo: longitudDisparo,
