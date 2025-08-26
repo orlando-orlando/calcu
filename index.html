@@ -13,13 +13,13 @@
     <h3>Ingresa dimensiones del cuerpo de agua</h3>
 
     <label for="area">Área (m²):</label>
-    <input type="number" id="area" min="0" step="0" placeholder="Ingresa el área en m²">
-  
-    <label for="profProm">Profundidad mínima (m):</label>
-    <input type="number" id="profMin" min="0" step="0" placeholder="Ingresa la profundidad en m">
+    <input type="number" id="area" min="1" max="15000" step="0.01" placeholder="Ingresa el área en m²">
+
+    <label for="profMin">Profundidad mínima (m):</label>
+    <input type="number" id="profMin" min="0" max="60" step="0.01" placeholder="Ingresa la profundidad en metros">
 
     <label for="profMax">Profundidad máxima (m):</label>
-    <input type="number" id="profMax" min="0" step="0" placeholder="Ingresa la profundidad en m">
+    <input type="number" id="profMax" min="0" max="60" step="0.01" placeholder="Ingresa la profundidad en metros">
 
     <label for="rotacion">Tasa de rotación (h):</label>
     <select id="rotacion">
@@ -27,6 +27,7 @@
       <option value="6">6 horas</option>
       <option value="8">8 horas</option>
       <option value="12">12 horas</option>
+      <option value="24">24 horas</option>
     </select>
 
     <h3>¿Qué tipo de desborde llevará?</h3>

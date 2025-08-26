@@ -1793,3 +1793,45 @@ const humedad = {
     },
 };
 
+const areaInput = document.getElementById("area");
+const profMinInput = document.getElementById("profMin");
+const profMaxInput = document.getElementById("profMax");
+
+// Lista de campos
+const campos = [areaInput, profMinInput, profMaxInput];
+
+campos.forEach(input => {
+    // Evita caracteres inválidos (solo números y un punto)
+    input.addEventListener("keypress", (e) => {
+        const char = String.fromCharCode(e.which);
+        if (!/[\d.]/.test(char)) {
+            e.preventDefault();
+        }
+        // Permite solo un punto decimal
+        if (char === "." && input.value.includes(".")) {
+            e.preventDefault();
+        }
+    });
+
+    // Evita pegar texto inválido
+    input.addEventListener("paste", (e) => {
+        const textoPegado = (e.clipboardData || window.clipboardData).getData('text');
+        if (!/^\d*\.?\d*$/.test(textoPegado)) {
+            e.preventDefault();
+        }
+    });
+
+    // Controla rangos y elimina negativos
+    input.addEventListener("input", () => {
+        let val = parseFloat(input.value);
+        if (isNaN(val)) return;
+
+        if (input.id === "area") {
+            if (val < 1) input.value = 1;
+            if (val > 10000) input.value = 10000;
+        } else {
+            if (val < 0) input.value = 0;
+            if (val > 60) input.value = 60; // <-- NUEVA REGLA PARA PROFUNDIDADES
+        }
+    });
+});

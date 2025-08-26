@@ -2,4 +2,10 @@
 .oculto {
     display: none;
   }
-  
+
+input[type="number"] {
+    width: 225px; /* Ajusta a tu gusto (por defecto son ~150px) */
+    padding: 0px;
+    font-size: 14px;
+    box-sizing: border-box; /* Mantiene proporciones con padding */
+}
