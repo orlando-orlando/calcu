@@ -23,10 +23,13 @@
 
     <label for="rotacion">Tasa de rotación (h):</label>
     <select id="rotacion">
+      <option value="0.5">0.5 horas</option>
+      <option value="1">1 hora</option>
       <option value="4">4 horas</option>
       <option value="6">6 horas</option>
       <option value="8">8 horas</option>
       <option value="12">12 horas</option>
+      <option value="18">18 horas</option>
       <option value="24">24 horas</option>
     </select>
 
@@ -121,15 +124,38 @@
     <label><input type="checkbox" id="chkMotobombaVV"> Motobomba velocidad variable</label><br>
 
       <h3>Selecciona tus empotrables</h3>
-    <label for="retorno">Tipo de retorno:</label>
+    <label for="retorno">Tipo boquilla de retorno:</label>
     <select id="retorno">
-      <option value="1.5">1.5"</option>
-      <option value="2.0">2.0"</option>
+      <option value="1.5">1.5in</option>
+      <option value="2.0">2.0in</option>
     </select><br>
-    <label for="desnatador">Tipo de desnatador:</label>
+    <label for="desnatador">Tipo desnatador:</label>
     <select id="desnatador">
-      <option value="1.5">1.5"</option>
-      <option value="2.0">2.0"</option>
+      <option value="1.5">1.5in</option>
+      <option value="2.0">2.0in</option>
+    </select><br>
+    <label for="drenFondo">Tipo dren de fondo:</label>
+    <select id="drenFondo">
+      <option value="1.5">1.5in</option>
+      <option value="2.0">2.0in</option>
+      <option value="7.5">7.5in</option>
+      <option value="8.0">8.0in</option>
+      <option value="9.0">9.0in</option>
+      <option value="12.0">12.0in</option>
+      <option value="18.0">18.0in</option>
+    </select><br>
+    <label for="drenCanal">Tipo dren de canal:</label>
+    <select id="drenCanal">
+      <option value="1.5">1.5in</option>
+      <option value="2.0">2.0in</option>
+      <option value="7.5">7.5in</option>
+      <option value="8.0">8.0in</option>
+      <option value="9.0">9.0in</option>
+    </select><br>
+    <label for="barredora">Tipo boquilla de barredora:</label>
+    <select id="barredora">
+      <option value="1.5">1.5in</option>
+      <option value="2.0">2.0in</option>
     </select>
 
 <br><br><button onclick="calcular()">Calcular</button>

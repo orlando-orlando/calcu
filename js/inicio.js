@@ -1149,7 +1149,7 @@ function desnatador(flujoMaximo, tipoDesnatador) {
         return { resultadoD, sumaFinal, resumenTramosD, resumenDisparosD };
 }
 
-/*function drenDeFondo(flujoMaximo, tipoDesnatador) {
+function drenDeFondo(flujoMaximo, tipoDrenFondo) {
     const area = parseFloat(document.getElementById('area').value);
     const diametros = {
         //"tuberia 0.75": 0.81,
@@ -1234,14 +1234,14 @@ function desnatador(flujoMaximo, tipoDesnatador) {
         "tuberia 18.00": 55.0
     };
 
-    let numDesnatadorInicial = Math.ceil(area / 50);
-    let flujoPorDesnatador = flujoMaximo / numDesnatadorInicial;
-    let numDesnatadorFinal = numDesnatadorInicial;
-    if (tipoDesnatador === "2.0" && flujoPorDesnatador > 50) {
-        numDesnatadorFinal = Math.ceil(flujoMaximo / 50); 
-    } else if (tipoDesnatador === "1.5" && flujoPorDesnatador > 35) {
-        numDesnatadorFinal = Math.ceil(flujoMaximo / 35); 
+    if (tipoDrenFondo === "1.5") {
+        numDrenFondoFinal = Math.ceil(flujoMaximo / 50); 
+    } else if (tipoDrenFondo === "2.0") {
+        numDrenFondoFinal = Math.ceil(flujoMaximo / 95); 
     }
+
+
+
     flujoPorDesnatador = flujoMaximo / numDesnatadorFinal;
     const longitudTotal = Math.sqrt(area) * 4;
     const longitudEntreDesnatadores = longitudTotal / numDesnatadorFinal;
@@ -1452,7 +1452,7 @@ function desnatador(flujoMaximo, tipoDesnatador) {
         // Al final:
         const sumaFinal = sumaCargaTramos + cargaDisparoTotal;
         return { resultadoD, sumaFinal, resumenTramosD, resumenDisparosD };
-}*/
+}
 
 const temperatura = {
     "guadalajara": {
