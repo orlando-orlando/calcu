@@ -1238,14 +1238,34 @@ function drenDeFondo(flujoMaximo, tipoDrenFondo) {
         numDrenFondoFinal = Math.ceil(flujoMaximo / 50); 
     } else if (tipoDrenFondo === "2.0") {
         numDrenFondoFinal = Math.ceil(flujoMaximo / 95); 
+    } else if (tipoDrenFondo === "7.5") {
+        numDrenFondoFinal = Math.ceil(flujoMaximo / 125); 
+    } else if (tipoDrenFondo === "8.0") {
+        numDrenFondoFinal = Math.ceil(flujoMaximo / 130); 
+    } else if (tipoDrenFondo === "9.0") {
+        numDrenFondoFinal = Math.ceil(flujoMaximo / 135); 
+    } else if (tipoDrenFondo === "12.0") {
+        numDrenFondoFinal = Math.ceil(flujoMaximo / 235); 
+    } else if (tipoDrenFondo === "18.0") {
+        numDrenFondoFinal = Math.ceil(flujoMaximo / 450); 
     }
 
+/*numdren = redondear.mas(flujomax * 2 ) /capacidad dren
+if (numdren == impar)
+num dren +1
+else
+    numdren = numdren
 
+raiz del area / 2 = posicion dren, sumar tramo al total 
+raiz del area / num dren + 1 = longitudEntreDrenes
+2 drenes = 2 codos + 1 tee + posicion dren
+4 drenes = 2 codos + 3 tee + posicion dren
+6 drenes = 2 codos + 5 tee + posicion dren */
 
-    flujoPorDesnatador = flujoMaximo / numDesnatadorFinal;
+    flujoPorDrenFondo = flujoMaximo / numDrenFondoFinal;
     const longitudTotal = Math.sqrt(area) * 4;
-    const longitudEntreDesnatadores = longitudTotal / numDesnatadorFinal;
-    const resultadoD = [];
+    const longitudEntreDrenes = longitudTotal / numDrenFondoFinal;
+    const resultadoDF = [];
     let sumaCargaTramos = 0;  // Acumulador fuera del ciclo
     let flujoRestante = flujoMaximo;
     let diametroAnterior = null;
