@@ -340,6 +340,99 @@ const tablasHTMLD = `
   ${resumenHTMLDisparosD}
 </div>`;
 
+    const tipoDrenFondo = document.getElementById("drenFondo").value;
+    const drenFondoDatos = drenFondo(flujoMax, tipoDrenFondo);
+    const { resultadoDF, resumenTramosDF } = drenFondoDatos;
+
+let drenFondoHTML = `
+<table border="1" cellpadding="4" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Número dren fondo</th>
+      <th>Flujo tramo (gpm)</th>
+      <th>Diámetro tubería tramo (in)</th>
+      <th>Velocidad tramo (ft/s)</th>
+      <th>Carga base tramo (ft/100ft)</th>
+      <th>Longitud tramo (m)</th>
+      <th>Carga tramo (ft)</th>
+      <th>Cantidad Tees</th>
+      <th>L. Eq. Tee (ft)</th>
+      <th>Carga Tee (ft)</th>
+      <th>Cantidad Codos</th>
+      <th>L. Eq. Codo (ft)</th>
+      <th>Carga Codo (ft)</th>
+      <th>Cantidad Reducciones</th>
+      <th>L. Eq. Reducción (ft)</th>
+      <th>Carga Reducción (ft)</th>
+      <th><strong>Carga tramo total (ft)</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+`;
+let sumaCargaTotalDF = 0;
+resultadoDF.forEach(dato => {
+  drenFondoHTML += `
+    <tr>
+      <td>${dato.tramo}</td>
+      <td>${dato.flujo}</td>
+      <td>${dato.tuberia}</td>
+      <td>${dato.velocidad}</td>
+      <td>${dato.cargaBase}</td>
+      <td>${dato.longitud}</td>
+      <td>${dato.cargaTramo}</td>
+      <td>${dato.cantidadTees}</td>
+      <td>${dato.longEqTee}</td>
+      <td>${dato.cargaTee}</td>
+      <td>${dato.cantidadCodos}</td>
+      <td>${dato.longEqCodo}</td>
+      <td>${dato.cargaCodo}</td>
+      <td>${dato.cantidadReducciones}</td>
+      <td>${dato.longEqReduccion}</td>
+      <td>${dato.cargaReduccion}</td>
+      <td><strong>${dato.cargaTotal}</strong></td>
+    </tr>
+  `;
+  sumaCargaTotalDF += parseFloat(dato.cargaTotal);
+});
+drenFondoHTML += `
+  <tr>
+    <td colspan="16" style="text-align: right;"><strong>Sumatoria total carga tramo (ft)</strong></td>
+    <td><strong>${sumaCargaTotalDF.toFixed(2)}</strong></td>
+    </tr>`;
+    drenFondoHTML += `</tbody></table>`;
+
+let resumenHTMLTramosDF = `
+<table class="tabla-ajustada" border="1" cellpadding="4" cellspacing="0">
+  <thead>
+    <tr>
+      <th colspan="5" style="text-align:center; background:#eaeaea;">TRAMOS</th>
+    </tr>
+    <tr>
+      <th>Diámetro (in)</th>
+      <th>Tubería (m)</th>
+      <th>Tees</th>
+      <th>Codos</th>
+      <th>Reducciones</th>
+    </tr>
+  </thead>
+  <tbody>`;
+for (const [diam, r] of Object.entries(resumenTramosDF)) {
+    resumenHTMLTramosDF += `
+    <tr>
+      <td>${diam.replace("tuberia ", "")}</td>
+      <td>${r.tuberia_m.toFixed(2)}</td>
+      <td>${r.tees}</td>
+      <td>${r.codos}</td>
+      <td>${r.reducciones}</td>
+    </tr>`;
+}
+resumenHTMLTramosDF += `</tbody></table>`;
+
+const tablasHTMLDF = `
+<div class="contenedor-tablas">
+  ${resumenHTMLTramosD}
+</div>`;
+
 // --- Mostrar en la ventana ---
 const nuevaVentana = window.open("", "_blank", `width=${window.screen.width},height=${window.screen.height},left=0,top=0,resizable=yes,scrollbars=yes`);
 nuevaVentana.document.write(`
@@ -403,6 +496,13 @@ nuevaVentana.document.write(`
   ${disparoHTMLD}
   <h4>Explosión de materiales:</h4>
   ${tablasHTMLD}
+</div>
+
+<h3 class="toggle-header">Dren de fondo</h3>
+<div class="toggle-content">
+  ${drenFondoHTML}
+  <h4>Explosión de materiales:</h4>
+  ${tablasHTMLDF}
 </div>
 
 <style>
@@ -1149,7 +1249,7 @@ function desnatador(flujoMaximo, tipoDesnatador) {
         return { resultadoD, sumaFinal, resumenTramosD, resumenDisparosD };
 }
 
-function drenDeFondo(flujoMaximo, tipoDrenFondo) {
+function drenFondo(flujoMaximo, tipoDrenFondo) {
     const area = parseFloat(document.getElementById('area').value);
     const diametros = {
         //"tuberia 0.75": 0.81,
@@ -1234,37 +1334,55 @@ function drenDeFondo(flujoMaximo, tipoDrenFondo) {
         "tuberia 18.00": 55.0
     };
 
-    if (tipoDrenFondo === "1.5") {
-        numDrenFondoFinal = Math.ceil(flujoMaximo / 50); 
-    } else if (tipoDrenFondo === "2.0") {
-        numDrenFondoFinal = Math.ceil(flujoMaximo / 95); 
-    } else if (tipoDrenFondo === "7.5") {
-        numDrenFondoFinal = Math.ceil(flujoMaximo / 125); 
-    } else if (tipoDrenFondo === "8.0") {
-        numDrenFondoFinal = Math.ceil(flujoMaximo / 130); 
-    } else if (tipoDrenFondo === "9.0") {
-        numDrenFondoFinal = Math.ceil(flujoMaximo / 135); 
-    } else if (tipoDrenFondo === "12.0") {
-        numDrenFondoFinal = Math.ceil(flujoMaximo / 235); 
-    } else if (tipoDrenFondo === "18.0") {
-        numDrenFondoFinal = Math.ceil(flujoMaximo / 450); 
+    // === Capacidad del dren según tipo ===
+    let capacidadDren = 0;
+    if (tipoDrenFondo === "1.5") capacidadDren = 50;
+    else if (tipoDrenFondo === "2.0") capacidadDren = 95;
+    else if (tipoDrenFondo === "7.5") capacidadDren = 125;
+    else if (tipoDrenFondo === "8.0") capacidadDren = 130;
+    else if (tipoDrenFondo === "9.0") capacidadDren = 135;
+    else if (tipoDrenFondo === "12.0") capacidadDren = 235;
+    else if (tipoDrenFondo === "18.0") capacidadDren = 450;
+
+    // === Número de drenes ===
+    let numDrenFondoFinal = Math.ceil((flujoMaximo * 2) / capacidadDren);
+    if (numDrenFondoFinal % 2 !== 0) numDrenFondoFinal++;
+
+        // === Cálculos básicos ===
+    const raizArea = Math.sqrt(area);
+    const longitudInicial = raizArea / 2; // tramo inicial
+    const longitudEntreDrenes = raizArea / (numDrenFondoFinal + 1);
+
+    // === Velocidad y diámetro para tramo inicial (≤ 6.5 ft/s) ===
+    let tuberiaInicial = null;
+    let velocidadInicial = -Infinity;
+    for (let tub in diametros) {
+        const d = diametros[tub];
+        const vel = flujoMaximo * 0.408498 / (d * d);
+        if (vel <= 6.5 && vel > velocidadInicial) {
+            velocidadInicial = vel;
+            tuberiaInicial = tub;
+        }
     }
 
-/*numdren = redondear.mas(flujomax * 2 ) /capacidad dren
-if (numdren == impar)
-num dren +1
-else
-    numdren = numdren
+    // === Velocidades y diámetros para drenes (≤ 4.5 ft/s) ===
+    const flujoPorDren = flujoMaximo / numDrenFondoFinal;
 
-raiz del area / 2 = posicion dren, sumar tramo al total 
-raiz del area / num dren + 1 = longitudEntreDrenes
-2 drenes = 2 codos + 1 tee + posicion dren
-4 drenes = 2 codos + 3 tee + posicion dren
-6 drenes = 2 codos + 5 tee + posicion dren */
+    let mejorTuberiaDren = null;
+    let velocidadDrenSeleccionada = -Infinity;
+    for (let tub in diametros) {
+        const d = diametros[tub];
+        const vel = flujoPorDren * 0.408498 / (d * d);
+        if (vel <= 4.5 && vel > velocidadDrenSeleccionada) {
+            velocidadDrenSeleccionada = vel;
+            mejorTuberiaDren = tub;
+        }
+    }
 
-    flujoPorDrenFondo = flujoMaximo / numDrenFondoFinal;
-    const longitudTotal = Math.sqrt(area) * 4;
-    const longitudEntreDrenes = longitudTotal / numDrenFondoFinal;
+    // === Codos y Tees ===
+    const totalCodos = 2;
+    const totalTees = numDrenFondoFinal - 1;
+
     const resultadoDF = [];
     let sumaCargaTramos = 0;  // Acumulador fuera del ciclo
     let flujoRestante = flujoMaximo;
@@ -1272,35 +1390,15 @@ raiz del area / num dren + 1 = longitudEntreDrenes
     const profMin = parseFloat(document.getElementById("profMin").value) || 0;
     const profMax = parseFloat(document.getElementById("profMax").value) || 0;
     const profundidad = Math.max(profMin, profMax); 
-    const longitudDisparo = ((profundidad - 0.5) + 1); 
-    const longitudDisparoFt = longitudDisparo / 0.3048;
-    const tuberiaDisparo = tipoDesnatador === "2.0" ? "tuberia 2.00" : "tuberia 1.50";
-    const cargaDisparoBase = 10.536 * 100 * Math.pow(flujoPorDesnatador, 1.852) / (Math.pow(diametros[tuberiaDisparo], 4.8655) * Math.pow(150, 1.852));
-    const cargaDisparoTramo = (longitudDisparoFt * cargaDisparoBase) / 100;
-    const cargaDisparoCodo = (codo[tuberiaDisparo] * cargaDisparoBase) / 100;
     let diametroMax = 0; // Guardamos el diámetro máximo encontrado
 
-    // Si el diámetro del disparo es distinto al diámetro del último tramo, hay reducción
-    let cargaDisparoReduccion = 0;
-    let longEqReduccionDisparo = 0;
-    if (diametroAnterior && diametroAnterior !== tuberiaDisparo) {
-        longEqReduccionDisparo = reduccion[tuberiaDisparo];
-        cargaDisparoReduccion = (longEqReduccionDisparo * cargaDisparoBase) / 100;
-        }
-    const cargaDisparoTotal = cargaDisparoTramo + cargaDisparoCodo + cargaDisparoReduccion;
-
     // === Resumen por diámetro ===
-    const resumenTramosD = {};
-    const resumenDisparosD = {};
+    const resumenTramosDF = {};
     const addDiam = (obj, d) => {
         if (!obj[d]) obj[d] = { tuberia_m: 0, tees: 0, codos: 0, reducciones: 0 };
         };
 
-    const raizArea = Math.sqrt(area);
-    let sumaLongitudes = 0;
-    let siguienteUmbral = raizArea;
-
-        for (let i = 0; i < numDesnatadorFinal; i++) {
+        for (let i = 0; i < numDrenFondoFinal; i++) {
         let flujoActual = flujoRestante;
 
         // Elegir diámetro que dé velocidad ≤ 4.5 ft/s
@@ -1334,16 +1432,8 @@ raiz del area / num dren + 1 = longitudEntreDrenes
         let dPulgadas = parseFloat(diametroSeleccionado.replace("tuberia ", ""));
         if (dPulgadas > diametroMax) diametroMax = dPulgadas;
 
-        // Forzar diámetro del último tramo según tipoDesnatador
-        if (i === numDesnatadorFinal - 1) {
-            diametroSeleccionado = (tipoDesnatador === "2.0") ? "tuberia 2.00" : "tuberia 1.50";
-            const d = diametros[diametroSeleccionado];
-            velocidadSeleccionada = flujoActual * 0.408498 / (d * d);
-            cargaSeleccionada = 10.536 * 100 * Math.pow(flujoActual, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
-        }
-
         // --- Accesorios base para esta fila ---
-        const tipoAccesorio = (i === numDesnatadorFinal - 1) ? "codo" : "tee";
+        const tipoAccesorio = (i === numDrenFondoFinal - 1) ? "codo" : "tee";
 
         // Tee (si aplica)
         let longEqTeeRow = 0;
@@ -1367,56 +1457,23 @@ raiz del area / num dren + 1 = longitudEntreDrenes
         }
 
         // Carga por la tubería del tramo
-        const cargaTramoRow = (longitudEntreDesnatadores / 0.3048) * (cargaSeleccionada / 100);
-
-        // --- Codos extra por múltiplos de √area ---
-        sumaLongitudes += longitudEntreDesnatadores;       // acumulado global
-        let extraCount = 0;
-        while (sumaLongitudes >= siguienteUmbral) {
-            extraCount += 1;
-            siguienteUmbral += raizArea;                 // siguiente múltiplo
-        }
-
+        const cargaTramoRow = (longitudEntreDrenes / 0.3048) * (cargaSeleccionada / 100);
         const cantidadTees = (tipoAccesorio === "tee") ? 1 : 0;          // 1 tee en tramos intermedios
         const codosBase = (tipoAccesorio === "codo") ? 1 : 0;            // 1 codo en el último tramo
-        const totalCodosFila = codosBase + extraCount;                    // codos base + codos extra por √area
         const cantidadReducciones = (longitudEqReduccion > 0) ? 1 : 0;    // 1 si cambió el diámetro respecto al tramo anterior
-        let longEqCodoExtraRow = extraCount * longEqCodoUnit;
-        let cargaCodoExtraRow = (longEqCodoExtraRow * cargaSeleccionada) / 100;
-
-        // Codo total mostrado en la fila (base + extras)
-        let longEqCodoTotalRow = longEqCodoBaseRow + longEqCodoExtraRow;
-        let cargaCodoTotalRow = cargaCodoBaseRow + cargaCodoExtraRow;
 
         // Carga total de la fila (tubería + tee + codo total + reducción)
-        const cargaTotalFilaNum = +(cargaTramoRow + cargaTeeRow + cargaCodoTotalRow + cargaReduccion).toFixed(2);
-        const cargaTotal2 = cargaTotalFilaNum + cargaDisparoTotal;
+        const cargaTotalFilaNum = +(cargaTramoRow + cargaTeeRow + cargaCodoBaseRow + cargaReduccion).toFixed(2);
 
         // === Resumen por diámetro (materiales del tramo) ===
-        addDiam(resumenTramosD, diametroSeleccionado);
-        resumenTramosD[diametroSeleccionado].tuberia_m += longitudEntreDesnatadores;
-        if (tipoAccesorio === "tee") resumenTramosD[diametroSeleccionado].tees += 1;
-        else resumenTramosD[diametroSeleccionado].codos += 1;      // codo base del último tramo
-        resumenTramosD[diametroSeleccionado].codos += extraCount;   // codos extra (0, 1, 2, ...)
-        if (longitudEqReduccion > 0) resumenTramosD[diametroSeleccionado].reducciones += 1;
-
-        // === Resumen materiales del disparo ===
-        addDiam(resumenDisparosD, tuberiaDisparo);
-        resumenDisparosD[tuberiaDisparo].tuberia_m += longitudDisparo;
-        resumenDisparosD[tuberiaDisparo].codos += 1;
-        if (diametroSeleccionado !== tuberiaDisparo) resumenDisparosD[tuberiaDisparo].reducciones += 1;
-
-        let dDisparo = parseFloat(tuberiaDisparo.replace("tuberia ", ""));
-        if (diametroMax > dDisparo) {
-            longEqReduccionDisparo = reduccion[tuberiaDisparo];
-            cargaDisparoReduccion = (longEqReduccionDisparo * cargaDisparoBase) / 100;
-        } else {
-            longEqReduccionDisparo = 0;
-            cargaDisparoReduccion = 0;
-        }
+        addDiam(resumenTramosDF, diametroSeleccionado);
+        resumenTramosDF[diametroSeleccionado].tuberia_m += longitudEntreDrenes;
+        if (tipoAccesorio === "tee") resumenTramosDF[diametroSeleccionado].tees += 1;
+        else resumenTramosDF[diametroSeleccionado].codos += 1;      // codo base del último tramo
+        if (longitudEqReduccion > 0) resumenTramosDF[diametroSeleccionado].reducciones += 1;
 
         // === Empuje de la fila a la tabla 1 ===
-        resultadoD.push({
+        resultadoDF.push({
             tramo: i + 1,
             flujo: flujoActual.toFixed(2),
             tuberia: diametroSeleccionado || "Ninguna cumple",
@@ -1424,7 +1481,7 @@ raiz del area / num dren + 1 = longitudEntreDrenes
 
             cargaBase: cargaSeleccionada ? cargaSeleccionada.toFixed(2) : "N/A",
             cargaTramo: cargaSeleccionada ? cargaTramoRow.toFixed(2) : "N/A",
-            longitud: longitudEntreDesnatadores.toFixed(2),
+            longitud: longitudEntreDrenes.toFixed(2),
 
             // Tee mostrado solo si aplica
             cantidadTees: cantidadTees,
@@ -1432,9 +1489,9 @@ raiz del area / num dren + 1 = longitudEntreDrenes
             cargaTee: cargaTeeRow.toFixed(2),
 
             // Codo mostrado siempre como TOTAL (base + extra si los hubo)
-            cantidadCodos: totalCodosFila,
+            cantidadCodos: totalCodos,
             longEqCodo: longEqCodoUnit.toFixed(2),
-            cargaCodo: cargaCodoTotalRow.toFixed(2),
+            cargaCodo: cargaCodoBaseRow.toFixed(2),
 
             // Reducción entre tramos
             cantidadReducciones: cantidadReducciones,
@@ -1444,34 +1501,20 @@ raiz del area / num dren + 1 = longitudEntreDrenes
             // Total de la fila (incluye codos extra si hubo)
             cargaTotal: cargaTotalFilaNum.toFixed(2),
 
-            // Datos del disparo
-            flujoDisparo: flujoPorDesnatador,
-            diametroDisparo: tuberiaDisparo,
-            velocidadDisparo: flujoPorDesnatador * 0.408498 / Math.pow(diametros[tuberiaDisparo], 2),
-            cargaBaseDisparo: cargaDisparoBase,
-            cargaDisparo: cargaDisparoTramo,
-            longitudDisparo: longitudDisparo,
-            longEqCodoDisparo: codo[tuberiaDisparo],
-            cargaCodoDisparo: cargaDisparoCodo,
-            longEqReduccionDisparo: longEqReduccionDisparo,
-            cargaReduccionDisparo: cargaDisparoReduccion,
-            cargaDisparoTotal: cargaDisparoTotal,
-
-            cargaTotal2: cargaTotal2
         });
 
         // Acumulados
         sumaCargaTramos += cargaTotalFilaNum;
 
         // Para siguiente iteración
-        flujoRestante -= flujoPorDesnatador;
+        flujoRestante -= flujoPorDren;
         if (flujoRestante < 0) flujoRestante = 0;
         diametroAnterior = diametroSeleccionado;
         }
 
         // Al final:
-        const sumaFinal = sumaCargaTramos + cargaDisparoTotal;
-        return { resultadoD, sumaFinal, resumenTramosD, resumenDisparosD };
+        const sumaFinal = sumaCargaTramos;
+        return { resultadoDF, sumaFinal, resumenTramosDF };
 }
 
 const temperatura = {
