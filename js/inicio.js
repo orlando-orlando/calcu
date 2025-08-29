@@ -10,7 +10,7 @@ function calcular() {
 
     const tipoRetorno = document.getElementById("retorno").value;
     const retornoDatos = retorno(flujoMax, tipoRetorno);
-    const { resultadoR, resumenTramosR, resumenDisparosR } = retornoDatos;
+    const { resultadoR, resumenTramosR, resumenDisparosR, tablaDistanciaCM } = retornoDatos;
     const disparoR = resultadoR[0];
     const flujoDisparoR = disparoR.flujoDisparo;
     const diametroDisparoR = disparoR.diametroDisparo;
@@ -80,6 +80,39 @@ retornoHTML += `
     <td><strong>${sumaCargaTotalR.toFixed(2)}</strong></td>
     </tr>`;
     retornoHTML += `</tbody></table>`;
+
+    cuartoHTML = `
+    <h4 class="subtitulo">Tramo de tubería del cuarto de máquinas al cuerpo de agua:</h4>
+    <table class="tabla-cuarto">
+            <thead>
+                <tr>
+                    <th>Flujo<br>tramo (gpm)</th>
+                    <th>Diámetro<br>tubería tramo (in)</th>
+                    <th>Velocidad<br>tramo (ft/s)</th>
+                    <th>Carga Base<br>tramo (ft/100ft)</th>
+                    <th>Longitud<br>tramo (m)</th>
+                    <th>Carga<br>Tramo (ft)</th>
+                    <th>Long. Eq.<br>Codo (ft)</th>
+                    <th>Carga<br>Codo (ft)</th>
+                    <th>Carga<br>tramo total (ft)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>${tablaDistanciaCM.flujoCM}</td>
+                    <td>${tablaDistanciaCM.tuberiaCM}</td>
+                    <td>${tablaDistanciaCM.velocidadCM}</td>
+                    <td>${tablaDistanciaCM.cargaBaseCM}</td>
+                    <td>${tablaDistanciaCM.distanciaCM}</td>
+                    <td>${tablaDistanciaCM.cargaTramoCM}</td>
+                    <td>${tablaDistanciaCM.longEqCodoCM}</td>
+                    <td>${tablaDistanciaCM.cargaCodoCM}</td>
+                    <td>${tablaDistanciaCM.cargaTotalCM}</td>
+                </tr>
+            </tbody>
+        </table>
+    `;
+
 let disparoHTMLR = `
 <table border="1" cellpadding="4" cellspacing="0" style="margin-top:20px;">
   <thead>
@@ -461,6 +494,22 @@ nuevaVentana.document.write(`
       margin: 10px;
     }
 
+    /* Tabla del cuarto de máquinas */
+    .tabla-cuarto {
+      table-layout: auto;
+      display: table;
+      width: 100%; /* Ocupa todo el ancho */
+      border-collapse: collapse;
+      margin: 10px 0;
+    }
+    .tabla-cuarto th, .tabla-cuarto td {
+      border: 1px solid #ccc;
+      padding: 4px;
+      text-align: center;
+      word-wrap: break-word;
+      white-space: normal;
+    }
+
     /* Contenedor en Flex */
     .contenedor-tablas {
       display: flex;
@@ -483,6 +532,7 @@ nuevaVentana.document.write(`
 <h3 class="toggle-header">Retornos</h3>
 <div class="toggle-content">
   ${retornoHTML}
+  ${cuartoHTML}
   <h4>Tramo de disparo de tubería principal a retorno:</h4>
   ${disparoHTMLR}
   <h4>Explosión de materiales:</h4>
@@ -770,6 +820,68 @@ function retorno(flujoMaximo, tipoRetorno) {
     let sumaLongitudes = 0;
     let siguienteUmbral = raizArea;
 
+// --- Tramo especial: distancia al cuarto de máquinas ---
+const distanciaCM = parseFloat(document.getElementById("distCuarto").value) || 0; // m
+if (distanciaCM > 0) {
+    let flujoCM = flujoMaximo; // todo el flujo entra a este tramo
+    let diametroCM = null;
+    let velocidadCM = -Infinity;
+    let cargaCM = null;
+    let mejorTubCM = null;
+    let mejorVelCM = null;
+    let mejorCargaCM = null;
+
+    for (let tub in diametros) {
+        const d = diametros[tub];
+        const vel = flujoCM * 0.408498 / (d * d);
+        mejorTubCM = tub;
+        mejorVelCM = vel;
+        mejorCargaCM = 10.536 * 100 * Math.pow(flujoCM, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
+
+        if (vel <= 6.5 && vel > velocidadCM) {
+            diametroCM = tub;
+            velocidadCM = vel;
+            cargaCM = mejorCargaCM;
+        }
+    }
+
+    if (!diametroCM) {
+        diametroCM = mejorTubCM;
+        velocidadCM = mejorVelCM;
+        cargaCM = mejorCargaCM;
+    }
+
+    const longitudCM_ft = distanciaCM * 3.281;
+    const cargaTramoCM = (longitudCM_ft * cargaCM) / 100;
+
+    // Suponemos codos y tees estándar (ejemplo: 0 o 1)
+    const cantidadCodosCM = 1;
+    const longEqCodoCM = codo[diametroCM];
+    const cargaCodoCM = (longEqCodoCM * cargaCM) / 100;
+
+    const cantidadTeesCM = 0;
+    const longEqTeeCM = 0;
+    const cargaTeeCM = 0;
+
+    const cargaTotalCM = cargaTramoCM + cargaCodoCM + cargaTeeCM;
+    const tablaDistanciaCM = {
+        distanciaCM: distanciaCM.toFixed(2),
+        flujoCM: flujoCM.toFixed(2),
+        tuberiaCM: diametroCM,
+        velocidadCM: velocidadCM.toFixed(2),
+        cargaBaseCM: cargaCM.toFixed(2),
+        cargaTramoCM: cargaTramoCM.toFixed(2),
+        cantidadCodosCM: cantidadCodosCM,
+        longEqCodoCM: longEqCodoCM.toFixed(2),
+        cargaCodoCM: cargaCodoCM.toFixed(2),
+        cargaTotalCM: cargaTotalCM.toFixed(2)
+    };
+
+    // Agregar a resumen de materiales
+    if (!resumenTramosR[diametroCM]) resumenTramosR[diametroCM] = { tuberia_m: 0, tees: 0, codos: 0, reducciones: 0 };
+    resumenTramosR[diametroCM].tuberia_m += distanciaCM;
+    resumenTramosR[diametroCM].codos += cantidadCodosCM;
+
         for (let i = 0; i < numRetornos; i++) {
         let flujoActual = flujoRestante;
 
@@ -941,7 +1053,8 @@ function retorno(flujoMaximo, tipoRetorno) {
 
         // Al final:
         const sumaFinal = sumaCargaTramos + cargaDisparoTotal;
-        return { resultadoR, sumaFinal, resumenTramosR, resumenDisparosR };
+        return { resultadoR, sumaFinal, resumenTramosR, resumenDisparosR, tablaDistanciaCM };
+    }
 }
 
 function desnatador(flujoMaximo, tipoDesnatador) {
@@ -1859,9 +1972,10 @@ const humedad = {
 const areaInput = document.getElementById("area");
 const profMinInput = document.getElementById("profMin");
 const profMaxInput = document.getElementById("profMax");
+const distCuartoInput = document.getElementById("distCuarto");
 
 // Lista de campos
-const campos = [areaInput, profMinInput, profMaxInput];
+const campos = [areaInput, profMinInput, profMaxInput, distCuartoInput];
 
 campos.forEach(input => {
     // Evita caracteres inválidos (solo números y un punto)
@@ -1891,10 +2005,13 @@ campos.forEach(input => {
 
         if (input.id === "area") {
             if (val < 1) input.value = 1;
-            if (val > 10000) input.value = 10000;
-        } else {
+            if (val > 10000) input.value = 10000; // Máximo para área
+        } else if (input.id === "profMin" || input.id === "profMax") {
             if (val < 0) input.value = 0;
-            if (val > 60) input.value = 60; // <-- NUEVA REGLA PARA PROFUNDIDADES
+            if (val > 60) input.value = 60; // Máximo para profundidades
+        } else if (input.id === "distCuarto") {
+            if (val < 0) input.value = 0;
+            if (val > 500) input.value = 500; // Máximo para distCuarto
         }
     });
 });
