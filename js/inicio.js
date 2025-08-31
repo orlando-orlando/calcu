@@ -143,12 +143,16 @@ let disparoHTMLR = `
       <td>${longEqReduccionDisparoR.toFixed(2)}</td>
       <td>${cargaReduccionDisparoR.toFixed(2)}</td>
       <td>${cargaDisparoTotalR.toFixed(2)}</td>
-    </tr>
+        </tr>
         <tr>
-      <td colspan="10" style="text-align: right;"><strong>Sumatoria total (carga tramo + carga disparo) (ft)</strong></td>
-      <td><strong>${(sumaCargaTotalR + cargaDisparoTotalR).toFixed(2)}</strong></td>
-    </tr>
-  </tbody>
+            <td colspan="10" style="text-align: right;"><strong>Carga tramo cuarto de máquinas (ft)</strong></td>
+            <td>${tablaDistanciaCM.cargaTotalCM}</td>
+        </tr>
+        <tr>
+            <td colspan="10" style="text-align: right;"><strong>Sumatoria total (carga tramos + disparo + cuarto de máquinas) (ft)</strong></td>
+            <td><strong>${(sumaCargaTotalR + cargaDisparoTotalR + parseFloat(tablaDistanciaCM.cargaTotalCM)).toFixed(2)}</strong></td>
+        </tr>
+        </tbody>
 </table>
 `;
 let resumenHTMLTramosR = `
@@ -1052,7 +1056,7 @@ if (distanciaCM > 0) {
         }
 
         // Al final:
-        const sumaFinal = sumaCargaTramos + cargaDisparoTotal;
+        const sumaFinal = sumaCargaTramos + cargaDisparoTotal + parseFloat(tablaDistanciaCM.cargaTotalCM);
         return { resultadoR, sumaFinal, resumenTramosR, resumenDisparosR, tablaDistanciaCM };
     }
 }
