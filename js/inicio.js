@@ -76,7 +76,7 @@ resultadoR.forEach(dato => {
 });
 retornoHTML += `
   <tr>
-    <td colspan="16" style="text-align: right;"><strong>Sumatoria total carga tramo (ft)</strong></td>
+    <td colspan="16" style="text-align: right;"><strong>Sumatoria carga tramo retornos (ft):</strong></td>
     <td><strong>${sumaCargaTotalR.toFixed(2)}</strong></td>
     </tr>`;
     retornoHTML += `</tbody></table>`;
@@ -92,7 +92,7 @@ retornoHTML += `
                     <th>Carga Base<br>tramo (ft/100ft)</th>
                     <th>Longitud<br>tramo (m)</th>
                     <th>Carga<br>Tramo (ft)</th>
-                    <th>Long. Eq.<br>Codo (ft)</th>
+                    <th>L. Eq.<br>Codo (ft)</th>
                     <th>Carga<br>Codo (ft)</th>
                     <th>Carga<br>tramo total (ft)</th>
                 </tr>
@@ -107,27 +107,31 @@ retornoHTML += `
                     <td>${tablaDistanciaCM.cargaTramoCM}</td>
                     <td>${tablaDistanciaCM.longEqCodoCM}</td>
                     <td>${tablaDistanciaCM.cargaCodoCM}</td>
-                    <td>${tablaDistanciaCM.cargaTotalCM}</td>
+                    <td><strong>${tablaDistanciaCM.cargaTotalCM}</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="8" style="text-align: right;"><strong>Carga tramo a cuarto de máquinas (ft):</strong></td>
+                    <td><strong>${tablaDistanciaCM.cargaTotalCM}</strong></td>
                 </tr>
             </tbody>
         </table>
     `;
-
 let disparoHTMLR = `
-<table border="1" cellpadding="4" cellspacing="0" style="margin-top:20px;">
+<h4 class="subtitulo">Tramo de disparo de tubería principal a retorno:</h4>
+<table class="tabla-cuarto">
   <thead>
     <tr>
-      <th>Flujo disparo (gpm)</th>
-      <th>Diámetro tubería disparo (in)</th>
-      <th>Velocidad disparo (ft/s)</th>
-      <th>Carga base disparo (ft/100ft)</th>
-      <th>Longitud disparo (m)</th>
-      <th>Carga disparo (ft)</th>
-      <th>L. Eq. Codo disparo (ft)</th>
-      <th>Carga Codo disparo (ft)</th>
-      <th>L. Eq. Reducción disparo (ft)</th>
-      <th>Carga Reducción disparo (ft)</th>
-      <th>Carga disparo total (ft)</th>
+      <th>Flujo<br>tramo (gpm)</th>
+      <th>Diámetro<br>tubería tramo (in)</th>
+      <th>Velocidad<br>tramo (ft/s)</th>
+      <th>Carga base<br>tramo (ft/100ft)</th>
+      <th>Longitud<br>tramo (m)</th>
+      <th>Carga<br>tramo (ft)</th>
+      <th>L. Eq.<br>Codo (ft)</th>
+      <th>Carga<br>Codo (ft)</th>
+      <th>L. Eq.<br>Reducción (ft)</th>
+      <th>Carga<br>Reducción (ft)</th>
+      <th>Carga<br>disparo total (ft)</th>
     </tr>
   </thead>
   <tbody>
@@ -142,19 +146,46 @@ let disparoHTMLR = `
       <td>${cargaCodoDisparoR.toFixed(2)}</td>
       <td>${longEqReduccionDisparoR.toFixed(2)}</td>
       <td>${cargaReduccionDisparoR.toFixed(2)}</td>
-      <td>${cargaDisparoTotalR.toFixed(2)}</td>
+      <td><strong>${cargaDisparoTotalR.toFixed(2)}</strong></td>
         </tr>
-        <tr>
-            <td colspan="10" style="text-align: right;"><strong>Carga tramo cuarto de máquinas (ft)</strong></td>
-            <td>${tablaDistanciaCM.cargaTotalCM}</td>
-        </tr>
-        <tr>
-            <td colspan="10" style="text-align: right;"><strong>Sumatoria total (carga tramos + disparo + cuarto de máquinas) (ft)</strong></td>
-            <td><strong>${(sumaCargaTotalR + cargaDisparoTotalR + parseFloat(tablaDistanciaCM.cargaTotalCM)).toFixed(2)}</strong></td>
-        </tr>
+                <tr>
+                    <td colspan="10" style="text-align: right;"><strong>Carga tramo disparos (ft):</strong></td>
+                    <td><strong>${cargaDisparoTotalR.toFixed(2)}</strong></td>
+                </tr>
         </tbody>
 </table>
 `;
+
+let sumatoriaHTMLR = `
+<div style="width: 350px;">
+  <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align:right;">
+    <thead>
+      <tr>
+        <th colspan="2" style="text-align:center; background:#f5f5f5;">Sumatoria de cargas</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="font-weight:bold; text-align:left;">Carga retornos (ft):</td>
+            <td>${sumaCargaTotalR.toFixed(2)} ft</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold; text-align:left;">Carga disparos (ft):</td>
+            <td>${cargaDisparoTotalR.toFixed(2)} ft</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold; text-align:left;">Carga a cuarto de máquinas (ft):</td>
+            <td>${parseFloat(tablaDistanciaCM.cargaTotalCM).toFixed(2)} ft</td>
+        </tr>
+        <tr style="background:#f5f5f5; font-weight:bold;">
+            <td style="text-align:left;">Carga dinámica total (ft):</td>
+            <td>${(sumaCargaTotalR + cargaDisparoTotalR + parseFloat(tablaDistanciaCM.cargaTotalCM)).toFixed(2)} ft</td>
+        </tr>
+    </tbody>
+  </table>
+</div>
+`;
+
 let resumenHTMLTramosR = `
 <table class="tabla-ajustada" border="1" cellpadding="4" cellspacing="0">
   <thead>
@@ -185,11 +216,12 @@ let resumenHTMLDisparosR = `
 <table class="tabla-ajustada" border="1" cellpadding="4" cellspacing="0">
   <thead>
     <tr>
-      <th colspan="4" style="text-align:center; background:#eaeaea;">DISPAROS AL RETORNO</th>
+      <th colspan="5" style="text-align:center; background:#eaeaea;">DISPAROS AL RETORNO</th>
     </tr>
     <tr>
       <th>Diámetro (in)</th>
       <th>Tubería (m)</th>
+      <th>Tees</th>
       <th>Codos</th>
       <th>Reducciones</th>
     </tr>
@@ -200,6 +232,7 @@ for (const [diam, r] of Object.entries(resumenDisparosR)) {
     <tr>
       <td>${diam.replace("tuberia ", "")}</td>
       <td>${r.tuberia_m.toFixed(2)}</td>
+      <td>${r.tees}</td>
       <td>${r.codos}</td>
       <td>${r.reducciones}</td>
     </tr>`;
@@ -492,10 +525,8 @@ nuevaVentana.document.write(`
 
     /* Ajuste al contenido */
     .tabla-ajustada {
-      table-layout: auto;
-      display: inline-table;
-      width: max-content;
-      margin: 10px;
+    table-layout: auto;
+    width: max-content; /* ajusta al contenido */
     }
 
     /* Tabla del cuarto de máquinas */
@@ -514,21 +545,28 @@ nuevaVentana.document.write(`
       white-space: normal;
     }
 
-    /* Contenedor en Flex */
-    .contenedor-tablas {
-      display: flex;
-      gap: 20px; /* espacio entre tablas */
-      flex-wrap: wrap; /* permite que bajen si no hay espacio */
-      align-items: flex-start; /* alinear arriba */
+    .sumatoria-container {
+    margin-left: auto; /* se pega a la derecha */
+    width: 350px; /* tamaño fijo */
     }
+    
+    /* Contenedor en Flex */
+    .contenedor-flex {
+    display: flex;
+    justify-content: space-between; /* explosión a la izquierda, sumatoria a la derecha */
+    align-items: flex-start; /* alinea en la parte superior */
+    gap: 20px;
+    }
+
   </style>
 </head>
 <body>
-  <h2>Estos son los valores calculados:</h2>
+  <h3>Resultado:</h3>
   <ul>
     <li><strong>Volumen:</strong> ${vol}</li>
     <li><strong>Flujo volumen:</strong> ${flujoVol}</li>
     <li><strong>Flujo infinity:</strong> ${flujoInf}</li>
+    <li><strong>Flujo máximo:</strong> ${flujoMax}</li>
     <li><strong>Tubería seleccionada succión:</strong> ${tubSuccion}</li>
     <li><strong>Tubería seleccionada descarga:</strong> ${tubDescarga}</li>
   </ul>
@@ -537,10 +575,14 @@ nuevaVentana.document.write(`
 <div class="toggle-content">
   ${retornoHTML}
   ${cuartoHTML}
-  <h4>Tramo de disparo de tubería principal a retorno:</h4>
   ${disparoHTMLR}
-  <h4>Explosión de materiales:</h4>
-  ${tablasHTMLR}
+<div class="contenedor-flex">
+  <div>
+    <h4>Explosión de materiales:</h4>
+    ${tablasHTMLR}
+  </div>
+  ${sumatoriaHTMLR}
+</div>
 </div>
 
 <h3 class="toggle-header">Desnatadores</h3>
