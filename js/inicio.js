@@ -25,7 +25,8 @@ function calcular() {
     const cargaDisparoTotalR = disparoR.cargaDisparoTotal;
 
 let retornoHTML = `
-<table border="1" cellpadding="4" cellspacing="0">
+<table class="tabla-retornos" border="1" cellpadding="4" cellspacing="0">
+  <caption class="subtitulo-retornos">TRAMO RETORNOS</caption>
   <thead>
     <tr>
       <th>Número retorno</th>
@@ -546,16 +547,24 @@ nuevaVentana.document.write(`
     }
 
     .sumatoria-container {
-    margin-left: auto; /* se pega a la derecha */
-    width: 350px; /* tamaño fijo */
+    flex: 0 0 350px; /* Fijo en 350px */
     }
     
-    /* Contenedor en Flex */
     .contenedor-flex {
     display: flex;
-    justify-content: space-between; /* explosión a la izquierda, sumatoria a la derecha */
-    align-items: flex-start; /* alinea en la parte superior */
+    flex-wrap: nowrap; /* NO permite que los elementos bajen */
+    justify-content: space-between;
+    align-items: flex-start;
     gap: 20px;
+    }
+
+    caption.subtitulo-retornos {
+    caption-side: top;      /* Garantiza que va arriba */
+    text-align: center;      /* Alinea el texto a la izq */
+    background: #f5f5f5;
+    font-weight: bold;
+    padding: 8px;
+    border: 1px solid #ccc;
     }
 
   </style>
@@ -581,7 +590,9 @@ nuevaVentana.document.write(`
     <h4>Explosión de materiales:</h4>
     ${tablasHTMLR}
   </div>
-  ${sumatoriaHTMLR}
+  <div class="sumatoria-container">
+    ${sumatoriaHTMLR}
+  </div>
 </div>
 </div>
 
