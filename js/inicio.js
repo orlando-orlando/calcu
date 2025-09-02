@@ -83,8 +83,8 @@ retornoHTML += `
     retornoHTML += `</tbody></table>`;
 
     cuartoHTML = `
-    <h4 class="subtitulo">Tramo de tubería del cuarto de máquinas al cuerpo de agua:</h4>
-    <table class="tabla-cuarto">
+    <table class="tabla-retornos" border="1" cellpadding="4" cellspacing="0">
+    <caption class="subtitulo-retornos">TRAMO DE TUBERIA DEL CUARTO DE MAQUINAS AL CUERPO DE AGUA</caption>
             <thead>
                 <tr>
                     <th>Flujo<br>tramo (gpm)</th>
@@ -93,6 +93,7 @@ retornoHTML += `
                     <th>Carga Base<br>tramo (ft/100ft)</th>
                     <th>Longitud<br>tramo (m)</th>
                     <th>Carga<br>Tramo (ft)</th>
+                    <th>Cantidad<br>Codos</th>
                     <th>L. Eq.<br>Codo (ft)</th>
                     <th>Carga<br>Codo (ft)</th>
                     <th>Carga<br>tramo total (ft)</th>
@@ -106,20 +107,21 @@ retornoHTML += `
                     <td>${tablaDistanciaCM.cargaBaseCM}</td>
                     <td>${tablaDistanciaCM.distanciaCM}</td>
                     <td>${tablaDistanciaCM.cargaTramoCM}</td>
+                    <td>1</td>
                     <td>${tablaDistanciaCM.longEqCodoCM}</td>
                     <td>${tablaDistanciaCM.cargaCodoCM}</td>
                     <td><strong>${tablaDistanciaCM.cargaTotalCM}</strong></td>
                 </tr>
                 <tr>
-                    <td colspan="8" style="text-align: right;"><strong>Carga tramo a cuarto de máquinas (ft):</strong></td>
+                    <td colspan="9" style="text-align: right;"><strong>Carga tramo a cuarto de máquinas (ft):</strong></td>
                     <td><strong>${tablaDistanciaCM.cargaTotalCM}</strong></td>
                 </tr>
             </tbody>
         </table>
     `;
 let disparoHTMLR = `
-<h4 class="subtitulo">Tramo de disparo de tubería principal a retorno:</h4>
-<table class="tabla-cuarto">
+    <table class="tabla-retornos" border="1" cellpadding="4" cellspacing="0">
+    <caption class="subtitulo-retornos">TRAMO DE DISPARO TUBERIA PRINCIPAL A RETORNO</caption>
   <thead>
     <tr>
       <th>Flujo<br>tramo (gpm)</th>
@@ -128,8 +130,10 @@ let disparoHTMLR = `
       <th>Carga base<br>tramo (ft/100ft)</th>
       <th>Longitud<br>tramo (m)</th>
       <th>Carga<br>tramo (ft)</th>
+      <th>Cantidad<br>Codos</th>
       <th>L. Eq.<br>Codo (ft)</th>
       <th>Carga<br>Codo (ft)</th>
+      <th>Cantidad<br>Reducciones</th>
       <th>L. Eq.<br>Reducción (ft)</th>
       <th>Carga<br>Reducción (ft)</th>
       <th>Carga<br>disparo total (ft)</th>
@@ -143,14 +147,16 @@ let disparoHTMLR = `
       <td>${cargaBaseDisparoR.toFixed(2)}</td>
       <td>${longitudDisparoR.toFixed(2)}</td>
       <td>${cargaDisparoR.toFixed(2)}</td>
+      <td>1</td>
       <td>${longEqCodoDisparoR.toFixed(2)}</td>
       <td>${cargaCodoDisparoR.toFixed(2)}</td>
+      <td>${longEqReduccionDisparoR !== 0 ? 1 : 0}</td>
       <td>${longEqReduccionDisparoR.toFixed(2)}</td>
       <td>${cargaReduccionDisparoR.toFixed(2)}</td>
       <td><strong>${cargaDisparoTotalR.toFixed(2)}</strong></td>
         </tr>
                 <tr>
-                    <td colspan="10" style="text-align: right;"><strong>Carga tramo disparos (ft):</strong></td>
+                    <td colspan="12" style="text-align: right;"><strong>Carga tramo disparos (ft):</strong></td>
                     <td><strong>${cargaDisparoTotalR.toFixed(2)}</strong></td>
                 </tr>
         </tbody>
@@ -171,12 +177,12 @@ let sumatoriaHTMLR = `
             <td>${sumaCargaTotalR.toFixed(2)} ft</td>
         </tr>
         <tr>
-            <td style="font-weight:bold; text-align:left;">Carga disparos (ft):</td>
-            <td>${cargaDisparoTotalR.toFixed(2)} ft</td>
-        </tr>
-        <tr>
             <td style="font-weight:bold; text-align:left;">Carga a cuarto de máquinas (ft):</td>
             <td>${parseFloat(tablaDistanciaCM.cargaTotalCM).toFixed(2)} ft</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold; text-align:left;">Carga disparos (ft):</td>
+            <td>${cargaDisparoTotalR.toFixed(2)} ft</td>
         </tr>
         <tr style="background:#f5f5f5; font-weight:bold;">
             <td style="text-align:left;">Carga dinámica total (ft):</td>
@@ -188,7 +194,7 @@ let sumatoriaHTMLR = `
 `;
 
 let resumenHTMLTramosR = `
-<table class="tabla-ajustada" border="1" cellpadding="4" cellspacing="0">
+<table class="tabla-ajustada redondeada" border="1" cellpadding="4" cellspacing="0">
   <thead>
     <tr>
       <th colspan="5" style="text-align:center; background:#eaeaea;">TRAMOS</th>
@@ -214,7 +220,7 @@ for (const [diam, r] of Object.entries(resumenTramosR)) {
 }
 resumenHTMLTramosR += `</tbody></table>`;
 let resumenHTMLDisparosR = `
-<table class="tabla-ajustada" border="1" cellpadding="4" cellspacing="0">
+<table class="tabla-ajustada redondeada" border="1" cellpadding="4" cellspacing="0">
   <thead>
     <tr>
       <th colspan="5" style="text-align:center; background:#eaeaea;">DISPAROS AL RETORNO</th>
@@ -262,7 +268,8 @@ const tablasHTMLR = `
     const cargaDisparoTotalD = disparoD.cargaDisparoTotal;
 
 let desnatadorHTML = `
-<table border="1" cellpadding="4" cellspacing="0">
+<table class="tabla-retornos" border="1" cellpadding="4" cellspacing="0">
+  <caption class="subtitulo-retornos">TRAMO DESNATADORES</caption>
   <thead>
     <tr>
       <th>Número desnatador</th>
@@ -356,7 +363,7 @@ let disparoHTMLD = `
 </table>
 `;
 let resumenHTMLTramosD = `
-<table class="tabla-ajustada" border="1" cellpadding="4" cellspacing="0">
+<table class="tabla-ajustada redondeada">
   <thead>
     <tr>
       <th colspan="5" style="text-align:center; background:#eaeaea;">TRAMOS</th>
@@ -382,7 +389,7 @@ for (const [diam, r] of Object.entries(resumenTramosD)) {
 }
 resumenHTMLTramosD += `</tbody></table>`;
 let resumenHTMLDisparosD = `
-<table class="tabla-ajustada" border="1" cellpadding="4" cellspacing="0">
+<table class="tabla-ajustada redondeada">
   <thead>
     <tr>
       <th colspan="4" style="text-align:center; background:#eaeaea;">DISPAROS AL DESNATADOR</th>
@@ -526,8 +533,69 @@ nuevaVentana.document.write(`
 
     /* Ajuste al contenido */
     .tabla-ajustada {
-    table-layout: auto;
-    width: max-content; /* ajusta al contenido */
+    border-collapse: collapse; /* une los bordes */
+    width: auto;
+    border: 1px solid #ccc; /* borde externo */
+    }
+
+    .redondeada {
+    border-radius: 10px; /* esquinas redondeadas */
+    overflow: hidden; /* evita que sobresalgan las celdas */
+    }
+
+    .tabla-ajustada th,
+    .tabla-ajustada td {
+    border: 1px solid #ccc; /* bordes internos */
+    padding: 6px 8px;
+    }
+
+    .tabla-ajustada thead th {
+    background: #eaeaea;
+    }
+
+        /* Tablas de resumen con bordes redondeados */
+    .tabla-ajustada.redondeada {
+    border-collapse: separate; /* Necesario para border-radius */
+    border-spacing: 0;         /* Evita espacios entre celdas */
+    border: 1px solid #ccc;    /* Borde externo */
+    border-radius: 10px;       /* Esquinas redondeadas */
+    overflow: hidden;          /* Evita que las celdas sobresalgan */
+    margin-top: 5px;           /* Pegadas al título de explosión de materiales */
+    width: max-content;        /* Ajusta al contenido */
+    }
+
+    /* Bordes internos de celdas */
+    .tabla-ajustada.redondeada th,
+    .tabla-ajustada.redondeada td {
+    border: 1px solid #ccc;    /* Bordes visibles en todas las celdas */
+    padding: 6px 8px;
+    text-align: center;
+    }
+
+    /* Color de encabezado */
+    .tabla-ajustada.redondeada thead th {
+    background: #eaeaea;
+    font-weight: bold;
+    }
+
+    /* Para que el caption no tape celdas (si se usa) */
+    .tabla-ajustada.redondeada caption {
+    caption-side: top;
+    text-align: left;
+    font-weight: bold;
+    background: #f5f5f5;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    margin-bottom: 0;
+    }
+    .contenedor-tablas {
+    display: flex;
+    justify-content: flex-start; /* o center si quieres centrarlas */
+    align-items: flex-start;
+    gap: 20px;
+    margin-top: 5px;
     }
 
     /* Tabla del cuarto de máquinas */
@@ -546,7 +614,30 @@ nuevaVentana.document.write(`
       white-space: normal;
     }
 
+    .tabla-retornos {
+    position: relative;        /* Necesario para posicionar el caption */
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 37px;          /* Espacio para la pestaña */
+    }
+
+    caption.subtitulo-retornos {
+    position: absolute;        /* Se posiciona respecto a la tabla */
+    top: -29px;                /* Ajusta la altura (depende del padding) */
+    left: 0.5;
+    background: #f5f5f5;
+    font-weight: bold;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0; /* Bordes superiores redondeados */
+    }
+
     .sumatoria-container {
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0; /* Bordes superiores redondeados */
+    margin-top: 22px;          /* Espacio para la pestaña */
     flex: 0 0 350px; /* Fijo en 350px */
     }
     
@@ -558,13 +649,15 @@ nuevaVentana.document.write(`
     gap: 20px;
     }
 
-    caption.subtitulo-retornos {
-    caption-side: top;      /* Garantiza que va arriba */
-    text-align: center;      /* Alinea el texto a la izq */
-    background: #f5f5f5;
-    font-weight: bold;
-    padding: 8px;
-    border: 1px solid #ccc;
+        .tabla-ajustada.redondeada tbody tr,
+    .tabla-retornos tbody tr,
+    .tabla-cuarto tbody tr {
+        height: 24px;       /* altura fija para todas las filas de datos */
+    }
+        
+    .explosion-titulo {
+    margin-top: 20px;  /* más pegado a la tabla */
+    margin-bottom: 0px;
     }
 
   </style>
@@ -587,8 +680,7 @@ nuevaVentana.document.write(`
   ${disparoHTMLR}
 <div class="contenedor-flex">
   <div>
-    <h4>Explosión de materiales:</h4>
-    ${tablasHTMLR}
+    <h4 class="explosion-titulo">Explosión de materiales:</h4>    ${tablasHTMLR}
   </div>
   <div class="sumatoria-container">
     ${sumatoriaHTMLR}
@@ -601,15 +693,13 @@ nuevaVentana.document.write(`
   ${desnatadorHTML}
   <h4>Tramo de disparo de tubería principal a desnatador:</h4>
   ${disparoHTMLD}
-  <h4>Explosión de materiales:</h4>
-  ${tablasHTMLD}
+    <h4 class="explosion-titulo">Explosión de materiales:</h4>  ${tablasHTMLD}
 </div>
 
 <h3 class="toggle-header">Dren de fondo</h3>
 <div class="toggle-content">
   ${drenFondoHTML}
-  <h4>Explosión de materiales:</h4>
-  ${tablasHTMLDF}
+    <h4 class="explosion-titulo">Explosión de materiales:</h4>  ${tablasHTMLDF}
 </div>
 
 <style>
