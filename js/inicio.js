@@ -173,7 +173,7 @@ let sumatoriaHTMLR = `
     </thead>
     <tbody>
         <tr>
-            <td style="font-weight:bold; text-align:left;">Carga retornos (ft):</td>
+            <td style="font-weight:bold; text-align:left;">Carga tramo retornos (ft):</td>
             <td>${sumaCargaTotalR.toFixed(2)} ft</td>
         </tr>
         <tr>
@@ -184,9 +184,13 @@ let sumatoriaHTMLR = `
             <td style="font-weight:bold; text-align:left;">Carga disparos (ft):</td>
             <td>${cargaDisparoTotalR.toFixed(2)} ft</td>
         </tr>
+        <tr>
+            <td style="font-weight:bold; text-align:left;">Carga accesorio retornos (ft):</td>
+            <td>${(1.5).toFixed(2)} ft</td>
+        </tr>
         <tr style="background:#f5f5f5; font-weight:bold;">
             <td style="text-align:left;">Carga dinámica total (ft):</td>
-            <td>${(sumaCargaTotalR + cargaDisparoTotalR + parseFloat(tablaDistanciaCM.cargaTotalCM)).toFixed(2)} ft</td>
+            <td>${(sumaCargaTotalR + cargaDisparoTotalR + parseFloat(tablaDistanciaCM.cargaTotalCM) + 1.5).toFixed(2)} ft</td>
         </tr>
     </tbody>
   </table>
@@ -253,7 +257,7 @@ const tablasHTMLR = `
 
     const tipoDesnatador = document.getElementById("desnatador").value;
     const desnatadorDatos = desnatador(flujoMax, tipoDesnatador);
-    const { resultadoD, resumenTramosD, resumenDisparosD } = desnatadorDatos;
+    const { resultadoD, resumenTramosD, resumenDisparosD, tablaDistanciaCMD } = desnatadorDatos;
     const disparoD = resultadoD[0];
     const flujoDisparoD = disparoD.flujoDisparo;
     const diametroDisparoD = disparoD.diametroDisparo;
@@ -320,12 +324,12 @@ resultadoD.forEach(dato => {
 });
 desnatadorHTML += `
   <tr>
-    <td colspan="16" style="text-align: right;"><strong>Sumatoria total carga tramo (ft)</strong></td>
+    <td colspan="16" style="text-align: right;"><strong>Sumatoria total carga tramo (ft):</strong></td>
     <td><strong>${sumaCargaTotalD.toFixed(2)}</strong></td>
     </tr>`;
     desnatadorHTML += `</tbody></table>`;
 
-    cuartoHTML = `
+    cuartoHTMLD = `
     <table class="tabla-retornos" border="1" cellpadding="4" cellspacing="0">
     <caption class="subtitulo-retornos">TRAMO DE TUBERIA DEL CUARTO DE MAQUINAS AL CUERPO DE AGUA</caption>
             <thead>
@@ -344,20 +348,20 @@ desnatadorHTML += `
             </thead>
             <tbody>
                 <tr>
-                    <td>${tablaDistanciaCM.flujoCM}</td>
-                    <td>${tablaDistanciaCM.tuberiaCM}</td>
-                    <td>${tablaDistanciaCM.velocidadCM}</td>
-                    <td>${tablaDistanciaCM.cargaBaseCM}</td>
-                    <td>${tablaDistanciaCM.distanciaCM}</td>
-                    <td>${tablaDistanciaCM.cargaTramoCM}</td>
+                    <td>${tablaDistanciaCMD.flujoCMD}</td>
+                    <td>${tablaDistanciaCMD.tuberiaCMD}</td>
+                    <td>${tablaDistanciaCMD.velocidadCMD}</td>
+                    <td>${tablaDistanciaCMD.cargaBaseCMD}</td>
+                    <td>${tablaDistanciaCMD.distanciaCMD}</td>
+                    <td>${tablaDistanciaCMD.cargaTramoCMD}</td>
                     <td>1</td>
-                    <td>${tablaDistanciaCM.longEqCodoCM}</td>
-                    <td>${tablaDistanciaCM.cargaCodoCM}</td>
-                    <td><strong>${tablaDistanciaCM.cargaTotalCM}</strong></td>
+                    <td>${tablaDistanciaCMD.longEqCodoCMD}</td>
+                    <td>${tablaDistanciaCMD.cargaCodoCMD}</td>
+                    <td><strong>${tablaDistanciaCMD.cargaTotalCMD}</strong></td>
                 </tr>
                 <tr>
                     <td colspan="9" style="text-align: right;"><strong>Carga tramo a cuarto de máquinas (ft):</strong></td>
-                    <td><strong>${tablaDistanciaCM.cargaTotalCM}</strong></td>
+                    <td><strong>${tablaDistanciaCMD.cargaTotalCMD}</strong></td>
                 </tr>
             </tbody>
         </table>
@@ -398,11 +402,11 @@ let disparoHTMLD = `
       <td>${cargaReduccionDisparoD.toFixed(2)}</td>
       <td><strong>${cargaDisparoTotalD.toFixed(2)}</strong></td>
     </tr>
-        <tr>
-      <td colspan="12" style="text-align: right;"><strong>Sumatoria total (carga tramo + carga disparo) (ft)</strong></td>
-      <td><strong>${(sumaCargaTotalD + cargaDisparoTotalD).toFixed(2)}</strong></td>
-    </tr>
-  </tbody>
+                <tr>
+                    <td colspan="12" style="text-align: right;"><strong>Carga tramo disparos (ft):</strong></td>
+                    <td><strong>${cargaDisparoTotalD.toFixed(2)}</strong></td>
+                </tr>
+        </tbody>
 </table>
 `;
 
@@ -416,20 +420,24 @@ let sumatoriaHTMLD = `
     </thead>
     <tbody>
         <tr>
-            <td style="font-weight:bold; text-align:left;">Carga desnatadores (ft):</td>
+            <td style="font-weight:bold; text-align:left;">Carga tramo desnatadores (ft):</td>
             <td>${sumaCargaTotalD.toFixed(2)} ft</td>
         </tr>
         <tr>
             <td style="font-weight:bold; text-align:left;">Carga a cuarto de máquinas (ft):</td>
-            <td>${parseFloat(tablaDistanciaCM.cargaTotalCM).toFixed(2)} ft</td>
+            <td>${parseFloat(tablaDistanciaCMD.cargaTotalCMD).toFixed(2)} ft</td>
         </tr>
         <tr>
             <td style="font-weight:bold; text-align:left;">Carga disparos (ft):</td>
             <td>${cargaDisparoTotalD.toFixed(2)} ft</td>
         </tr>
+        <tr>
+            <td style="font-weight:bold; text-align:left;">Carga accesorio desnatadores (ft):</td>
+            <td>${(1.5).toFixed(2)} ft</td>
+        </tr>
         <tr style="background:#f5f5f5; font-weight:bold;">
             <td style="text-align:left;">Carga dinámica total (ft):</td>
-            <td>${(sumaCargaTotalD + cargaDisparoTotalD + parseFloat(tablaDistanciaCM.cargaTotalCM)).toFixed(2)} ft</td>
+            <td>${(sumaCargaTotalD + cargaDisparoTotalD + parseFloat(tablaDistanciaCMD.cargaTotalCMD) + 1.5).toFixed(2)} ft</td>
         </tr>
     </tbody>
   </table>
@@ -494,10 +502,11 @@ const tablasHTMLD = `
 
     const tipoDrenFondo = document.getElementById("drenFondo").value;
     const drenFondoDatos = drenFondo(flujoMax, tipoDrenFondo);
-    const { resultadoDF, resumenTramosDF } = drenFondoDatos;
+    const { resultadoDF, resumenTramosDF, tablaDistanciaCMDF } = drenFondoDatos;
 
 let drenFondoHTML = `
-<table border="1" cellpadding="4" cellspacing="0">
+<table class="tabla-retornos" border="1" cellpadding="4" cellspacing="0">
+  <caption class="subtitulo-retornos">TRAMO DRENES FONDO</caption>
   <thead>
     <tr>
       <th>Número dren fondo</th>
@@ -553,8 +562,76 @@ drenFondoHTML += `
     </tr>`;
     drenFondoHTML += `</tbody></table>`;
 
+    cuartoHTMLDF = `
+    <table class="tabla-retornos" border="1" cellpadding="4" cellspacing="0">
+    <caption class="subtitulo-retornos">TRAMO DE TUBERIA DEL CUARTO DE MAQUINAS AL CUERPO DE AGUA</caption>
+            <thead>
+                <tr>
+                    <th>Flujo<br>tramo (gpm)</th>
+                    <th>Diámetro<br>tubería tramo (in)</th>
+                    <th>Velocidad<br>tramo (ft/s)</th>
+                    <th>Carga Base<br>tramo (ft/100ft)</th>
+                    <th>Longitud<br>tramo (m)</th>
+                    <th>Carga<br>Tramo (ft)</th>
+                    <th>Cantidad<br>Codos</th>
+                    <th>L. Eq.<br>Codo (ft)</th>
+                    <th>Carga<br>Codo (ft)</th>
+                    <th>Carga<br>tramo total (ft)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>${tablaDistanciaCMDF.flujoCMDF}</td>
+                    <td>${tablaDistanciaCMDF.tuberiaCMDF}</td>
+                    <td>${tablaDistanciaCMDF.velocidadCMDF}</td>
+                    <td>${tablaDistanciaCMDF.cargaBaseCMDF}</td>
+                    <td>${tablaDistanciaCMDF.distanciaCMDF}</td>
+                    <td>${tablaDistanciaCMDF.cargaTramoCMDF}</td>
+                    <td>1</td>
+                    <td>${tablaDistanciaCMDF.longEqCodoCMDF}</td>
+                    <td>${tablaDistanciaCMDF.cargaCodoCMDF}</td>
+                    <td><strong>${tablaDistanciaCMDF.cargaTotalCMDF}</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="9" style="text-align: right;"><strong>Carga tramo a cuarto de máquinas (ft):</strong></td>
+                    <td><strong>${tablaDistanciaCMDF.cargaTotalCMDF}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    `;
+
+let sumatoriaHTMLDF = `
+<div style="width: 350px;">
+  <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align:right;">
+    <thead>
+      <tr>
+        <th colspan="2" style="text-align:center; background:#f5f5f5;">Sumatoria de cargas</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="font-weight:bold; text-align:left;">Carga tramo drenes fondo (ft):</td>
+            <td>${sumaCargaTotalDF.toFixed(2)} ft</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold; text-align:left;">Carga a cuarto de máquinas (ft):</td>
+            <td>${parseFloat(tablaDistanciaCMDF.cargaTotalCMDF).toFixed(2)} ft</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold; text-align:left;">Carga accesorio drenes fondo (ft):</td>
+            <td>${(1.5).toFixed(2)} ft</td>
+        </tr>
+        <tr style="background:#f5f5f5; font-weight:bold;">
+            <td style="text-align:left;">Carga dinámica total (ft):</td>
+            <td>${(sumaCargaTotalDF + parseFloat(tablaDistanciaCMDF.cargaTotalCMDF) + 1.5).toFixed(2)} ft</td>
+        </tr>
+    </tbody>
+  </table>
+</div>
+`;
+
 let resumenHTMLTramosDF = `
-<table class="tabla-ajustada" border="1" cellpadding="4" cellspacing="0">
+<table class="tabla-ajustada redondeada" border="1" cellpadding="4" cellspacing="0">
   <thead>
     <tr>
       <th colspan="5" style="text-align:center; background:#eaeaea;">TRAMOS</th>
@@ -568,7 +645,13 @@ let resumenHTMLTramosDF = `
     </tr>
   </thead>
   <tbody>`;
-for (const [diam, r] of Object.entries(resumenTramosDF)) {
+// Ordenar los diámetros de mayor a menor antes de recorrer
+const entradasOrdenadasDF = Object.entries(resumenTramosDF).sort((a, b) => {
+  const diamA = parseFloat(a[0].replace("tuberia ", ""));
+  const diamB = parseFloat(b[0].replace("tuberia ", ""));
+  return diamB - diamA; // mayor a menor
+});
+for (const [diam, r] of entradasOrdenadasDF) {
     resumenHTMLTramosDF += `
     <tr>
       <td>${diam.replace("tuberia ", "")}</td>
@@ -582,7 +665,7 @@ resumenHTMLTramosDF += `</tbody></table>`;
 
 const tablasHTMLDF = `
 <div class="contenedor-tablas">
-  ${resumenHTMLTramosD}
+  ${resumenHTMLTramosDF}
 </div>`;
 
 // --- Mostrar en la ventana ---
@@ -737,7 +820,7 @@ nuevaVentana.document.write(`
   </style>
 </head>
 <body>
-  <h3>Resultado:</h3>
+  <h3>Resumen de resultados:</h3>
   <ul>
     <li><strong>Volumen:</strong> ${vol}</li>
     <li><strong>Flujo volumen:</strong> ${flujoVol}</li>
@@ -765,7 +848,7 @@ nuevaVentana.document.write(`
 <h3 class="toggle-header">Desnatadores</h3>
 <div class="toggle-content">
   ${desnatadorHTML}
-  ${cuartoHTML}
+  ${cuartoHTMLD}
   ${disparoHTMLD}
 <div class="contenedor-flex">
   <div>
@@ -780,7 +863,15 @@ nuevaVentana.document.write(`
 <h3 class="toggle-header">Dren de fondo</h3>
 <div class="toggle-content">
   ${drenFondoHTML}
+  ${cuartoHTMLDF}
+  <div class="contenedor-flex">
+  <div>
     <h4 class="explosion-titulo">Explosión de materiales:</h4>  ${tablasHTMLDF}
+  </div>
+  <div class="sumatoria-container">
+    ${sumatoriaHTMLDF}
+  </div>
+</div>
 </div>
 
 <style>
@@ -1011,7 +1102,7 @@ function retorno(flujoMaximo, tipoRetorno) {
 
     const numRetornos = Math.ceil(flujoMaximo / (tipoRetorno === "2.0" ? 40 : 26));
     const flujoPorRetorno = flujoMaximo / numRetornos;
-    const longitudTotal = Math.sqrt(area) * 4;
+    const longitudTotal = Math.sqrt(area) * 3.5;
     const longitudEntreRetornos = longitudTotal / numRetornos;
     const resultadoR = [];
     let sumaCargaTramos = 0;  // Acumulador fuera del ciclo
@@ -1379,7 +1470,7 @@ function desnatador(flujoMaximo, tipoDesnatador) {
         numDesnatadorFinal = Math.ceil(flujoMaximo / 35); 
     }
     flujoPorDesnatador = flujoMaximo / numDesnatadorFinal;
-    const longitudTotal = Math.sqrt(area) * 4;
+    const longitudTotal = Math.sqrt(area) * 3.5;
     const longitudEntreDesnatadores = longitudTotal / numDesnatadorFinal;
     const resultadoD = [];
     let sumaCargaTramos = 0;  // Acumulador fuera del ciclo
@@ -1415,6 +1506,68 @@ function desnatador(flujoMaximo, tipoDesnatador) {
     const raizArea = Math.sqrt(area);
     let sumaLongitudes = 0;
     let siguienteUmbral = raizArea;
+
+// --- Tramo especial: distancia al cuarto de máquinas ---
+const distanciaCMD = parseFloat(document.getElementById("distCuarto").value) || 0; // m
+if (distanciaCMD > 0) {
+    let flujoCMD = flujoMaximo; // todo el flujo entra a este tramo
+    let diametroCMD = null;
+    let velocidadCMD = -Infinity;
+    let cargaCMD = null;
+    let mejorTubCMD = null;
+    let mejorVelCMD = null;
+    let mejorCargaCMD = null;
+
+    for (let tub in diametros) {
+        const d = diametros[tub];
+        const vel = flujoCMD * 0.408498 / (d * d);
+        mejorTubCMD = tub;
+        mejorVelCMD = vel;
+        mejorCargaCMD = 10.536 * 100 * Math.pow(flujoCMD, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
+
+        if (vel <= 4.5 && vel > velocidadCMD) {
+            diametroCMD = tub;
+            velocidadCMD = vel;
+            cargaCMD = mejorCargaCMD;
+        }
+    }
+
+    if (!diametroCMD) {
+        diametroCMD = mejorTubCMD;
+        velocidadCMD = mejorVelCMD;
+        cargaCMD = mejorCargaCMD;
+    }
+
+    const longitudCMD_ft = distanciaCMD * 3.281;
+    const cargaTramoCMD = (longitudCMD_ft * cargaCMD) / 100;
+
+    // Suponemos codos y tees estándar (ejemplo: 0 o 1)
+    const cantidadCodosCMD = 1;
+    const longEqCodoCMD = codo[diametroCMD];
+    const cargaCodoCMD = (longEqCodoCMD * cargaCMD) / 100;
+
+    const cantidadTeesCMD = 0;
+    const longEqTeeCMD = 0;
+    const cargaTeeCMD = 0;
+
+    const cargaTotalCMD = cargaTramoCMD + cargaCodoCMD + cargaTeeCMD;
+    const tablaDistanciaCMD = {
+        distanciaCMD: distanciaCMD.toFixed(2),
+        flujoCMD: flujoCMD.toFixed(2),
+        tuberiaCMD: diametroCMD,
+        velocidadCMD: velocidadCMD.toFixed(2),
+        cargaBaseCMD: cargaCMD.toFixed(2),
+        cargaTramoCMD: cargaTramoCMD.toFixed(2),
+        cantidadCodosCMD: cantidadCodosCMD,
+        longEqCodoCMD: longEqCodoCMD.toFixed(2),
+        cargaCodoCMD: cargaCodoCMD.toFixed(2),
+        cargaTotalCMD: cargaTotalCMD.toFixed(2)
+    };
+
+    // Agregar a resumen de materiales
+    if (!resumenTramosD[diametroCMD]) resumenTramosD[diametroCMD] = { tuberia_m: 0, tees: 0, codos: 0, reducciones: 0 };
+    resumenTramosD[diametroCMD].tuberia_m += distanciaCMD;
+    resumenTramosD[diametroCMD].codos += cantidadCodosCMD;
 
         for (let i = 0; i < numDesnatadorFinal; i++) {
         let flujoActual = flujoRestante;
@@ -1587,7 +1740,8 @@ function desnatador(flujoMaximo, tipoDesnatador) {
 
         // Al final:
         const sumaFinal = sumaCargaTramos + cargaDisparoTotal;
-        return { resultadoD, sumaFinal, resumenTramosD, resumenDisparosD };
+        return { resultadoD, sumaFinal, resumenTramosD, resumenDisparosD, tablaDistanciaCMD };
+    }
 }
 
 function drenFondo(flujoMaximo, tipoDrenFondo) {
@@ -1691,39 +1845,8 @@ function drenFondo(flujoMaximo, tipoDrenFondo) {
 
         // === Cálculos básicos ===
     const raizArea = Math.sqrt(area);
-    const longitudInicial = raizArea / 2; // tramo inicial
-    const longitudEntreDrenes = raizArea / (numDrenFondoFinal + 1);
-
-    // === Velocidad y diámetro para tramo inicial (≤ 6.5 ft/s) ===
-    let tuberiaInicial = null;
-    let velocidadInicial = -Infinity;
-    for (let tub in diametros) {
-        const d = diametros[tub];
-        const vel = flujoMaximo * 0.408498 / (d * d);
-        if (vel <= 6.5 && vel > velocidadInicial) {
-            velocidadInicial = vel;
-            tuberiaInicial = tub;
-        }
-    }
-
-    // === Velocidades y diámetros para drenes (≤ 4.5 ft/s) ===
     const flujoPorDren = flujoMaximo / numDrenFondoFinal;
-
-    let mejorTuberiaDren = null;
-    let velocidadDrenSeleccionada = -Infinity;
-    for (let tub in diametros) {
-        const d = diametros[tub];
-        const vel = flujoPorDren * 0.408498 / (d * d);
-        if (vel <= 4.5 && vel > velocidadDrenSeleccionada) {
-            velocidadDrenSeleccionada = vel;
-            mejorTuberiaDren = tub;
-        }
-    }
-
-    // === Codos y Tees ===
-    const totalCodos = 2;
-    const totalTees = numDrenFondoFinal - 1;
-
+    const longitudEntreDrenes = raizArea / (numDrenFondoFinal + 1);
     const resultadoDF = [];
     let sumaCargaTramos = 0;  // Acumulador fuera del ciclo
     let flujoRestante = flujoMaximo;
@@ -1738,6 +1861,68 @@ function drenFondo(flujoMaximo, tipoDrenFondo) {
     const addDiam = (obj, d) => {
         if (!obj[d]) obj[d] = { tuberia_m: 0, tees: 0, codos: 0, reducciones: 0 };
         };
+
+// --- Tramo especial: distancia al cuarto de máquinas ---
+const distanciaCMDF = parseFloat(document.getElementById("distCuarto").value) || 0; // m
+if (distanciaCMDF > 0) {
+    let flujoCMDF = flujoMaximo; // todo el flujo entra a este tramo
+    let diametroCMDF = null;
+    let velocidadCMDF = -Infinity;
+    let cargaCMDF = null;
+    let mejorTubCMDF = null;
+    let mejorVelCMDF = null;
+    let mejorCargaCMDF = null;
+
+    for (let tub in diametros) {
+        const d = diametros[tub];
+        const vel = flujoCMDF * 0.408498 / (d * d);
+        mejorTubCMDF = tub;
+        mejorVelCMDF = vel;
+        mejorCargaCMDF = 10.536 * 100 * Math.pow(flujoCMDF, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
+
+        if (vel <= 6.5 && vel > velocidadCMDF) {
+            diametroCMDF = tub;
+            velocidadCMDF = vel;
+            cargaCMDF = mejorCargaCMDF;
+        }
+    }
+
+    if (!diametroCMDF) {
+        diametroCMDF = mejorTubCMDF;
+        velocidadCMDF = mejorVelCMDF;
+        cargaCMDF = mejorCargaCMDF;
+    }
+
+    const longitudCMDF_ft = distanciaCMDF * 3.281;
+    const cargaTramoCMDF = (longitudCMDF_ft * cargaCMDF) / 100;
+
+    // Suponemos codos y tees estándar (ejemplo: 0 o 1)
+    const cantidadCodosCMDF = 1;
+    const longEqCodoCMDF = codo[diametroCMDF];
+    const cargaCodoCMDF = (longEqCodoCMDF * cargaCMDF) / 100;
+
+    const cantidadTeesCMDF = 0;
+    const longEqTeeCMDF = 0;
+    const cargaTeeCMDF = 0;
+
+    const cargaTotalCMDF = cargaTramoCMDF + cargaCodoCMDF + cargaTeeCMDF;
+    const tablaDistanciaCMDF = {
+        distanciaCMDF: distanciaCMDF.toFixed(2),
+        flujoCMDF: flujoCMDF.toFixed(2),
+        tuberiaCMDF: diametroCMDF,
+        velocidadCMDF: velocidadCMDF.toFixed(2),
+        cargaBaseCMDF: cargaCMDF.toFixed(2),
+        cargaTramoCMDF: cargaTramoCMDF.toFixed(2),
+        cantidadCodosCMDF: cantidadCodosCMDF,
+        longEqCodoCMDF: longEqCodoCMDF.toFixed(2),
+        cargaCodoCMDF: cargaCodoCMDF.toFixed(2),
+        cargaTotalCMDF: cargaTotalCMDF.toFixed(2)
+    };
+
+        // Agregar a resumen de materiales
+    if (!resumenTramosDF[diametroCMDF]) resumenTramosDF[diametroCMDF] = { tuberia_m: 0, tees: 0, codos: 0, reducciones: 0 };
+    resumenTramosDF[diametroCMDF].tuberia_m += distanciaCMDF;
+    resumenTramosDF[diametroCMDF].codos += cantidadCodosCMDF;
 
         for (let i = 0; i < numDrenFondoFinal; i++) {
         let flujoActual = flujoRestante;
@@ -1801,10 +1986,18 @@ function drenFondo(flujoMaximo, tipoDrenFondo) {
         const cargaTramoRow = (longitudEntreDrenes / 0.3048) * (cargaSeleccionada / 100);
         const cantidadTees = (tipoAccesorio === "tee") ? 1 : 0;          // 1 tee en tramos intermedios
         const codosBase = (tipoAccesorio === "codo") ? 1 : 0;            // 1 codo en el último tramo
+        const totalCodosFila = codosBase + 0;                    // codos base + codos extra por √area
         const cantidadReducciones = (longitudEqReduccion > 0) ? 1 : 0;    // 1 si cambió el diámetro respecto al tramo anterior
+        let longEqCodoExtraRow = 1 * longEqCodoUnit;
+        let cargaCodoExtraRow = (longEqCodoExtraRow * cargaSeleccionada) / 100;
+
+        // Codo total mostrado en la fila (base + extras)
+        let longEqCodoTotalRow = longEqCodoBaseRow + longEqCodoExtraRow;
+        let cargaCodoTotalRow = cargaCodoBaseRow + cargaCodoExtraRow;
 
         // Carga total de la fila (tubería + tee + codo total + reducción)
-        const cargaTotalFilaNum = +(cargaTramoRow + cargaTeeRow + cargaCodoBaseRow + cargaReduccion).toFixed(2);
+        const cargaTotalFilaNum = +(cargaTramoRow + cargaTeeRow + cargaCodoTotalRow + cargaReduccion).toFixed(2);
+        const cargaTotal2 = cargaTotalFilaNum + 0;
 
         // === Resumen por diámetro (materiales del tramo) ===
         addDiam(resumenTramosDF, diametroSeleccionado);
@@ -1830,9 +2023,9 @@ function drenFondo(flujoMaximo, tipoDrenFondo) {
             cargaTee: cargaTeeRow.toFixed(2),
 
             // Codo mostrado siempre como TOTAL (base + extra si los hubo)
-            cantidadCodos: totalCodos,
+            cantidadCodos: totalCodosFila,
             longEqCodo: longEqCodoUnit.toFixed(2),
-            cargaCodo: cargaCodoBaseRow.toFixed(2),
+            cargaCodo: cargaCodoTotalRow.toFixed(2),
 
             // Reducción entre tramos
             cantidadReducciones: cantidadReducciones,
@@ -1842,6 +2035,7 @@ function drenFondo(flujoMaximo, tipoDrenFondo) {
             // Total de la fila (incluye codos extra si hubo)
             cargaTotal: cargaTotalFilaNum.toFixed(2),
 
+            cargaTotal2: cargaTotal2
         });
 
         // Acumulados
@@ -1854,8 +2048,9 @@ function drenFondo(flujoMaximo, tipoDrenFondo) {
         }
 
         // Al final:
-        const sumaFinal = sumaCargaTramos;
-        return { resultadoDF, sumaFinal, resumenTramosDF };
+        const sumaFinal = sumaCargaTramos + parseFloat(tablaDistanciaCMDF.cargaTotalCMDF);
+        return { resultadoDF, sumaFinal, resumenTramosDF, tablaDistanciaCMDF };
+    }
 }
 
 const temperatura = {
