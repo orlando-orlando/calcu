@@ -836,6 +836,254 @@ const tablasHTMLDC = `
   ${resumenHTMLTramosDC}
 </div>`;
 
+
+    const tipoBarredora = document.getElementById("barredora").value;
+    const barredoraDatos = barredora(flujoMax, tipoBarredora);
+    const { resultadoB, resumenTramosB, resumenDisparosB, tablaDistanciaCMB } = barredoraDatos;
+    const disparoB = resultadoB[0];
+    const flujoDisparoB = disparoB.flujoDisparo;
+    const diametroDisparoB = disparoB.diametroDisparo;
+    const velocidadDisparoB = disparoB.velocidadDisparo;
+    const cargaBaseDisparoB = disparoB.cargaBaseDisparo;
+    const cargaDisparoB = disparoB.cargaDisparo;
+    const longitudDisparoB = disparoB.longitudDisparo;
+    const longEqCodoDisparoB = disparoB.longEqCodoDisparo;
+    const cargaCodoDisparoB = disparoB.cargaCodoDisparo;
+    const longEqReduccionDisparoB = disparoB.longEqReduccionDisparo;
+    const cargaReduccionDisparoB = disparoB.cargaReduccionDisparo;
+    const cargaDisparoTotalB = disparoB.cargaDisparoTotal;
+
+let barredoraHTML = `
+<table class="tabla-retornos" border="1" cellpadding="4" cellspacing="0">
+  <caption class="subtitulo-retornos">TRAMO BARREDORAS</caption>
+  <thead>
+    <tr>
+      <th>Número barredora</th>
+      <th>Flujo tramo (gpm)</th>
+      <th>Diámetro tubería tramo (in)</th>
+      <th>Velocidad tramo (ft/s)</th>
+      <th>Carga base tramo (ft/100ft)</th>
+      <th>Longitud tramo (m)</th>
+      <th>Carga tramo (ft)</th>
+      <th>Cantidad Tees</th>
+      <th>L. Eq. Tee (ft)</th>
+      <th>Carga Tee (ft)</th>
+      <th>Cantidad Codos</th>
+      <th>L. Eq. Codo (ft)</th>
+      <th>Carga Codo (ft)</th>
+      <th>Cantidad Reducciones</th>
+      <th>L. Eq. Reducción (ft)</th>
+      <th>Carga Reducción (ft)</th>
+      <th><strong>Carga tramo total (ft)</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+`;
+let sumaCargaTotalB = 0;
+resultadoB.forEach(dato => {
+  barredoraHTML += `
+    <tr>
+      <td>${dato.tramo}</td>
+      <td>${dato.flujo}</td>
+      <td>${dato.tuberia}</td>
+      <td>${dato.velocidad}</td>
+      <td>${dato.cargaBase}</td>
+      <td>${dato.longitud}</td>
+      <td>${dato.cargaTramo}</td>
+      <td>${dato.cantidadTees}</td>
+      <td>${dato.longEqTee}</td>
+      <td>${dato.cargaTee}</td>
+      <td>${dato.cantidadCodos}</td>
+      <td>${dato.longEqCodo}</td>
+      <td>${dato.cargaCodo}</td>
+      <td>${dato.cantidadReducciones}</td>
+      <td>${dato.longEqReduccion}</td>
+      <td>${dato.cargaReduccion}</td>
+      <td><strong>${dato.cargaTotal}</strong></td>
+    </tr>
+  `;
+  sumaCargaTotalB += parseFloat(dato.cargaTotal);
+});
+barredoraHTML += `
+  <tr>
+    <td colspan="16" style="text-align: right;"><strong>Sumatoria carga tramo barredoras (ft):</strong></td>
+    <td><strong>${sumaCargaTotalB.toFixed(2)}</strong></td>
+    </tr>`;
+    barredoraHTML += `</tbody></table>`;
+
+    cuartoHTMLB = `
+    <table class="tabla-retornos" border="1" cellpadding="4" cellspacing="0">
+    <caption class="subtitulo-retornos">TRAMO DE TUBERIA DEL CUARTO DE MAQUINAS AL CUERPO DE AGUA</caption>
+            <thead>
+                <tr>
+                    <th>Flujo<br>tramo (gpm)</th>
+                    <th>Diámetro<br>tubería tramo (in)</th>
+                    <th>Velocidad<br>tramo (ft/s)</th>
+                    <th>Carga Base<br>tramo (ft/100ft)</th>
+                    <th>Longitud<br>tramo (m)</th>
+                    <th>Carga<br>Tramo (ft)</th>
+                    <th>Cantidad<br>Codos</th>
+                    <th>L. Eq.<br>Codo (ft)</th>
+                    <th>Carga<br>Codo (ft)</th>
+                    <th>Carga<br>tramo total (ft)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>${tablaDistanciaCMB.flujoCMB}</td>
+                    <td>${tablaDistanciaCMB.tuberiaCMB}</td>
+                    <td>${tablaDistanciaCMB.velocidadCMB}</td>
+                    <td>${tablaDistanciaCMB.cargaBaseCMB}</td>
+                    <td>${tablaDistanciaCMB.distanciaCMB}</td>
+                    <td>${tablaDistanciaCMB.cargaTramoCMB}</td>
+                    <td>1</td>
+                    <td>${tablaDistanciaCMB.longEqCodoCMB}</td>
+                    <td>${tablaDistanciaCMB.cargaCodoCMB}</td>
+                    <td><strong>${tablaDistanciaCMB.cargaTotalCMB}</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="9" style="text-align: right;"><strong>Carga tramo a cuarto de máquinas (ft):</strong></td>
+                    <td><strong>${tablaDistanciaCMB.cargaTotalCMB}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    `;
+let disparoHTMLB = `
+    <table class="tabla-retornos" border="1" cellpadding="4" cellspacing="0">
+    <caption class="subtitulo-retornos">TRAMO DE DISPARO TUBERIA PRINCIPAL A BARREDORA</caption>
+  <thead>
+    <tr>
+      <th>Flujo<br>tramo (gpm)</th>
+      <th>Diámetro<br>tubería tramo (in)</th>
+      <th>Velocidad<br>tramo (ft/s)</th>
+      <th>Carga base<br>tramo (ft/100ft)</th>
+      <th>Longitud<br>tramo (m)</th>
+      <th>Carga<br>tramo (ft)</th>
+      <th>Cantidad<br>Codos</th>
+      <th>L. Eq.<br>Codo (ft)</th>
+      <th>Carga<br>Codo (ft)</th>
+      <th>Cantidad<br>Reducciones</th>
+      <th>L. Eq.<br>Reducción (ft)</th>
+      <th>Carga<br>Reducción (ft)</th>
+      <th>Carga<br>disparo total (ft)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>${flujoDisparoB.toFixed(2)}</td>
+      <td>${diametroDisparoB}</td>
+      <td>${velocidadDisparoB.toFixed(2)}</td>
+      <td>${cargaBaseDisparoB.toFixed(2)}</td>
+      <td>${longitudDisparoB.toFixed(2)}</td>
+      <td>${cargaDisparoB.toFixed(2)}</td>
+      <td>1</td>
+      <td>${longEqCodoDisparoB.toFixed(2)}</td>
+      <td>${cargaCodoDisparoB.toFixed(2)}</td>
+      <td>${longEqReduccionDisparoB !== 0 ? 1 : 0}</td>
+      <td>${longEqReduccionDisparoB.toFixed(2)}</td>
+      <td>${cargaReduccionDisparoB.toFixed(2)}</td>
+      <td><strong>${cargaDisparoTotalB.toFixed(2)}</strong></td>
+        </tr>
+                <tr>
+                    <td colspan="12" style="text-align: right;"><strong>Carga tramo disparos (ft):</strong></td>
+                    <td><strong>${cargaDisparoTotalB.toFixed(2)}</strong></td>
+                </tr>
+        </tbody>
+</table>
+`;
+
+let sumatoriaHTMLB = `
+<div style="width: 350px;">
+  <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; text-align:right;">
+    <thead>
+      <tr>
+        <th colspan="2" style="text-align:center; background:#f5f5f5;">Sumatoria de cargas</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="font-weight:bold; text-align:left;">Carga tramo barredoras (ft):</td>
+            <td>${sumaCargaTotalB.toFixed(2)} ft</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold; text-align:left;">Carga a cuarto de máquinas (ft):</td>
+            <td>${parseFloat(tablaDistanciaCMB.cargaTotalCMB).toFixed(2)} ft</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold; text-align:left;">Carga disparos (ft):</td>
+            <td>${cargaDisparoTotalB.toFixed(2)} ft</td>
+        </tr>
+        <tr>
+            <td style="font-weight:bold; text-align:left;">Carga accesorio barredoras (ft):</td>
+            <td>${(1.5).toFixed(2)} ft</td>
+        </tr>
+        <tr style="background:#f5f5f5; font-weight:bold;">
+            <td style="text-align:left;">Carga dinámica total (ft):</td>
+            <td>${(sumaCargaTotalB + cargaDisparoTotalB + parseFloat(tablaDistanciaCMB.cargaTotalCMB) + 1.5).toFixed(2)} ft</td>
+        </tr>
+    </tbody>
+  </table>
+</div>
+`;
+
+let resumenHTMLTramosB = `
+<table class="tabla-ajustada redondeada" border="1" cellpadding="4" cellspacing="0">
+  <thead>
+    <tr>
+      <th colspan="5" style="text-align:center; background:#eaeaea;">TRAMOS</th>
+    </tr>
+    <tr>
+      <th>Diámetro (in)</th>
+      <th>Tubería (m)</th>
+      <th>Tees</th>
+      <th>Codos</th>
+      <th>Reducciones</th>
+    </tr>
+  </thead>
+  <tbody>`;
+for (const [diam, r] of Object.entries(resumenTramosB)) {
+    resumenHTMLTramosB += `
+    <tr>
+      <td>${diam.replace("tuberia ", "")}</td>
+      <td>${r.tuberia_m.toFixed(2)}</td>
+      <td>${r.tees}</td>
+      <td>${r.codos}</td>
+      <td>${r.reducciones}</td>
+    </tr>`;
+}
+resumenHTMLTramosB += `</tbody></table>`;
+let resumenHTMLDisparosB = `
+<table class="tabla-ajustada redondeada" border="1" cellpadding="4" cellspacing="0">
+  <thead>
+    <tr>
+      <th colspan="5" style="text-align:center; background:#eaeaea;">DISPAROS A BARREDORA</th>
+    </tr>
+    <tr>
+      <th>Diámetro (in)</th>
+      <th>Tubería (m)</th>
+      <th>Tees</th>
+      <th>Codos</th>
+      <th>Reducciones</th>
+    </tr>
+  </thead>
+  <tbody>`;
+for (const [diam, r] of Object.entries(resumenDisparosB)) {
+    resumenHTMLDisparosB += `
+    <tr>
+      <td>${diam.replace("tuberia ", "")}</td>
+      <td>${r.tuberia_m.toFixed(2)}</td>
+      <td>${r.tees}</td>
+      <td>${r.codos}</td>
+      <td>${r.reducciones}</td>
+    </tr>`;
+}
+resumenHTMLDisparosB += `</tbody></table>`;
+const tablasHTMLB = `
+<div class="contenedor-tablas">
+  ${resumenHTMLTramosB}
+  ${resumenHTMLDisparosB}
+</div>`;
+
 // --- Mostrar en la ventana ---
 const nuevaVentana = window.open("", "_blank", `width=${window.screen.width},height=${window.screen.height},left=0,top=0,resizable=yes,scrollbars=yes`);
 nuevaVentana.document.write(`
@@ -1052,6 +1300,21 @@ nuevaVentana.document.write(`
   </div>
   <div class="sumatoria-container">
     ${sumatoriaHTMLDC}
+  </div>
+</div>
+</div>
+
+<h3 class="toggle-header">Barredoras</h3>
+<div class="toggle-content">
+  ${barredoraHTML}
+  ${cuartoHTMLB}
+  ${disparoHTMLB}
+<div class="contenedor-flex">
+  <div>
+    <h4 class="explosion-titulo">Explosión de materiales:</h4>    ${tablasHTMLB}
+  </div>
+  <div class="sumatoria-container">
+    ${sumatoriaHTMLB}
   </div>
 </div>
 </div>
@@ -2626,37 +2889,74 @@ function barredora(flujoMaximo, tipoBarredora) {
         "tuberia 18.00": 55.0
     };
 
-    const numBarredoras = Math.ceil(flujoMaximo / (tipoRetorno === "2.0" ? 40 : 26));
-    const flujoPorRetorno = flujoMaximo / numRetornos;
+    // === Cálculo de barredoras ===
+    const mangueraBarredora = parseFloat(document.getElementById("mangueraBarredora").value) || 0; // largo en m
+    const largoMangueraFinal = mangueraBarredora - (mangueraBarredora * 0.05);
+    const areaSemiCirculo = (Math.PI * Math.pow(largoMangueraFinal, 2)) / 2;
+    let numBarredoraA = area / areaSemiCirculo;
+    let numBarredoraB = Math.sqrt(area) / (largoMangueraFinal * 2);
+    // Selección según la condición
+    let numBarredoras;
+    if (largoMangueraFinal > Math.sqrt(area)) {
+        numBarredoras = numBarredoraB;
+    } else {
+        numBarredoras = numBarredoraA;
+    }
+    numBarredoras = Math.ceil(numBarredoras); 
+    const flujoMaximoAjustado = (flujoMaximo > 180) ? 180 : flujoMaximo;
+    const flujoPorBarredora = flujoMaximoAjustado / numBarredoras;
     const longitudTotal = Math.sqrt(area) * 3.5;
-    const longitudEntreRetornos = longitudTotal / numRetornos;
-    const resultadoR = [];
+    const longitudEntreBarredoras = longitudTotal / numBarredoras;
+    const resultadoB = [];
     let sumaCargaTramos = 0;  // Acumulador fuera del ciclo
-    let flujoRestante = flujoMaximo;
+    let flujoRestante = flujoMaximoAjustado;
     let diametroAnterior = null;
     const profMin = parseFloat(document.getElementById("profMin").value) || 0;
     const profMax = parseFloat(document.getElementById("profMax").value) || 0;
     const profundidad = Math.max(profMin, profMax); 
-    const longitudDisparo = ((profundidad / 2) + 1); 
+    let diametroMax = 0; // Guardamos el diámetro máximo encontrado
+    const longitudDisparo = ((profundidad - 0.3) + 1); 
     const longitudDisparoFt = longitudDisparo / 0.3048;
-    const tuberiaDisparo = tipoRetorno === "2.0" ? "tuberia 2.00" : "tuberia 1.50";
-    const cargaDisparoBase = 10.536 * 100 * Math.pow(flujoPorRetorno, 1.852) / (Math.pow(diametros[tuberiaDisparo], 4.8655) * Math.pow(150, 1.852));
+
+    // === Selección del diámetro del disparo con restricción de velocidad ≤ 8 ft/s ===
+    let tuberiaDisparo = null;
+    let velocidadDisparoSel = -Infinity;
+    let cargaDisparoSel = null;
+    for (let tub in diametros) {
+        const d = diametros[tub];
+        const vel = flujoPorBarredora * 0.408498 / (d * d);
+        const carga = 10.536 * 100 * Math.pow(flujoPorBarredora, 1.852) /
+                    (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
+
+        if (vel <= 8.0 && vel > velocidadDisparoSel) {
+            tuberiaDisparo = tub;
+            velocidadDisparoSel = vel;
+            cargaDisparoSel = carga;
+        }
+    }
+    // Si ninguno cumple, elegir el más grande
+    if (!tuberiaDisparo) {
+        tuberiaDisparo = "tuberia 18.00";
+        const d = diametros[tuberiaDisparo];
+        velocidadDisparoSel = flujoPorBarredora * 0.408498 / (d * d);
+        cargaDisparoSel = 10.536 * 100 * Math.pow(flujoPorBarredora, 1.852) /
+                        (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
+    }
+    // === Cálculo de cargas del disparo ===
+    const cargaDisparoBase = cargaDisparoSel;
     const cargaDisparoTramo = (longitudDisparoFt * cargaDisparoBase) / 100;
     const cargaDisparoCodo = (codo[tuberiaDisparo] * cargaDisparoBase) / 100;
-    let diametroMax = 0; // Guardamos el diámetro máximo encontrado
-
-    // Si el diámetro del disparo es distinto al diámetro del último tramo, hay reducción
     let cargaDisparoReduccion = 0;
     let longEqReduccionDisparo = 0;
     if (diametroAnterior && diametroAnterior !== tuberiaDisparo) {
         longEqReduccionDisparo = reduccion[tuberiaDisparo];
         cargaDisparoReduccion = (longEqReduccionDisparo * cargaDisparoBase) / 100;
-        }
+    }
     const cargaDisparoTotal = cargaDisparoTramo + cargaDisparoCodo + cargaDisparoReduccion;
 
     // === Resumen por diámetro ===
-    const resumenTramosR = {};
-    const resumenDisparosR = {};
+    const resumenTramosB = {};
+    const resumenDisparosB = {};
     const addDiam = (obj, d) => {
         if (!obj[d]) obj[d] = { tuberia_m: 0, tees: 0, codos: 0, reducciones: 0 };
         };
@@ -2666,71 +2966,71 @@ function barredora(flujoMaximo, tipoBarredora) {
     let siguienteUmbral = raizArea;
 
 // --- Tramo especial: distancia al cuarto de máquinas ---
-const distanciaCM = parseFloat(document.getElementById("distCuarto").value) || 0; // m
-if (distanciaCM > 0) {
-    let flujoCM = flujoMaximo; // todo el flujo entra a este tramo
-    let diametroCM = null;
-    let velocidadCM = -Infinity;
-    let cargaCM = null;
-    let mejorTubCM = null;
-    let mejorVelCM = null;
-    let mejorCargaCM = null;
+const distanciaCMB = parseFloat(document.getElementById("distCuarto").value) || 0; // m
+if (distanciaCMB > 0) {
+    let flujoCMB = flujoMaximoAjustado; // todo el flujo entra a este tramo
+    let diametroCMB = null;
+    let velocidadCMB = -Infinity;
+    let cargaCMB = null;
+    let mejorTubCMB = null;
+    let mejorVelCMB = null;
+    let mejorCargaCMB = null;
 
     for (let tub in diametros) {
         const d = diametros[tub];
-        const vel = flujoCM * 0.408498 / (d * d);
-        mejorTubCM = tub;
-        mejorVelCM = vel;
-        mejorCargaCM = 10.536 * 100 * Math.pow(flujoCM, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
+        const vel = flujoCMB * 0.408498 / (d * d);
+        mejorTubCMB = tub;
+        mejorVelCMB = vel;
+        mejorCargaCMB = 10.536 * 100 * Math.pow(flujoCMB, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
 
-        if (vel <= 6.5 && vel > velocidadCM) {
-            diametroCM = tub;
-            velocidadCM = vel;
-            cargaCM = mejorCargaCM;
+        if (vel <= 8.0 && vel > velocidadCMB) {
+            diametroCMB = tub;
+            velocidadCMB = vel;
+            cargaCMB = mejorCargaCMB;
         }
     }
 
-    if (!diametroCM) {
-        diametroCM = mejorTubCM;
-        velocidadCM = mejorVelCM;
-        cargaCM = mejorCargaCM;
+    if (!diametroCMB) {
+        diametroCMB = mejorTubCMB;
+        velocidadCMB = mejorVelCMB;
+        cargaCMB = mejorCargaCMB;
     }
 
-    const longitudCM_ft = distanciaCM * 3.281;
-    const cargaTramoCM = (longitudCM_ft * cargaCM) / 100;
+    const longitudCMB_ft = distanciaCMB * 3.281;
+    const cargaTramoCMB = (longitudCMB_ft * cargaCMB) / 100;
 
     // Suponemos codos y tees estándar (ejemplo: 0 o 1)
-    const cantidadCodosCM = 1;
-    const longEqCodoCM = codo[diametroCM];
-    const cargaCodoCM = (longEqCodoCM * cargaCM) / 100;
+    const cantidadCodosCMB = 1;
+    const longEqCodoCMB = codo[diametroCMB];
+    const cargaCodoCMB = (longEqCodoCMB * cargaCMB) / 100;
 
-    const cantidadTeesCM = 0;
-    const longEqTeeCM = 0;
-    const cargaTeeCM = 0;
+    const cantidadTeesCMB = 0;
+    const longEqTeeCMB = 0;
+    const cargaTeeCMB = 0;
 
-    const cargaTotalCM = cargaTramoCM + cargaCodoCM + cargaTeeCM;
-    const tablaDistanciaCM = {
-        distanciaCM: distanciaCM.toFixed(2),
-        flujoCM: flujoCM.toFixed(2),
-        tuberiaCM: diametroCM,
-        velocidadCM: velocidadCM.toFixed(2),
-        cargaBaseCM: cargaCM.toFixed(2),
-        cargaTramoCM: cargaTramoCM.toFixed(2),
-        cantidadCodosCM: cantidadCodosCM,
-        longEqCodoCM: longEqCodoCM.toFixed(2),
-        cargaCodoCM: cargaCodoCM.toFixed(2),
-        cargaTotalCM: cargaTotalCM.toFixed(2)
+    const cargaTotalCMB = cargaTramoCMB + cargaCodoCMB + cargaTeeCMB;
+    const tablaDistanciaCMB = {
+        distanciaCMB: distanciaCMB.toFixed(2),
+        flujoCMB: flujoCMB.toFixed(2),
+        tuberiaCMB: diametroCMB,
+        velocidadCMB: velocidadCMB.toFixed(2),
+        cargaBaseCMB: cargaCMB.toFixed(2),
+        cargaTramoCMB: cargaTramoCMB.toFixed(2),
+        cantidadCodosCMB: cantidadCodosCMB,
+        longEqCodoCMB: longEqCodoCMB.toFixed(2),
+        cargaCodoCMB: cargaCodoCMB.toFixed(2),
+        cargaTotalCMB: cargaTotalCMB.toFixed(2)
     };
 
     // Agregar a resumen de materiales
-    if (!resumenTramosR[diametroCM]) resumenTramosR[diametroCM] = { tuberia_m: 0, tees: 0, codos: 0, reducciones: 0 };
-    resumenTramosR[diametroCM].tuberia_m += distanciaCM;
-    resumenTramosR[diametroCM].codos += cantidadCodosCM;
+    if (!resumenTramosB[diametroCMB]) resumenTramosB[diametroCMB] = { tuberia_m: 0, tees: 0, codos: 0, reducciones: 0 };
+    resumenTramosB[diametroCMB].tuberia_m += distanciaCMB;
+    resumenTramosB[diametroCMB].codos += cantidadCodosCMB;
 
-        for (let i = 0; i < numRetornos; i++) {
+        for (let i = 0; i < numBarredoras; i++) {
         let flujoActual = flujoRestante;
 
-        // Elegir diámetro que dé velocidad ≤ 6.5 ft/s
+        // Elegir diámetro que dé velocidad ≤ 8.0 ft/s
         let diametroSeleccionado = null;
         let velocidadSeleccionada = -Infinity;
         let cargaSeleccionada = null;
@@ -2745,7 +3045,7 @@ if (distanciaCM > 0) {
             mejorVel = velocidad;
             mejorCarga = 10.536 * 100 * Math.pow(flujoActual, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
 
-            if (velocidad <= 6.5 && velocidad > velocidadSeleccionada) {
+            if (velocidad <= 8.0 && velocidad > velocidadSeleccionada) {
             velocidadSeleccionada = velocidad;
             diametroSeleccionado = tub;
             cargaSeleccionada = mejorCarga;
@@ -2761,16 +3061,8 @@ if (distanciaCM > 0) {
         let dPulgadas = parseFloat(diametroSeleccionado.replace("tuberia ", ""));
         if (dPulgadas > diametroMax) diametroMax = dPulgadas;
 
-        // Forzar diámetro del último tramo según tipoRetorno
-        if (i === numRetornos - 1) {
-            diametroSeleccionado = (tipoRetorno === "2.0") ? "tuberia 2.00" : "tuberia 1.50";
-            const d = diametros[diametroSeleccionado];
-            velocidadSeleccionada = flujoActual * 0.408498 / (d * d);
-            cargaSeleccionada = 10.536 * 100 * Math.pow(flujoActual, 1.852) / (Math.pow(d, 4.8655) * Math.pow(150, 1.852));
-        }
-
         // --- Accesorios base para esta fila ---
-        const tipoAccesorio = (i === numRetornos - 1) ? "codo" : "tee";
+        const tipoAccesorio = (i === numBarredoras - 1) ? "codo" : "tee";
 
         // Tee (si aplica)
         let longEqTeeRow = 0;
@@ -2794,10 +3086,10 @@ if (distanciaCM > 0) {
         }
 
         // Carga por la tubería del tramo
-        const cargaTramoRow = (longitudEntreRetornos / 0.3048) * (cargaSeleccionada / 100);
+        const cargaTramoRow = (longitudEntreBarredoras / 0.3048) * (cargaSeleccionada / 100);
 
         // --- Codos extra por múltiplos de √area ---
-        sumaLongitudes += longitudEntreRetornos;       // acumulado global
+        sumaLongitudes += longitudEntreBarredoras;       // acumulado global
         let extraCount = 0;
         while (sumaLongitudes >= siguienteUmbral) {
             extraCount += 1;
@@ -2820,18 +3112,18 @@ if (distanciaCM > 0) {
         const cargaTotal2 = cargaTotalFilaNum + cargaDisparoTotal;
 
         // === Resumen por diámetro (materiales del tramo) ===
-        addDiam(resumenTramosR, diametroSeleccionado);
-        resumenTramosR[diametroSeleccionado].tuberia_m += longitudEntreRetornos;
-        if (tipoAccesorio === "tee") resumenTramosR[diametroSeleccionado].tees += 1;
-        else resumenTramosR[diametroSeleccionado].codos += 1;      // codo base del último tramo
-        resumenTramosR[diametroSeleccionado].codos += extraCount;   // codos extra (0, 1, 2, ...)
-        if (longitudEqReduccion > 0) resumenTramosR[diametroSeleccionado].reducciones += 1;
+        addDiam(resumenTramosB, diametroSeleccionado);
+        resumenTramosB[diametroSeleccionado].tuberia_m += longitudEntreBarredoras;
+        if (tipoAccesorio === "tee") resumenTramosB[diametroSeleccionado].tees += 1;
+        else resumenTramosB[diametroSeleccionado].codos += 1;      // codo base del último tramo
+        resumenTramosB[diametroSeleccionado].codos += extraCount;   // codos extra (0, 1, 2, ...)
+        if (longitudEqReduccion > 0) resumenTramosB[diametroSeleccionado].reducciones += 1;
 
         // === Resumen materiales del disparo ===
-        addDiam(resumenDisparosR, tuberiaDisparo);
-        resumenDisparosR[tuberiaDisparo].tuberia_m += longitudDisparo;
-        resumenDisparosR[tuberiaDisparo].codos += 1;
-        if (diametroSeleccionado !== tuberiaDisparo) resumenDisparosR[tuberiaDisparo].reducciones += 1;
+        addDiam(resumenDisparosB, tuberiaDisparo);
+        resumenDisparosB[tuberiaDisparo].tuberia_m += longitudDisparo;
+        resumenDisparosB[tuberiaDisparo].codos += 1;
+        if (diametroSeleccionado !== tuberiaDisparo) resumenDisparosB[tuberiaDisparo].reducciones += 1;
 
         let dDisparo = parseFloat(tuberiaDisparo.replace("tuberia ", ""));
         if (diametroMax > dDisparo) {
@@ -2843,7 +3135,7 @@ if (distanciaCM > 0) {
         }
 
         // === Empuje de la fila a la tabla 1 ===
-        resultadoR.push({
+        resultadoB.push({
             tramo: i + 1,
             flujo: flujoActual.toFixed(2),
             tuberia: diametroSeleccionado || "Ninguna cumple",
@@ -2851,7 +3143,7 @@ if (distanciaCM > 0) {
 
             cargaBase: cargaSeleccionada ? cargaSeleccionada.toFixed(2) : "N/A",
             cargaTramo: cargaSeleccionada ? cargaTramoRow.toFixed(2) : "N/A",
-            longitud: longitudEntreRetornos.toFixed(2),
+            longitud: longitudEntreBarredoras.toFixed(2),
 
             // Tee mostrado solo si aplica
             cantidadTees: cantidadTees,
@@ -2872,9 +3164,9 @@ if (distanciaCM > 0) {
             cargaTotal: cargaTotalFilaNum.toFixed(2),
 
             // Datos del disparo
-            flujoDisparo: flujoPorRetorno,
+            flujoDisparo: flujoPorBarredora,
             diametroDisparo: tuberiaDisparo,
-            velocidadDisparo: flujoPorRetorno * 0.408498 / Math.pow(diametros[tuberiaDisparo], 2),
+            velocidadDisparo: flujoPorBarredora * 0.408498 / Math.pow(diametros[tuberiaDisparo], 2),
             cargaBaseDisparo: cargaDisparoBase,
             cargaDisparo: cargaDisparoTramo,
             longitudDisparo: longitudDisparo,
@@ -2891,14 +3183,14 @@ if (distanciaCM > 0) {
         sumaCargaTramos += cargaTotalFilaNum;
 
         // Para siguiente iteración
-        flujoRestante -= flujoPorRetorno;
+        flujoRestante -= flujoPorBarredora;
         if (flujoRestante < 0) flujoRestante = 0;
         diametroAnterior = diametroSeleccionado;
         }
 
         // Al final:
-        const sumaFinal = sumaCargaTramos + cargaDisparoTotal + parseFloat(tablaDistanciaCM.cargaTotalCM);
-        return { resultadoR, sumaFinal, resumenTramosR, resumenDisparosR, tablaDistanciaCM };
+        const sumaFinal = sumaCargaTramos + cargaDisparoTotal + parseFloat(tablaDistanciaCMB.cargaTotalCMB);
+        return { resultadoB, sumaFinal, resumenTramosB, resumenDisparosB, tablaDistanciaCMB };
     }
 }
 
