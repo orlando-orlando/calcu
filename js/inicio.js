@@ -2903,7 +2903,7 @@ function barredora(flujoMaximo, tipoBarredora) {
         numBarredoras = numBarredoraA;
     }
     numBarredoras = Math.ceil(numBarredoras); 
-    const flujoMaximoAjustado = (flujoMaximo > 180) ? 180 : flujoMaximo;
+    const flujoMaximoAjustado = (flujoMaximo > 120) ? 120 : flujoMaximo;
     const flujoPorBarredora = flujoMaximoAjustado / numBarredoras;
     const longitudTotal = Math.sqrt(area) * 3.5;
     const longitudEntreBarredoras = longitudTotal / numBarredoras;
