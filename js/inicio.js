@@ -1,3 +1,228 @@
+// Objeto para guardar datos de usuario
+const datos = {};
+
+// Contenido de cada sección
+const secciones = {
+  dimensiones: `
+    <label for="area">Área (m²):</label>
+    <input type="number" id="area" step="0.01"><br>
+    <label for="profMin">Profundidad mínima (m):</label>
+    <input type="number" id="profMin" step="0.01"><br>
+    <label for="profMax">Profundidad máxima (m):</label>
+    <input type="number" id="profMax" step="0.01"><br>
+    <label for="distCuarto">Distancia al cuarto de máquinas (m):</label>
+    <input type="number" id="distCuarto" step="0.01"><br>
+    <label for="rotacion">Tasa de rotación (h):</label>
+    <select id="rotacion">
+      <option value="0.5">0.5 horas</option>
+      <option value="1">1 hora</option>
+      <option value="4">4 horas</option>
+      <option value="6">6 horas</option>
+      <option value="8">8 horas</option>
+      <option value="12">12 horas</option>
+      <option value="18">18 horas</option>
+      <option value="24">24 horas</option>
+    </select>
+  `,
+  desborde: `
+    <label><input type="checkbox" id="chkInfinity"> Infinity</label><br>
+    <label><input type="checkbox" id="chkCanal"> Canal perimetral</label><br>
+    <label><input type="checkbox" id="chkNinguno"> Ninguno</label><br>
+    <div id="campoInfinity" class="oculto">
+      <label for="largoInfinity">Largo del muro Infinity (m):</label>
+      <input type="number" id="largoInfinity" step="0.01"><br>
+      <label for="alturaDesborde">Altura desborde infinity (mm):</label>
+      <input type="number" id="alturaDesborde" step="0.01"><br>
+    </div>
+    <div id="campoCanal" class="oculto">
+      <label for="largoCanal">Largo del canal perimetral (m):</label>
+      <input type="number" id="largoCanal" step="0.01"><br>
+    </div>
+  `,
+  calentamiento: `
+    <label><input type="checkbox" id="chkBombaCalor"> Bomba de calor</label><br>
+    <label><input type="checkbox" id="chkPanel"> Panel solar</label><br>
+    <label><input type="checkbox" id="chkCaldera"> Caldera</label><br>
+    <div id="campoBombaCalor" class="oculto">
+      <label for="cargaEstaticaBC">Diferencia de altura bomba de calor (m):</label>
+      <input type="number" id="cargaEstaticaBC" step="0.01"><br>
+    </div>
+    <div id="campoPanel" class="oculto">
+      <label for="cargaEstaticaPan">Diferencia de altura panel solar (m):</label>
+      <input type="number" id="cargaEstaticaPan" step="0.01"><br>
+    </div>
+    <div id="campoCaldera" class="oculto">
+      <label for="cargaEstaticaCal">Diferencia de altura caldera (m):</label>
+      <input type="number" id="cargaEstaticaCal" step="0.01"><br>
+    </div>
+  `,
+  ubicacion: `
+    <label for="ciudad">Ciudad:</label>
+    <select id="ciudad">
+      <option value="guadalajara">Guadalajara</option>
+      <option value="mexicali">Mexicali</option>
+      <option value="losCabos">Los Cabos</option>
+      <option value="hermosillo">Hermosillo</option>
+      <option value="chihuahua">Chihuahua</option>
+      <option value="torreon">Torreón</option>
+      <option value="monterrey">Monterrey</option>
+      <option value="tampico">Tampico</option>
+      <option value="veracruz">Veracruz</option>
+      <option value="sanLuisPotosi">San Luis Potosí</option>
+      <option value="durango">Durango</option>
+      <option value="culiacan">Culiacán</option>
+      <option value="tepic">Tepic</option>
+      <option value="colima">Colima</option>
+      <option value="aguascalientes">Aguascalientes</option>
+      <option value="zacatecas">Zacatecas</option>
+      <option value="morelia">Morelia</option>
+      <option value="leon">León</option>
+      <option value="queretaro">Querétaro</option>
+      <option value="pachuca">Pachuca</option>
+      <option value="ciudadDeMexico">Ciudad de México</option>
+      <option value="acapulco">Acapulco</option>
+      <option value="cuernavaca">Cuernavaca</option>
+      <option value="puebla">Puebla</option>
+      <option value="tlaxcala">Tlaxcala</option>
+      <option value="oaxaca">Oaxaca</option>
+      <option value="villahermosa">Villahermosa</option>
+      <option value="tuxtlaGutierrez">Tuxtla Gutiérrez</option>
+      <option value="campeche">Campeche</option>
+      <option value="merida">Mérida</option>
+      <option value="cancun">Cancún</option>
+      <option value="manzanillo">Manzanillo</option>
+      <option value="puertoVallarta">Puerto Vallarta</option>
+      <option value="huatulco">Huatulco</option>
+      <option value="mazatlan">Mazatlán</option>
+      <option value="puertoPeñasco">Puerto Peñasco</option>
+      <option value="ixtapaZihuatanejo">Ixtapa / Zihuatanejo</option>
+      <option value="saltillo">Saltillo</option>
+    </select>
+  `,
+  sanitizacion: `
+    <label><input type="checkbox" id="chkGenerador"> Generador de cloro</label><br>
+    <label><input type="checkbox" id="chkOzonificador"> Ozonificador</label><br>
+    <label><input type="checkbox" id="chkLamparaUV"> Lámpara U.V.</label><br>
+  `,
+  filtracion: `
+    <label><input type="checkbox" id="chkPrefiltro"> Prefiltro</label><br>
+    <label><input type="checkbox" id="chkFiltro"> Filtro</label><br>
+  `,
+  motobomba: `
+    <label><input type="checkbox" id="chkMotobomba1V"> Motobomba 1 velocidad</label><br>
+    <label><input type="checkbox" id="chkMotobombaVV"> Motobomba velocidad variable</label><br>
+  `,
+  empotrables: `
+    <label for="retorno">Tipo boquilla de retorno:</label>
+    <select id="retorno">
+      <option value="1.5">1.5in</option>
+      <option value="2.0">2.0in</option>
+    </select><br>
+    <label for="desnatador">Tipo desnatador:</label>
+    <select id="desnatador">
+      <option value="1.5">1.5in</option>
+      <option value="2.0">2.0in</option>
+    </select><br>
+    <label for="drenFondo">Tipo dren de fondo:</label>
+    <select id="drenFondo">
+      <option value="1.5">1.5in</option>
+      <option value="2.0">2.0in</option>
+      <option value="7.5">7.5in</option>
+      <option value="8.0">8.0in</option>
+      <option value="9.0">9.0in</option>
+      <option value="12.0">12.0in</option>
+      <option value="18.0">18.0in</option>
+    </select><br>
+    <label for="drenCanal">Tipo dren de canal:</label>
+    <select id="drenCanal">
+      <option value="1.5">1.5in</option>
+      <option value="2.0">2.0in</option>
+      <option value="7.5">7.5in</option>
+      <option value="8.0">8.0in</option>
+      <option value="9.0">9.0in</option>
+    </select><br>
+    <label for="barredora">Tipo boquilla de barredora:</label>
+    <select id="barredora">
+      <option value="1.5">1.5in</option>
+      <option value="2.0">2.0in</option>
+    </select><br>
+    <label for="mangueraBarredora">Largo manguera de barredora:</label>
+    <select id="mangueraBarredora">
+      <option value="7.5">7.5m</option>
+      <option value="9.0">9.0m</option>
+      <option value="10.5">10.5m</option>
+      <option value="12.0">12.0m</option>
+      <option value="15.0">15.0m</option>
+      <option value="50.0">50.0m</option>
+    </select>
+  `
+};
+
+// Función para renderizar y restaurar valores previos
+function renderSeccion(seccion) {
+  const contenedor = document.getElementById("contenidoDerecho");
+  contenedor.innerHTML = secciones[seccion] || "Sin contenido";
+
+  // Restaurar valores previos guardados
+  for (let id in datos) {
+    const el = document.getElementById(id);
+    if (el) {
+      if (el.type === "checkbox") {
+        el.checked = datos[id];
+      } else {
+        el.value = datos[id];
+      }
+    }
+  }
+}
+
+// Listener para abrir secciones
+document.querySelectorAll(".panel-izquierdo details").forEach(det => {
+  det.addEventListener("toggle", function () {
+    if (this.open) {
+      const seccion = this.dataset.section;
+      renderSeccion(seccion);
+
+      // Cerrar los demás
+      document.querySelectorAll(".panel-izquierdo details").forEach(d => {
+        if (d !== this) d.open = false;
+      });
+    }
+  });
+});
+
+// Guardar valores al escribir/cambiar
+document.addEventListener("input", (e) => {
+  if (e.target.id) {
+    datos[e.target.id] = e.target.value;
+  }
+});
+
+document.addEventListener("change", (e) => {
+  if (e.target.id) {
+    if (e.target.type === "checkbox") {
+      datos[e.target.id] = e.target.checked;
+    } else {
+      datos[e.target.id] = e.target.value;
+    }
+  }
+});
+
+// Escucha los toggles
+document.querySelectorAll(".panel-izquierdo details").forEach(det => {
+  det.addEventListener("toggle", function () {
+    if (this.open) {
+      const seccion = this.dataset.section;
+      document.getElementById("contenidoDerecho").innerHTML = secciones[seccion] || "Sin contenido";
+      
+      // Cerrar los demás
+      document.querySelectorAll(".panel-izquierdo details").forEach(d => {
+        if (d !== this) d.open = false;
+      });
+    }
+  });
+});
+
 function calcular() {
     const vol = volumen();
     const flujoVol = flujoVolumen();
@@ -1370,9 +1595,9 @@ function mostrarCampos() {
 }
 
 function volumen() {
-    let area = parseFloat(document.getElementById('area').value) || 0;
-    let profMin = parseFloat(document.getElementById('profMin').value) || 0;
-    let profMax = parseFloat(document.getElementById('profMax').value) || 0;
+    let area = parseFloat(datos.area) || 0;
+    let profMin = parseFloat(datos.profMin) || 0;
+    let profMax = parseFloat(datos.profMax) || 0;
 
     let profProm = 0;
 
@@ -1390,18 +1615,16 @@ function volumen() {
 
 function flujoVolumen() {
     let vol = volumen();
-    let rotacion1 = document.getElementById('rotacion').value;
+    let rotacion1 = parseFloat(datos.rotacion) || 6; // si no eligió nada, que use 6h por defecto
     let flujoVolumen = parseFloat((vol * 1000 / 60 / rotacion1).toFixed(1));
     let flujoVolumen2 = parseFloat((flujoVolumen / 3.7854).toFixed(1));    
-  //  document.getElementById('flujoVolumen2').innerText = 'Flujo filtrado: ' + flujoVolumen2 + ' gpm';
     return flujoVolumen2;
 }
 
 function flujoInfinity(){
-    let muroInfinity = document.getElementById('largoInfinity').value;
-    let alturaCortina = document.getElementById('alturaDesborde').value;
-    let flujoInfinity = parseFloat((36*(muroInfinity/.3048)*((alturaCortina/25.4)**1.5)).toFixed(1));
- //   document.getElementById('flujoInfinity').innerText = 'Flujo infinity: ' + flujoInfinity + ' gpm';
+    let muroInfinity = parseFloat(datos.largoInfinity) || 0;
+    let alturaCortina = parseFloat(datos.alturaDesborde) || 0;
+    let flujoInfinity = parseFloat((36 * (muroInfinity / 0.3048) * Math.pow((alturaCortina / 25.4), 1.5)).toFixed(1));
     return flujoInfinity;
 }
 

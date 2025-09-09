@@ -2,178 +2,57 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Agua control</title>
+  <title>Agua Control</title>
   <link rel="stylesheet" href="estilos.css">
-
 </head>
 <body>
 
-  <h1>Agua control</h1>
+  <div class="contenedor">
+    <!-- Panel izquierdo -->
+    <div class="panel-izquierdo">
+      <h1>Agua Control</h1>
 
-    <h3>Ingresa dimensiones del cuerpo de agua</h3>
+      <details data-section="dimensiones">
+        <summary>Ingresa dimensiones del cuerpo de agua</summary>
+      </details>
 
-    <label for="area">Área (m²):</label>
-    <input type="number" id="area" min="1" max="15000" step="0.01" placeholder="Ingresa el área en m²"><br>
+      <details data-section="desborde">
+        <summary>¿Qué tipo de desborde llevará?</summary>
+      </details>
 
-    <label for="profMin">Profundidad mínima (m):</label>
-    <input type="number" id="profMin" min="0" max="60" step="0.01" placeholder="Ingresa la profundidad en metros"><br>
+      <details data-section="calentamiento">
+        <summary>¿Qué tipo de calentamiento llevará?</summary>
+      </details>
 
-    <label for="profMax">Profundidad máxima (m):</label>
-    <input type="number" id="profMax" min="0" max="60" step="0.01" placeholder="Ingresa la profundidad en metros"><br>
+      <details data-section="ubicacion">
+        <summary>Selecciona la ubicación</summary>
+      </details>
 
-    <label for="distCuarto">Distancia cuerpo de agua a cuarto de máquinas (m):</label>
-    <input type="number" id="distCuarto" min="0" step="0.01" placeholder="Ingresa la distancia en metros"><br>
+      <details data-section="sanitizacion">
+        <summary>Selecciona tu sanitización</summary>
+      </details>
 
-    <label for="rotacion">Tasa de rotación (h):</label>
-    <select id="rotacion">
-      <option value="0.5">0.5 horas</option>
-      <option value="1">1 hora</option>
-      <option value="4">4 horas</option>
-      <option value="6">6 horas</option>
-      <option value="8">8 horas</option>
-      <option value="12">12 horas</option>
-      <option value="18">18 horas</option>
-      <option value="24">24 horas</option>
-    </select>
+      <details data-section="filtracion">
+        <summary>Selecciona tu filtración</summary>
+      </details>
 
-    <h3>¿Qué tipo de desborde llevará?</h3>
+      <details data-section="motobomba">
+        <summary>¿Qué tipo de motobomba deseas?</summary>
+      </details>
 
-    <label><input type="checkbox" id="chkInfinity" onchange="mostrarCampos()"> Infinity</label><br>
-    <label><input type="checkbox" id="chkCanal" onchange="mostrarCampos()"> Canal perimetral</label><br>
-    <label><input type="checkbox" id="chkNinguno" onchange="mostrarCampos()"> Ninguno</label><br><br>
-      <div id="campoInfinity" class="oculto">
-      <label for="largoInfinity">Largo del muro Infinity (m):</label>
-      <input type="number" id="largoInfinity" step="0.01"><br><br>
-      <label for="alturaDesborde">Altura desborde infinity (mm):</label>
-      <input type="number" id="alturaDesborde" step="0.01"><br><br>
-      </div>
-      <div id="campoCanal" class="oculto">
-      <label for="largoCanal">Largo del canal perimetral (m):</label>
-      <input type="number" id="largoCanal" step="0.01"><br><br>
-      </div>
+      <details data-section="empotrables">
+        <summary>Selecciona tus empotrables</summary>
+      </details>
 
-    <h3>¿Qué tipo de calentamiento llevará?</h3>
+      <button onclick="calcular()">Calcular</button>
+    </div>
 
-    <label><input type="checkbox" id="chkBombaCalor" onchange="mostrarCampos()"> Bomba de calor</label><br>
-    <label><input type="checkbox" id="chkPanel" onchange="mostrarCampos()"> Panel solar</label><br>
-    <label><input type="checkbox" id="chkCaldera" onchange="mostrarCampos()"> Caldera</label><br><br>
-      <div id="campoBombaCalor" class="oculto">
-      <label for="cargaEstaticaBC">Diferencia de altura espejo de agua contra ubicación bomba de calor (m):</label>
-      <input type="number" id="cargaEstaticaBC" step="0.01"><br><br>
-      </div>
-      <div id="campoPanel" class="oculto">
-      <label for="cargaEstaticaPan">Diferencia de altura espejo de agua contra ubicación panel solar (m):</label>
-      <input type="number" id="cargaEstaticaPan" step="0.01"><br><br>
-      </div>
-      <div id="campoCaldera" class="oculto">
-      <label for="cargaEstaticaCal">Diferencia de altura espejo de agua contra ubicación caldera (m):</label>
-      <input type="number" id="cargaEstaticaCal" step="0.01"><br><br>
-      </div>
+    <!-- Panel derecho -->
+    <div class="panel-derecho" id="contenidoDerecho">
+      <p>Selecciona un apartado en el menú de la izquierda para empezar.</p>
+    </div>
+  </div>
 
-  <h3>Selecciona la ubicación</h3>
-  <label for="ciudad">Ciudad:</label>
-  <select id="ciudad">
-    <option value="guadalajara">Guadalajara</option>
-    <option value="mexicali">Mexicali</option>
-    <option value="losCabos">Los Cabos</option>
-    <option value="hermosillo">Hermosillo</option>
-    <option value="chihuahua">Chihuahua</option>
-    <option value="torreon">Torreón</option>
-    <option value="monterrey">Monterrey</option>
-    <option value="tampico">Tampico</option>
-    <option value="veracruz">Veracruz</option>
-    <option value="sanLuisPotosi">San Luis Potosí</option>
-    <option value="durango">Durango</option>
-    <option value="culiacan">Culiacán</option>
-    <option value="tepic">Tepic</option>
-    <option value="colima">Colima</option>
-    <option value="aguascalientes">Aguascalientes</option>
-    <option value="zacatecas">Zacatecas</option>
-    <option value="morelia">Morelia</option>
-    <option value="leon">León</option>
-    <option value="queretaro">Querétaro</option>
-    <option value="pachuca">Pachuca</option>
-    <option value="ciudadDeMexico">Ciudad de México</option>
-    <option value="acapulco">Acapulco</option>
-    <option value="cuernavaca">Cuernavaca</option>
-    <option value="puebla">Puebla</option>
-    <option value="tlaxcala">Tlaxcala</option>
-    <option value="oaxaca">Oaxaca</option>
-    <option value="villahermosa">Villahermosa</option>
-    <option value="tuxtlaGutierrez">Tuxtla Gutiérrez</option>
-    <option value="campeche">Campeche</option>
-    <option value="merida">Mérida</option>
-    <option value="cancun">Cancún</option>
-    <option value="manzanillo">Manzanillo</option>
-    <option value="puertoVallarta">Puerto Vallarta</option>
-    <option value="huatulco">Huatulco</option>
-    <option value="mazatlan">Mazatlán</option>
-    <option value="puertoPeñasco">Puerto Peñasco</option>
-    <option value="ixtapaZihuatanejo">Ixtapa / Zihuatanejo</option>
-    <option value="saltillo">Saltillo</option>
-  </select>
-
-      <h3>Selecciona tu santización</h3>
-    <label><input type="checkbox" id="chkGenerador"> Generador de cloro</label><br>
-    <label><input type="checkbox" id="chkOzonificador"> Ozonificador</label><br>
-    <label><input type="checkbox" id="chkLamparaUV"> Lámpara U.V.</label><br>
-    
-      <h3>Selecciona tu filtración</h3>
-    <label><input type="checkbox" id="chkPrefiltro"> Prefiltro</label><br>
-    <label><input type="checkbox" id="chkFiltro" onchange="mostrarCampos()"> Filtro</label><br>
-
-      <h3>¿Qué tipo de motobomba deseas?</h3>    
-    <label><input type="checkbox" id="chkMotobomba1V"> Motobomba 1 velocidad</label><br>
-    <label><input type="checkbox" id="chkMotobombaVV"> Motobomba velocidad variable</label><br>
-
-      <h3>Selecciona tus empotrables</h3>
-    <label for="retorno">Tipo boquilla de retorno:</label>
-    <select id="retorno">
-      <option value="1.5">1.5in</option>
-      <option value="2.0">2.0in</option>
-    </select><br>
-    <label for="desnatador">Tipo desnatador:</label>
-    <select id="desnatador">
-      <option value="1.5">1.5in</option>
-      <option value="2.0">2.0in</option>
-    </select><br>
-    <label for="drenFondo">Tipo dren de fondo:</label>
-    <select id="drenFondo">
-      <option value="1.5">1.5in</option>
-      <option value="2.0">2.0in</option>
-      <option value="7.5">7.5in</option>
-      <option value="8.0">8.0in</option>
-      <option value="9.0">9.0in</option>
-      <option value="12.0">12.0in</option>
-      <option value="18.0">18.0in</option>
-    </select><br>
-    <label for="drenCanal">Tipo dren de canal:</label>
-    <select id="drenCanal">
-      <option value="1.5">1.5in</option>
-      <option value="2.0">2.0in</option>
-      <option value="7.5">7.5in</option>
-      <option value="8.0">8.0in</option>
-      <option value="9.0">9.0in</option>
-    </select><br>
-    <label for="barredora">Tipo boquilla de barredora:</label>
-    <select id="barredora">
-      <option value="1.5">1.5in</option>
-      <option value="2.0">2.0in</option>
-    </select><br>
-    <label for="mangueraBarredora">Largo manguera de barredora:</label>
-    <select id="mangueraBarredora">
-      <option value="7.5">7.5m</option>
-      <option value="9.0">9.0m</option>
-      <option value="10.5">10.5m</option>
-      <option value="12.0">12.0m</option>
-      <option value="15.0">15.0m</option>
-      <option value="50.0">50.0m</option>
-    </select>
-
-<br><br><button onclick="calcular()">Calcular</button>
-<br><br>
-
-<script src="js/inicio.js"></script>
-
+  <script src="inicio.js"></script>
 </body>
 </html>
