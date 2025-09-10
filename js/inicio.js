@@ -208,21 +208,6 @@ document.addEventListener("change", (e) => {
   }
 });
 
-// Escucha los toggles
-document.querySelectorAll(".panel-izquierdo details").forEach(det => {
-  det.addEventListener("toggle", function () {
-    if (this.open) {
-      const seccion = this.dataset.section;
-      document.getElementById("contenidoDerecho").innerHTML = secciones[seccion] || "Sin contenido";
-      
-      // Cerrar los demás
-      document.querySelectorAll(".panel-izquierdo details").forEach(d => {
-        if (d !== this) d.open = false;
-      });
-    }
-  });
-});
-
 function calcular() {
     const vol = volumen();
     const flujoVol = flujoVolumen();
@@ -233,7 +218,7 @@ function calcular() {
     const tubSuccion = tuberiaSeleccionada(velFlujo, "succion");
     const tubDescarga = tuberiaSeleccionada(velFlujo, "descarga");
 
-    const tipoRetorno = document.getElementById("retorno").value;
+    const tipoRetorno = datos["retorno"] || "1.5";  
     const retornoDatos = retorno(flujoMax, tipoRetorno);
     const { resultadoR, resumenTramosR, resumenDisparosR, tablaDistanciaCM } = retornoDatos;
     const disparoR = resultadoR[0];
@@ -480,7 +465,7 @@ const tablasHTMLR = `
   ${resumenHTMLDisparosR}
 </div>`;
 
-    const tipoDesnatador = document.getElementById("desnatador").value;
+    const tipoDesnatador = datos["desnatador"] || "1.5";
     const desnatadorDatos = desnatador(flujoMax, tipoDesnatador);
     const { resultadoD, resumenTramosD, resumenDisparosD, tablaDistanciaCMD } = desnatadorDatos;
     const disparoD = resultadoD[0];
@@ -725,7 +710,7 @@ const tablasHTMLD = `
   ${resumenHTMLDisparosD}
 </div>`;
 
-    const tipoDrenFondo = document.getElementById("drenFondo").value;
+    const tipoDrenFondo = datos["drenFondo"] || "1.5";
     const drenFondoDatos = drenFondo(flujoMax, tipoDrenFondo);
     const { resultadoDF, resumenTramosDF, tablaDistanciaCMDF } = drenFondoDatos;
 
@@ -893,7 +878,7 @@ const tablasHTMLDF = `
   ${resumenHTMLTramosDF}
 </div>`;
 
-    const tipoDrenCanal = document.getElementById("drenCanal").value;
+    const tipoDrenCanal = datos["drenCanal"] || "1.5";  
     const drenCanalDatos = drenCanal(flujoMax, tipoDrenCanal);
     const { resultadoDC, resumenTramosDC, tablaDistanciaCMDC } = drenCanalDatos;
 
@@ -1062,7 +1047,7 @@ const tablasHTMLDC = `
 </div>`;
 
 
-    const tipoBarredora = document.getElementById("barredora").value;
+    const tipoBarredora = datos["barredora"] || "1.5";  
     const barredoraDatos = barredora(flujoMax, tipoBarredora);
     const { resultadoB, resumenTramosB, resumenDisparosB, tablaDistanciaCMB } = barredoraDatos;
     const disparoB = resultadoB[0];
@@ -1684,7 +1669,7 @@ function tuberiaSeleccionada(velocidades, tipo) {
 }
 
 function retorno(flujoMaximo, tipoRetorno) {
-    const area = parseFloat(document.getElementById('area').value);
+    const area = parseFloat(datos.area) || 0;
     const diametros = {
         //"tuberia 0.75": 0.81,
         //"tuberia 1.00": 1.03,
@@ -1776,9 +1761,9 @@ function retorno(flujoMaximo, tipoRetorno) {
     let sumaCargaTramos = 0;  // Acumulador fuera del ciclo
     let flujoRestante = flujoMaximo;
     let diametroAnterior = null;
-    const profMin = parseFloat(document.getElementById("profMin").value) || 0;
-    const profMax = parseFloat(document.getElementById("profMax").value) || 0;
-    const profundidad = Math.max(profMin, profMax); 
+    const profMin = parseFloat(datos.profMin) || 0;
+    const profMax = parseFloat(datos.profMax) || 0;
+    const profundidad = Math.max(profMin, profMax);
     const longitudDisparo = ((profundidad / 2) + 1); 
     const longitudDisparoFt = longitudDisparo / 0.3048;
     const tuberiaDisparo = tipoRetorno === "2.0" ? "tuberia 2.00" : "tuberia 1.50";
@@ -1808,7 +1793,7 @@ function retorno(flujoMaximo, tipoRetorno) {
     let siguienteUmbral = raizArea;
 
 // --- Tramo especial: distancia al cuarto de máquinas ---
-const distanciaCM = parseFloat(document.getElementById("distCuarto").value) || 0; // m
+    const distanciaCM = parseFloat(datos.distCuarto) || 0;
 if (distanciaCM > 0) {
     let flujoCM = flujoMaximo; // todo el flujo entra a este tramo
     let diametroCM = null;
@@ -2045,7 +2030,7 @@ if (distanciaCM > 0) {
 }
 
 function desnatador(flujoMaximo, tipoDesnatador) {
-    const area = parseFloat(document.getElementById('area').value);
+    const area = parseFloat(datos.area) || 0;
     const diametros = {
         //"tuberia 0.75": 0.81,
         //"tuberia 1.00": 1.03,
@@ -2144,8 +2129,8 @@ function desnatador(flujoMaximo, tipoDesnatador) {
     let sumaCargaTramos = 0;  // Acumulador fuera del ciclo
     let flujoRestante = flujoMaximo;
     let diametroAnterior = null;
-    const profMin = parseFloat(document.getElementById("profMin").value) || 0;
-    const profMax = parseFloat(document.getElementById("profMax").value) || 0;
+    const profMin = parseFloat(datos.profMin) || 0;
+    const profMax = parseFloat(datos.profMax) || 0;
     const profundidad = Math.max(profMin, profMax); 
     const longitudDisparo = ((profundidad - 0.5) + 1); 
     const longitudDisparoFt = longitudDisparo / 0.3048;
@@ -2176,7 +2161,7 @@ function desnatador(flujoMaximo, tipoDesnatador) {
     let siguienteUmbral = raizArea;
 
 // --- Tramo especial: distancia al cuarto de máquinas ---
-const distanciaCMD = parseFloat(document.getElementById("distCuarto").value) || 0; // m
+    const distanciaCMD = parseFloat(datos.distCuarto) || 0;
 if (distanciaCMD > 0) {
     let flujoCMD = flujoMaximo; // todo el flujo entra a este tramo
     let diametroCMD = null;
@@ -2413,7 +2398,7 @@ if (distanciaCMD > 0) {
 }
 
 function drenFondo(flujoMaximo, tipoDrenFondo) {
-    const area = parseFloat(document.getElementById('area').value);
+    const area = parseFloat(datos.area) || 0;
     const diametros = {
         //"tuberia 0.75": 0.81,
         //"tuberia 1.00": 1.03,
@@ -2519,8 +2504,8 @@ function drenFondo(flujoMaximo, tipoDrenFondo) {
     let sumaCargaTramos = 0;  // Acumulador fuera del ciclo
     let flujoRestante = flujoMaximo;
     let diametroAnterior = null;
-    const profMin = parseFloat(document.getElementById("profMin").value) || 0;
-    const profMax = parseFloat(document.getElementById("profMax").value) || 0;
+    const profMin = parseFloat(datos.profMin) || 0;
+    const profMax = parseFloat(datos.profMax) || 0;
     const profundidad = Math.max(profMin, profMax); 
     let diametroMax = 0; // Guardamos el diámetro máximo encontrado
 
@@ -2531,7 +2516,7 @@ function drenFondo(flujoMaximo, tipoDrenFondo) {
         };
 
 // --- Tramo especial: distancia al cuarto de máquinas ---
-const distanciaCMDF = parseFloat(document.getElementById("distCuarto").value) || 0; // m
+const distanciaCMDF = parseFloat(datos.distCuarto) || 0;
 if (distanciaCMDF > 0) {
     let flujoCMDF = flujoMaximo; // todo el flujo entra a este tramo
     let diametroCMDF = null;
@@ -2722,7 +2707,7 @@ if (distanciaCMDF > 0) {
 }
 
 function drenCanal(flujoMaximo, tipoDrenCanal) {
-    const largoInfinity = parseFloat(document.getElementById('largoInfinity').value);
+    const largoInfinity = parseFloat(datos.largoInfinity) || 0;
     const diametros = {
         //"tuberia 0.75": 0.81,
         //"tuberia 1.00": 1.03,
@@ -2825,8 +2810,8 @@ function drenCanal(flujoMaximo, tipoDrenCanal) {
     let sumaCargaTramos = 0;  // Acumulador fuera del ciclo
     let flujoRestante = flujoMaximo;
     let diametroAnterior = null;
-    const profMin = parseFloat(document.getElementById("profMin").value) || 0;
-    const profMax = parseFloat(document.getElementById("profMax").value) || 0;
+    const profMin = parseFloat(datos.profMin) || 0;
+    const profMax = parseFloat(datos.profMax) || 0;
     const profundidad = Math.max(profMin, profMax); 
     let diametroMax = 0; // Guardamos el diámetro máximo encontrado
 
@@ -2837,7 +2822,7 @@ function drenCanal(flujoMaximo, tipoDrenCanal) {
         };
 
 // --- Tramo especial: distancia al cuarto de máquinas ---
-const distanciaCMDC = parseFloat(document.getElementById("distCuarto").value) || 0; // m
+const distanciaCMDC = parseFloat(datos.distCuarto) || 0;
 if (distanciaCMDC > 0) {
     let flujoCMDC = flujoMaximo; // todo el flujo entra a este tramo
     let diametroCMDC = null;
@@ -3028,7 +3013,7 @@ if (distanciaCMDC > 0) {
 }
 
 function barredora(flujoMaximo, tipoBarredora) {
-    const area = parseFloat(document.getElementById('area').value);
+    const area = parseFloat(datos.area) || 0;
     const diametros = {
         //"tuberia 0.75": 0.81,
         //"tuberia 1.00": 1.03,
@@ -3113,7 +3098,7 @@ function barredora(flujoMaximo, tipoBarredora) {
     };
 
     // === Cálculo de barredoras ===
-    const mangueraBarredora = parseFloat(document.getElementById("mangueraBarredora").value) || 0; // largo en m
+    const mangueraBarredora = parseFloat(datos.mangueraBarredora) || 7.5;
     const largoMangueraFinal = mangueraBarredora - (mangueraBarredora * 0.05);
     const areaSemiCirculo = (Math.PI * Math.pow(largoMangueraFinal, 2)) / 2;
     let numBarredoraA = area / areaSemiCirculo;
@@ -3134,8 +3119,8 @@ function barredora(flujoMaximo, tipoBarredora) {
     let sumaCargaTramos = 0;  // Acumulador fuera del ciclo
     let flujoRestante = flujoMaximoAjustado;
     let diametroAnterior = null;
-    const profMin = parseFloat(document.getElementById("profMin").value) || 0;
-    const profMax = parseFloat(document.getElementById("profMax").value) || 0;
+    const profMin = parseFloat(datos.profMin) || 0;
+    const profMax = parseFloat(datos.profMax) || 0;
     const profundidad = Math.max(profMin, profMax); 
     let diametroMax = 0; // Guardamos el diámetro máximo encontrado
     const longitudDisparo = ((profundidad - 0.3) + 1); 
@@ -3189,7 +3174,7 @@ function barredora(flujoMaximo, tipoBarredora) {
     let siguienteUmbral = raizArea;
 
 // --- Tramo especial: distancia al cuarto de máquinas ---
-const distanciaCMB = parseFloat(document.getElementById("distCuarto").value) || 0; // m
+const distanciaCMB = parseFloat(datos.distCuarto) || 0;
 if (distanciaCMB > 0) {
     let flujoCMB = flujoMaximoAjustado; // todo el flujo entra a este tramo
     let diametroCMB = null;
@@ -3755,50 +3740,3 @@ const humedad = {
         promedio: [80, 78, 75, 70, 65, 60, 65, 70, 75, 80, 85, 88]
     },
 };
-
-const areaInput = document.getElementById("area");
-const profMinInput = document.getElementById("profMin");
-const profMaxInput = document.getElementById("profMax");
-const distCuartoInput = document.getElementById("distCuarto");
-
-// Lista de campos
-const campos = [areaInput, profMinInput, profMaxInput, distCuartoInput];
-
-campos.forEach(input => {
-    // Evita caracteres inválidos (solo números y un punto)
-    input.addEventListener("keypress", (e) => {
-        const char = String.fromCharCode(e.which);
-        if (!/[\d.]/.test(char)) {
-            e.preventDefault();
-        }
-        // Permite solo un punto decimal
-        if (char === "." && input.value.includes(".")) {
-            e.preventDefault();
-        }
-    });
-
-    // Evita pegar texto inválido
-    input.addEventListener("paste", (e) => {
-        const textoPegado = (e.clipboardData || window.clipboardData).getData('text');
-        if (!/^\d*\.?\d*$/.test(textoPegado)) {
-            e.preventDefault();
-        }
-    });
-
-    // Controla rangos y elimina negativos
-    input.addEventListener("input", () => {
-        let val = parseFloat(input.value);
-        if (isNaN(val)) return;
-
-        if (input.id === "area") {
-            if (val < 1) input.value = 1;
-            if (val > 10000) input.value = 10000; // Máximo para área
-        } else if (input.id === "profMin" || input.id === "profMax") {
-            if (val < 0) input.value = 0;
-            if (val > 60) input.value = 60; // Máximo para profundidades
-        } else if (input.id === "distCuarto") {
-            if (val < 0) input.value = 0;
-            if (val > 500) input.value = 500; // Máximo para distCuarto
-        }
-    });
-});
