@@ -4,39 +4,61 @@ const datos = {};
 // Contenido de cada sección
 const secciones = {
   dimensiones: `
-    <label for="area">Área (m²):</label>
-    <input type="number" id="area" step="0.01"><br>
-    <label for="profMin">Profundidad mínima (m):</label>
-    <input type="number" id="profMin" step="0.01"><br>
-    <label for="profMax">Profundidad máxima (m):</label>
-    <input type="number" id="profMax" step="0.01"><br>
-    <label for="distCuarto">Distancia al cuarto de máquinas (m):</label>
-    <input type="number" id="distCuarto" step="0.01"><br>
-    <label for="rotacion">Tasa de rotación (h):</label>
-    <select id="rotacion">
-      <option value="0.5">0.5 horas</option>
-      <option value="1">1 hora</option>
-      <option value="4">4 horas</option>
-      <option value="6">6 horas</option>
-      <option value="8">8 horas</option>
-      <option value="12">12 horas</option>
-      <option value="18">18 horas</option>
-      <option value="24">24 horas</option>
-    </select>
+    <div class="form-section">
+      <div class="form-group">
+        <label for="area">Área (m²):</label>
+        <input type="number" id="area" step="0.01">
+      </div>
+      <div class="form-group">
+        <label for="profMin">Profundidad mínima (m):</label>
+        <input type="number" id="profMin" step="0.01">
+      </div>
+      <div class="form-group">
+        <label for="profMax">Profundidad máxima (m):</label>
+        <input type="number" id="profMax" step="0.01">
+      </div>
+      <div class="form-group">
+        <label for="distCuarto">Distancia al cuarto de máquinas (m):</label>
+        <input type="number" id="distCuarto" step="0.01">
+      </div>
+      <div class="form-group">
+        <label for="rotacion">Tasa de rotación (h):</label>
+        <select id="rotacion">
+          <option value="0.5">0.5 horas</option>
+          <option value="1">1 hora</option>
+          <option value="4">4 horas</option>
+          <option value="6">6 horas</option>
+          <option value="8">8 horas</option>
+          <option value="12">12 horas</option>
+          <option value="18">18 horas</option>
+          <option value="24">24 horas</option>
+        </select>
+      </div>
+    </div>
   `,
   desborde: `
-    <label><input type="checkbox" id="chkInfinity"> Infinity</label><br>
-    <label><input type="checkbox" id="chkCanal"> Canal perimetral</label><br>
-    <label><input type="checkbox" id="chkNinguno"> Ninguno</label><br>
-    <div id="campoInfinity" class="oculto">
-      <label for="largoInfinity">Largo del muro Infinity (m):</label>
-      <input type="number" id="largoInfinity" step="0.01"><br>
-      <label for="alturaDesborde">Altura desborde infinity (mm):</label>
-      <input type="number" id="alturaDesborde" step="0.01"><br>
-    </div>
-    <div id="campoCanal" class="oculto">
-      <label for="largoCanal">Largo del canal perimetral (m):</label>
-      <input type="number" id="largoCanal" step="0.01"><br>
+    <div class="form-section">
+      <div class="form-group inline">
+        <label><input type="checkbox" id="chkInfinity"> Infinity</label>
+        <label><input type="checkbox" id="chkCanal"> Canal perimetral</label>
+        <label><input type="checkbox" id="chkNinguno"> Ninguno</label>
+      </div>
+      <div id="campoInfinity" class="form-subgroup oculto">
+        <div class="form-group">
+          <label for="largoInfinity">Largo del muro Infinity (m):</label>
+          <input type="number" id="largoInfinity" step="0.01">
+        </div>
+        <div class="form-group">
+          <label for="alturaDesborde">Altura desborde infinity (mm):</label>
+          <input type="number" id="alturaDesborde" step="0.01">
+        </div>
+      </div>
+      <div id="campoCanal" class="form-subgroup oculto">
+        <div class="form-group">
+          <label for="largoCanal">Largo del canal perimetral (m):</label>
+          <input type="number" id="largoCanal" step="0.01">
+        </div>
+      </div>
     </div>
   `,
   calentamiento: `
