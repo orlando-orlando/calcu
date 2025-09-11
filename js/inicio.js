@@ -1,3 +1,42 @@
+document.addEventListener("input", guardarCambio);
+document.addEventListener("change", guardarCambio);
+
+function guardarCambio(e) {
+  const el = e.target;
+
+  if (el.type === "checkbox") {
+    datos[el.id] = el.checked;
+  } else if (el.type === "radio") {
+    // Guardar por name
+    if (el.checked) {
+      datos[el.name] = el.value;
+    }
+  } else if (el.id) {
+    datos[el.id] = el.value;
+  }
+}
+
+// --- Función genérica para mostrar/ocultar campos asociados ---
+function toggleCampo(checkboxId, campoId) {
+  const chk = document.getElementById(checkboxId);
+  const campo = document.getElementById(campoId);
+  if (chk && campo) {
+    campo.classList.toggle("oculto", !chk.checked);
+  }
+}
+
+// --- Escucha todos los cambios en checkboxes ---
+document.addEventListener("change", () => {
+  // --- Desborde ---
+  toggleCampo("chkInfinity", "campoInfinity");
+  toggleCampo("chkCanal", "campoCanal");
+
+  // --- Calentamiento ---
+  toggleCampo("chkBombaCalor", "campoBombaCalor");
+  toggleCampo("chkPanel", "campoPanel");
+  toggleCampo("chkCaldera", "campoCaldera");
+});
+
 // Objeto para guardar datos de usuario
 const datos = {};
 
@@ -36,49 +75,67 @@ const secciones = {
       </div>
     </div>
   `,
-  desborde: `
-    <div class="form-section">
+desborde: `
+  <div class="form-section">
+    <div class="form-group inline">
+      <label><input type="checkbox" id="chkInfinity"> Infinity</label>
+      <label><input type="checkbox" id="chkCanal"> Canal perimetral</label>
+      <label><input type="checkbox" id="chkNinguno"> Ninguno</label>
+    </div>
+
+    <div id="campoInfinity" class="form-subgroup oculto">
+      <!-- 👇 Nuevo bloque de motobomba independiente -->
       <div class="form-group inline">
-        <label><input type="checkbox" id="chkInfinity"> Infinity</label>
-        <label><input type="checkbox" id="chkCanal"> Canal perimetral</label>
-        <label><input type="checkbox" id="chkNinguno"> Ninguno</label>
+        <span>¿Motobomba independiente para Infinity?</span>
+        <label><input type="radio" name="motobombaInfinity" value="si"> Sí</label>
+        <label><input type="radio" name="motobombaInfinity" value="no"> No</label><br><br>
       </div>
-      <div id="campoInfinity" class="form-subgroup oculto">
-        <div class="form-group">
-          <label for="largoInfinity">Largo del muro Infinity (m):</label>
-          <input type="number" id="largoInfinity" step="0.01">
-        </div>
-        <div class="form-group">
-          <label for="alturaDesborde">Altura desborde infinity (mm):</label>
-          <input type="number" id="alturaDesborde" step="0.01">
-        </div>
+      <div class="form-group">
+        <label for="largoInfinity">Largo del muro Infinity (m):</label>
+        <input type="number" id="largoInfinity" step="0.01"><br>
       </div>
-      <div id="campoCanal" class="form-subgroup oculto">
-        <div class="form-group">
-          <label for="largoCanal">Largo del canal perimetral (m):</label>
-          <input type="number" id="largoCanal" step="0.01">
-        </div>
+      <div class="form-group">
+        <label for="alturaDesborde">Altura desborde infinity (mm):</label>
+        <input type="number" id="alturaDesborde" step="0.01">
       </div>
     </div>
-  `,
-  calentamiento: `
-    <label><input type="checkbox" id="chkBombaCalor"> Bomba de calor</label><br>
-    <label><input type="checkbox" id="chkPanel"> Panel solar</label><br>
-    <label><input type="checkbox" id="chkCaldera"> Caldera</label><br>
-    <div id="campoBombaCalor" class="oculto">
-      <label for="cargaEstaticaBC">Diferencia de altura bomba de calor (m):</label>
-      <input type="number" id="cargaEstaticaBC" step="0.01"><br>
+
+    <div id="campoCanal" class="form-subgroup oculto">
+      <div class="form-group">
+        <label for="largoCanal">Largo del canal perimetral (m):</label>
+        <input type="number" id="largoCanal" step="0.01">
+      </div>
     </div>
-    <div id="campoPanel" class="oculto">
-      <label for="cargaEstaticaPan">Diferencia de altura panel solar (m):</label>
-      <input type="number" id="cargaEstaticaPan" step="0.01"><br>
+  </div>
+`,
+calentamiento: `
+  <div class="form-section">
+    <div class="form-group inline">
+      <label><input type="checkbox" id="chkBombaCalor"> Bomba de calor</label>
+      <label><input type="checkbox" id="chkPanel"> Panel solar</label>
+      <label><input type="checkbox" id="chkCaldera"> Caldera</label>
     </div>
-    <div id="campoCaldera" class="oculto">
-      <label for="cargaEstaticaCal">Diferencia de altura caldera (m):</label>
-      <input type="number" id="cargaEstaticaCal" step="0.01"><br>
+    <div id="campoBombaCalor" class="form-subgroup oculto">
+      <div class="form-group">
+        <label for="cargaEstaticaBC">Diferencia de altura bomba de calor (m):</label>
+        <input type="number" id="cargaEstaticaBC" step="0.01">
+      </div>
     </div>
-  `,
-  ubicacion: `
+    <div id="campoPanel" class="form-subgroup oculto">
+      <div class="form-group">
+        <label for="cargaEstaticaPan">Diferencia de altura panel solar (m):</label>
+        <input type="number" id="cargaEstaticaPan" step="0.01">
+      </div>
+    </div>
+    <div id="campoCaldera" class="form-subgroup oculto">
+      <div class="form-group">
+        <label for="cargaEstaticaCal">Diferencia de altura caldera (m):</label>
+        <input type="number" id="cargaEstaticaCal" step="0.01">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
     <label for="ciudad">Ciudad:</label>
     <select id="ciudad">
       <option value="guadalajara">Guadalajara</option>
@@ -119,82 +176,149 @@ const secciones = {
       <option value="puertoPeñasco">Puerto Peñasco</option>
       <option value="ixtapaZihuatanejo">Ixtapa / Zihuatanejo</option>
       <option value="saltillo">Saltillo</option>
-    </select>
-  `,
+    </select><br>
+  </div>
+
+  <div class="form-group">
+    <label for="tempDeseada">Temperatura deseada (°C):</label>
+    <input type="number" id="tempDeseada" min="15" max="40" step="0.5" placeholder="Ej. 28°C">
+  </div>
+`,
   sanitizacion: `
-    <label><input type="checkbox" id="chkGenerador"> Generador de cloro</label><br>
-    <label><input type="checkbox" id="chkOzonificador"> Ozonificador</label><br>
-    <label><input type="checkbox" id="chkLamparaUV"> Lámpara U.V.</label><br>
+    <div class="form-section form-group inline">
+      <label><input type="checkbox" id="chkGenerador"> Generador de cloro</label>
+      <label><input type="checkbox" id="chkOzonificador"> Ozonificador</label>
+      <label><input type="checkbox" id="chkLamparaUV"> Lámpara U.V.</label>
+    </div>
   `,
   filtracion: `
-    <label><input type="checkbox" id="chkPrefiltro"> Prefiltro</label><br>
-    <label><input type="checkbox" id="chkFiltro"> Filtro</label><br>
+    <div class="form-section form-group inline">
+      <label><input type="checkbox" id="chkPrefiltro"> Prefiltro</label>
+      <label><input type="checkbox" id="chkFiltro"> Filtro</label>
+    </div>
   `,
   motobomba: `
-    <label><input type="checkbox" id="chkMotobomba1V"> Motobomba 1 velocidad</label><br>
-    <label><input type="checkbox" id="chkMotobombaVV"> Motobomba velocidad variable</label><br>
+    <div class="form-section form-group inline">
+      <label><input type="checkbox" id="chkMotobomba1V"> Motobomba 1 velocidad</label>
+      <label><input type="checkbox" id="chkMotobombaVV"> Motobomba velocidad variable</label>
+    </div>
   `,
   empotrables: `
-    <label for="retorno">Tipo boquilla de retorno:</label>
-    <select id="retorno">
-      <option value="1.5">1.5in</option>
-      <option value="2.0">2.0in</option>
-    </select><br>
-    <label for="desnatador">Tipo desnatador:</label>
-    <select id="desnatador">
-      <option value="1.5">1.5in</option>
-      <option value="2.0">2.0in</option>
-    </select><br>
-    <label for="drenFondo">Tipo dren de fondo:</label>
-    <select id="drenFondo">
-      <option value="1.5">1.5in</option>
-      <option value="2.0">2.0in</option>
-      <option value="7.5">7.5in</option>
-      <option value="8.0">8.0in</option>
-      <option value="9.0">9.0in</option>
-      <option value="12.0">12.0in</option>
-      <option value="18.0">18.0in</option>
-    </select><br>
-    <label for="drenCanal">Tipo dren de canal:</label>
-    <select id="drenCanal">
-      <option value="1.5">1.5in</option>
-      <option value="2.0">2.0in</option>
-      <option value="7.5">7.5in</option>
-      <option value="8.0">8.0in</option>
-      <option value="9.0">9.0in</option>
-    </select><br>
-    <label for="barredora">Tipo boquilla de barredora:</label>
-    <select id="barredora">
-      <option value="1.5">1.5in</option>
-      <option value="2.0">2.0in</option>
-    </select><br>
-    <label for="mangueraBarredora">Largo manguera de barredora:</label>
-    <select id="mangueraBarredora">
-      <option value="7.5">7.5m</option>
-      <option value="9.0">9.0m</option>
-      <option value="10.5">10.5m</option>
-      <option value="12.0">12.0m</option>
-      <option value="15.0">15.0m</option>
-      <option value="50.0">50.0m</option>
-    </select>
+    <div class="form-section">
+      <div class="form-group">
+        <label for="retorno">Tipo boquilla de retorno:</label>
+        <select id="retorno">
+          <option value="1.5">1.5in</option>
+          <option value="2.0">2.0in</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="desnatador">Tipo desnatador:</label>
+        <select id="desnatador">
+          <option value="1.5">1.5in</option>
+          <option value="2.0">2.0in</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="drenFondo">Tipo dren de fondo:</label>
+        <select id="drenFondo">
+          <option value="1.5">1.5in</option>
+          <option value="2.0">2.0in</option>
+          <option value="7.5">7.5in</option>
+          <option value="8.0">8.0in</option>
+          <option value="9.0">9.0in</option>
+          <option value="12.0">12.0in</option>
+          <option value="18.0">18.0in</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="drenCanal">Tipo dren de canal:</label>
+        <select id="drenCanal">
+          <option value="1.5">1.5in</option>
+          <option value="2.0">2.0in</option>
+          <option value="7.5">7.5in</option>
+          <option value="8.0">8.0in</option>
+          <option value="9.0">9.0in</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="barredora">Tipo boquilla de barredora:</label>
+        <select id="barredora">
+          <option value="1.5">1.5in</option>
+          <option value="2.0">2.0in</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="mangueraBarredora">Largo manguera de barredora:</label>
+        <select id="mangueraBarredora">
+          <option value="7.5">7.5m</option>
+          <option value="9.0">9.0m</option>
+          <option value="10.5">10.5m</option>
+          <option value="12.0">12.0m</option>
+          <option value="15.0">15.0m</option>
+          <option value="50.0">50.0m</option>
+        </select>
+      </div>
+    </div>
   `
 };
 
-// Función para renderizar y restaurar valores previos
+// 🔹 Guardar datos antes de cambiar sección
+function guardarDatos() {
+  const inputs = document.querySelectorAll("#contenidoDerecho input, #contenidoDerecho select");
+  inputs.forEach(el => {
+    if (el.type === "checkbox") {
+      datos[el.id] = el.checked;
+    } else if (el.type === "radio") {
+      if (el.checked) {
+        datos[el.name] = el.value; // 🔑 Guardamos por "name", no por id
+      }
+    } else {
+      datos[el.id] = el.value;
+    }
+  });
+}
+
+// 🔹 Renderizar sección y restaurar valores
 function renderSeccion(seccion) {
   const contenedor = document.getElementById("contenidoDerecho");
   contenedor.innerHTML = secciones[seccion] || "Sin contenido";
 
-  // Restaurar valores previos guardados
-  for (let id in datos) {
-    const el = document.getElementById(id);
+  // Restaurar valores previos
+  for (let key in datos) {
+    const el = document.getElementById(key);
     if (el) {
       if (el.type === "checkbox") {
-        el.checked = datos[id];
+        el.checked = datos[key];
       } else {
-        el.value = datos[id];
+        el.value = datos[key];
       }
     }
+
+    // 🔑 Restaurar radios por "name"
+    const radios = document.querySelectorAll(`input[name="${key}"]`);
+    if (radios.length > 0) {
+      radios.forEach(radio => {
+        radio.checked = (radio.value === datos[key]);
+      });
+    }
+  }
+
+  // ✅ Restaurar campos ocultos si sus checkboxes están activos
+  if (document.getElementById("chkInfinity")?.checked) {
+    document.getElementById("campoInfinity").classList.remove("oculto");
+  }
+  if (document.getElementById("chkCanal")?.checked) {
+    document.getElementById("campoCanal").classList.remove("oculto");
+  }
+  if (document.getElementById("chkBombaCalor")?.checked) {
+    document.getElementById("campoBombaCalor").classList.remove("oculto");
+  }
+  if (document.getElementById("chkPanel")?.checked) {
+    document.getElementById("campoPanel").classList.remove("oculto");
+  }
+  if (document.getElementById("chkCaldera")?.checked) {
+    document.getElementById("campoCaldera").classList.remove("oculto");
   }
 }
 

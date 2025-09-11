@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Agua Control</title>
+  <title>Simulador sistemas hidráulicos</title>
   <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
@@ -10,10 +10,10 @@
   <div class="contenedor">
     <!-- Panel izquierdo -->
     <div class="panel-izquierdo">
-      <h1>Agua Control</h1>
+      <h1>Calcula tu sistema</h1><br><br>
 
       <details data-section="dimensiones">
-        <summary>Ingresa dimensiones del cuerpo de agua</summary>
+        <summary>Dimensiones del cuerpo de agua</summary>
       </details>
 
       <details data-section="desborde">
@@ -21,30 +21,30 @@
       </details>
 
       <details data-section="calentamiento">
-        <summary>¿Qué tipo de calentamiento llevará?</summary>
-      </details>
-
-      <details data-section="ubicacion">
-        <summary>Selecciona la ubicación</summary>
+        <summary>Sistema de calentamiento</summary>
       </details>
 
       <details data-section="sanitizacion">
-        <summary>Selecciona tu sanitización</summary>
+        <summary>Método de sanitización</summary>
       </details>
 
       <details data-section="filtracion">
-        <summary>Selecciona tu filtración</summary>
+        <summary>Filtrado</summary>
       </details>
 
       <details data-section="motobomba">
-        <summary>¿Qué tipo de motobomba deseas?</summary>
+        <summary>Motobomba</summary>
       </details>
 
       <details data-section="empotrables">
-        <summary>Selecciona tus empotrables</summary>
+        <summary>Accesorios empotrables</summary>
       </details>
 
-      <button onclick="calcular()">Calcular</button>
+      <button onclick="calcular()">Calcular</button><br><br><br>
+
+      <details data-section="resultados">
+        <summary>Resumen de resultados</summary>
+      </details>
     </div>
 
     <!-- Panel derecho -->

@@ -3,11 +3,14 @@
     display: none;
   }
 
-input[type="number"] {
-    width: 225px; /* Ajusta a tu gusto (por defecto son ~150px) */
-    padding: 1px;
-    font-size: 12.5px;
-    box-sizing: border-box; /* Mantiene proporciones con padding */
+input[type="number"],
+select {
+  width: 225px; /* ahora inputs y selects tienen el mismo ancho */
+  padding: 0.5rem;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
 }
 
 body {
@@ -21,7 +24,7 @@ body {
 }
 
 .panel-izquierdo {
-  width: 17%;
+  width: 15%;
   padding: 15px;
   background: #f2f2f2;
   border-right: 1px solid #ccc;
