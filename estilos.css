@@ -99,3 +99,127 @@ body {
   padding-left: 1rem;
   border-left: 2px solid #eee;
 }
+
+.tabla-clima {
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+.tabla-clima table {
+  width: 100%;
+  max-width: 600px;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: center;
+  table-layout: fixed; /* 👈 fuerza ancho fijo en columnas */
+}
+
+.tabla-clima th,
+.tabla-clima td {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 6px;
+  width: 20%; /* 👈 5 columnas → 100 / 5 = 20% */
+}
+
+.tabla-clima th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  word-wrap: break-word;     /* permite que el texto se divida */
+  white-space: normal;       /* fuerza que haga salto de línea */
+  padding: 6px;
+}
+
+.tabla-clima tbody tr:nth-child(even) {
+  background-color: #f9f9f9; /* gris muy claro */
+}
+
+.tabla-clima tbody tr:nth-child(odd) {
+  background-color: #ffffff; /* blanco */
+}
+
+/* opcional: resaltar fila en hover */
+.tabla-clima tbody tr:hover {
+  background-color: #e6f2ff;
+}
+
+.resumen-clima {
+  margin-top: 15px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+  font-size: 14px;
+}
+
+.resumen-clima h4 {
+  margin-bottom: 8px;
+  color: #0077cc;
+}
+
+.deshabilitado td {
+  color: #999;
+  background: #f1f1f1;
+}
+.deshabilitado td:first-child {
+  background: #fff; /* que el checkbox no se opaque */
+}
+
+.panel-centro {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.panel-clima {
+  width: 35%;        /* 👈 ancho fijo para tablas de clima */
+  padding: 20px;
+  background: #fff;  /* opcional */
+  border-left: 1px solid #ccc;
+  overflow-y: auto;
+}
+
+.panel-clima .tabla-clima {
+  margin-bottom: 20px;
+}
+
+#contenedorMesFrio {
+  margin-top: 20px;
+  width: 100%;  /* para que ocupe todo el ancho de la tabla */
+}
+
+/* Asegurarnos de que la fila de inputs+tabla use toda la anchura y no haga wrap */
+.form-section.clima-layout,
+.clima-layout {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: nowrap;               /* importante: no permitir wrap */
+  justify-content: space-between;  /* empuja los extremos: inputs a la izquierda, tabla a la derecha */
+}
+
+/* Columna de inputs: tamaño fijo / máximo para no ocupar demasiado */
+.clima-form {
+  flex: 0 0 460px;   /* no crece, no encoge, ancho base 460px (ajusta a tu gusto) */
+  max-width: 480px;
+}
+
+/* Columna de tabla: se coloca a la derecha, ocupa lo restante */
+.clima-tabla {
+  flex: 1 1 420px;   /* puede crecer para rellenar, ancho base 420px */
+  min-width: 320px;
+  display: flex;
+  justify-content: flex-end;  /* contenido de la columna alineado a la derecha */
+  align-items: flex-start;
+  margin-left: 0;              /* dejamos que space-between haga el trabajo */
+  margin-right: 100px;    /* 👈 ajusta este valor para moverla más a la izquierda */
+}
+
+/* La tabla en sí: limitamos su ancho para que no estire todo */
+.clima-tabla .tabla-clima {
+  width: 100%;
+  max-width: 520px;  /* ancho máximo visual para la tabla (ajusta) */
+  margin: 0;         /* sin margen extra */
+}

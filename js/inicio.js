@@ -109,79 +109,92 @@ desborde: `
   </div>
 `,
 calentamiento: `
-  <div class="form-section">
-    <div class="form-group inline">
-      <label><input type="checkbox" id="chkBombaCalor"> Bomba de calor</label>
-      <label><input type="checkbox" id="chkPanel"> Panel solar</label>
-      <label><input type="checkbox" id="chkCaldera"> Caldera</label>
-    </div>
-    <div id="campoBombaCalor" class="form-subgroup oculto">
-      <div class="form-group">
-        <label for="cargaEstaticaBC">Diferencia de altura bomba de calor (m):</label>
-        <input type="number" id="cargaEstaticaBC" step="0.01">
+  <div class="form-section clima-layout">
+    <!-- Columna izquierda: Inputs -->
+    <div class="clima-form">
+      <div class="form-group inline">
+        <label><input type="checkbox" id="chkBombaCalor"> Bomba de calor</label>
+        <label><input type="checkbox" id="chkPanel"> Panel solar</label>
+        <label><input type="checkbox" id="chkCaldera"> Caldera</label>
       </div>
-    </div>
-    <div id="campoPanel" class="form-subgroup oculto">
-      <div class="form-group">
-        <label for="cargaEstaticaPan">Diferencia de altura panel solar (m):</label>
-        <input type="number" id="cargaEstaticaPan" step="0.01">
-      </div>
-    </div>
-    <div id="campoCaldera" class="form-subgroup oculto">
-      <div class="form-group">
-        <label for="cargaEstaticaCal">Diferencia de altura caldera (m):</label>
-        <input type="number" id="cargaEstaticaCal" step="0.01">
-      </div>
-    </div>
-  </div>
 
-  <div class="form-group">
-    <label for="ciudad">Ciudad:</label>
-    <select id="ciudad">
-      <option value="guadalajara">Guadalajara</option>
-      <option value="mexicali">Mexicali</option>
-      <option value="losCabos">Los Cabos</option>
-      <option value="hermosillo">Hermosillo</option>
-      <option value="chihuahua">Chihuahua</option>
-      <option value="torreon">Torreón</option>
-      <option value="monterrey">Monterrey</option>
-      <option value="tampico">Tampico</option>
-      <option value="veracruz">Veracruz</option>
-      <option value="sanLuisPotosi">San Luis Potosí</option>
-      <option value="durango">Durango</option>
-      <option value="culiacan">Culiacán</option>
-      <option value="tepic">Tepic</option>
-      <option value="colima">Colima</option>
-      <option value="aguascalientes">Aguascalientes</option>
-      <option value="zacatecas">Zacatecas</option>
-      <option value="morelia">Morelia</option>
-      <option value="leon">León</option>
-      <option value="queretaro">Querétaro</option>
-      <option value="pachuca">Pachuca</option>
-      <option value="ciudadDeMexico">Ciudad de México</option>
-      <option value="acapulco">Acapulco</option>
-      <option value="cuernavaca">Cuernavaca</option>
-      <option value="puebla">Puebla</option>
-      <option value="tlaxcala">Tlaxcala</option>
-      <option value="oaxaca">Oaxaca</option>
-      <option value="villahermosa">Villahermosa</option>
-      <option value="tuxtlaGutierrez">Tuxtla Gutiérrez</option>
-      <option value="campeche">Campeche</option>
-      <option value="merida">Mérida</option>
-      <option value="cancun">Cancún</option>
-      <option value="manzanillo">Manzanillo</option>
-      <option value="puertoVallarta">Puerto Vallarta</option>
-      <option value="huatulco">Huatulco</option>
-      <option value="mazatlan">Mazatlán</option>
-      <option value="puertoPeñasco">Puerto Peñasco</option>
-      <option value="ixtapaZihuatanejo">Ixtapa / Zihuatanejo</option>
-      <option value="saltillo">Saltillo</option>
-    </select><br>
-  </div>
+      <div id="campoBombaCalor" class="form-subgroup oculto">
+        <div class="form-group">
+          <label for="cargaEstaticaBC">Diferencia de altura: espejo de agua - bomba de calor (m):</label>
+          <input type="number" id="cargaEstaticaBC" step="0.01">
+        </div>
+      </div>
+      <div id="campoPanel" class="form-subgroup oculto">
+        <div class="form-group">
+          <label for="cargaEstaticaPan">Diferencia de altura: espejo de agua - panel solar (m):</label>
+          <input type="number" id="cargaEstaticaPan" step="0.01">
+        </div>
+      </div>
+      <div id="campoCaldera" class="form-subgroup oculto">
+        <div class="form-group">
+          <label for="cargaEstaticaCal">Diferencia de altura: espejo de agua - caldera (m):</label>
+          <input type="number" id="cargaEstaticaCal" step="0.01">
+        </div>
+      </div>
 
-  <div class="form-group">
-    <label for="tempDeseada">Temperatura deseada (°C):</label>
-    <input type="number" id="tempDeseada" min="15" max="40" step="0.5" placeholder="Ej. 28°C">
+      <!-- 👇 Temperatura deseada -->
+      <div class="form-group">
+        <label for="tempDeseada">Temperatura deseada del agua (°C):</label>
+        <input type="number" id="tempDeseada" step="0.1" min="10" max="40">
+      </div>
+
+      <!-- 👇 Ciudad -->
+      <div class="form-group">
+        <label for="ciudad">Ciudad:</label>
+        <select id="ciudad">
+          <option value="">-- Selecciona --</option>
+          <option value="guadalajara">Guadalajara</option>
+          <option value="mexicali">Mexicali</option>
+          <option value="losCabos">Los Cabos</option>
+          <option value="hermosillo">Hermosillo</option>
+          <option value="chihuahua">Chihuahua</option>
+          <option value="torreon">Torreón</option>
+          <option value="monterrey">Monterrey</option>
+          <option value="tampico">Tampico</option>
+          <option value="veracruz">Veracruz</option>
+          <option value="sanLuisPotosi">San Luis Potosí</option>
+          <option value="durango">Durango</option>
+          <option value="culiacan">Culiacán</option>
+          <option value="tepic">Tepic</option>
+          <option value="colima">Colima</option>
+          <option value="aguascalientes">Aguascalientes</option>
+          <option value="zacatecas">Zacatecas</option>
+          <option value="morelia">Morelia</option>
+          <option value="leon">León</option>
+          <option value="queretaro">Querétaro</option>
+          <option value="pachuca">Pachuca</option>
+          <option value="ciudadDeMexico">Ciudad de México</option>
+          <option value="acapulco">Acapulco</option>
+          <option value="cuernavaca">Cuernavaca</option>
+          <option value="puebla">Puebla</option>
+          <option value="tlaxcala">Tlaxcala</option>
+          <option value="oaxaca">Oaxaca</option>
+          <option value="villahermosa">Villahermosa</option>
+          <option value="tuxtlaGutierrez">Tuxtla Gutiérrez</option>
+          <option value="campeche">Campeche</option>
+          <option value="merida">Mérida</option>
+          <option value="cancun">Cancún</option>
+          <option value="manzanillo">Manzanillo</option>
+          <option value="puertoVallarta">Puerto Vallarta</option>
+          <option value="huatulco">Huatulco</option>
+          <option value="mazatlan">Mazatlán</option>
+          <option value="puertoPeñasco">Puerto Peñasco</option>
+          <option value="ixtapaZihuatanejo">Ixtapa / Zihuatanejo</option>
+          <option value="saltillo">Saltillo</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Columna derecha: Tabla clima + resumen -->
+    <div class="clima-tabla">
+      <div id="tablaClima" class="tabla-clima"></div>
+      <div id="contenedorMesFrio" class="resumen-clima"></div>
+    </div>
   </div>
 `,
   sanitizacion: `
@@ -319,6 +332,12 @@ function renderSeccion(seccion) {
   }
   if (document.getElementById("chkCaldera")?.checked) {
     document.getElementById("campoCaldera").classList.remove("oculto");
+  }
+
+    // 👇 Si estamos en sección con ciudad, redibujar tabla
+  const ciudad = document.getElementById("ciudad")?.value;
+  if (ciudad) {
+    renderTabla(ciudad);
   }
 }
 
@@ -3548,86 +3567,209 @@ if (distanciaCMB > 0) {
     }
 }
 
+const meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+
+let ciudadSeleccionada = null; // 👉 ciudad activa
+let mesesSeleccionados = Array(12).fill(true); // ✔ todos los meses seleccionados por defecto
+
+function renderTabla(ciudad) {
+  const datosTemp = temperatura[ciudad];
+  const datosViento = velocidadViento[ciudad];
+  const datosHumedad = humedad[ciudad];
+
+  if (!datosTemp || !datosViento || !datosHumedad) {
+    document.getElementById("tablaClima").innerHTML = "<p>No hay datos para esta ciudad</p>";
+    return;
+  }
+
+  let tabla = `
+    <p><strong>Selecciona los meses a calentar:</strong></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Calentar</th>
+          <th>Mes</th>
+          <th>Temperatura<br>Min. (°C)</th>
+          <th>Temperatura<br>Max. (°C)</th>
+          <th>Velocidad<br>Viento Max. (km/h)</th>
+          <th>Humedad Relativa<br>Prom. (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  for (let i = 0; i < 12; i++) {
+    tabla += `
+      <tr data-mes="${i}" class="${mesesSeleccionados[i] ? '' : 'deshabilitado'}">
+        <td><input type="checkbox" class="chk-mes" data-mes="${i}" ${mesesSeleccionados[i] ? 'checked' : ''}></td>
+        <td>${meses[i]}</td>
+        <td>${datosTemp.min[i].toFixed(1)}</td>
+        <td>${datosTemp.max[i].toFixed(1)}</td>
+        <td>${datosViento.max[i].toFixed(1)}</td>
+        <td>${datosHumedad.promedio[i].toFixed(1)}</td>
+      </tr>
+    `;
+  }
+
+  tabla += `</tbody></table>`;
+  tabla += `<div id="contenedorMesFrio"></div>`;
+
+  document.getElementById("tablaClima").innerHTML = tabla;
+const columnaTabla = document.querySelector('.clima-tabla');
+if (columnaTabla) {
+  columnaTabla.style.marginLeft = 'auto'; // empuja la columna al borde derecho disponible
+  columnaTabla.style.display = 'flex';
+  columnaTabla.style.justifyContent = 'flex-end';
+}
+  function actualizarMesFrio() {
+    let minTemp = Infinity;
+    let mesMasFrioIndex = -1;
+
+    for (let i = 0; i < 12; i++) {
+      if (mesesSeleccionados[i] && datosTemp.min[i] < minTemp) {
+        minTemp = datosTemp.min[i];
+        mesMasFrioIndex = i;
+      }
+    }
+
+    if (mesMasFrioIndex === -1) {
+      document.getElementById("contenedorMesFrio").innerHTML = "<p>No hay meses seleccionados</p>";
+      return;
+    }
+
+    const tempPromedio = ((datosTemp.min[mesMasFrioIndex] + datosTemp.max[mesMasFrioIndex]) / 2).toFixed(1);
+    const vientoMax = datosViento.max[mesMasFrioIndex].toFixed(1);
+    const humedadMes = datosHumedad.promedio[mesMasFrioIndex].toFixed(1);
+
+    document.getElementById("contenedorMesFrio").innerHTML = `
+      <h4>Mes más frío seleccionado:</h4>
+      <table id="tablaMesFrio">
+        <thead>
+          <tr>
+            <th>Mes</th>
+            <th>Temperatura Min. (°C)</th>
+            <th>Temperatura Promedio (°C)</th>
+            <th>Velocidad Viento Max. (km/h)</th>
+            <th>Humedad Relativa (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>${meses[mesMasFrioIndex]}</td>
+            <td>${minTemp.toFixed(1)}</td>
+            <td>${tempPromedio}</td>
+            <td>${vientoMax}</td>
+            <td>${humedadMes}</td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+  }
+
+  // inicializamos tabla mes frío
+  actualizarMesFrio();
+
+  // actualizar variable global y tabla mes frío al cambiar un checkbox
+  document.querySelectorAll(".chk-mes").forEach(chk => {
+    chk.addEventListener("change", (e) => {
+      const i = parseInt(e.target.dataset.mes);
+      mesesSeleccionados[i] = e.target.checked;
+
+      const fila = document.querySelector(`tr[data-mes="${i}"]`);
+      fila.classList.toggle("deshabilitado", !e.target.checked);
+
+      actualizarMesFrio();
+    });
+  });
+}
+
+document.addEventListener("change", (e) => {
+  if (e.target.id === "ciudad") {
+    ciudadSeleccionada = e.target.value; // 👉 guarda la ciudad
+    renderTabla(ciudadSeleccionada);
+  }
+});
+
 const temperatura = {
     "guadalajara": {
         min: [9.5, 10.3, 12.3, 14.3, 16.4, 17.3, 16.5, 16.4, 16.5, 14.9, 12.1, 10.3],
-        max: [24.7, 26.5, 29, 31.2, 32.5, 30.5, 27.5, 27.3, 27.1, 27.1, 26.4, 24.7]
+        max: [24.7, 26.5, 29.0, 31.2, 32.5, 30.5, 27.5, 27.3, 27.1, 27.1, 26.4, 24.7]
     },
     "mexicali": {
-        min: [5.8, 7.6, 10, 12.8, 16.7, 20.9, 25.6, 25.5, 22.1, 16.1, 9.8, 5.7],
-        max: [20.5, 23, 26, 29.7, 35, 40, 42.3, 41.5, 38.7, 32.5, 25.3, 20.4]
+        min: [5.8, 7.6, 10.0, 12.8, 16.7, 20.9, 25.6, 25.5, 22.1, 16.1, 9.8, 5.7],
+        max: [20.5, 23.0, 26.0, 29.7, 35.0, 40.0, 42.3, 41.5, 38.7, 32.5, 25.3, 20.4]
     },
     "losCabos": {
-        min: [13, 12.7, 13.5, 15.4, 17, 19, 22.8, 24.2, 23.9, 21.4, 17.5, 14.5],
-        max: [25.4, 25.9, 26.9, 29, 30.7, 31.7, 33.3, 33.7, 33, 32.1, 29.4, 26.8]
+        min: [13.0, 12.7, 13.5, 15.4, 17.0, 19.0, 22.8, 24.2, 23.9, 21.4, 17.5, 14.5],
+        max: [25.4, 25.9, 26.9, 29.0, 30.7, 31.7, 33.3, 33.7, 33.0, 32.1, 29.4, 26.8]
     },
     "hermosillo": {
-        min: [9.4, 10.6, 12.4, 15, 18.5, 23.5, 25.6, 25.4, 24.1, 19.3, 13, 9.7],
-        max: [23.7, 25.7, 28, 31.8, 35.3, 39.5, 39, 37.8, 37.2, 33.6, 28, 23.8]
+        min: [9.4, 10.6, 12.4, 15.0, 18.5, 23.5, 25.6, 25.4, 24.1, 19.3, 13.0, 9.7],
+        max: [23.7, 25.7, 28.0, 31.8, 35.3, 39.5, 39.0, 37.8, 37.2, 33.6, 28.0, 23.8]
     },
     "chihuahua": {
-        min: [1.3, 3, 6.5, 9.3, 13.3, 17.6, 18.25, 17.25, 15, 10, 5, 1.5],
-        max: [18, 20.3, 24, 27.3, 31.3, 33.3, 31.75, 30, 28.6, 26.25, 22, 18]
+        min: [1.3, 3.0, 6.5, 9.3, 13.3, 17.6, 18.2, 17.2, 15.0, 10.0, 5.0, 1.5],
+        max: [18.0, 20.3, 24.0, 27.3, 31.3, 33.3, 31.7, 30.0, 28.6, 26.2, 22.0, 18.0]
     },
     "torreon": {
-        min: [6.8, 8.6, 11.9, 15.6, 19, 20.8, 20.5, 20.3, 18.6, 15.2, 10.3, 7.4],
-        max: [22.3, 25.3, 26, 32.5, 35.3, 35.4, 34.3, 33.7, 31.8, 29.5, 26.1, 22.8]
+        min: [6.8, 8.6, 11.9, 15.6, 19.0, 20.8, 20.5, 20.3, 18.6, 15.2, 10.3, 7.4],
+        max: [22.3, 25.3, 26.0, 32.5, 35.3, 35.4, 34.3, 33.7, 31.8, 29.5, 26.1, 22.8]
     },
     "monterrey": {
-        min: [8.2, 10, 13.2, 16.7, 20.2, 22, 22.3, 22.5, 20.9, 17.2, 12.7, 9.1],
-        max: [20.7, 23.2, 26.9, 30, 32.2, 33.8, 34.8, 34.5, 31.5, 27.6, 24.1, 21.2]
+        min: [8.2, 10.0, 13.2, 16.7, 20.2, 22.0, 22.3, 22.5, 20.9, 17.2, 12.7, 9.1],
+        max: [20.7, 23.2, 26.9, 30.0, 32.2, 33.8, 34.8, 34.5, 31.5, 27.6, 24.1, 21.2]
     },
     "tampico": {
-        min: [4, 13, 15, 16, 21, 23, 22, 23, 22, 16, 8, 10],
-        max: [29, 29, 30, 32, 33, 34, 44, 34, 33, 32, 30, 33]
+        min: [4.0, 13.0, 15.0, 16.0, 21.0, 23.0, 22.0, 23.0, 22.0, 16.0, 8.0, 10.0],
+        max: [29.0, 29.0, 30.0, 32.0, 33.0, 34.0, 44.0, 34.0, 33.0, 32.0, 30.0, 33.0]
     },
     "veracruz": {
-        min: [17, 17, 20, 22, 24, 24, 23, 23, 23, 22, 19, 18],
-        max: [26, 27, 29, 31, 32, 32, 31, 32, 32, 30, 29, 27]
+        min: [17.0, 17.0, 20.0, 22.0, 24.0, 24.0, 23.0, 23.0, 23.0, 22.0, 19.0, 18.0],
+        max: [26.0, 27.0, 29.0, 31.0, 32.0, 32.0, 31.0, 32.0, 32.0, 30.0, 29.0, 27.0]
     },
     "sanLuisPotosi": {
         min: [5.5, 6.8, 9.3, 11.9, 13.7, 14.1, 13.4, 13.4, 12.9, 10.8, 8.2, 6.4],
-        max: [20.6, 22.5, 25.4, 27.7, 28.4, 26.7, 24.8, 25, 23.8, 23.2, 22.4, 20.7]
+        max: [20.6, 22.5, 25.4, 27.7, 28.4, 26.7, 24.8, 25.0, 23.8, 23.2, 22.4, 20.7]
     },
     "durango": {
-        min: [1.3, 2.4, 5.3, 8.2, 11.1, 14, 14, 13.7, 12.2, 9.1, 5, 2.1],
-        max: [20.5, 22.1, 24.5, 27.2, 30, 30.4, 28, 27.6, 26.7, 25.6, 23, 20.5]
+        min: [1.3, 2.4, 5.3, 8.2, 11.1, 14.0, 14.0, 13.7, 12.2, 9.1, 5.0, 2.1],
+        max: [20.5, 22.1, 24.5, 27.2, 30.0, 30.4, 28.0, 27.6, 26.7, 25.6, 23.0, 20.5]
     },
     "culiacan": {
-        min: [10.9, 11.3, 12.1, 14.5, 18, 23.2, 24.1, 23.8, 23.6, 20.7, 15.6, 12.2],
+        min: [10.9, 11.3, 12.1, 14.5, 18.0, 23.2, 24.1, 23.8, 23.6, 20.7, 15.6, 12.2],
         max: [27.8, 28.9, 30.5, 32.8, 34.9, 35.9, 35.5, 34.8, 34.4, 34.2, 31.5, 28.2]
     },
     "tepic": {
-        min: [8, 8, 9, 10.3, 14, 18, 19, 19.75, 19.6, 17, 12.6, 9],
-        max: [26, 27, 28.5, 30, 31, 30, 29, 28.75, 28, 28.6, 27.6, 26.5]
+        min: [8.0, 8.0, 9.0, 10.3, 14.0, 18.0, 19.0, 19.7, 19.6, 17.0, 12.6, 9.0],
+        max: [26.0, 27.0, 28.5, 30.0, 31.0, 30.0, 29.0, 28.7, 28.0, 28.6, 27.6, 26.5]
     },
     "colima": {
-        min: [14, 14, 14.5, 16, 18.6, 21.5, 22, 22, 21.6, 20, 17.6, 15],
-        max: [28, 28.6, 29.5, 31, 32, 31.5, 31, 30.75, 30.6, 31, 30, 28.5]
+        min: [14.0, 14.0, 14.5, 16.0, 18.6, 21.5, 22.0, 22.0, 21.6, 20.0, 17.6, 15.0],
+        max: [28.0, 28.6, 29.5, 31.0, 32.0, 31.5, 31.0, 30.7, 30.6, 31.0, 30.0, 28.5]
     },
     "aguascalientes": {
-        min: [4, 5, 7, 9.3, 12.3, 14.25, 14, 14, 14.6, 10.25, 6.6, 4.25],
-        max: [22.3, 24, 26.5, 28.6, 30, 28.5, 26.25, 26, 25.6, 25, 24, 22.5]
+        min: [4.0, 5.0, 7.0, 9.3, 12.3, 14.2, 14.0, 14.0, 14.6, 10.2, 6.6, 4.2],
+        max: [22.3, 24.0, 26.5, 28.6, 30.0, 28.5, 26.2, 26.0, 25.6, 25.0, 24.0, 22.5]
     },
     "zacatecas": {
-        min: [1, 2, 3.75, 6.3, 9, 11.25, 11, 10.75, 9.3, 6.5, 3, 1.25],
-        max: [17.6, 19.3, 22, 24, 25.6, 25, 23, 22.5, 22, 21.5, 20.3, 18.5]
+        min: [1.0, 2.0, 3.7, 6.3, 9.0, 11.2, 11.0, 10.7, 9.3, 6.5, 3.0, 1.2],
+        max: [17.6, 19.3, 22.0, 24.0, 25.6, 25.0, 23.0, 22.5, 22.0, 21.5, 20.3, 18.5]
     },
     "morelia": {
         min: [5.2, 6.1, 8.4, 10.6, 12.5, 13.4, 12.8, 12.9, 12.7, 10.5, 7.8, 5.9],
-        max: [23.8, 25.6, 27.9, 30, 30.6, 28.4, 26.1, 26, 25.5, 25.5, 25.3, 24.2]
+        max: [23.8, 25.6, 27.9, 30.0, 30.6, 28.4, 26.1, 26.0, 25.5, 25.5, 25.3, 24.2]
     },
     "leon": {
-        min: [7.7, 8.9, 10.9, 13.8, 15.7, 16.4, 15.2, 15.2, 14.8, 12.5, 10, 8.3],
-        max: [23.6, 25.7, 28.2, 30.5, 31.7, 29.9, 27.5, 27.6, 27.1, 26.9, 25.8, 24]
+        min: [7.7, 8.9, 10.9, 13.8, 15.7, 16.4, 15.2, 15.2, 14.8, 12.5, 10.0, 8.3],
+        max: [23.6, 25.7, 28.2, 30.5, 31.7, 29.9, 27.5, 27.6, 27.1, 26.9, 25.8, 24.0]
     },
     "queretaro": {
-        min: [6, 7, 9.5, 12, 13.6, 14.75, 14.5, 14, 13.6, 11.5, 8.6, 6.25],
-        max: [23, 25, 27, 28.6, 29.6, 28, 26.75, 26.6, 26, 25.5, 24.6, 23.5]
+        min: [6.0, 7.0, 9.5, 12.0, 13.6, 14.7, 14.5, 14.0, 13.6, 11.5, 8.6, 6.2],
+        max: [23.0, 25.0, 27.0, 28.6, 29.6, 28.0, 26.7, 26.6, 26.0, 25.5, 24.6, 23.5]
     },
     "pachuca": {
         min: [2.8, 3.4, 5.6, 7.8, 9.2, 9.4, 9.2, 8.8, 8.4, 6.9, 4.2, 3.5],
-        max: [19.8, 20.7, 23, 24.6, 24.1, 22, 20.7, 20.8, 20.5, 20.4, 20, 19.7]
+        max: [19.8, 20.7, 23.0, 24.6, 24.1, 22.0, 20.7, 20.8, 20.5, 20.4, 20.0, 19.7]
     },
     "ciudadDeMexico": {
         min: [7.4, 8.5, 10.4, 12.3, 13.2, 13.5, 12.5, 12.7, 12.7, 11.2, 9.7, 8.1],
@@ -3638,66 +3780,66 @@ const temperatura = {
         max: [30.4, 30.4, 30.4, 30.8, 31.6, 31.9, 32.3, 32.2, 31.6, 31.7, 31.4, 30.9]
     },
     "cuernavaca": {
-        min: [12.2, 13.3, 15, 16.6, 17.3, 16.8, 16, 15.9, 15.7, 14.9, 13.7, 12.7],
+        min: [12.2, 13.3, 15.0, 16.6, 17.3, 16.8, 16.0, 15.9, 15.7, 14.9, 13.7, 12.7],
         max: [25.2, 26.5, 28.8, 30.1, 29.7, 27.1, 26.2, 26.1, 25.1, 25.9, 25.8, 25.2]
     },
     "puebla": {
-        min: [6, 7, 9, 11, 12, 13, 12, 12, 12, 10, 8, 6],
-        max: [22, 23, 25, 27, 26, 25, 24, 24, 23, 23, 23, 21]
+        min: [6.0, 7.0, 9.0, 11.0, 12.0, 13.0, 12.0, 12.0, 12.0, 10.0, 8.0, 6.0],
+        max: [22.0, 23.0, 25.0, 27.0, 26.0, 25.0, 24.0, 24.0, 23.0, 23.0, 23.0, 21.0]
     },
     "tlaxcala": {
-        min: [5, 6.6, 8, 9.3, 11, 11.5, 11, 11, 11, 9.5, 7, 5.5],
-        max: [20.6, 21.6, 23.5, 24.3, 24.3, 23.25, 22.5, 22.5, 22, 21.5, 21, 20.5]
+        min: [5.0, 6.6, 8.0, 9.3, 11.0, 11.5, 11.0, 11.0, 11.0, 9.5, 7.0, 5.5],
+        max: [20.6, 21.6, 23.5, 24.3, 24.3, 23.2, 22.5, 22.5, 22.0, 21.5, 21.0, 20.5]
     },
     "oaxaca": {
-        min: [9, 10, 12, 14, 15.3, 16, 15.5, 15, 15, 13.5, 11, 9.25],
-        max: [25.75, 27.25, 29.25, 30.6, 29.3, 27, 26, 26, 26, 26, 26, 25.75]
+        min: [9.0, 10.0, 12.0, 14.0, 15.3, 16.0, 15.5, 15.0, 15.0, 13.5, 11.0, 9.2],
+        max: [25.7, 27.2, 29.2, 30.6, 29.3, 27.0, 26.0, 26.0, 26.0, 26.0, 26.0, 25.7]
     },
     "villahermosa": {
-        min: [19.3, 19.7, 21.3, 23.1, 24.2, 24.2, 23.8, 23.8, 23.8, 23, 21.5, 19.9],
-        max: [27.9, 29.2, 31.9, 33.9, 35.1, 34.4, 33.9, 34, 33, 31.2, 29.8, 28.3]
+        min: [19.3, 19.7, 21.3, 23.1, 24.2, 24.2, 23.8, 23.8, 23.8, 23.0, 21.5, 19.9],
+        max: [27.9, 29.2, 31.9, 33.9, 35.1, 34.4, 33.9, 34.0, 33.0, 31.2, 29.8, 28.3]
     },
     "tuxtlaGutierrez": {
-        min: [17, 17.3, 18.25, 21, 22, 22, 21, 21, 21.3, 20.5, 19, 17.5],
-        max: [28.25, 30, 31.5, 33.3, 33.3, 31.25, 31, 31, 30.3, 29.5, 28.6, 28]
+        min: [17.0, 17.3, 18.2, 21.0, 22.0, 22.0, 21.0, 21.0, 21.3, 20.5, 19.0, 17.5],
+        max: [28.2, 30.0, 31.5, 33.3, 33.3, 31.2, 31.0, 31.0, 30.3, 29.5, 28.6, 28.0]
     },
     "campeche": {
-        min: [18.3, 19.3, 20.75, 22.3, 24, 24, 23.5, 23.75, 23.6, 22.25, 20.6, 19.25],
-        max: [28, 29, 31, 33, 34, 33.25, 33, 33, 32, 31, 29.6, 28.25]
+        min: [18.3, 19.3, 20.7, 22.3, 24.0, 24.0, 23.5, 23.7, 23.6, 22.2, 20.6, 19.2],
+        max: [28.0, 29.0, 31.0, 33.0, 34.0, 33.2, 33.0, 33.0, 32.0, 31.0, 29.6, 28.2]
     },
     "merida": {
         min: [17.2, 17.3, 18.6, 20.2, 21.7, 21.6, 21.4, 21.3, 21.6, 20.8, 19.3, 17.5],
-        max: [30.8, 31.5, 34, 35.6, 36.3, 35.3, 35, 34.9, 34.2, 32.7, 31.5, 30.6]
+        max: [30.8, 31.5, 34.0, 35.6, 36.3, 35.3, 35.0, 34.9, 34.2, 32.7, 31.5, 30.6]
     },
     "cancun": {
-        min: [19.8, 20.3, 21, 22.6, 23.9, 24.7, 24.8, 24.6, 24.3, 23.3, 21.9, 20.5],
+        min: [19.8, 20.3, 21.0, 22.6, 23.9, 24.7, 24.8, 24.6, 24.3, 23.3, 21.9, 20.5],
         max: [28.3, 29.4, 30.7, 32.2, 33.5, 33.7, 34.3, 34.8, 33.7, 31.6, 29.8, 28.6]
     },
     "manzanillo": {
         min: [20.3, 19.8, 19.5, 20.5, 22.5, 24.6, 24.9, 24.8, 24.5, 24.3, 22.9, 21.5],
-        max: [29.4, 29.2, 29, 29.4, 30.5, 31.6, 32.4, 32.5, 31.7, 31.9, 31.1, 30]
+        max: [29.4, 29.2, 29.0, 29.4, 30.5, 31.6, 32.4, 32.5, 31.7, 31.9, 31.1, 30.0]
     },
     "puertoVallarta": {
-        min: [16.7, 16.3, 16.9, 17.2, 20.2, 22.8, 22.9, 23, 22.9, 22.2, 19.7, 18],
-        max: [28.8, 29, 29.2, 29.9, 31, 32.3, 33.3, 33.7, 33.6, 33.6, 32.3, 29.9]
+        min: [16.7, 16.3, 16.9, 17.2, 20.2, 22.8, 22.9, 23.0, 22.9, 22.2, 19.7, 18.0],
+        max: [28.8, 29.0, 29.2, 29.9, 31.0, 32.3, 33.3, 33.7, 33.6, 33.6, 32.3, 29.9]
     },
 };
 
 const velocidadViento = {
     "guadalajara": {
-        max: [8.8, 9.2, 9.6, 9.5, 9.2, 8, 7, 7.4, 7.9, 7.9, 8, 8.2]
+        max: [8.8, 9.2, 9.6, 9.5, 9.2, 8.0, 7.0, 7.4, 7.9, 7.9, 8.0, 8.2]
     },
     "mexicali": {
-        max: [10.5, 11.4, 12.9, 14, 14, 13.4, 11.9, 10.8, 11.1, 11.1, 10.7, 10.4]
+        max: [10.5, 11.4, 12.9, 14.0, 14.0, 13.4, 11.9, 10.8, 11.1, 11.1, 10.7, 10.4]
     },
     "losCabos": {
-        max: [14.3, 13.6, 13.6, 13.2, 13.1, 12.9, 11.3, 11.6, 12.1, 12, 13.9, 14.6]
+        max: [14.3, 13.6, 13.6, 13.2, 13.1, 12.9, 11.3, 11.6, 12.1, 12.0, 13.9, 14.6]
     },
     "hermosillo": {
         max: [12.4, 12.7, 13.4, 13.9, 14.1, 14.1, 12.8, 9.6, 10.7, 11.4, 12.3, 12.5]
     },
     "chihuahua": {
-        max: [13.9, 15.4, 16.6, 16.6, 16, 13.4, 11.4, 9.9, 10.6, 11.8, 13, 13.2]
+        max: [13.9, 15.4, 16.6, 16.6, 16.0, 13.4, 11.4, 9.9, 10.6, 11.8, 13.0, 13.2]
     },
     "torreon": {
         max: [10.2, 11.1, 11.7, 11.8, 11.5, 12.3, 12.2, 11.6, 11.6, 10.4, 9.6, 9.7]
@@ -3706,100 +3848,100 @@ const velocidadViento = {
         max: [10.8, 12.2, 13.1, 13.4, 13.9, 15.1, 15.2, 14.4, 12.9, 11.3, 10.7, 10.1]
     },
     "tampico": {
-        max: [15.5, 16, 16.6, 16.7, 16.6, 15.5, 14.3, 12.7, 13.8, 14.7, 15.3, 15.6]
+        max: [15.5, 16.0, 16.6, 16.7, 16.6, 15.5, 14.3, 12.7, 13.8, 14.7, 15.3, 15.6]
     },
     "veracruz": {
         max: [15.6, 15.3, 14.9, 14.8, 13.5, 12.3, 10.4, 10.3, 14.4, 15.7, 15.9, 15.7]
     },
     "sanLuisPotosi": {
-        max: [13.9, 15, 15.5, 15.2, 14, 16.2, 16.2, 15.6, 15.5, 14.2, 12.5, 13]
+        max: [13.9, 15.0, 15.5, 15.2, 14.0, 16.2, 16.2, 15.6, 15.5, 14.2, 12.5, 13.0]
     },
     "durango": {
-        max: [11.9, 12.7, 13.3, 13.1, 12, 9.8, 9.5, 9.3, 9.4, 9.3, 10.5, 11.2]
+        max: [11.9, 12.7, 13.3, 13.1, 12.0, 9.8, 9.5, 9.3, 9.4, 9.3, 10.5, 11.2]
     },
     "culiacan": {
-        max: [9.1, 9.5, 10, 10.2, 11, 11.1, 9.9, 7.9, 7.9, 8.6, 8.8, 8.8]
+        max: [9.1, 9.5, 10.0, 10.2, 11.0, 11.1, 9.9, 7.9, 7.9, 8.6, 8.8, 8.8]
     },
     "tepic": {
-        max: [8.3, 8.7, 8.9, 9.1, 9.3, 9.3, 7.8, 6.9, 7, 7.5, 7.8, 7.9]
+        max: [8.3, 8.7, 8.9, 9.1, 9.3, 9.3, 7.8, 6.9, 7.0, 7.5, 7.8, 7.9]
     },
     "colima": {
-        max: [8.6, 9.1, 9.7, 10.2, 10.4, 10.1, 8.3, 7.9, 8, 7.5, 7.7, 8]
+        max: [8.6, 9.1, 9.7, 10.2, 10.4, 10.1, 8.3, 7.9, 8.0, 7.5, 7.7, 8.0]
     },
     "aguascalientes": {
-        max: [12.4, 13, 13.3, 13.1, 12, 12.3, 12.3, 12.4, 12.6, 12.1, 11.3, 11.6]
+        max: [12.4, 13.0, 13.3, 13.1, 12.0, 12.3, 12.3, 12.4, 12.6, 12.1, 11.3, 11.6]
     },
     "zacatecas": {
-        max: [15.1, 15.7, 16.3, 16, 14.5, 14.4, 14.5, 14.3, 14.2, 13.2, 13.2, 14.1]
+        max: [15.1, 15.7, 16.3, 16.0, 14.5, 14.4, 14.5, 14.3, 14.2, 13.2, 13.2, 14.1]
     },
     "morelia": {
-        max: [8, 8.6, 9.1, 9.1, 8.4, 7.2, 6.7, 6.8, 7.6, 7.5, 7.4, 7.4]
+        max: [8.0, 8.6, 9.1, 9.1, 8.4, 7.2, 6.7, 6.8, 7.6, 7.5, 7.4, 7.4]
     },
     "leon": {
-        max: [12.8, 13.3, 13.6, 13.3, 12.3, 13.7, 13.7, 14, 14.3, 14, 12.8, 12.1]
+        max: [12.8, 13.3, 13.6, 13.3, 12.3, 13.7, 13.7, 14.0, 14.3, 14.0, 12.8, 12.1]
     },
     "queretaro": {
-        max: [11.9, 12.7, 12.9, 12.7, 11.9, 13.1, 13.1, 13.1, 13.2, 13, 11.8, 11.1]
+        max: [11.9, 12.7, 12.9, 12.7, 11.9, 13.1, 13.1, 13.1, 13.2, 13.0, 11.8, 11.1]
     },
     "pachuca": {
         max: [9.3, 10.1, 10.5, 10.6, 10.9, 11.4, 11.4, 11.2, 10.9, 10.5, 9.2, 8.5]
     },
     "ciudadDeMexico": {
-        max: [7.9, 8.3, 8.6, 8.4, 7, 7.1, 7.1, 7, 7.6, 7.6, 7.1, 7.2]
+        max: [7.9, 8.3, 8.6, 8.4, 7.0, 7.1, 7.1, 7.0, 7.6, 7.6, 7.1, 7.2]
     },
     "acapulco": {
-        max: [9.7, 10.5, 10.8, 10.8, 11.1, 11.1, 10.4, 10.7, 11.2, 10.5, 9.1, 9]
+        max: [9.7, 10.5, 10.8, 10.8, 11.1, 11.1, 10.4, 10.7, 11.2, 10.5, 9.1, 9.0]
     },
     "cuernavaca": {
         max: [8.4, 8.9, 9.1, 8.9, 7.8, 7.2, 7.3, 7, 6.9, 7.3, 7.5, 7.9]
     },
     "puebla": {
-        max: [10.2, 10.9, 12.1, 13, 13, 12.2, 10.9, 10.2, 10.4, 10.5, 10.3, 10.1]
+        max: [10.2, 10.9, 12.1, 13.0, 13.0, 12.2, 10.9, 10.2, 10.4, 10.5, 10.3, 10.1]
     },
     "tlaxcala": {
-        max: [9.3, 9.8, 10, 9.5, 8.2, 9.3, 9.6, 9.4, 9.8, 9.8, 9.5, 8.6]
+        max: [9.3, 9.8, 10.0, 9.5, 8.2, 9.3, 9.6, 9.4, 9.8, 9.8, 9.5, 8.6]
     },
     "oaxaca": {
-        max: [10.2, 10, 9.7, 9.1, 8.5, 10, 10.7, 10.3, 10.3, 11.7, 11.8, 10.7]
+        max: [10.2, 10.0, 9.7, 9.1, 8.5, 10.0, 10.7, 10.3, 10.3, 11.7, 11.8, 10.7]
     },
     "villahermosa": {
-        max: [12.1, 11.9, 11.5, 10.9, 10.8, 12.9, 13.5, 12.9, 10.9, 11.8, 12, 12]
+        max: [12.1, 11.9, 11.5, 10.9, 10.8, 12.9, 13.5, 12.9, 10.9, 11.8, 12.0, 12.0]
     },
     "tuxtlaGutierrez": {
-        max: [12.6, 12.5, 12.3, 11.6, 10, 7.8, 7.2, 7.3, 8.9, 11.6, 12.1, 12.3]
+        max: [12.6, 12.5, 12.3, 11.6, 10.0, 7.8, 7.2, 7.3, 8.9, 11.6, 12.1, 12.3]
     },
     "campeche": {
         max: [11.8, 12.3, 12.7, 12.9, 12.7, 11.6, 11.2, 10.4, 10.3, 11.3, 11.5, 11.5]
     },
     "merida": {
-        max: [7.2, 7.8, 8.2, 8.2, 8.1, 7, 6.4, 5.9, 5.9, 6.7, 6.9, 7]
+        max: [7.2, 7.8, 8.2, 8.2, 8.1, 7.0, 6.4, 5.9, 5.9, 6.7, 6.9, 7.0]
     },
     "cancun": {
-        max: [14.1, 14.6, 15, 14.6, 13.6, 13, 11.8, 10.8, 11.6, 13.7, 13.9, 14]
+        max: [14.1, 14.6, 15.0, 14.6, 13.6, 13.0, 11.8, 10.8, 11.6, 13.7, 13.9, 14.0]
     },
     "manzanillo": {
-        max: [8.7, 9.1, 9.6, 9.7, 10.3, 10.3, 9.6, 9.5, 9.8, 9, 8, 8]
+        max: [8.7, 9.1, 9.6, 9.7, 10.3, 10.3, 9.6, 9.5, 9.8, 9.0, 8.0, 8.0]
     },
     "puertoVallarta": {
-        max: [10, 10.6, 10.9, 11.1, 11.1, 10.7, 9.1, 9.1, 9.4, 9.3, 9.4, 9.5]
+        max: [10.0, 10.6, 10.9, 11.1, 11.1, 10.7, 9.1, 9.1, 9.4, 9.3, 9.4, 9.5]
     },
 };
 
 const humedad = {
     "guadalajara": {
-        promedio: [77, 74, 66, 55, 45, 40, 30, 32, 41, 51, 63, 72]
+        promedio: [77.0, 74.0, 66.0, 55.0, 45.0, 40.0, 30.0, 32.0, 41.0, 51.0, 63.0, 72.0]
     },
     "mexicali": {
-        promedio: [38, 36, 32, 28, 24, 20, 22, 24, 26, 30, 34, 38]
+        promedio: [38.0, 36.0, 32.0, 28.0, 24.0, 20.0, 22.0, 24.0, 26.0, 30.0, 34.0, 38.0]
     },
     "losCabos": {
-        promedio: [70, 68, 65, 60, 55, 50, 55, 60, 65, 70, 75, 78]
+        promedio: [70.0, 68.0, 65.0, 60.0, 55.0, 50.0, 55.0, 60.0, 65.0, 70.0, 75.0, 78.0]
     },
     "hermosillo": {
-        promedio: [40, 38, 35, 30, 25, 20, 25, 30, 35, 40, 45, 50]
+        promedio: [40.0, 38.0, 35.0, 30.0, 25.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0]
     },
     "chihuahua": {
-        promedio: [48, 46, 44, 42, 40, 38, 36, 34, 32, 30, 28, 26]
+        promedio: [48.0, 46.0, 44.0, 42.0, 40.0, 38.0, 36.0, 34.0, 32.0, 30.0, 28.0, 26.0]
     },
     "torreon": {
         promedio: [43, 41, 39, 37, 35, 33, 31, 29, 27, 25, 23, 21]
