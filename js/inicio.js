@@ -112,39 +112,10 @@ calentamiento: `
   <div class="form-section clima-layout">
     <!-- Columna izquierda: Inputs -->
     <div class="clima-form">
-      <div class="form-group inline">
-        <label><input type="checkbox" id="chkBombaCalor"> Bomba de calor</label>
-        <label><input type="checkbox" id="chkPanel"> Panel solar</label>
-        <label><input type="checkbox" id="chkCaldera"> Caldera</label>
-      </div>
-
-      <div id="campoBombaCalor" class="form-subgroup oculto">
-        <div class="form-group">
-          <label for="cargaEstaticaBC">Diferencia de altura: espejo de agua - bomba de calor (m):</label>
-          <input type="number" id="cargaEstaticaBC" step="0.01">
-        </div>
-      </div>
-      <div id="campoPanel" class="form-subgroup oculto">
-        <div class="form-group">
-          <label for="cargaEstaticaPan">Diferencia de altura: espejo de agua - panel solar (m):</label>
-          <input type="number" id="cargaEstaticaPan" step="0.01">
-        </div>
-      </div>
-      <div id="campoCaldera" class="form-subgroup oculto">
-        <div class="form-group">
-          <label for="cargaEstaticaCal">Diferencia de altura: espejo de agua - caldera (m):</label>
-          <input type="number" id="cargaEstaticaCal" step="0.01">
-        </div>
-      </div>
-
-      <!-- 👇 Temperatura deseada -->
-      <div class="form-group">
-        <label for="tempDeseada">Temperatura deseada del agua (°C):</label>
-        <input type="number" id="tempDeseada" step="0.1" min="10" max="40">
-      </div>
 
       <!-- 👇 Ciudad -->
-      <div class="form-group">
+    <div class="form-group inline">
+      <div class="form-subgroup-inline">
         <label for="ciudad">Ciudad:</label>
         <select id="ciudad">
           <option value="">-- Selecciona --</option>
@@ -188,14 +159,44 @@ calentamiento: `
           <option value="saltillo">Saltillo</option>
         </select>
       </div>
+      <!-- 👇 Temperatura deseada -->
+      <div class="form-subgroup-inline">
+        <label for="tempDeseada">Temperatura deseada del agua (°C):</label>
+        <input type="number" id="tempDeseada" step="0.1" min="10" max="40">
+      </div>
     </div>
 
+      <div class="form-group inline">
+        <label><input type="checkbox" id="chkBombaCalor"> Bomba de calor</label>
+        <label><input type="checkbox" id="chkPanel"> Panel solar</label>
+        <label><input type="checkbox" id="chkCaldera"> Caldera</label>
+      </div>
+
+      <div id="campoBombaCalor" class="form-subgroup oculto">
+        <div class="form-group">
+          <label for="cargaEstaticaBC">Diferencia de altura: espejo de agua - bomba de calor (m):</label>
+          <input type="number" id="cargaEstaticaBC" step="0.01">
+        </div>
+      </div>
+      <div id="campoPanel" class="form-subgroup oculto">
+        <div class="form-group">
+          <label for="cargaEstaticaPan">Diferencia de altura: espejo de agua - panel solar (m):</label>
+          <input type="number" id="cargaEstaticaPan" step="0.01">
+        </div>
+      </div>
+      <div id="campoCaldera" class="form-subgroup oculto">
+        <div class="form-group">
+          <label for="cargaEstaticaCal">Diferencia de altura: espejo de agua - caldera (m):</label>
+          <input type="number" id="cargaEstaticaCal" step="0.01">
+        </div>
+      </div>
+            <div id="contenedorMesFrio" class="resumen-clima"></div>
+  
+  </div>
     <!-- Columna derecha: Tabla clima + resumen -->
     <div class="clima-tabla">
       <div id="tablaClima" class="tabla-clima"></div>
-      <div id="contenedorMesFrio" class="resumen-clima"></div>
     </div>
-  </div>
 `,
   sanitizacion: `
     <div class="form-section form-group inline">

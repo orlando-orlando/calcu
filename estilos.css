@@ -185,41 +185,36 @@ body {
 
 #contenedorMesFrio {
   margin-top: 20px;
-  width: 100%;  /* para que ocupe todo el ancho de la tabla */
+  width: 100%;     /* ahora sí ocupa todo el ancho disponible */
+  box-sizing: border-box;
 }
 
-/* Asegurarnos de que la fila de inputs+tabla use toda la anchura y no haga wrap */
-.form-section.clima-layout,
 .clima-layout {
-  width: 100%;
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
-  gap: 20px;
-  flex-wrap: nowrap;               /* importante: no permitir wrap */
-  justify-content: space-between;  /* empuja los extremos: inputs a la izquierda, tabla a la derecha */
-}
-
-/* Columna de inputs: tamaño fijo / máximo para no ocupar demasiado */
-.clima-form {
-  flex: 0 0 460px;   /* no crece, no encoge, ancho base 460px (ajusta a tu gusto) */
-  max-width: 480px;
-}
-
-/* Columna de tabla: se coloca a la derecha, ocupa lo restante */
-.clima-tabla {
-  flex: 1 1 420px;   /* puede crecer para rellenar, ancho base 420px */
-  min-width: 320px;
-  display: flex;
-  justify-content: flex-end;  /* contenido de la columna alineado a la derecha */
-  align-items: flex-start;
-  margin-left: 0;              /* dejamos que space-between haga el trabajo */
-  margin-right: 100px;    /* 👈 ajusta este valor para moverla más a la izquierda */
-}
-
-/* La tabla en sí: limitamos su ancho para que no estire todo */
-.clima-tabla .tabla-clima {
   width: 100%;
-  max-width: 520px;  /* ancho máximo visual para la tabla (ajusta) */
-  margin: 0;         /* sin margen extra */
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: nowrap; /* importante: no permitir wrap */
+}
+
+.clima-form {
+  flex: 0 0 460px;  /* ancho fijo */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.clima-tabla {
+  flex: 1 1 auto;           /* ocupa el espacio restante */
+  display: flex;
+  flex-direction: column;    /* tabla arriba, resumen debajo */
+  align-items: stretch;      /* que los hijos ocupen todo el ancho */
+  gap: 15px;                 /* separación entre tabla y resumen */
+}
+
+.clima-tabla .tabla-clima,
+.clima-tabla #contenedorMesFrio {
+  width: 100%;              /* ocupan todo el ancho de la columna derecha */
 }
