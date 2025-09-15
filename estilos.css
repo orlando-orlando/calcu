@@ -186,9 +186,7 @@ body {
 .clima-layout {
   display: grid;
   grid-template-columns: minmax(460px, 1fr) 600px; /* columna izquierda flexible, columna derecha fija */
-  grid-template-rows: auto auto; /* fila 1 = inputs + tabla, fila 2 = resumen */
   column-gap: 20px;
-  row-gap: 20px;
   align-items: flex-start;
 }
 
@@ -203,7 +201,7 @@ body {
 
 /* Resumen debajo de inputs, ancho estirado hasta la tabla */
 .clima-resumen {
-  grid-column: 1 / 2; /* empieza en la columna 1 */
+  grid-column: 1; /* empieza en la columna 1 */
   grid-row: 2;        /* va en la fila 2 */
 }
 
@@ -218,7 +216,7 @@ body {
 
 .clima-tabla {
   grid-column: 2;
-  grid-row: 1 / 3; /* ocupa de la fila 1 hasta la 2 → queda a la derecha de ambos */
+  grid-row: 1; /* ocupa de la fila 1 hasta la 2 → queda a la derecha de ambos */
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -240,3 +238,68 @@ body {
 #campoBombaCalor .form-subgroup-inline label {
   white-space: normal; /* permite que el label haga salto de línea si es largo */
 }
+
+/* Tarjeta contenedora */
+.tarjeta-bdc {
+  margin-left: 0;        /* deja la tarjeta alineada a la izquierda */
+  padding: 15px 20px;    /* espacio interno: 15px arriba/abajo, 20px izquierda/derecha */
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* Título de la tarjeta */
+.tarjeta-bdc h4 {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  color: #0077cc;
+  font-weight: 700;
+}
+
+/* Fila de inputs */
+.fila-bdc {
+  display: flex;
+  gap: 20px;
+  align-items: flex-end; /* inputs alineados en la base */
+  flex-wrap: wrap;       /* que se acomoden si no caben */
+}
+
+/* Cada campo */
+.campo-bdc {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 180px;
+}
+
+/* Labels */
+.campo-bdc label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  line-height: 1.2;
+  color: #333;
+  white-space: normal; /* permite salto de línea */
+}
+
+/* Inputs y selects uniformes */
+.campo-bdc input,
+.campo-bdc select {
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #fafafa;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.campo-bdc input:focus,
+.campo-bdc select:focus {
+  outline: none;
+  border-color: #0077cc;
+  box-shadow: 0 0 4px rgba(0,119,204,0.3);
+}
+
