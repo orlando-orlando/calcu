@@ -114,57 +114,57 @@ calentamiento: `
     <div class="clima-form">
 
       <!-- 👇 Ciudad -->
-    <div class="form-group inline">
-      <div class="form-subgroup-inline">
-        <label for="ciudad">Ciudad:</label>
-        <select id="ciudad">
-          <option value="">-- Selecciona --</option>
-          <option value="guadalajara">Guadalajara</option>
-          <option value="mexicali">Mexicali</option>
-          <option value="losCabos">Los Cabos</option>
-          <option value="hermosillo">Hermosillo</option>
-          <option value="chihuahua">Chihuahua</option>
-          <option value="torreon">Torreón</option>
-          <option value="monterrey">Monterrey</option>
-          <option value="tampico">Tampico</option>
-          <option value="veracruz">Veracruz</option>
-          <option value="sanLuisPotosi">San Luis Potosí</option>
-          <option value="durango">Durango</option>
-          <option value="culiacan">Culiacán</option>
-          <option value="tepic">Tepic</option>
-          <option value="colima">Colima</option>
-          <option value="aguascalientes">Aguascalientes</option>
-          <option value="zacatecas">Zacatecas</option>
-          <option value="morelia">Morelia</option>
-          <option value="leon">León</option>
-          <option value="queretaro">Querétaro</option>
-          <option value="pachuca">Pachuca</option>
-          <option value="ciudadDeMexico">Ciudad de México</option>
-          <option value="acapulco">Acapulco</option>
-          <option value="cuernavaca">Cuernavaca</option>
-          <option value="puebla">Puebla</option>
-          <option value="tlaxcala">Tlaxcala</option>
-          <option value="oaxaca">Oaxaca</option>
-          <option value="villahermosa">Villahermosa</option>
-          <option value="tuxtlaGutierrez">Tuxtla Gutiérrez</option>
-          <option value="campeche">Campeche</option>
-          <option value="merida">Mérida</option>
-          <option value="cancun">Cancún</option>
-          <option value="manzanillo">Manzanillo</option>
-          <option value="puertoVallarta">Puerto Vallarta</option>
-          <option value="huatulco">Huatulco</option>
-          <option value="mazatlan">Mazatlán</option>
-          <option value="puertoPeñasco">Puerto Peñasco</option>
-          <option value="ixtapaZihuatanejo">Ixtapa / Zihuatanejo</option>
-          <option value="saltillo">Saltillo</option>
-        </select>
+      <div class="form-group inline">
+        <div class="form-subgroup-inline">
+          <label for="ciudad">Ciudad:</label>
+          <select id="ciudad">
+            <option value="">-- Selecciona --</option>
+            <option value="guadalajara">Guadalajara</option>
+            <option value="mexicali">Mexicali</option>
+            <option value="losCabos">Los Cabos</option>
+            <option value="hermosillo">Hermosillo</option>
+            <option value="chihuahua">Chihuahua</option>
+            <option value="torreon">Torreón</option>
+            <option value="monterrey">Monterrey</option>
+            <option value="tampico">Tampico</option>
+            <option value="veracruz">Veracruz</option>
+            <option value="sanLuisPotosi">San Luis Potosí</option>
+            <option value="durango">Durango</option>
+            <option value="culiacan">Culiacán</option>
+            <option value="tepic">Tepic</option>
+            <option value="colima">Colima</option>
+            <option value="aguascalientes">Aguascalientes</option>
+            <option value="zacatecas">Zacatecas</option>
+            <option value="morelia">Morelia</option>
+            <option value="leon">León</option>
+            <option value="queretaro">Querétaro</option>
+            <option value="pachuca">Pachuca</option>
+            <option value="ciudadDeMexico">Ciudad de México</option>
+            <option value="acapulco">Acapulco</option>
+            <option value="cuernavaca">Cuernavaca</option>
+            <option value="puebla">Puebla</option>
+            <option value="tlaxcala">Tlaxcala</option>
+            <option value="oaxaca">Oaxaca</option>
+            <option value="villahermosa">Villahermosa</option>
+            <option value="tuxtlaGutierrez">Tuxtla Gutiérrez</option>
+            <option value="campeche">Campeche</option>
+            <option value="merida">Mérida</option>
+            <option value="cancun">Cancún</option>
+            <option value="manzanillo">Manzanillo</option>
+            <option value="puertoVallarta">Puerto Vallarta</option>
+            <option value="huatulco">Huatulco</option>
+            <option value="mazatlan">Mazatlán</option>
+            <option value="puertoPeñasco">Puerto Peñasco</option>
+            <option value="ixtapaZihuatanejo">Ixtapa / Zihuatanejo</option>
+            <option value="saltillo">Saltillo</option>
+          </select>
+        </div>
+        <!-- 👇 Temperatura deseada -->
+        <div class="form-subgroup-inline">
+          <label for="tempDeseada">Temperatura deseada del agua (°C):</label>
+          <input type="number" id="tempDeseada" step="0.1" min="10" max="40">
+        </div>
       </div>
-      <!-- 👇 Temperatura deseada -->
-      <div class="form-subgroup-inline">
-        <label for="tempDeseada">Temperatura deseada del agua (°C):</label>
-        <input type="number" id="tempDeseada" step="0.1" min="10" max="40">
-      </div>
-    </div>
 
       <div class="form-group inline">
         <label><input type="checkbox" id="chkBombaCalor"> Bomba de calor</label>
@@ -173,11 +173,26 @@ calentamiento: `
       </div>
 
       <div id="campoBombaCalor" class="form-subgroup oculto">
-        <div class="form-group">
-          <label for="cargaEstaticaBC">Diferencia de altura: espejo de agua - bomba de calor (m):</label>
-          <input type="number" id="cargaEstaticaBC" step="0.01">
+        <div class="form-group inline">
+          <div class="form-subgroup-inline">
+            <label for="numBombasCalor">Número de bombas de calor:</label>
+            <input type="number" id="numBombasCalor" step="1" min="1">
+          </div>
+          <div class="form-subgroup-inline">
+            <label for="recomendadaBC">Bomba de calor recomendada:</label>
+            <input type="text" id="recomendadaBC">
+          </div>
+          <div class="form-subgroup-inline">
+            <label for="capacidadBC">Capacidad de bomba de calor (kW):</label>
+            <input type="number" id="capacidadBC" step="0.1" min="0">
+          </div>
+          <div class="form-subgroup-inline">
+            <label for="cargaEstaticaBC">Diferencia de altura: espejo de agua - bomba de calor (m):</label>
+            <input type="number" id="cargaEstaticaBC" step="0.01">
+          </div>
         </div>
       </div>
+
       <div id="campoPanel" class="form-subgroup oculto">
         <div class="form-group">
           <label for="cargaEstaticaPan">Diferencia de altura: espejo de agua - panel solar (m):</label>
@@ -190,13 +205,18 @@ calentamiento: `
           <input type="number" id="cargaEstaticaCal" step="0.01">
         </div>
       </div>
-            <div id="contenedorMesFrio" class="resumen-clima"></div>
-  
-  </div>
-    <!-- Columna derecha: Tabla clima + resumen -->
+    </div>
+
+    <!-- 👇 Resumen debajo de inputs pero estirado hasta tabla -->
+    <div class="clima-resumen">
+      <div id="contenedorMesFrio" class="resumen-clima"></div>
+    </div>
+
+    <!-- Columna derecha: Tabla clima -->
     <div class="clima-tabla">
       <div id="tablaClima" class="tabla-clima"></div>
     </div>
+  </div>
 `,
   sanitizacion: `
     <div class="form-section form-group inline">
