@@ -1,3 +1,14 @@
+function toggleInputs(checkboxId, contenedorId) {
+  const chk = document.getElementById(checkboxId);
+  const contenedor = document.getElementById(contenedorId);
+  if (!chk || !contenedor) return;
+
+  const inputs = contenedor.querySelectorAll("input, select, textarea");
+  inputs.forEach(el => {
+    el.disabled = !chk.checked; // 👉 habilita si el checkbox está marcado
+  });
+}
+
 document.addEventListener("input", guardarCambio);
 document.addEventListener("change", guardarCambio);
 
@@ -16,26 +27,35 @@ function guardarCambio(e) {
   }
 }
 
-// --- Función genérica para mostrar/ocultar campos asociados ---
-function toggleCampo(checkboxId, campoId) {
-  const chk = document.getElementById(checkboxId);
-  const campo = document.getElementById(campoId);
-  if (chk && campo) {
-    campo.classList.toggle("oculto", !chk.checked);
-  }
-}
-
 // --- Escucha todos los cambios en checkboxes ---
 document.addEventListener("change", () => {
-  // --- Desborde ---
+  // --- Desborde (sí se ocultan) ---
   toggleCampo("chkInfinity", "campoInfinity");
   toggleCampo("chkCanal", "campoCanal");
 
-  // --- Calentamiento ---
-  toggleCampo("chkBombaCalor", "campoBombaCalor");
-  toggleCampo("chkPanel", "campoPanel");
-  toggleCampo("chkCaldera", "campoCaldera");
+  // --- Calentamiento (NO se ocultan, solo habilitar/deshabilitar) ---
+  toggleInputs("chkBombaCalor", "campoBombaCalor");
+  toggleInputs("chkPanel", "campoPanel");
+  toggleInputs("chkCaldera", "campoCaldera");
 });
+
+function actualizarTablasClima() {
+  const ciudad = document.getElementById("ciudad")?.value;
+  const tablaClima = document.getElementById("tablaClima");
+  const resumenClima = document.getElementById("contenedorMesFrio");
+
+  if (!tablaClima || !resumenClima) return;
+
+  if (!ciudad) {
+    // Sin ciudad: “deshabilitar”
+    tablaClima.classList.add("disabled-table");
+    resumenClima.classList.add("disabled-table");
+  } else {
+    // Con ciudad: habilitar
+    tablaClima.classList.remove("disabled-table");
+    resumenClima.classList.remove("disabled-table");
+  }
+}
 
 // Objeto para guardar datos de usuario
 const datos = {};
@@ -83,7 +103,7 @@ desborde: `
       <label><input type="checkbox" id="chkNinguno"> Ninguno</label>
     </div>
 
-    <div id="campoInfinity" class="form-subgroup oculto">
+    <div id="campoInfinity" class="form-subgroup">
       <!-- 👇 Nuevo bloque de motobomba independiente -->
       <div class="form-group inline">
         <span>¿Motobomba independiente para Infinity?</span>
@@ -100,7 +120,7 @@ desborde: `
       </div>
     </div>
 
-    <div id="campoCanal" class="form-subgroup oculto">
+    <div id="campoCanal" class="form-subgroup">
       <div class="form-group">
         <label for="largoCanal">Largo del canal perimetral (m):</label>
         <input type="number" id="largoCanal" step="0.01">
@@ -194,16 +214,16 @@ calentamiento: `
     </div>
 
     <!-- 🔥 Bomba de calor -->
-    <div id="campoBombaCalor" class="form-subgroup oculto tarjeta-bdc">
+    <div id="campoBombaCalor" class="form-subgroup tarjeta-bdc">
       <h4>Bomba de calor</h4>
       <div class="form-group inline fila-bdc">
         <div class="campo-bdc">
           <label for="numBombasCalor">Número de bombas de calor:</label>
-          <input type="number" id="numBombasCalor" step="1" min="1">
+          <input type="number" id="numBombasCalor" step="1" min="1" disabled>
         </div>
         <div class="campo-bdc">
           <label for="recomendadaBC">Bomba de calor recomendada:</label>
-          <select id="recomendadaBC">
+          <select id="recomendadaBC disabled">
             <option value="">-- Selecciona --</option>
             <option value="ejemplo1">Modelo AquaHeat 3000</option>
             <option value="ejemplo2">Modelo ThermoMax Pro</option>
@@ -212,22 +232,22 @@ calentamiento: `
         </div>
         <div class="campo-bdc">
           <label for="capacidadBC">Capacidad de bomba de calor (kW):</label>
-          <input type="number" id="capacidadBC" step="0.1" min="0">
+          <input type="number" id="capacidadBC" step="0.1" min="0" disabled>
         </div>
         <div class="campo-bdc">
           <label for="cargaEstaticaBC">Diferencia de altura: espejo de agua - bomba de calor (m):</label>
-          <input type="number" id="cargaEstaticaBC" step="0.01">
+          <input type="number" id="cargaEstaticaBC" step="0.01" disabled>
         </div>
       </div>
     </div>
 
     <!-- ☀️ Panel solar -->
-    <div id="campoPanel" class="form-subgroup oculto tarjeta-bdc">
+    <div id="campoPanel" class="form-subgroup tarjeta-bdc">
       <h4>Panel solar</h4>
       <div class="form-group inline fila-bdc">
         <div class="campo-bdc">
           <label for="numPaneles">Número de paneles solares:</label>
-          <input type="number" id="numPaneles" step="1" min="1">
+          <input type="number" id="numPaneles" step="1" min="1" disabled>
         </div>
         <div class="campo-bdc">
           <label for="recomendadoPanel">Panel solar recomendado:</label>
@@ -240,22 +260,22 @@ calentamiento: `
         </div>
         <div class="campo-bdc">
           <label for="capacidadPanel">Capacidad de panel solar (kW):</label>
-          <input type="number" id="capacidadPanel" step="0.1" min="0">
+          <input type="number" id="capacidadPanel" step="0.1" min="0" disabled>
         </div>
         <div class="campo-bdc">
           <label for="cargaEstaticaPan">Diferencia de altura: espejo de agua - panel solar (m):</label>
-          <input type="number" id="cargaEstaticaPan" step="0.01">
+          <input type="number" id="cargaEstaticaPan" step="0.01" disabled>
         </div>
       </div>
     </div>
 
     <!-- 🔥 Caldera -->
-    <div id="campoCaldera" class="form-subgroup oculto tarjeta-bdc">
+    <div id="campoCaldera" class="form-subgroup tarjeta-bdc">
       <h4>Caldera</h4>
       <div class="form-group inline fila-bdc">
         <div class="campo-bdc">
           <label for="numCalderas">Número de calderas:</label>
-          <input type="number" id="numCalderas" step="1" min="1">
+          <input type="number" id="numCalderas" step="1" min="1" disabled>
         </div>
         <div class="campo-bdc">
           <label for="recomendadaCal">Caldera recomendada:</label>
@@ -268,11 +288,11 @@ calentamiento: `
         </div>
         <div class="campo-bdc">
           <label for="capacidadCal">Capacidad de caldera (kW):</label>
-          <input type="number" id="capacidadCal" step="0.1" min="0">
+          <input type="number" id="capacidadCal" step="0.1" min="0" disabled>
         </div>
         <div class="campo-bdc">
           <label for="cargaEstaticaCal">Diferencia de altura: espejo de agua - caldera (m):</label>
-          <input type="number" id="cargaEstaticaCal" step="0.01">
+          <input type="number" id="cargaEstaticaCal" step="0.01" disabled>
         </div>
       </div>
     </div>
@@ -387,6 +407,10 @@ function guardarDatos() {
 function renderSeccion(seccion) {
   const contenedor = document.getElementById("contenidoDerecho");
   contenedor.innerHTML = secciones[seccion] || "Sin contenido";
+// Cada vez que se renderiza la sección o cambia la ciudad
+document.getElementById("ciudad")?.addEventListener("change", actualizarTablasClima);
+// Dentro de renderSeccion:
+actualizarTablasClima();
 
   // Restaurar valores previos
   for (let key in datos) {
@@ -408,27 +432,40 @@ function renderSeccion(seccion) {
     }
   }
 
-  // ✅ Restaurar campos ocultos si sus checkboxes están activos
-  if (document.getElementById("chkInfinity")?.checked) {
-    document.getElementById("campoInfinity").classList.remove("oculto");
+  // ✅ Restaurar estado de inputs según checkboxes
+  if (document.getElementById("chkBombaCalor")) {
+    toggleInputs("chkBombaCalor", "campoBombaCalor");
   }
-  if (document.getElementById("chkCanal")?.checked) {
-    document.getElementById("campoCanal").classList.remove("oculto");
+  if (document.getElementById("chkPanel")) {
+    toggleInputs("chkPanel", "campoPanel");
   }
-  if (document.getElementById("chkBombaCalor")?.checked) {
-    document.getElementById("campoBombaCalor").classList.remove("oculto");
-  }
-  if (document.getElementById("chkPanel")?.checked) {
-    document.getElementById("campoPanel").classList.remove("oculto");
-  }
-  if (document.getElementById("chkCaldera")?.checked) {
-    document.getElementById("campoCaldera").classList.remove("oculto");
+  if (document.getElementById("chkCaldera")) {
+    toggleInputs("chkCaldera", "campoCaldera");
   }
 
-    // 👇 Si estamos en sección con ciudad, redibujar tabla
+  // 👇 Si estamos en sección con ciudad, redibujar tabla
   const ciudad = document.getElementById("ciudad")?.value;
   if (ciudad) {
     renderTabla(ciudad);
+  }
+
+  // ✅ Listeners para que los checkboxes activen/desactiven inputs
+  if (document.getElementById("chkBombaCalor")) {
+    document.getElementById("chkBombaCalor").addEventListener("change", function () {
+      toggleInputs("chkBombaCalor", "campoBombaCalor");
+    });
+  }
+
+  if (document.getElementById("chkPanel")) {
+    document.getElementById("chkPanel").addEventListener("change", function () {
+      toggleInputs("chkPanel", "campoPanel");
+    });
+  }
+
+  if (document.getElementById("chkCaldera")) {
+    document.getElementById("chkCaldera").addEventListener("change", function () {
+      toggleInputs("chkCaldera", "campoCaldera");
+    });
   }
 }
 
@@ -1820,19 +1857,6 @@ document.querySelectorAll(".toggle-header").forEach(header => {
 </html>
 `);
 nuevaVentana.document.close();
-}
-
-function mostrarCampos() {
-    const chkInfinity = document.getElementById('chkInfinity').checked;
-    const chkCanal = document.getElementById('chkCanal').checked;
-    const chkBombaCalor = document.getElementById('chkBombaCalor').checked;
-    const chkPanel = document.getElementById('chkPanel').checked;
-    const chkCaldera = document.getElementById('chkCaldera').checked;
-    document.getElementById('campoInfinity').classList.toggle('oculto', !chkInfinity);
-    document.getElementById('campoCanal').classList.toggle('oculto', !chkCanal);
-    document.getElementById('campoBombaCalor').classList.toggle('oculto', !chkBombaCalor);
-    document.getElementById('campoPanel').classList.toggle('oculto', !chkPanel);
-    document.getElementById('campoCaldera').classList.toggle('oculto', !chkCaldera);
 }
 
 function volumen() {
@@ -4115,3 +4139,4 @@ const humedad = {
         promedio: [80, 78, 75, 70, 65, 60, 65, 70, 75, 80, 85, 88]
     },
 };
+
