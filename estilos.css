@@ -111,7 +111,6 @@ body {
   border-collapse: collapse;
   font-size: 14px;
   text-align: center;
-  table-layout: fixed;
 }
 
 .tabla-clima th,
@@ -206,7 +205,7 @@ body {
 }
 
 .resumen-clima {
-  width: 98%;
+  width: 96.2%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -298,6 +297,162 @@ body {
 
 .campo-bdc input:focus,
 .campo-bdc select:focus {
+  outline: none;
+  border-color: #0077cc;
+  box-shadow: 0 0 4px rgba(0,119,204,0.3);
+}
+
+/* 👉 Estilo general de las tarjetas (igual que bombas/paneles) */
+.tarjeta-tabla {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 15px;
+  margin-top: 0px;
+  overflow-x: auto; /* scroll horizontal si la tabla es muy ancha */
+}
+
+/* 👉 Tablas dentro de tarjetas */
+.tabla-clima table,
+.resumen-clima table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+/* 👉 Encabezado */
+.tabla-clima thead,
+.resumen-clima thead {
+  background: #f4f6f8;
+  color: #333;
+  text-align: center;
+}
+
+.tabla-clima th,
+.resumen-clima th {
+  padding: 8px 10px;
+  border-bottom: 2px solid #ddd;
+}
+
+/* 👉 Filas */
+.tabla-clima td,
+.resumen-clima td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+/* 👉 Zebra stripes */
+.tabla-clima tbody tr:nth-child(even),
+.resumen-clima tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+/* 👉 Hover */
+.tabla-clima tbody tr:hover,
+.resumen-clima tbody tr:hover {
+  background-color: #f1f7ff;
+}
+
+/* 👉 Título del resumen */
+.resumen-clima h4 {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #444;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* 👉 Ajuste visual extra para que la tabla clima se vea como tarjeta */
+.tarjeta-tabla table {
+  border-radius: 8px;          /* bordes redondeados */
+  overflow: hidden;            /* para que el redondeo afecte al contenido */
+}
+
+.tarjeta-tabla th {
+  background: #f4f6f8;
+  font-weight: 600;
+}
+
+.tarjeta-tabla td {
+  background: #fff;
+}
+
+/* Tarjeta de selección de calentamiento */
+.tarjeta-calentamiento {
+  display: flex;
+  flex-direction: row;  /* los checkbox e inputs irán en fila */
+  align-items: center;
+  justify-content: flex-start;
+  padding: 15px 20px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  background: #fff;
+  gap: 20px;            /* separación entre label y checkboxes */
+  flex-wrap: nowrap;     /* evita que se vayan a otra línea */
+}
+
+.label-calentamiento {
+  font-weight: 600;
+  color: #0077cc;
+  font-size: 16px;
+  min-width: 180px;      /* ancho del label para que quede alineado */
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 60px;
+  flex-wrap: nowrap;     /* fuerza una sola fila */
+}
+
+.checkbox-row label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.fila-cuatro-inputs {
+  display: flex;
+  gap: 20px;              /* separación entre inputs */
+  flex-wrap: wrap;         /* que se acomoden si no caben */
+  align-items: flex-end;   /* alinea los inputs por la base, no por el label */
+}
+
+.fila-cuatro-inputs .form-subgroup-inline {
+  display: flex;
+  flex-direction: column;  
+  flex: 1 1 180px;         /* crece y se reduce proporcionalmente */
+  min-width: 150px;        
+}
+
+.fila-cuatro-inputs label {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  line-height: 1.2;
+  color: #333;
+  height: 1.8em;           /* fuerza altura uniforme de label para alinear inputs */
+  display: flex;
+  align-items: flex-end;    /* alinea el texto del label al final */
+}
+
+.fila-cuatro-inputs input,
+.fila-cuatro-inputs select {
+  padding: 8px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  background: #fafafa;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.fila-cuatro-inputs input:focus,
+.fila-cuatro-inputs select:focus {
   outline: none;
   border-color: #0077cc;
   box-shadow: 0 0 4px rgba(0,119,204,0.3);

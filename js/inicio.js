@@ -114,7 +114,7 @@ calentamiento: `
   <div class="clima-form">
 
     <!-- 👇 Ciudad + Temperatura -->
-    <div class="form-group inline">
+    <div class="form-group inline fila-cuatro-inputs">
       <div class="form-subgroup-inline">
         <label for="ciudad">Ciudad:</label>
         <select id="ciudad">
@@ -160,16 +160,37 @@ calentamiento: `
         </select>
       </div>
       <div class="form-subgroup-inline">
-        <label for="tempDeseada">Temperatura deseada del agua (°C):</label>
+        <label for="tempDeseada">Temperatura deseada (°C):</label>
         <input type="number" id="tempDeseada" step="0.1" min="10" max="40">
+      </div>
+
+      <div class="form-subgroup-inline">
+        <label for="cuerpoTechado">Cuerpo de agua techado:</label>
+        <select id="cuerpoTechado">
+          <option value="">-- Selecciona --</option>
+          <option value="si">Sí</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+
+      <div class="form-subgroup-inline">
+        <label for="cubiertaTermica">Con cubierta térmica:</label>
+        <select id="cubiertaTermica">
+          <option value="">-- Selecciona --</option>
+          <option value="si">Sí</option>
+          <option value="no">No</option>
+        </select>
       </div>
     </div>
 
-    <!-- 👇 Selección de equipos -->
-    <div class="form-group inline">
-      <label><input type="checkbox" id="chkBombaCalor"> Bomba de calor</label>
-      <label><input type="checkbox" id="chkPanel"> Panel solar</label>
-      <label><input type="checkbox" id="chkCaldera"> Caldera</label>
+    <!-- 👇 Selección de equipos dentro de tarjeta estilo inputs -->
+    <div class="tarjeta-bdc tarjeta-calentamiento">
+      <label class="label-calentamiento">Selecciona tu calentamiento:</label>
+      <div class="checkbox-row">
+        <label><input type="checkbox" id="chkBombaCalor"> Bomba de calor</label>
+        <label><input type="checkbox" id="chkPanel"> Panel solar</label>
+        <label><input type="checkbox" id="chkCaldera"> Caldera</label>
+      </div>
     </div>
 
     <!-- 🔥 Bomba de calor -->
@@ -257,16 +278,14 @@ calentamiento: `
     </div>
       <!-- 👉 Resumen debajo de inputs, ancho hasta tabla -->
   <div class="clima-resumen">
-    <div id="contenedorMesFrio" class="resumen-clima"></div>
   </div>
   </div> <!-- cierre clima-form -->
 
-  <!-- 👉 Columna derecha: Tabla clima -->
-  <div class="clima-tabla">
+  <!-- 👉 Columna derecha: Tabla clima con resumen debajo -->
+  <div class="clima-tabla tarjeta-tabla">
     <div id="tablaClima" class="tabla-clima"></div>
+    <div id="contenedorMesFrio" class="resumen-clima"></div>
   </div>
-
-
 </div>
 `,
   sanitizacion: `
@@ -3651,6 +3670,7 @@ function renderTabla(ciudad) {
 
   if (!datosTemp || !datosViento || !datosHumedad) {
     document.getElementById("tablaClima").innerHTML = "<p>No hay datos para esta ciudad</p>";
+    document.getElementById("contenedorMesFrio").innerHTML = "";
     return;
   }
 
@@ -3661,10 +3681,10 @@ function renderTabla(ciudad) {
         <tr>
           <th>Calentar</th>
           <th>Mes</th>
-          <th>Temperatura<br>Min. (°C)</th>
-          <th>Temperatura<br>Max. (°C)</th>
-          <th>Velocidad<br>Viento Max. (km/h)</th>
-          <th>Humedad Relativa<br>Prom. (%)</th>
+          <th>Temperatura Min. (°C)</th>
+          <th>Temperatura Max. (°C)</th>
+          <th>Velocidad Viento Max. (km/h)</th>
+          <th>Humedad Relativa Prom. (%)</th>
         </tr>
       </thead>
       <tbody>
@@ -3684,15 +3704,10 @@ function renderTabla(ciudad) {
   }
 
   tabla += `</tbody></table>`;
-  tabla += `<div id="contenedorMesFrio"></div>`;
 
+  // 👉 Aquí solo pintamos la tablaClima
   document.getElementById("tablaClima").innerHTML = tabla;
-const columnaTabla = document.querySelector('.clima-tabla');
-if (columnaTabla) {
-  columnaTabla.style.marginLeft = 'auto'; // empuja la columna al borde derecho disponible
-  columnaTabla.style.display = 'flex';
-  columnaTabla.style.justifyContent = 'flex-end';
-}
+
   function actualizarMesFrio() {
     let minTemp = Infinity;
     let mesMasFrioIndex = -1;
@@ -3738,10 +3753,10 @@ if (columnaTabla) {
     `;
   }
 
-  // inicializamos tabla mes frío
+  // 👉 Inicializamos resumen
   actualizarMesFrio();
 
-  // actualizar variable global y tabla mes frío al cambiar un checkbox
+  // 👉 Eventos en los checkboxes de meses
   document.querySelectorAll(".chk-mes").forEach(chk => {
     chk.addEventListener("change", (e) => {
       const i = parseInt(e.target.dataset.mes);
