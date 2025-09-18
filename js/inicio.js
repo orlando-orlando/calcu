@@ -47,15 +47,59 @@ function actualizarTablasClima() {
   if (!tablaClima || !resumenClima) return;
 
   if (!ciudad) {
-    // Sin ciudad: “deshabilitar”
+    // Sin ciudad: tabla bloqueada con contenido vacío
     tablaClima.classList.add("disabled-table");
     resumenClima.classList.add("disabled-table");
+
+    const tablaVacia = `
+      <p><strong>Selecciona los meses a calentar:</strong></p>
+      <table>
+        <thead>
+          <tr>
+            <th>Calentar</th>
+            <th>Mes</th>
+            <th>Temperatura Min. (°C)</th>
+            <th>Temperatura Max. (°C)</th>
+            <th>Velocidad Viento Max. (km/h)</th>
+            <th>Humedad Relativa Prom. (%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${Array(12).fill(0).map((_, i) => `
+            <tr data-mes="${i}" class="deshabilitado">
+              <td><input type="checkbox" class="chk-mes" data-mes="${i}" disabled></td>
+              <td>${meses[i]}</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+    tablaClima.innerHTML = tablaVacia;
+    resumenClima.innerHTML = `<p>Mes más frío seleccionado: -</p>`;
   } else {
-    // Con ciudad: habilitar
+    // Con ciudad: desbloquear y renderizar datos reales
     tablaClima.classList.remove("disabled-table");
     resumenClima.classList.remove("disabled-table");
+    renderTabla(ciudad);
   }
 }
+
+// Listener de cambio en ciudad
+document.addEventListener("change", (e) => {
+  if (e.target.id === "ciudad") {
+    ciudadSeleccionada = e.target.value;
+    actualizarTablasClima();
+  }
+});
+
+// Inicializar tabla bloqueada al cargar la sección
+document.addEventListener("DOMContentLoaded", () => {
+  actualizarTablasClima();
+});
 
 // Objeto para guardar datos de usuario
 const datos = {};
@@ -407,66 +451,48 @@ function guardarDatos() {
 function renderSeccion(seccion) {
   const contenedor = document.getElementById("contenidoDerecho");
   contenedor.innerHTML = secciones[seccion] || "Sin contenido";
-// Cada vez que se renderiza la sección o cambia la ciudad
-document.getElementById("ciudad")?.addEventListener("change", actualizarTablasClima);
-// Dentro de renderSeccion:
-actualizarTablasClima();
 
   // Restaurar valores previos
   for (let key in datos) {
     const el = document.getElementById(key);
     if (el) {
-      if (el.type === "checkbox") {
-        el.checked = datos[key];
-      } else {
-        el.value = datos[key];
-      }
+      if (el.type === "checkbox") el.checked = datos[key];
+      else el.value = datos[key];
     }
 
-    // 🔑 Restaurar radios por "name"
     const radios = document.querySelectorAll(`input[name="${key}"]`);
-    if (radios.length > 0) {
-      radios.forEach(radio => {
-        radio.checked = (radio.value === datos[key]);
+    radios.forEach(radio => radio.checked = (radio.value === datos[key]));
+  }
+
+  // Restaurar checkboxes de calentamiento
+  ["chkBombaCalor","chkPanel","chkCaldera"].forEach(id => {
+    if (document.getElementById(id)) toggleInputs(id, "campo"+id.replace("chk",""));
+  });
+
+  // Render tabla si hay ciudad seleccionada
+  const ciudadSelect = document.getElementById("ciudad");
+  if (ciudadSelect) {
+    // 👉 solo inicializamos listener una vez
+    if (!ciudadSelect.dataset.listener) {
+      ciudadSelect.addEventListener("change", () => {
+        actualizarTablasClima();
+        renderTabla(ciudadSelect.value);
       });
+      ciudadSelect.dataset.listener = true;
     }
+    actualizarTablasClima();
+
+    if (ciudadSelect.value) renderTabla(ciudadSelect.value);
   }
 
-  // ✅ Restaurar estado de inputs según checkboxes
-  if (document.getElementById("chkBombaCalor")) {
-    toggleInputs("chkBombaCalor", "campoBombaCalor");
-  }
-  if (document.getElementById("chkPanel")) {
-    toggleInputs("chkPanel", "campoPanel");
-  }
-  if (document.getElementById("chkCaldera")) {
-    toggleInputs("chkCaldera", "campoCaldera");
-  }
-
-  // 👇 Si estamos en sección con ciudad, redibujar tabla
-  const ciudad = document.getElementById("ciudad")?.value;
-  if (ciudad) {
-    renderTabla(ciudad);
-  }
-
-  // ✅ Listeners para que los checkboxes activen/desactiven inputs
-  if (document.getElementById("chkBombaCalor")) {
-    document.getElementById("chkBombaCalor").addEventListener("change", function () {
-      toggleInputs("chkBombaCalor", "campoBombaCalor");
-    });
-  }
-
-  if (document.getElementById("chkPanel")) {
-    document.getElementById("chkPanel").addEventListener("change", function () {
-      toggleInputs("chkPanel", "campoPanel");
-    });
-  }
-
-  if (document.getElementById("chkCaldera")) {
-    document.getElementById("chkCaldera").addEventListener("change", function () {
-      toggleInputs("chkCaldera", "campoCaldera");
-    });
-  }
+  // Listeners para checkboxes de calentamiento
+  ["chkBombaCalor","chkPanel","chkCaldera"].forEach(id => {
+    const chk = document.getElementById(id);
+    if (chk && !chk.dataset.listener) {
+      chk.addEventListener("change", () => toggleInputs(id,"campo"+id.replace("chk","")));
+      chk.dataset.listener = true;
+    }
+  });
 }
 
 // Listener para abrir secciones
@@ -3693,8 +3719,7 @@ function renderTabla(ciudad) {
   const datosHumedad = humedad[ciudad];
 
   if (!datosTemp || !datosViento || !datosHumedad) {
-    document.getElementById("tablaClima").innerHTML = "<p>No hay datos para esta ciudad</p>";
-    document.getElementById("contenedorMesFrio").innerHTML = "";
+    // Si la ciudad no tiene datos (no debería pasar con ciudades válidas)
     return;
   }
 
@@ -3728,10 +3753,9 @@ function renderTabla(ciudad) {
   }
 
   tabla += `</tbody></table>`;
-
-  // 👉 Aquí solo pintamos la tablaClima
   document.getElementById("tablaClima").innerHTML = tabla;
 
+  // Función para actualizar resumen del mes más frío
   function actualizarMesFrio() {
     let minTemp = Infinity;
     let mesMasFrioIndex = -1;
@@ -3744,7 +3768,7 @@ function renderTabla(ciudad) {
     }
 
     if (mesMasFrioIndex === -1) {
-      document.getElementById("contenedorMesFrio").innerHTML = "<p>No hay meses seleccionados</p>";
+      document.getElementById("contenedorMesFrio").innerHTML = "<p>Mes más frío seleccionado: -</p>";
       return;
     }
 
@@ -3777,10 +3801,9 @@ function renderTabla(ciudad) {
     `;
   }
 
-  // 👉 Inicializamos resumen
   actualizarMesFrio();
 
-  // 👉 Eventos en los checkboxes de meses
+  // Eventos en checkboxes de meses
   document.querySelectorAll(".chk-mes").forEach(chk => {
     chk.addEventListener("change", (e) => {
       const i = parseInt(e.target.dataset.mes);
