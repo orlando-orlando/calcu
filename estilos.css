@@ -304,7 +304,7 @@ body {
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 15px;
+  padding: 0px 15px 15px 15px; /* arriba 5px, derecha 15px, abajo 15px, izquierda 15px */
   margin-top: 0px;
   overflow-x: auto; /* scroll horizontal si la tabla es muy ancha */
 }
