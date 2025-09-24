@@ -3713,13 +3713,19 @@ const meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov"
 let ciudadSeleccionada = null; // 👉 ciudad activa
 let mesesSeleccionados = Array(12).fill(true); // ✔ todos los meses seleccionados por defecto
 
+let climaResumen = {
+  mes: null,
+  tempProm: null,
+  viento: null,
+  humedad: null
+};
+
 function renderTabla(ciudad) {
   const datosTemp = temperatura[ciudad];
   const datosViento = velocidadViento[ciudad];
   const datosHumedad = humedad[ciudad];
 
   if (!datosTemp || !datosViento || !datosHumedad) {
-    // Si la ciudad no tiene datos (no debería pasar con ciudades válidas)
     return;
   }
 
@@ -3755,7 +3761,7 @@ function renderTabla(ciudad) {
   tabla += `</tbody></table>`;
   document.getElementById("tablaClima").innerHTML = tabla;
 
-  // Función para actualizar resumen del mes más frío
+  // 🔹 Función para actualizar resumen del mes más frío
   function actualizarMesFrio() {
     let minTemp = Infinity;
     let mesMasFrioIndex = -1;
@@ -3769,12 +3775,20 @@ function renderTabla(ciudad) {
 
     if (mesMasFrioIndex === -1) {
       document.getElementById("contenedorMesFrio").innerHTML = "<p>Mes más frío seleccionado: -</p>";
+      climaResumen = { mes: null, tempProm: null, viento: null, humedad: null };
       return;
     }
 
     const tempPromedio = ((datosTemp.min[mesMasFrioIndex] + datosTemp.max[mesMasFrioIndex]) / 2).toFixed(1);
     const vientoMax = datosViento.max[mesMasFrioIndex].toFixed(1);
     const humedadMes = datosHumedad.promedio[mesMasFrioIndex].toFixed(1);
+
+    climaResumen = {
+      mes: meses[mesMasFrioIndex],
+      tempProm: parseFloat(tempPromedio),
+      viento: parseFloat(vientoMax),
+      humedad: parseFloat(humedadMes)
+    };
 
     document.getElementById("contenedorMesFrio").innerHTML = `
       <h4>Mes más frío seleccionado:</h4>
@@ -3799,19 +3813,19 @@ function renderTabla(ciudad) {
         </tbody>
       </table>
     `;
+
+    // 👉 Ejecutar cálculo al inicio y cada vez que cambia
+    qEvaporacion();
   }
 
   actualizarMesFrio();
 
-  // Eventos en checkboxes de meses
+  // Eventos en checkboxes
   document.querySelectorAll(".chk-mes").forEach(chk => {
     chk.addEventListener("change", (e) => {
       const i = parseInt(e.target.dataset.mes);
       mesesSeleccionados[i] = e.target.checked;
-
-      const fila = document.querySelector(`tr[data-mes="${i}"]`);
-      fila.classList.toggle("deshabilitado", !e.target.checked);
-
+      document.querySelector(`tr[data-mes="${i}"]`).classList.toggle("deshabilitado", !e.target.checked);
       actualizarMesFrio();
     });
   });
@@ -4163,3 +4177,73 @@ const humedad = {
     },
 };
 
+const calorVaporizacion = [
+  { tempC: 6.7,  whKg: 688.79 },
+  { tempC: 17.2, whKg: 681.95 },
+  { tempC: 23.7, whKg: 677.77 },
+  { tempC: 26.4, whKg: 676.03 },
+  { tempC: 28.6, whKg: 674.40 },
+  { tempC: 32.6, whKg: 671.85 },
+  { tempC: 40.0, whKg: 666.97 }
+];
+
+const humedadAbsoluta = [
+  { tempC: 0,  kgKg: 0.0000000 },
+  { tempC: 1,  kgKg: 0.0040570 },
+  { tempC: 2,  kgKg: 0.0043610 },
+  { tempC: 3,  kgKg: 0.0046853 },
+  { tempC: 4,  kgKg: 0.0050310 },
+  { tempC: 5,  kgKg: 0.0054008 },
+  { tempC: 6,  kgKg: 0.0057910 },
+  { tempC: 7,  kgKg: 0.0062067 },
+  { tempC: 8,  kgKg: 0.0066494 },
+  { tempC: 9,  kgKg: 0.0071206 },
+  { tempC: 10, kgKg: 0.0076219 },
+  { tempC: 11, kgKg: 0.0081549 },
+  { tempC: 12, kgKg: 0.0087214 },
+  { tempC: 13, kgKg: 0.0093232 },
+  { tempC: 14, kgKg: 0.0099623 },
+  { tempC: 15, kgKg: 0.0106406 },
+  { tempC: 16, kgKg: 0.0113601 },
+  { tempC: 17, kgKg: 0.0121230 },
+  { tempC: 18, kgKg: 0.0129315 },
+  { tempC: 19, kgKg: 0.0137880 },
+  { tempC: 20, kgKg: 0.0146949 },
+  { tempC: 21, kgKg: 0.0156546 },
+  { tempC: 22, kgKg: 0.0166698 },
+  { tempC: 23, kgKg: 0.0177432 },
+  { tempC: 24, kgKg: 0.0188774 },
+  { tempC: 25, kgKg: 0.0200755 },
+  { tempC: 26, kgKg: 0.0213404 },
+  { tempC: 27, kgKg: 0.0226752 },
+  { tempC: 28, kgKg: 0.0240830 },
+  { tempC: 29, kgKg: 0.0255866 },
+  { tempC: 30, kgKg: 0.0271822 },
+  { tempC: 31, kgKg: 0.0288641 },
+  { tempC: 32, kgKg: 0.0306374 },
+  { tempC: 33, kgKg: 0.0325074 },
+  { tempC: 34, kgKg: 0.0344801 },
+  { tempC: 35, kgKg: 0.0365613 },
+  { tempC: 36, kgKg: 0.0387575 },
+  { tempC: 37, kgKg: 0.0410756 },
+  { tempC: 38, kgKg: 0.0435227 },
+  { tempC: 39, kgKg: 0.0461065 },
+  { tempC: 40, kgKg: 0.0488350 }
+];
+
+function qEvaporacion() {
+  if (!climaResumen.tempProm) return 0;
+
+  const T = climaResumen.tempProm;
+  const V = climaResumen.viento;
+  const HR = climaResumen.humedad;
+
+  // 👉 Aquí metes tu fórmula
+  const q = (0.1 * (25 + T) * (1 + V/100) * (1 - HR/100));
+
+  console.log("Temp =", T.toFixed(3));
+    console.log("V =", V.toFixed(3));
+  console.log("HR =", HR.toFixed(3));
+
+  return q;
+}
