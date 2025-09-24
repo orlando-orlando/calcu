@@ -30,8 +30,8 @@ function guardarCambio(e) {
 // --- Escucha todos los cambios en checkboxes ---
 document.addEventListener("change", () => {
   // --- Desborde (sí se ocultan) ---
-  toggleCampo("chkInfinity", "campoInfinity");
-  toggleCampo("chkCanal", "campoCanal");
+  //toggleCampo("chkInfinity", "campoInfinity");
+  //toggleCampo("chkCanal", "campoCanal");
 
   // --- Calentamiento (NO se ocultan, solo habilitar/deshabilitar) ---
   toggleInputs("chkBombaCalor", "campoBombaCalor");
@@ -4232,18 +4232,55 @@ const humedadAbsoluta = [
 ];
 
 function qEvaporacion() {
-  if (!climaResumen.tempProm) return 0;
+  // 📌 Comprobamos que exista climaResumen.tempProm
+  if (!climaResumen?.tempProm) return 0;
 
-  const T = climaResumen.tempProm;
-  const V = climaResumen.viento;
-  const HR = climaResumen.humedad;
+  // 📌 Lectura de inputs desde DOM
+  const area = parseFloat(datos["area"]) || 0;
+  const tempDeseada = parseFloat(datos["tempDeseada"]) || 0;
+  const techado = datos["cuerpoTechado"] || "no";
+  const cubierta = datos["cubiertaTermica"] || "no";
 
-  // 👉 Aquí metes tu fórmula
-  const q = (0.1 * (25 + T) * (1 + V/100) * (1 - HR/100));
+  // 📌 Constantes
+  const b = 6.9;
+  const n = area / 5.6;
 
-  console.log("Temp =", T.toFixed(3));
-    console.log("V =", V.toFixed(3));
-  console.log("HR =", HR.toFixed(3));
+  // 📌 Clima del mes más frío
+  const tProm = climaResumen.tempProm; // temp promedio
+  const velViento = (techado === "si") ? 0 : climaResumen.viento; // viento
+  const ga = climaResumen.humedad / 100; // humedad relativa
 
-  return q;
+  // 🔹 Buscar Calor de Vaporización (primer tempC >= tempDeseada)
+  const calorVapObj = calorVaporizacion.find(c => tempDeseada <= c.tempC) 
+                      || calorVaporizacion[calorVaporizacion.length - 1];
+  const calorVap = calorVapObj.whKg;
+
+  // 🔹 Buscar humedad absoluta We y Was (primer tempC >= tempDeseada / Tprom)
+  const weObj = humedadAbsoluta.find(h => tempDeseada <= h.tempC) 
+                || humedadAbsoluta[humedadAbsoluta.length - 1];
+  const wasObj = humedadAbsoluta.find(h => tProm <= h.tempC) 
+                 || humedadAbsoluta[humedadAbsoluta.length - 1];
+  const we = weObj.kgKg;
+  const was = wasObj.kgKg;
+
+  // 📌 Fórmula de evaporación
+  let qEvap = (((area * 16) + (133 * n) * (we - ga * was) * calorVap / 1000 * 3412.14)) * ((b * velViento / 100) + 1);
+
+  // 📌 Si lleva cubierta térmica
+  if (cubierta === "si") qEvap *= 0.5;
+
+  // 🔹 Debug (opcional)
+  console.log("area =", area);
+  console.log("nadadores =", n);
+  console.log("We =", we);
+  console.log("Ga =", ga);
+  console.log("Was =", was);
+  console.log("CalorVap =", calorVap);
+  console.log("b =", b);
+  console.log("v =", velViento);
+  console.log("qEvap =", qEvap);
+
+  return qEvap;
 }
+
+
