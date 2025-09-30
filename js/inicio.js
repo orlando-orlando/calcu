@@ -105,6 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const datos = {};
 
 let resumenMateriales = {};
+
 // Contenido de cada sección
 const secciones = {
   dimensiones: `
@@ -503,6 +504,7 @@ function renderSeccion(seccion) {
     setTimeout(() => {
       engancharListenersCalentamiento();
       qEvaporacion();
+      qTuberia();
     }, 50);
   }
 }
@@ -3920,33 +3922,24 @@ idsRelevantes.forEach(id => {
   }
 });
 
-// 🔹 Objeto global donde guardamos cada pérdida
-const perdidas = {
-  evaporacion: 0,
-  tuberia: 0,
-  // luego podrás agregar más: conveccion, radiacion, etc.
-};
-
 // 🔹 Revisión robusta de la gráfica
-function mostrarGrafica() {
+function mostrarGrafica(qEvap, qTub) {
   const canvas = document.getElementById("graficaPerdidas");
   if (!canvas) return;
+
   const ctx = canvas.getContext("2d");
 
   if (graficaPerdidas) {
-    graficaPerdidas.destroy();
+    graficaPerdidas.destroy(); // 👉 Destruye la vieja
   }
 
   graficaPerdidas = new Chart(ctx, {
     type: "pie",
     data: {
-      labels: ["Evaporación", "Tubería"], // 👈 se irán agregando
+      labels: ["Evaporación", "Convección", "Radiación", "Transmisión", "Infinity", "Canal perimetral", "Tubería"],
       datasets: [{
-        data: [
-          perdidas.evaporacion,
-          perdidas.tuberia
-        ],
-        backgroundColor: ["#36A2EB", "#FFCE56"]
+        data: [qEvap, 0, 0, 0, 0, 0, qTub],
+        backgroundColor: ["#36A2EB", "#FF6384", "#FF9F40", "#4BC0C0", "#9966FF", "#C9CBCF", "#FFCE56"]
       }]
     },
     options: { responsive: true, animation: false }
@@ -4384,11 +4377,6 @@ function qEvaporacion() {
   // 📌 Si lleva cubierta térmica
   if (cubierta === "si") qEvap *= 0.5;
 
-  qEvap = Number(qEvap.toFixed(2));
-
-  // 👉 Guardar en el objeto global
-  perdidas.evaporacion = qEvap;
-
   // 🔹 Debug (opcional)
   console.log("area =", area);
   console.log("nadadores =", n);
@@ -4399,23 +4387,26 @@ function qEvaporacion() {
   console.log("b =", b);
   console.log("v =", velViento);
   console.log("qEvap =", qEvap);
-  // 👉 Actualizar gráfica
-  mostrarGrafica();
+  mostrarGrafica(qEvap);
 
   return qEvap;
 }
 
 function qTuberia(resumenMateriales = {}) {
-  if (!climaResumen?.tempProm) return { porDiametro: {}, total_BTU_h: 0 };
+  // 📌 Comprobar que exista tempProm en climaResumen
+  if (!climaResumen?.tempProm) return 0;
 
+  // 🔹 Constantes
   const INCH_TO_M = 0.0254;
-  const KCALH_TO_BTUH = 3.96832;
-  const k_kcal_m_h_C = 0.22;
+  const KCALH_TO_BTUH = 3.96832; // 1 kcal/h = 3.96832 BTU/h
+  const k_kcal_m_h_C = 0.22;     // conductividad PVC [kcal/m·h·°C]
 
-  const T2 = climaResumen.tempProm;
-  const T1 = parseFloat(datos["tempDeseada"]) || 0;
+  // 🔹 Temperaturas
+  const T2 = climaResumen.tempProm;  // 🌡 temp promedio desde resumen clima
+  const T1 = parseFloat(datos["tempDeseada"]) || 0; // 🌡 deseada del usuario
   const deltaT = T1 - T2;
 
+  // 🔹 Tabla PVC cédula 40 (m)
   const pvcSch40 = {
     "0.75": { OD_m: 1.050 * INCH_TO_M, ID_m: 0.824 * INCH_TO_M },
     "1.0":  { OD_m: 1.315 * INCH_TO_M, ID_m: 1.047 * INCH_TO_M },
@@ -4430,13 +4421,15 @@ function qTuberia(resumenMateriales = {}) {
     "16.0": { OD_m: 16.000 * INCH_TO_M, ID_m: 15.220 * INCH_TO_M }
   };
 
-  const qTub = { porDiametro: {}, total_BTU_h: 0 };
+  // 🔹 Resultado
+  const qTub = {
+    porDiametro: {},
+    total_BTU_h: 0
+  };
 
-  console.log("📦 Detalle pérdidas en tubería:");
-
+  // 🔹 Calcular pérdidas por cada diámetro del resumenMateriales
   for (const [diamNom, info] of Object.entries(resumenMateriales)) {
     const length_m = (info && typeof info.tuberia_m === "number") ? info.tuberia_m : 0;
-
     if (length_m <= 0) {
       qTub.porDiametro[diamNom] = { length_m, Q_BTU_h: 0, note: "longitud 0" };
       continue;
@@ -4451,27 +4444,27 @@ function qTuberia(resumenMateriales = {}) {
     const r1 = entry.ID_m / 2;
     const r2 = entry.OD_m / 2;
 
+    // 📌 Fórmula (k en kcal/m·h·°C → convertimos a BTU/h)
     const Q_kcal_h = (2 * Math.PI * k_kcal_m_h_C * length_m * deltaT) / Math.log(r2 / r1);
     const Q_BTU_h = Q_kcal_h * KCALH_TO_BTUH;
 
-    qTub.porDiametro[diamNom] = { length_m, Q_BTU_h: Number(Q_BTU_h.toFixed(2)) };
+    qTub.porDiametro[diamNom] = {
+      length_m,
+      Q_BTU_h: Number(Q_BTU_h.toFixed(2))
+    };
+
     qTub.total_BTU_h += Q_BTU_h;
 
-    console.log(`   🔹 Tubería ${diamNom}" (${length_m} m): ${Q_BTU_h.toFixed(2)} BTU/h`);
+    console.log(
+      `Tubería ${diamNom}" (${length_m} m): pérdida = ${Q_BTU_h.toFixed(2)} BTU/h`
+    );
   }
 
   qTub.total_BTU_h = Number(qTub.total_BTU_h.toFixed(2));
   console.log(`👉 Pérdida total en tubería = ${qTub.total_BTU_h} BTU/h`);
 
-  // 👉 Guardar en el objeto global
-  perdidas.tuberia = qTub.total_BTU_h;
-
-  // 👉 Actualizar gráfica
-  mostrarGrafica();
-
   return qTub;
 }
-
 
 function qRadiacion() {
 
@@ -4486,9 +4479,7 @@ function qTransmision() {
 }
 
 function qInfinity() {
-
 }
 
 function qCanal() {
-
 }
