@@ -104,8 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
 // Objeto para guardar datos de usuario
 const datos = {};
 
-let resumenMateriales = {};
-
 // Contenido de cada sección
 const secciones = {
   dimensiones: `
@@ -1999,6 +1997,10 @@ function tuberiaSeleccionada(velocidades, tipo) {
         : "Ninguna cumple";
 }
 
+function fix2(v) {
+  return (parseFloat(v) || 0).toFixed(2);
+}
+
 function retorno(flujoMaximo, tipoRetorno) {
     const area = parseFloat(datos.area) || 0;
     const diametros = {
@@ -2168,16 +2170,16 @@ if (distanciaCM > 0) {
 
     const cargaTotalCM = cargaTramoCM + cargaCodoCM + cargaTeeCM;
     const tablaDistanciaCM = {
-        distanciaCM: distanciaCM.toFixed(2),
-        flujoCM: flujoCM.toFixed(2),
+        distanciaCM: fix2(distanciaCM),
+        flujoCM: fix2(flujoCM),
         tuberiaCM: diametroCM,
-        velocidadCM: velocidadCM.toFixed(2),
-        cargaBaseCM: cargaCM.toFixed(2),
-        cargaTramoCM: cargaTramoCM.toFixed(2),
+        velocidadCM: fix2(velocidadCM),
+        cargaBaseCM: fix2(cargaCM),
+        cargaTramoCM: fix2(cargaTramoCM),
         cantidadCodosCM: cantidadCodosCM,
-        longEqCodoCM: longEqCodoCM.toFixed(2),
-        cargaCodoCM: cargaCodoCM.toFixed(2),
-        cargaTotalCM: cargaTotalCM.toFixed(2)
+        longEqCodoCM: fix2(longEqCodoCM),
+        cargaCodoCM: fix2(cargaCodoCM),
+        cargaTotalCM: fix2(cargaTotalCM)
     };
 
     // Agregar a resumen de materiales
@@ -2215,6 +2217,9 @@ if (distanciaCM > 0) {
             velocidadSeleccionada = mejorVel;
             cargaSeleccionada = mejorCarga;
         }
+
+    console.log(`Tramo ${i + 1} | Flujo actual: ${flujoActual.toFixed(2)} | Diametro elegido: ${diametroSeleccionado} | Velocidad: ${velocidadSeleccionada.toFixed(2)} | Carga: ${cargaSeleccionada.toFixed(2)} | Longitud: ${longitudEntreRetornos.toFixed(2)}`);
+
 
         let dPulgadas = parseFloat(diametroSeleccionado.replace("tuberia ", ""));
         if (dPulgadas > diametroMax) diametroMax = dPulgadas;
@@ -2303,31 +2308,31 @@ if (distanciaCM > 0) {
         // === Empuje de la fila a la tabla 1 ===
         resultadoR.push({
             tramo: i + 1,
-            flujo: flujoActual.toFixed(2),
+            flujo: fix2(flujoActual),
             tuberia: diametroSeleccionado || "Ninguna cumple",
-            velocidad: velocidadSeleccionada.toFixed(2),
+            velocidad: fix2(velocidadSeleccionada),
 
             cargaBase: cargaSeleccionada ? cargaSeleccionada.toFixed(2) : "N/A",
             cargaTramo: cargaSeleccionada ? cargaTramoRow.toFixed(2) : "N/A",
-            longitud: longitudEntreRetornos.toFixed(2),
+            longitud: fix2(longitudEntreRetornos),
 
             // Tee mostrado solo si aplica
             cantidadTees: cantidadTees,
-            longEqTee: longEqTeeRow.toFixed(2),
-            cargaTee: cargaTeeRow.toFixed(2),
+            longEqTee: fix2(longEqTeeRow),
+            cargaTee: fix2(cargaTeeRow),
 
             // Codo mostrado siempre como TOTAL (base + extra si los hubo)
             cantidadCodos: totalCodosFila,
-            longEqCodo: longEqCodoUnit.toFixed(2),
-            cargaCodo: cargaCodoTotalRow.toFixed(2),
+            longEqCodo: fix2(longEqCodoUnit),
+            cargaCodo: fix2(cargaCodoTotalRow),
 
             // Reducción entre tramos
             cantidadReducciones: cantidadReducciones,
-            longEqReduccion: longitudEqReduccion.toFixed(2),
-            cargaReduccion: cargaReduccion.toFixed(2),
+            longEqReduccion: fix2(longitudEqReduccion),
+            cargaReduccion: fix2(cargaReduccion),
 
             // Total de la fila (incluye codos extra si hubo)
-            cargaTotal: cargaTotalFilaNum.toFixed(2),
+            cargaTotal: fix2(cargaTotalFilaNum),
 
             // Datos del disparo
             flujoDisparo: flujoPorRetorno,
@@ -3841,7 +3846,9 @@ function renderTabla(ciudad) {
 
     // 👉 Ejecutar cálculo al inicio y cada vez que cambia
     qEvaporacion();
-    qTuberia(resumenMateriales);
+  // 👉 Ejecutar retornos automáticamente y mandar sus resúmenes a qTuberia
+  const { resumenTramosR, resumenDisparosR } = retorno(); 
+  qTuberia(resumenTramosR, resumenDisparosR);
   }
 
   actualizarMesFrio();
@@ -3880,15 +3887,22 @@ function syncDatos(id) {
 ["area", "tempDeseada", "cuerpoTechado", "cubiertaTermica"].forEach(id => {
   const el = document.getElementById(id);
   if (el) {
-    el.addEventListener("change", () => {
-      syncDatos(id);
-      qEvaporacion();
-    });
-    el.addEventListener("input", () => { // para valores numéricos en vivo
-      syncDatos(id);
-      qEvaporacion();
-      qTuberia();
-    });
+    const recalcular = () => {
+      syncDatos(id);          // 🔹 Actualiza datos[id]
+
+      qEvaporacion();         // 🔹 Recalcula evaporación
+
+      // 🔹 Ejecutar retorno con los valores correctos
+      const flujoMax = parseFloat(datos.flujoMax) || 0;
+      const tipoRet = datos.tipoRetorno || "1.5";
+      const { resumenTramosR, resumenDisparosR } = retorno(flujoMax, tipoRet);
+
+      // 🔹 Ahora pasar los resúmenes a qTuberia
+      qTuberia(resumenTramosR, resumenDisparosR);
+    };
+
+    el.addEventListener("change", recalcular);
+    el.addEventListener("input", recalcular);
   }
 });
 
@@ -3918,6 +3932,7 @@ idsRelevantes.forEach(id => {
     el.addEventListener("input", () => {
       syncDatos(id);
       qEvaporacion();
+      qTuberia();
     });
   }
 });
@@ -4392,7 +4407,27 @@ function qEvaporacion() {
   return qEvap;
 }
 
-function qTuberia(resumenMateriales = {}) {
+function qTuberia(resumenTramosR = {}, resumenDisparosR = {}) {
+  // 🔹 Combinar los resúmenes
+  const resumenMateriales = { ...(resumenTramosR || {}) };
+
+  for (const [diam, info] of Object.entries(resumenDisparosR || {})) {
+    if (!resumenMateriales[diam]) {
+      resumenMateriales[diam] = { ...info };
+    } else {
+      resumenMateriales[diam].tuberia_m += info.tuberia_m || 0;
+      resumenMateriales[diam].tees += info.tees || 0;
+      resumenMateriales[diam].codos += info.codos || 0;
+      resumenMateriales[diam].reducciones += info.reducciones || 0;
+    }
+  }
+
+  // 🔹 Si resumenMateriales quedó vacío, devolvemos 0
+  if (Object.keys(resumenMateriales).length === 0) {
+    console.log("⚠️ No hay tuberías para calcular pérdidas");
+    return { porDiametro: {}, total_BTU_h: 0 };
+  }
+
   // 📌 Comprobar que exista tempProm en climaResumen
   if (!climaResumen?.tempProm) return 0;
 
@@ -4408,17 +4443,18 @@ function qTuberia(resumenMateriales = {}) {
 
   // 🔹 Tabla PVC cédula 40 (m)
   const pvcSch40 = {
-    "0.75": { OD_m: 1.050 * INCH_TO_M, ID_m: 0.824 * INCH_TO_M },
-    "1.0":  { OD_m: 1.315 * INCH_TO_M, ID_m: 1.047 * INCH_TO_M },
-    "1.5":  { OD_m: 1.900 * INCH_TO_M, ID_m: 1.610 * INCH_TO_M },
-    "2.0":  { OD_m: 2.375 * INCH_TO_M, ID_m: 2.067 * INCH_TO_M },
-    "3.0":  { OD_m: 3.500 * INCH_TO_M, ID_m: 3.068 * INCH_TO_M },
-    "4.0":  { OD_m: 4.500 * INCH_TO_M, ID_m: 4.026 * INCH_TO_M },
-    "6.0":  { OD_m: 6.625 * INCH_TO_M, ID_m: 6.065 * INCH_TO_M },
-    "8.0":  { OD_m: 8.625 * INCH_TO_M, ID_m: 8.071 * INCH_TO_M },
-    "10.0": { OD_m: 10.750 * INCH_TO_M, ID_m: 10.020 * INCH_TO_M },
-    "12.0": { OD_m: 12.750 * INCH_TO_M, ID_m: 12.090 * INCH_TO_M },
-    "16.0": { OD_m: 16.000 * INCH_TO_M, ID_m: 15.220 * INCH_TO_M }
+    "tuberia 1.50":  { OD_m: 1.90 * INCH_TO_M, ID_m: 1.61 * INCH_TO_M },
+    "tuberia 2.00":  { OD_m: 2.37 * INCH_TO_M, ID_m: 2.07 * INCH_TO_M },
+    "tuberia 2.50":  { OD_m: 2.87 * INCH_TO_M, ID_m: 2.47 * INCH_TO_M },
+    "tuberia 3.00":  { OD_m: 3.50 * INCH_TO_M, ID_m: 3.07 * INCH_TO_M },
+    "tuberia 4.00":  { OD_m: 4.50 * INCH_TO_M, ID_m: 4.03 * INCH_TO_M },
+    "tuberia 6.00":  { OD_m: 6.62 * INCH_TO_M, ID_m: 6.07 * INCH_TO_M },
+    "tuberia 8.00":  { OD_m: 8.62 * INCH_TO_M, ID_m: 7.98 * INCH_TO_M },
+    "tuberia 10.00": { OD_m: 10.75 * INCH_TO_M, ID_m: 9.98 * INCH_TO_M },
+    "tuberia 12.00": { OD_m: 12.75 * INCH_TO_M, ID_m: 11.89 * INCH_TO_M },
+    "tuberia 14.00": { OD_m: 14.00 * INCH_TO_M, ID_m: 13.13 * INCH_TO_M },
+    "tuberia 16.00": { OD_m: 16.00 * INCH_TO_M, ID_m: 14.94 * INCH_TO_M },
+    "tuberia 18.00": { OD_m: 18.00 * INCH_TO_M, ID_m: 16.81 * INCH_TO_M }
   };
 
   // 🔹 Resultado
@@ -4438,6 +4474,7 @@ function qTuberia(resumenMateriales = {}) {
     const entry = pvcSch40[diamNom];
     if (!entry) {
       qTub.porDiametro[diamNom] = { length_m, Q_BTU_h: 0, note: "diámetro no en tabla" };
+      console.log(`⚠️ ${diamNom} no encontrado en tabla PVC`);
       continue;
     }
 
@@ -4455,8 +4492,9 @@ function qTuberia(resumenMateriales = {}) {
 
     qTub.total_BTU_h += Q_BTU_h;
 
+    // 🔹 Log detallado
     console.log(
-      `Tubería ${diamNom}" (${length_m} m): pérdida = ${Q_BTU_h.toFixed(2)} BTU/h`
+      `✅ Tubería ${diamNom} | Longitud: ${length_m} m | Pérdida: ${Q_BTU_h.toFixed(2)} BTU/h`
     );
   }
 
