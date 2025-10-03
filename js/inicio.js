@@ -1997,6 +1997,41 @@ function tuberiaSeleccionada(velocidades, tipo) {
         : "Ninguna cumple";
 }
 
+function generarResumenes() {
+  const vol = volumen();
+  const flujoVol = flujoVolumen();
+  const flujoInf = flujoInfinity();
+  const flujoMax = flujoMaximo(flujoVol, flujoInf);
+
+  const tipoRetorno = datos["retorno"] || "1.5";  
+  const retornoDatos = retorno(flujoMax, tipoRetorno);
+  const { resumenTramosR, resumenDisparosR } = retornoDatos;
+
+  return { resumenTramosR, resumenDisparosR, flujoMax, tipoRetorno };
+}
+
+// 🔹 Cálculos centralizados
+function ejecutarCalculos() {
+  // 👉 Si no hay clima válido aún, no calculamos pérdidas
+  if (!climaResumen || climaResumen.tempProm === null) {
+    console.warn("⚠️ Clima no definido, cálculos incompletos");
+    return;
+  }
+
+  // 🔹 Recalcular evaporación
+  const qEvap = qEvaporacion();
+
+  // 🔹 Generar resúmenes de tuberías
+  const { resumenTramosR, resumenDisparosR } = generarResumenes();
+
+  // 🔹 Pasar resúmenes y clima a tubería
+  const qTubResult = qTuberia(resumenTramosR, resumenDisparosR);
+  const qTubTotal = qTubResult.total_BTU_h;
+
+  // 🔹 Actualizar gráfica
+  mostrarGrafica(qEvap, qTubTotal);
+}
+
 function fix2(v) {
   return (parseFloat(v) || 0).toFixed(2);
 }
@@ -2217,9 +2252,6 @@ if (distanciaCM > 0) {
             velocidadSeleccionada = mejorVel;
             cargaSeleccionada = mejorCarga;
         }
-
-    console.log(`Tramo ${i + 1} | Flujo actual: ${flujoActual.toFixed(2)} | Diametro elegido: ${diametroSeleccionado} | Velocidad: ${velocidadSeleccionada.toFixed(2)} | Carga: ${cargaSeleccionada.toFixed(2)} | Longitud: ${longitudEntreRetornos.toFixed(2)}`);
-
 
         let dPulgadas = parseFloat(diametroSeleccionado.replace("tuberia ", ""));
         if (dPulgadas > diametroMax) diametroMax = dPulgadas;
@@ -3755,9 +3787,7 @@ function renderTabla(ciudad) {
   const datosViento = velocidadViento[ciudad];
   const datosHumedad = humedad[ciudad];
 
-  if (!datosTemp || !datosViento || !datosHumedad) {
-    return;
-  }
+  if (!datosTemp || !datosViento || !datosHumedad) return;
 
   let tabla = `
     <p><strong>Selecciona los meses a calentar:</strong></p>
@@ -3844,11 +3874,8 @@ function renderTabla(ciudad) {
       </table>
     `;
 
-    // 👉 Ejecutar cálculo al inicio y cada vez que cambia
-    qEvaporacion();
-  // 👉 Ejecutar retornos automáticamente y mandar sus resúmenes a qTuberia
-  const { resumenTramosR, resumenDisparosR } = retorno(); 
-  qTuberia(resumenTramosR, resumenDisparosR);
+    // 👉 Ejecutar cálculos centralizados
+    ejecutarCalculos();
   }
 
   actualizarMesFrio();
@@ -3864,9 +3891,10 @@ function renderTabla(ciudad) {
   });
 }
 
+// 👉 Ciudad cambia → refrescar tabla (lo que a su vez recalcula climaResumen y ejecuta cálculos)
 document.addEventListener("change", (e) => {
   if (e.target.id === "ciudad") {
-    ciudadSeleccionada = e.target.value; // 👉 guarda la ciudad
+    ciudadSeleccionada = e.target.value;
     renderTabla(ciudadSeleccionada);
   }
 });
@@ -3883,40 +3911,7 @@ function syncDatos(id) {
   }
 }
 
-// 🔹 Hook automático: escucha cambios en todos los inputs relevantes
-["area", "tempDeseada", "cuerpoTechado", "cubiertaTermica"].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) {
-    const recalcular = () => {
-      syncDatos(id);          // 🔹 Actualiza datos[id]
-
-      qEvaporacion();         // 🔹 Recalcula evaporación
-
-      // 🔹 Ejecutar retorno con los valores correctos
-      const flujoMax = parseFloat(datos.flujoMax) || 0;
-      const tipoRet = datos.tipoRetorno || "1.5";
-      const { resumenTramosR, resumenDisparosR } = retorno(flujoMax, tipoRet);
-
-      // 🔹 Ahora pasar los resúmenes a qTuberia
-      qTuberia(resumenTramosR, resumenDisparosR);
-    };
-
-    el.addEventListener("change", recalcular);
-    el.addEventListener("input", recalcular);
-  }
-});
-
-// 🔹 Hook para ciudad
-document.addEventListener("change", (e) => {
-  if (e.target.id === "ciudad") {
-    ciudadSeleccionada = e.target.value;
-    renderTabla(ciudadSeleccionada); // esto ya llama qEvaporacion() al final
-  }
-});
-
-let graficaPerdidas; // referencia global a la gráfica
-
-// 🔹 Forzar recalculo en cualquier cambio de inputs relevantes
+// 🔹 Inputs que disparan recálculo
 const idsRelevantes = [
   "area", "tempDeseada", "cuerpoTechado", "cubiertaTermica",
   "ciudad", "profMin", "profMax", "distCuarto", "rotacion"
@@ -3925,20 +3920,26 @@ const idsRelevantes = [
 idsRelevantes.forEach(id => {
   const el = document.getElementById(id);
   if (el) {
-    el.addEventListener("change", () => {
+    const recalcular = () => {
       syncDatos(id);
-      qEvaporacion();
-    });
-    el.addEventListener("input", () => {
-      syncDatos(id);
-      qEvaporacion();
-      qTuberia();
-    });
+
+      // ⚡ Si aún no hay clima válido, pero ya hay ciudad, forzar refresco
+      if (climaResumen.tempProm === null && ciudadSeleccionada) {
+        renderTabla(ciudadSeleccionada);
+      }
+
+      ejecutarCalculos();
+    };
+
+    el.addEventListener("change", recalcular);
+    el.addEventListener("input", recalcular);
   }
 });
 
+let graficaPerdidas; // referencia global a la gráfica
+
 // 🔹 Revisión robusta de la gráfica
-function mostrarGrafica(qEvap, qTub) {
+function mostrarGrafica(qEvap, qTubTotal) {
   const canvas = document.getElementById("graficaPerdidas");
   if (!canvas) return;
 
@@ -3953,7 +3954,7 @@ function mostrarGrafica(qEvap, qTub) {
     data: {
       labels: ["Evaporación", "Convección", "Radiación", "Transmisión", "Infinity", "Canal perimetral", "Tubería"],
       datasets: [{
-        data: [qEvap, 0, 0, 0, 0, 0, qTub],
+        data: [qEvap, 0, 0, 0, 0, 0, qTubTotal],
         backgroundColor: ["#36A2EB", "#FF6384", "#FF9F40", "#4BC0C0", "#9966FF", "#C9CBCF", "#FFCE56"]
       }]
     },
@@ -4422,26 +4423,22 @@ function qTuberia(resumenTramosR = {}, resumenDisparosR = {}) {
     }
   }
 
-  // 🔹 Si resumenMateriales quedó vacío, devolvemos 0
+  // 🔹 Si no hay materiales, regreso objeto vacío
   if (Object.keys(resumenMateriales).length === 0) {
     console.log("⚠️ No hay tuberías para calcular pérdidas");
     return { porDiametro: {}, total_BTU_h: 0 };
   }
 
-  // 📌 Comprobar que exista tempProm en climaResumen
-  if (!climaResumen?.tempProm) return 0;
+  if (!climaResumen?.tempProm) return { porDiametro: {}, total_BTU_h: 0 };
 
-  // 🔹 Constantes
   const INCH_TO_M = 0.0254;
-  const KCALH_TO_BTUH = 3.96832; // 1 kcal/h = 3.96832 BTU/h
-  const k_kcal_m_h_C = 0.22;     // conductividad PVC [kcal/m·h·°C]
+  const KCALH_TO_BTUH = 3.96832;
+  const k_kcal_m_h_C = 0.22;
 
-  // 🔹 Temperaturas
-  const T2 = climaResumen.tempProm;  // 🌡 temp promedio desde resumen clima
-  const T1 = parseFloat(datos["tempDeseada"]) || 0; // 🌡 deseada del usuario
+  const T2 = climaResumen.tempProm;
+  const T1 = parseFloat(datos["tempDeseada"]) || 0;
   const deltaT = T1 - T2;
 
-  // 🔹 Tabla PVC cédula 40 (m)
   const pvcSch40 = {
     "tuberia 1.50":  { OD_m: 1.90 * INCH_TO_M, ID_m: 1.61 * INCH_TO_M },
     "tuberia 2.00":  { OD_m: 2.37 * INCH_TO_M, ID_m: 2.07 * INCH_TO_M },
@@ -4457,13 +4454,8 @@ function qTuberia(resumenTramosR = {}, resumenDisparosR = {}) {
     "tuberia 18.00": { OD_m: 18.00 * INCH_TO_M, ID_m: 16.81 * INCH_TO_M }
   };
 
-  // 🔹 Resultado
-  const qTub = {
-    porDiametro: {},
-    total_BTU_h: 0
-  };
+  const qTub = { porDiametro: {}, total_BTU_h: 0 };
 
-  // 🔹 Calcular pérdidas por cada diámetro del resumenMateriales
   for (const [diamNom, info] of Object.entries(resumenMateriales)) {
     const length_m = (info && typeof info.tuberia_m === "number") ? info.tuberia_m : 0;
     if (length_m <= 0) {
@@ -4474,14 +4466,12 @@ function qTuberia(resumenTramosR = {}, resumenDisparosR = {}) {
     const entry = pvcSch40[diamNom];
     if (!entry) {
       qTub.porDiametro[diamNom] = { length_m, Q_BTU_h: 0, note: "diámetro no en tabla" };
-      console.log(`⚠️ ${diamNom} no encontrado en tabla PVC`);
       continue;
     }
 
     const r1 = entry.ID_m / 2;
     const r2 = entry.OD_m / 2;
 
-    // 📌 Fórmula (k en kcal/m·h·°C → convertimos a BTU/h)
     const Q_kcal_h = (2 * Math.PI * k_kcal_m_h_C * length_m * deltaT) / Math.log(r2 / r1);
     const Q_BTU_h = Q_kcal_h * KCALH_TO_BTUH;
 
@@ -4491,16 +4481,13 @@ function qTuberia(resumenTramosR = {}, resumenDisparosR = {}) {
     };
 
     qTub.total_BTU_h += Q_BTU_h;
-
-    // 🔹 Log detallado
-    console.log(
+        console.log(
       `✅ Tubería ${diamNom} | Longitud: ${length_m} m | Pérdida: ${Q_BTU_h.toFixed(2)} BTU/h`
     );
   }
 
   qTub.total_BTU_h = Number(qTub.total_BTU_h.toFixed(2));
   console.log(`👉 Pérdida total en tubería = ${qTub.total_BTU_h} BTU/h`);
-
   return qTub;
 }
 
