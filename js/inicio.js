@@ -11,7 +11,6 @@ function toggleInputs(checkboxId, contenedorId) {
 
 document.addEventListener("input", guardarCambio);
 document.addEventListener("change", guardarCambio);
-
 function guardarCambio(e) {
   const el = e.target;
 
@@ -508,11 +507,19 @@ function renderSeccion(seccion) {
 }
 
 function engancharListenersCalentamiento() {
-  ["area","tempDeseada","cuerpoTechado","cubiertaTermica"].forEach(id => {
+  ["area", "tempDeseada", "cuerpoTechado", "cubiertaTermica"].forEach(id => {
     const el = document.getElementById(id);
     if (el && !el.dataset.listener) {
-      el.addEventListener("input", () => { syncDatos(id); qEvaporacion(); });
-      el.addEventListener("change", () => { syncDatos(id); qEvaporacion(); });
+      const recalcular = () => {
+        syncDatos(id);
+
+        // ⚙️ Recalcula pérdidas
+        ejecutarCalculosDebounced(); // 🔹 Llama todo el flujo: evaporación + retorno + tubería + gráfica
+
+      };
+
+      el.addEventListener("input", recalcular);
+      el.addEventListener("change", recalcular);
       el.dataset.listener = true;
     }
   });
@@ -2009,9 +2016,16 @@ function generarResumenes() {
 
   return { resumenTramosR, resumenDisparosR, flujoMax, tipoRetorno };
 }
-
+let calculoEnCurso = false;
+let timeoutCalculo = null;
+function ejecutarCalculosDebounced() {
+  if (timeoutCalculo) clearTimeout(timeoutCalculo);
+  timeoutCalculo = setTimeout(() => ejecutarCalculos(), 150);
+}
 // 🔹 Cálculos centralizados
 function ejecutarCalculos() {
+    idsRelevantes.forEach(id => syncDatos(id));
+    
   // 👉 Si no hay clima válido aún, no calculamos pérdidas
   if (!climaResumen || climaResumen.tempProm === null) {
     console.warn("⚠️ Clima no definido, cálculos incompletos");
@@ -2035,7 +2049,6 @@ function ejecutarCalculos() {
 function fix2(v) {
   return (parseFloat(v) || 0).toFixed(2);
 }
-
 function retorno(flujoMaximo, tipoRetorno) {
     const area = parseFloat(datos.area) || 0;
     const diametros = {
@@ -3771,17 +3784,14 @@ if (distanciaCMB > 0) {
 }
 
 const meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
-
 let ciudadSeleccionada = null; // 👉 ciudad activa
 let mesesSeleccionados = Array(12).fill(true); // ✔ todos los meses seleccionados por defecto
-
 let climaResumen = {
   mes: null,
   tempProm: null,
   viento: null,
   humedad: null
 };
-
 function renderTabla(ciudad) {
   const datosTemp = temperatura[ciudad];
   const datosViento = velocidadViento[ciudad];
@@ -3875,7 +3885,7 @@ function renderTabla(ciudad) {
     `;
 
     // 👉 Ejecutar cálculos centralizados
-    ejecutarCalculos();
+    ejecutarCalculosDebounced();
   }
 
   actualizarMesFrio();
@@ -3898,7 +3908,6 @@ document.addEventListener("change", (e) => {
     renderTabla(ciudadSeleccionada);
   }
 });
-
 // 🔹 Función para actualizar datos[] cada vez que un input cambia
 function syncDatos(id) {
   const el = document.getElementById(id);
@@ -3910,25 +3919,17 @@ function syncDatos(id) {
     }
   }
 }
-
 // 🔹 Inputs que disparan recálculo
 const idsRelevantes = [
   "area", "tempDeseada", "cuerpoTechado", "cubiertaTermica",
   "ciudad", "profMin", "profMax", "distCuarto", "rotacion"
 ];
-
 idsRelevantes.forEach(id => {
   const el = document.getElementById(id);
   if (el) {
     const recalcular = () => {
       syncDatos(id);
-
-      // ⚡ Si aún no hay clima válido, pero ya hay ciudad, forzar refresco
-      if (climaResumen.tempProm === null && ciudadSeleccionada) {
-        renderTabla(ciudadSeleccionada);
-      }
-
-      ejecutarCalculos();
+      ejecutarCalculosDebounced(); // ✅ recalcula TODO: evaporación + tubería + gráfica
     };
 
     el.addEventListener("change", recalcular);
@@ -3937,7 +3938,6 @@ idsRelevantes.forEach(id => {
 });
 
 let graficaPerdidas; // referencia global a la gráfica
-
 // 🔹 Revisión robusta de la gráfica
 function mostrarGrafica(qEvap, qTubTotal) {
   const canvas = document.getElementById("graficaPerdidas");
@@ -4096,7 +4096,6 @@ const temperatura = {
         max: [28.8, 29.0, 29.2, 29.9, 31.0, 32.3, 33.3, 33.7, 33.6, 33.6, 32.3, 29.9]
     },
 };
-
 const velocidadViento = {
     "guadalajara": {
         max: [8.8, 9.2, 9.6, 9.5, 9.2, 8.0, 7.0, 7.4, 7.9, 7.9, 8.0, 8.2]
@@ -4198,7 +4197,6 @@ const velocidadViento = {
         max: [10.0, 10.6, 10.9, 11.1, 11.1, 10.7, 9.1, 9.1, 9.4, 9.3, 9.4, 9.5]
     },
 };
-
 const humedad = {
     "guadalajara": {
         promedio: [77.0, 74.0, 66.0, 55.0, 45.0, 40.0, 30.0, 32.0, 41.0, 51.0, 63.0, 72.0]
@@ -4300,7 +4298,6 @@ const humedad = {
         promedio: [80, 78, 75, 70, 65, 60, 65, 70, 75, 80, 85, 88]
     },
 };
-
 const calorVaporizacion = [
   { tempC: 6.7,  whKg: 688.79 },
   { tempC: 17.2, whKg: 681.95 },
@@ -4310,7 +4307,6 @@ const calorVaporizacion = [
   { tempC: 32.6, whKg: 671.85 },
   { tempC: 40.0, whKg: 666.97 }
 ];
-
 const humedadAbsoluta = [
   { tempC: 0,  kgKg: 0.0000000 },
   { tempC: 1,  kgKg: 0.0040570 },
