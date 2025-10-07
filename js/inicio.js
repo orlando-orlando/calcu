@@ -4201,7 +4201,7 @@ const velocidadViento = {
 };
 const humedad = {
     "guadalajara": {
-        promedio: [77.0, 74.0, 66.0, 55.0, 45.0, 40.0, 30.0, 32.0, 41.0, 51.0, 63.0, 72.0]
+        promedio: [52.0, 49.0, 41.0, 36.0, 41.0, 60.0, 78.0, 81.0, 82.0, 73.0, 64.0, 57.0]
     },
     "mexicali": {
         promedio: [38.0, 36.0, 32.0, 28.0, 24.0, 20.0, 22.0, 24.0, 26.0, 30.0, 34.0, 38.0]
@@ -4516,21 +4516,18 @@ function qConveccion() {
   const constante = 0.6246; // constante de convección
   const area = parseFloat(datos["area"]) || 0; // m²
 
-  // 🔹 Si no hay clima o área, salimos
-  if (!climaResumen || climaResumen.tempProm == null || !area) return 0;
-
   // 🔹 Temperaturas en °C
-  const T_agua = climaResumen.tempProm - 2; // vaso de agua
+  const T_agua = climaResumen.tempProm - 3; // vaso de agua
   const T_aire = climaResumen.tempProm;     // aire del ambiente
-
   // 🔹 Cálculo de convección en W
-  const Qconv_W = constante * Math.pow((T_agua - T_aire), 4 / 3) * area;
+  const Qconv_W = (constante * Math.pow((T_aire - T_agua), 4 / 3)) * area;
 
   // 🔹 Convertir a BTU/h (1 W = 3.412142 BTU/h)
   const Qconv_BTUh = Qconv_W * 3.412142;
   console.log("area =", area);
+  console.log("Temp prom aire - 2 =", T_agua);
+  console.log("Temp prom aire =", T_aire);
   console.log("Perdida conveccion =", Qconv_BTUh);
-
   return Qconv_BTUh;
 }
 
