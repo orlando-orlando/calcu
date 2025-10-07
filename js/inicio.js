@@ -2034,6 +2034,8 @@ function ejecutarCalculos() {
 
   // 🔹 Recalcular evaporación
   const qEvap = qEvaporacion();
+  const qRad = qRadiacion();
+  const qConv = qConveccion();
 
   // 🔹 Generar resúmenes de tuberías
   const { resumenTramosR, resumenDisparosR } = generarResumenes();
@@ -2043,7 +2045,7 @@ function ejecutarCalculos() {
   const qTubTotal = qTubResult.total_BTU_h;
 
   // 🔹 Actualizar gráfica
-  mostrarGrafica(qEvap, qTubTotal);
+  mostrarGrafica(qEvap, qRad, qConv, qTubTotal);
 }
 
 function fix2(v) {
@@ -3939,7 +3941,7 @@ idsRelevantes.forEach(id => {
 
 let graficaPerdidas; // referencia global a la gráfica
 // 🔹 Revisión robusta de la gráfica
-function mostrarGrafica(qEvap, qTubTotal) {
+function mostrarGrafica(qEvap, qRad, qConv, qTubTotal) {
   const canvas = document.getElementById("graficaPerdidas");
   if (!canvas) return;
 
@@ -3954,7 +3956,7 @@ function mostrarGrafica(qEvap, qTubTotal) {
     data: {
       labels: ["Evaporación", "Convección", "Radiación", "Transmisión", "Infinity", "Canal perimetral", "Tubería"],
       datasets: [{
-        data: [qEvap, 0, 0, 0, 0, 0, qTubTotal],
+        data: [qEvap, qConv, qRad, 0, 0, 0, qTubTotal],
         backgroundColor: ["#36A2EB", "#FF6384", "#FF9F40", "#4BC0C0", "#9966FF", "#C9CBCF", "#FFCE56"]
       }]
     },
@@ -4488,11 +4490,48 @@ function qTuberia(resumenTramosR = {}, resumenDisparosR = {}) {
 }
 
 function qRadiacion() {
+  const sigma = 5.67e-8; // Constante de Stefan-Boltzmann (W/m²K⁴)
+  const emisividad = 0.95;
 
+  // 🔹 Obtener valores desde los datos globales
+  const tempAguaC = parseFloat(datos["tempDeseada"]) || 0; // °C
+  const area = parseFloat(datos["area"]) || 0; // m²
+
+  if (!tempAguaC || !area) return 0; // si faltan datos, no calculamos
+
+  // 🔹 Convertir a Kelvin
+  const T_agua = tempAguaC + 273;
+  const T_cerramiento = (tempAguaC - 1) + 273;
+
+  // 🔹 Calcular pérdida por radiación (W)
+  const Qrad_W = sigma * emisividad * (Math.pow(T_agua, 4) - Math.pow(T_cerramiento, 4)) * area;
+
+  // 🔹 Convertir a BTU/h (1 W = 3.412142 BTU/h)
+  const Qrad_BTUh = Qrad_W * 3.412142;
+
+  return Qrad_BTUh;
 }
 
 function qConveccion() {
+  const constante = 0.6246; // constante de convección
+  const area = parseFloat(datos["area"]) || 0; // m²
 
+  // 🔹 Si no hay clima o área, salimos
+  if (!climaResumen || climaResumen.tempProm == null || !area) return 0;
+
+  // 🔹 Temperaturas en °C
+  const T_agua = climaResumen.tempProm - 2; // vaso de agua
+  const T_aire = climaResumen.tempProm;     // aire del ambiente
+
+  // 🔹 Cálculo de convección en W
+  const Qconv_W = constante * Math.pow((T_agua - T_aire), 4 / 3) * area;
+
+  // 🔹 Convertir a BTU/h (1 W = 3.412142 BTU/h)
+  const Qconv_BTUh = Qconv_W * 3.412142;
+  console.log("area =", area);
+  console.log("Perdida conveccion =", Qconv_BTUh);
+
+  return Qconv_BTUh;
 }
 
 function qTransmision() {
