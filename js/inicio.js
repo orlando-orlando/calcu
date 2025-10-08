@@ -2036,6 +2036,7 @@ function ejecutarCalculos() {
   const qEvap = qEvaporacion();
   const qRad = qRadiacion();
   const qConv = qConveccion();
+  const qTrans = qTransmision();
 
   // 🔹 Generar resúmenes de tuberías
   const { resumenTramosR, resumenDisparosR } = generarResumenes();
@@ -2045,7 +2046,7 @@ function ejecutarCalculos() {
   const qTubTotal = qTubResult.total_BTU_h;
 
   // 🔹 Actualizar gráfica
-  mostrarGrafica(qEvap, qRad, qConv, qTubTotal);
+  mostrarGrafica(qEvap, qRad, qConv, qTrans, qTubTotal);
 }
 
 function fix2(v) {
@@ -3941,7 +3942,7 @@ idsRelevantes.forEach(id => {
 
 let graficaPerdidas; // referencia global a la gráfica
 // 🔹 Revisión robusta de la gráfica
-function mostrarGrafica(qEvap, qRad, qConv, qTubTotal) {
+function mostrarGrafica(qEvap, qRad, qConv, qTrans, qTubTotal) {
   const canvas = document.getElementById("graficaPerdidas");
   if (!canvas) return;
 
@@ -3956,7 +3957,7 @@ function mostrarGrafica(qEvap, qRad, qConv, qTubTotal) {
     data: {
       labels: ["Evaporación", "Convección", "Radiación", "Transmisión", "Infinity", "Canal perimetral", "Tubería"],
       datasets: [{
-        data: [qEvap, qConv, qRad, 0, 0, 0, qTubTotal],
+        data: [qEvap, qConv, qRad, qTrans, 0, 0, qTubTotal],
         backgroundColor: ["#36A2EB", "#FF6384", "#FF9F40", "#4BC0C0", "#9966FF", "#C9CBCF", "#FFCE56"]
       }]
     },
@@ -4532,7 +4533,31 @@ function qConveccion() {
 }
 
 function qTransmision() {
+  const C_T = 1.5; // W/m²°C
+  const area = parseFloat(datos["area"] || 0);
+  const profMax = parseFloat(datos["profMax"] || 0);
+  const tempDeseada = parseFloat(datos["tempDeseada"] || 0);
 
+  // 🔹 Clima promedio (temperatura exterior)
+  const tempExterior = climaResumen?.tempProm ?? 0;
+
+  if (area <= 0 || tempDeseada <= 0 || tempExterior === null) {
+    console.warn("⚠️ Datos insuficientes para qTransmision");
+    return 0;
+  }
+
+  // 🔹 Superficie de cerramiento S
+  const S = area + (Math.sqrt(area) * 4) * profMax;
+
+  // 🔹 Cálculo de Q
+  const Q = C_T * S * (tempDeseada - tempExterior); // [W]
+
+  // 🔹 Convertimos a BTU/h
+  const Q_BTU_h = Q * 3.412;
+
+  console.log(`qTransmision = ${Q_BTU_h.toFixed(2)} BTU/h`);
+
+  return Q_BTU_h;
 }
 
 function qInfinity() {
