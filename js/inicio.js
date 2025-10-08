@@ -4672,3 +4672,6 @@ function qInfinity() {
 
 function qCanal() {
 }
+
+function qCascada() {
+}
