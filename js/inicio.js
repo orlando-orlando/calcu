@@ -29,8 +29,8 @@ function guardarCambio(e) {
 // --- Escucha todos los cambios en checkboxes ---
 document.addEventListener("change", () => {
   // --- Desborde (sí se ocultan) ---
-  //toggleCampo("chkInfinity", "campoInfinity");
-  //toggleCampo("chkCanal", "campoCanal");
+ toggleInputs("chkInfinity", "campoInfinity");
+ toggleInputs("chkCanal", "campoCanal");
 
   // --- Calentamiento (NO se ocultan, solo habilitar/deshabilitar) ---
   toggleInputs("chkBombaCalor", "campoBombaCalor");
@@ -89,11 +89,57 @@ function actualizarTablasClima() {
 
 // Listener de cambio en ciudad
 document.addEventListener("change", (e) => {
-  if (e.target.id === "ciudad") {
-    ciudadSeleccionada = e.target.value;
-    actualizarTablasClima();
-  }
+  // --- Tipo de sistema dinámico ---
+  if (e.target.id === "tipoSistema") renderTiposCuerpo(e.target.value);
+
+  // --- Tipo de desborde dinámico ---
+  if (e.target.name === "desborde") handleDesborde(e.target.value);
 });
+
+function renderTiposCuerpo(tipo) {
+  const container = document.getElementById("tiposCuerpoContainer");
+  if (!container) return;
+  container.innerHTML = "";
+
+  const tiposDisponibles = ["Alberca", "Espejo de agua", "Jacuzzi", "Chapoteadero"];
+
+  if (tipo === "1cuerpo") {
+    container.innerHTML = `
+      <div class="form-group">
+        <label><strong>Tipo de cuerpo de agua:</strong></label>
+        ${tiposDisponibles.map(t => `
+          <label><input type="radio" name="tipoCuerpo1" value="${t.toLowerCase()}"> ${t}</label>
+        `).join("")}
+      </div>
+    `;
+  } else if (tipo === "2juntos" || tipo === "2indep") {
+    container.innerHTML = `
+      <div class="form-group">
+        <label><strong>Tipo de cuerpo 1:</strong></label>
+        ${tiposDisponibles.map(t => `
+          <label><input type="radio" name="tipoCuerpo1" value="${t.toLowerCase()}"> ${t}</label>
+        `).join("")}
+      </div>
+      <div class="form-group">
+        <label><strong>Tipo de cuerpo 2:</strong></label>
+        ${tiposDisponibles.map(t => `
+          <label><input type="radio" name="tipoCuerpo2" value="${t.toLowerCase()}"> ${t}</label>
+        `).join("")}
+      </div>
+    `;
+  }
+}
+
+function handleDesborde(tipo) {
+  const campos = document.getElementById("camposDesborde");
+  const campoInfinity = document.getElementById("campoInfinity");
+  const campoCanal = document.getElementById("campoCanal");
+
+  campos.style.display = tipo === "ninguno" ? "none" : "block";
+
+  campoInfinity.style.display = (tipo === "infinity" || tipo === "ambos") ? "block" : "none";
+  campoCanal.style.display = (tipo === "canal" || tipo === "ambos") ? "block" : "none";
+}
 
 // Inicializar tabla bloqueada al cargar la sección
 document.addEventListener("DOMContentLoaded", () => {
@@ -105,27 +151,114 @@ const datos = {};
 
 // Contenido de cada sección
 const secciones = {
-  dimensiones: `
-    <div class="form-section">
+dimensiones: `
+<div class="form-section clima-layout" style="font-family: inherit;">
+
+  <!-- Columna izquierda (inputs principales) -->
+  <div class="clima-form">
+
+    <!-- 🔹 Tipo de sistema -->
+    <div class="tarjeta-bdc tarjeta-calentamiento">
+      <label class="label-calentamiento">Tipo de sistema:</label>
+      <select id="tipoSistema" class="input-azul">
+        <option value="">-- Selecciona --</option>
+        <option value="1cuerpo">1 cuerpo de agua</option>
+        <option value="2juntos">2 cuerpos de agua juntos</option>
+        <option value="2indep">2 cuerpos de agua independientes</option>
+      </select>
+    </div>
+
+    <!-- Radios de tipo de cuerpo (dinámico) -->
+    <div id="tiposCuerpoContainer"></div>
+
+    <!-- 🔹 Uso del cuerpo de agua -->
+    <div class="tarjeta-bdc tarjeta-calentamiento">
+      <label class="label-calentamiento">Uso del cuerpo de agua:</label>
+      <select id="usoCuerpo" class="input-azul">
+        <option value="">-- Selecciona uso --</option>
+        <option value="residencial">Residencial</option>
+        <option value="publica">Pública</option>
+        <option value="competencia">Competencia</option>
+        <option value="parqueAcuatico">Parque acuático</option>
+      </select>
+    </div>
+
+    <!-- 🔹 Tipo de desborde -->
+    <div class="tarjeta-bdc tarjeta-calentamiento">
+      <label class="label-calentamiento">Tipo de desborde:</label>
+      <div id="toggleDesborde" class="checkbox-row">
+        <label><input type="radio" name="desborde" value="infinity"> Infinity</label>
+        <label><input type="radio" name="desborde" value="canal"> Canal perimetral</label>
+        <label><input type="radio" name="desborde" value="ambos"> Ambos</label>
+        <label><input type="radio" name="desborde" value="ninguno"> Ninguno</label>
+      </div>
+    </div>
+
+    <!-- 🔹 Campos dinámicos de desborde -->
+    <div id="camposDesborde" style="display:none;">
+
+      <div id="campoInfinity" class="tarjeta-bdc tarjeta-calentamiento" style="display:none;">
+        <label class="label-calentamiento">Desborde Infinity:</label>
+
+        <div class="form-group inline">
+          <span>¿Motobomba independiente?</span>
+          <label><input type="radio" name="motobombaInfinity" value="si"> Sí</label>
+          <label><input type="radio" name="motobombaInfinity" value="no"> No</label>
+        </div>
+
+        <div class="form-group inline fila-bdc">
+          <div class="campo-bdc">
+            <label for="largoInfinity">Largo del muro (m):</label>
+            <input type="number" id="largoInfinity" class="input-azul" step="0.01">
+          </div>
+          <div class="campo-bdc">
+            <label for="alturaDesborde">Altura desborde (mm):</label>
+            <input type="number" id="alturaDesborde" class="input-azul" step="0.01">
+          </div>
+        </div>
+      </div>
+
+      <div id="campoCanal" class="tarjeta-bdc tarjeta-calentamiento" style="display:none;">
+        <label class="label-calentamiento">Canal perimetral:</label>
+        <div class="form-group inline fila-bdc">
+          <div class="campo-bdc">
+            <label for="largoCanal">Largo total del canal (m):</label>
+            <input type="number" id="largoCanal" class="input-azul" step="0.01">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔹 Dimensiones físicas -->
+    <div class="tarjeta-bdc tarjeta-calentamiento">
+      <label class="label-calentamiento">Dimensiones físicas:</label>
+
       <div class="form-group">
         <label for="area">Área (m²):</label>
-        <input type="number" id="area" step="0.01">
+        <input type="number" id="area" class="input-azul" step="0.01">
       </div>
-      <div class="form-group">
-        <label for="profMin">Profundidad mínima (m):</label>
-        <input type="number" id="profMin" step="0.01">
+
+      <div class="form-group inline fila-bdc">
+        <div class="campo-bdc">
+          <label for="profMin">Prof. mínima (m):</label>
+          <input type="number" id="profMin" class="input-azul" step="0.01">
+        </div>
+        <div class="campo-bdc">
+          <label for="profMax">Prof. máxima (m):</label>
+          <input type="number" id="profMax" class="input-azul" step="0.01">
+        </div>
       </div>
-      <div class="form-group">
-        <label for="profMax">Profundidad máxima (m):</label>
-        <input type="number" id="profMax" step="0.01">
+
+      <div class="form-group inline fila-bdc">
+        <div class="campo-bdc">
+          <label for="distCuarto">Distancia a cuarto de máquinas (m):</label>
+          <input type="number" id="distCuarto" class="input-azul" step="0.01">
+        </div>
       </div>
-      <div class="form-group">
-        <label for="distCuarto">Distancia al cuarto de máquinas (m):</label>
-        <input type="number" id="distCuarto" step="0.01">
-      </div>
+
       <div class="form-group">
         <label for="rotacion">Tasa de rotación (h):</label>
-        <select id="rotacion">
+        <select id="rotacion" class="input-azul">
           <option value="0.5">0.5 horas</option>
           <option value="1">1 hora</option>
           <option value="4">4 horas</option>
@@ -137,39 +270,13 @@ const secciones = {
         </select>
       </div>
     </div>
-  `,
-desborde: `
-  <div class="form-section">
-    <div class="form-group inline">
-      <label><input type="checkbox" id="chkInfinity"> Infinity</label>
-      <label><input type="checkbox" id="chkCanal"> Canal perimetral</label>
-      <label><input type="checkbox" id="chkNinguno"> Ninguno</label>
-    </div>
 
-    <div id="campoInfinity" class="form-subgroup">
-      <!-- 👇 Nuevo bloque de motobomba independiente -->
-      <div class="form-group inline">
-        <span>¿Motobomba independiente para Infinity?</span>
-        <label><input type="radio" name="motobombaInfinity" value="si"> Sí</label>
-        <label><input type="radio" name="motobombaInfinity" value="no"> No</label><br><br>
-      </div>
-      <div class="form-group">
-        <label for="largoInfinity">Largo del muro Infinity (m):</label>
-        <input type="number" id="largoInfinity" step="0.01"><br>
-      </div>
-      <div class="form-group">
-        <label for="alturaDesborde">Altura desborde infinity (mm):</label>
-        <input type="number" id="alturaDesborde" step="0.01">
-      </div>
-    </div>
-
-    <div id="campoCanal" class="form-subgroup">
-      <div class="form-group">
-        <label for="largoCanal">Largo del canal perimetral (m):</label>
-        <input type="number" id="largoCanal" step="0.01">
-      </div>
-    </div>
   </div>
+
+  <!-- Columna derecha vacía (para futuro resumen o ayuda visual) -->
+  <div class="clima-tabla tarjeta-tabla" style="display:none;"></div>
+
+</div>
 `,
 calentamiento: `
 <div class="form-section clima-layout">
