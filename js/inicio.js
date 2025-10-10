@@ -332,7 +332,7 @@ calentamiento: `
       </div>
       <div class="form-subgroup-inline">
         <label for="tempDeseada">Temperatura deseada (°C):</label>
-        <input type="number" id="tempDeseada" step="0.1" min="10" max="40">
+        <input type="number" id="tempDeseada" step="0.5" min="25" max="40">
       </div>
 
       <div class="form-subgroup-inline">
@@ -354,7 +354,7 @@ calentamiento: `
       </div>
     </div>
 
-    <div style="width: 400px; margin: 20px auto;">
+    <div style="width: 1000px; margin: -10px 0 px 0;">
       <canvas id="graficaPerdidas"></canvas>
     </div>
 
@@ -4055,8 +4055,8 @@ function mostrarGrafica(qEvap, qRad, qConv, qTrans, qInf, qCan, qTubTotal) {
   const canvas = document.getElementById("graficaPerdidas");
   if (!canvas) return;
 
-  canvas.width = 750;
-  canvas.height = 470;
+  canvas.width = 780;
+  canvas.height = 480;
 
   const ctx = canvas.getContext("2d");
 
@@ -4065,6 +4065,7 @@ function mostrarGrafica(qEvap, qRad, qConv, qTrans, qInf, qCan, qTubTotal) {
   const n = (x) => (Number.isFinite(Number(x)) ? Number(x) : 0);
 
   const valores = [n(qEvap), n(qConv), n(qRad), n(qTrans), n(qInf), n(qCan), n(qTubTotal)];
+
   const etiquetas = [
     "Evaporación",
     "Convección",
@@ -4072,7 +4073,7 @@ function mostrarGrafica(qEvap, qRad, qConv, qTrans, qInf, qCan, qTubTotal) {
     "Transmisión",
     "Infinity",
     "Canal perimetral",
-    "Tubería",
+    "Tubería"
   ];
 
   const colores = [
@@ -4082,34 +4083,33 @@ function mostrarGrafica(qEvap, qRad, qConv, qTrans, qInf, qCan, qTubTotal) {
     "#4BC0C0",
     "#9966FF",
     "#C9CBCF",
-    "#FFCE56",
+    "#FFCE56"
   ];
 
+  // 🔹 Sumatoria total
   const total = valores.reduce((a, b) => a + b, 0);
 
   graficaPerdidas = new Chart(ctx, {
     type: "pie",
     data: {
       labels: etiquetas,
-      datasets: [
-        {
-          data: valores,
-          backgroundColor: colores,
-          borderWidth: 1,
-          radius: "95%",
-        },
-      ],
+      datasets: [{
+        data: valores,
+        backgroundColor: colores,
+        borderWidth: 1,
+        radius: "92%"
+      }]
     },
     options: {
       responsive: false,
-      animation: false,
+      maintainAspectRatio: false,
       layout: {
         padding: {
-          left: -50,   // mueve la gráfica más a la izquierda
-          right: 250,
-          bottom: 60,
-          top: 60,
-        },
+          left: -100,    // 👈 un poco más a la izquierda
+          right: 0,  // 👈 más espacio para los nombres
+          top: 50,
+          bottom: 70
+        }
       },
       plugins: {
         legend: {
@@ -4119,7 +4119,7 @@ function mostrarGrafica(qEvap, qRad, qConv, qTrans, qInf, qCan, qTubTotal) {
             usePointStyle: true,
             boxWidth: 14,
             font: { size: 14 },
-            padding: 12,
+            padding: 18, // 👈 separa más texto de la gráfica
             generateLabels: function (chart) {
               const data = chart.data;
               const dataset = data.datasets[0];
@@ -4128,7 +4128,7 @@ function mostrarGrafica(qEvap, qRad, qConv, qTrans, qInf, qCan, qTubTotal) {
                 const color = dataset.backgroundColor[i];
                 return {
                   text: `${label}: ${valor.toLocaleString("es-MX", {
-                    maximumFractionDigits: 2,
+                    maximumFractionDigits: 0,
                   })} BTU/h`,
                   fillStyle: color,
                   strokeStyle: color,
@@ -4143,51 +4143,47 @@ function mostrarGrafica(qEvap, qRad, qConv, qTrans, qInf, qCan, qTubTotal) {
             label: (ctx) => {
               const val = Number(ctx.parsed) || 0;
               return `${ctx.label}: ${val.toLocaleString("es-MX", {
-                maximumFractionDigits: 2,
+                maximumFractionDigits: 0,
               })} BTU/h`;
             },
           },
-        },
-        title: {
-          display: false, // 👈 lo manejaremos manualmente para centrarlo perfectamente
         },
       },
     },
     plugins: [
       {
-        id: "tituloCentradoYTotal",
-        afterDraw: (chart) => {
+        id: "tituloPersonalizado",
+        afterDraw(chart) {
           const { ctx, chartArea } = chart;
-          if (!chartArea) return;
-
           ctx.save();
-
-          // 🔹 Título centrado realmente
           ctx.font = "bold 20px sans-serif";
           ctx.fillStyle = "#222";
           ctx.textAlign = "center";
           ctx.fillText(
             "Distribución de Pérdidas de Calor (BTU/h)",
-            chart.width / 2, // centrado absoluto del canvas
-            30 // posición vertical del título
+            (chartArea.left + chartArea.right) / 2 + 170, // 👈 mueve 80 px a la derecha
+            chartArea.top - 15
           );
-
-          // 🔹 Total debajo del pastel
+          ctx.restore();
+        }
+      },
+      {
+        id: "totalAbajo",
+        afterDraw(chart) {
+          const { ctx, chartArea } = chart;
+          ctx.save();
           ctx.font = "bold 17px sans-serif";
           ctx.fillStyle = "#333";
           ctx.textAlign = "center";
           ctx.fillText(
-            `Total: ${total.toLocaleString("es-MX", {
-              maximumFractionDigits: 2,
-            })} BTU/h`,
-            (chartArea.left + chartArea.right) / 2 - 30,
-            chartArea.bottom + 35
+            `Total: ${total.toLocaleString("es-MX", { maximumFractionDigits: 0 })} BTU/h`,
+            (chartArea.left + chartArea.right) / 2 + 170, // 👈 ajusta posición horizontal
+            chartArea.bottom + 40
           );
-
           ctx.restore();
-        },
-      },
-    ],
+        }
+      }
+    ]
   });
 }
 
