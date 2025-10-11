@@ -332,7 +332,20 @@ calentamiento: `
       </div>
       <div class="form-subgroup-inline">
         <label for="tempDeseada">Temperatura deseada (°C):</label>
-        <input type="number" id="tempDeseada" step="0.5" min="25" max="40">
+<input 
+  type="number" 
+  id="tempDeseada" 
+  step="0.5" 
+  min="25" 
+  max="40"
+  oninput="
+    const val = parseFloat(this.value);
+    if (!isNaN(val)) {
+      if (val < 25) this.value = 25;
+      if (val > 40) this.value = 40;
+    }
+  "
+>
       </div>
 
       <div class="form-subgroup-inline">
@@ -5137,3 +5150,6 @@ function qCanal() {
 
   return Q_BTU_h;
 }
+
+
+
