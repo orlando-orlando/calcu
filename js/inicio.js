@@ -96,43 +96,6 @@ document.addEventListener("change", (e) => {
   if (e.target.name === "desborde") handleDesborde(e.target.value);
 });
 
-function renderTiposCuerpo(tipo) {
-  const container = document.getElementById("tiposCuerpoContainer");
-  const colDerecha = document.getElementById("columnaDerechaDim");
-  if (!container || !colDerecha) return;
-
-  container.innerHTML = "";
-  colDerecha.style.display = tipo ? "block" : "none";
-
-  const tiposDisponibles = ["Alberca", "Espejo de agua", "Jacuzzi", "Chapoteadero"];
-
-  if (tipo === "1cuerpo") {
-    container.innerHTML = `
-      <div class="form-group">
-        <label><strong>Tipo de cuerpo de agua:</strong></label>
-        ${tiposDisponibles.map(t => `
-          <label><input type="radio" name="tipoCuerpo1" value="${t.toLowerCase()}"> ${t}</label>
-        `).join("")}
-      </div>
-    `;
-  } else if (tipo === "2juntos" || tipo === "2indep") {
-    container.innerHTML = `
-      <div class="form-group">
-        <label><strong>Tipo de cuerpo 1:</strong></label>
-        ${tiposDisponibles.map(t => `
-          <label><input type="radio" name="tipoCuerpo1" value="${t.toLowerCase()}"> ${t}</label>
-        `).join("")}
-      </div>
-      <div class="form-group">
-        <label><strong>Tipo de cuerpo 2:</strong></label>
-        ${tiposDisponibles.map(t => `
-          <label><input type="radio" name="tipoCuerpo2" value="${t.toLowerCase()}"> ${t}</label>
-        `).join("")}
-      </div>
-    `;
-  }
-}
-
 function handleDesborde(tipo) {
   const campos = document.getElementById("camposDesborde");
   const campoInfinity = document.getElementById("campoInfinity");
@@ -155,21 +118,77 @@ const datos = {};
 // Contenido de cada sección
 const secciones = {
 dimensiones: `
-<div class="form-section clima-layout" style="font-family: inherit;">
+<div class="form-section" style="font-family: inherit;">
+
+        <!-- 🔹 Tipo de sistema (modo visual con imágenes tipo radio) -->
+    <div class="tipo-sistema-container full-width">
+      <div class="titulo-seccion">Selecciona el tipo de sistema</div>
+
+      <div class="opciones-sistema">
+        <label class="opcion-sistema">
+          <input type="radio" name="tipoSistema" value="alberca">
+          <img src="./img/alberca.jpg" alt="Alberca">
+          <span>Alberca</span>
+        </label>
+
+        <label class="opcion-sistema">
+          <input type="radio" name="tipoSistema" value="jacuzzi">
+          <img src="https://cdn.pixabay.com/photo/2015/11/07/11/50/jacuzzi-1033270_1280.jpg" alt="Jacuzzi">
+          <span>Jacuzzi</span>
+        </label>
+
+        <label class="opcion-sistema">
+          <input type="radio" name="tipoSistema" value="chapoteadero">
+          <img src="https://cdn.pixabay.com/photo/2017/08/06/22/01/kids-2594035_1280.jpg" alt="Chapoteadero">
+          <span>Chapoteadero</span>
+        </label>
+
+        <label class="opcion-sistema">
+          <input type="radio" name="tipoSistema" value="espejoAgua">
+          <img src="https://cdn.pixabay.com/photo/2017/08/06/22/01/kids-2594035_1280.jpg" alt="Espejo de agua">
+          <span>Espejo de agua</span>
+        </label>
+
+        <label class="opcion-sistema">
+          <input type="radio" name="tipoSistema" value="albercaJacuzzi1">
+          <img src="https://cdn.pixabay.com/photo/2016/06/09/17/05/pool-1449207_1280.jpg" alt="Alberca con jacuzzi (1 cuerpo)">
+          <span>Alberca + Jacuzzi (1 cuerpo)</span>
+        </label>
+
+        <label class="opcion-sistema">
+          <input type="radio" name="tipoSistema" value="albercaChapo1">
+          <img src="https://cdn.pixabay.com/photo/2016/08/06/22/14/swimming-pool-1575942_1280.jpg" alt="Alberca con chapoteadero (1 cuerpo)">
+          <span>Alberca + Chapoteadero (1 cuerpo)</span>
+        </label>
+
+        <label class="opcion-sistema">
+          <input type="radio" name="tipoSistema" value="jacuzziChapo1">
+          <img src="https://cdn.pixabay.com/photo/2017/03/09/21/15/jacuzzi-2138446_1280.jpg" alt="Jacuzzi + Chapoteadero (1 cuerpo)">
+          <span>Jacuzzi + Chapoteadero (1 cuerpo)</span>
+        </label>
+
+        <label class="opcion-sistema">
+          <input type="radio" name="tipoSistema" value="albercaJacuzzi2">
+          <img src="https://cdn.pixabay.com/photo/2017/01/20/00/30/pool-1996826_1280.jpg" alt="Alberca + Jacuzzi (2 cuerpos)">
+          <span>Alberca + Jacuzzi (2 cuerpos)</span>
+        </label>
+
+        <label class="opcion-sistema">
+          <input type="radio" name="tipoSistema" value="albercaChapo2">
+          <img src="https://cdn.pixabay.com/photo/2017/08/30/06/08/pool-2691424_1280.jpg" alt="Alberca + Chapoteadero (2 cuerpos)">
+          <span>Alberca + Chapoteadero (2 cuerpos)</span>
+        </label>
+
+        <label class="opcion-sistema">
+          <input type="radio" name="tipoSistema" value="jacuzziChapo2">
+          <img src="https://cdn.pixabay.com/photo/2016/06/06/16/40/hot-tub-1436680_1280.jpg" alt="Jacuzzi + Chapoteadero (2 cuerpos)">
+          <span>Jacuzzi + Chapoteadero (2 cuerpos)</span>
+        </label>
+      </div>
+    </div>
 
   <!-- Columna izquierda (inputs principales) -->
   <div class="clima-form">
-
-    <!-- 🔹 Tipo de sistema -->
-    <div class="tarjeta-bdc tarjeta-calentamiento">
-      <label class="label-calentamiento">Tipo de sistema:</label>
-      <select id="tipoSistema" class="input-azul">
-        <option value="">-- Selecciona --</option>
-        <option value="1cuerpo">1 cuerpo de agua</option>
-        <option value="2juntos">2 cuerpos de agua juntos</option>
-        <option value="2indep">2 cuerpos de agua independientes</option>
-      </select>
-    </div>
 
     <!-- 🔹 Uso del cuerpo de agua + Tasa de rotación -->
     <div class="tarjeta-bdc tarjeta-calentamiento">
@@ -336,12 +355,12 @@ calentamiento: `
   type="number" 
   id="tempDeseada" 
   step="0.5" 
-  min="25" 
+  min="20" 
   max="40"
   oninput="
     const val = parseFloat(this.value);
     if (!isNaN(val)) {
-      if (val < 25) this.value = 25;
+      if (val < 20) this.value = 20;
       if (val > 40) this.value = 40;
     }
   "

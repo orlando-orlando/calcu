@@ -468,3 +468,157 @@ select:disabled {
   opacity: 0.5;              /* Se ve atenuada */
 }
 
+.sistemas-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.grupo-sistemas h4 {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #004c91;
+}
+
+.grupo-sistemas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.sistema-opcion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background-color: #f7f9fb;
+  width: 150px;
+}
+
+.sistema-opcion:hover {
+  border-color: #2196f3;
+  background-color: #e8f3ff;
+}
+
+.sistema-opcion input {
+  display: none;
+}
+
+.sistema-opcion img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.sistema-opcion span {
+  margin-top: 6px;
+  font-weight: 600;
+  text-align: center;
+  color: #333;
+  font-size: 14px;
+}
+
+/* 🔹 Cuando se selecciona */
+.sistema-opcion input:checked + img,
+.sistema-opcion input:checked ~ span {
+  filter: brightness(1.1);
+}
+
+.sistema-opcion input:checked ~ span {
+  color: #1976d2;
+}
+
+.sistema-opcion input:checked ~ img {
+  border: 2px solid #1976d2;
+  box-shadow: 0 0 8px rgba(25, 118, 210, 0.6);
+  border-radius: 10px;
+}
+
+/* 🔹 Contenedor general: ocupa todo el ancho visible del panel derecho */
+.tipo-sistema-container {
+  width: calc(100% + 40px);
+  margin-left: -20px;
+  margin-right: -20px;
+  background-color: #f9fbfd;
+  padding: 25px 0 35px 0; /* reduce un poco el padding superior */
+  text-align: center;
+  box-shadow: inset 0 -2px 8px rgba(0,0,0,0.05);
+}
+
+/* 🔹 Título de la sección */
+.titulo-seccion {
+  font-size: 22px;
+  font-weight: 600;
+  color: #004c91;
+  margin-bottom: 25px;
+}
+
+/* 🔹 Grilla fija: 2 filas de 5 columnas que llenan todo el ancho */
+.opciones-sistema {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);  /* 5 columnas iguales */
+  grid-template-rows: repeat(2, auto);    /* 2 filas automáticas */
+  gap: 25px;
+  justify-items: center;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+/* 🔹 Cada tarjeta/imagen ajustada al tamaño disponible */
+.opcion-sistema {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  max-width: 200px; /* tamaño máximo de cada tarjeta */
+}
+
+.opcion-sistema:hover {
+  border-color: #007bff;
+  transform: translateY(-4px);
+}
+
+.opcion-sistema img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.opcion-sistema span {
+  padding: 10px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  line-height: 1.2em;
+}
+
+.opcion-sistema input {
+  display: none;
+}
+
+/* 🔹 Estado seleccionado */
+.opcion-sistema input:checked + img {
+  border-bottom: 4px solid #007bff;
+  filter: brightness(1.1);
+}
+
+.opcion-sistema input:checked ~ span {
+  color: #007bff;
+}
+
