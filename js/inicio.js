@@ -117,386 +117,386 @@ const datos = {};
 
 // Contenido de cada sección
 const secciones = {
-dimensiones: `
-<div class="form-section" style="font-family: inherit;">
+  dimensiones: `
+  <div class="form-section" style="font-family: inherit;">
 
-        <!-- 🔹 Tipo de sistema (modo visual con imágenes tipo radio) -->
-    <div class="tipo-sistema-container full-width">
-      <div class="titulo-seccion">Selecciona el tipo de sistema</div>
+          <!-- 🔹 Tipo de sistema (modo visual con imágenes tipo radio) -->
+      <div class="tipo-sistema-container full-width">
+        <div class="titulo-seccion">Selecciona el tipo de sistema</div>
 
-      <div class="opciones-sistema">
-        <label class="opcion-sistema">
-          <input type="radio" name="tipoSistema" value="alberca">
-          <img src="./img/alberca.jpg" alt="Alberca">
-          <span>Alberca</span>
-        </label>
+        <div class="opciones-sistema">
+          <label class="opcion-sistema">
+            <input type="radio" name="tipoSistema" value="alberca">
+            <img src="./img/alberca.jpg" alt="Alberca">
+            <span>Alberca</span>
+          </label>
 
-        <label class="opcion-sistema">
-          <input type="radio" name="tipoSistema" value="jacuzzi">
-          <img src="https://cdn.pixabay.com/photo/2015/11/07/11/50/jacuzzi-1033270_1280.jpg" alt="Jacuzzi">
-          <span>Jacuzzi</span>
-        </label>
+          <label class="opcion-sistema">
+            <input type="radio" name="tipoSistema" value="jacuzzi">
+            <img src="https://cdn.pixabay.com/photo/2015/11/07/11/50/jacuzzi-1033270_1280.jpg" alt="Jacuzzi">
+            <span>Jacuzzi</span>
+          </label>
 
-        <label class="opcion-sistema">
-          <input type="radio" name="tipoSistema" value="chapoteadero">
-          <img src="https://cdn.pixabay.com/photo/2017/08/06/22/01/kids-2594035_1280.jpg" alt="Chapoteadero">
-          <span>Chapoteadero</span>
-        </label>
+          <label class="opcion-sistema">
+            <input type="radio" name="tipoSistema" value="chapoteadero">
+            <img src="https://cdn.pixabay.com/photo/2017/08/06/22/01/kids-2594035_1280.jpg" alt="Chapoteadero">
+            <span>Chapoteadero</span>
+          </label>
 
-        <label class="opcion-sistema">
-          <input type="radio" name="tipoSistema" value="espejoAgua">
-          <img src="https://cdn.pixabay.com/photo/2017/08/06/22/01/kids-2594035_1280.jpg" alt="Espejo de agua">
-          <span>Espejo de agua</span>
-        </label>
+          <label class="opcion-sistema">
+            <input type="radio" name="tipoSistema" value="espejoAgua">
+            <img src="https://cdn.pixabay.com/photo/2017/08/06/22/01/kids-2594035_1280.jpg" alt="Espejo de agua">
+            <span>Espejo de agua</span>
+          </label>
 
-        <label class="opcion-sistema">
-          <input type="radio" name="tipoSistema" value="albercaJacuzzi1">
-          <img src="https://cdn.pixabay.com/photo/2016/06/09/17/05/pool-1449207_1280.jpg" alt="Alberca con jacuzzi (1 cuerpo)">
-          <span>Alberca + Jacuzzi (1 cuerpo)</span>
-        </label>
+          <label class="opcion-sistema">
+            <input type="radio" name="tipoSistema" value="albercaJacuzzi1">
+            <img src="https://cdn.pixabay.com/photo/2016/06/09/17/05/pool-1449207_1280.jpg" alt="Alberca con jacuzzi (1 cuerpo)">
+            <span>Alberca + Jacuzzi (1 cuerpo)</span>
+          </label>
 
-        <label class="opcion-sistema">
-          <input type="radio" name="tipoSistema" value="albercaChapo1">
-          <img src="https://cdn.pixabay.com/photo/2016/08/06/22/14/swimming-pool-1575942_1280.jpg" alt="Alberca con chapoteadero (1 cuerpo)">
-          <span>Alberca + Chapoteadero (1 cuerpo)</span>
-        </label>
+          <label class="opcion-sistema">
+            <input type="radio" name="tipoSistema" value="albercaChapo1">
+            <img src="https://cdn.pixabay.com/photo/2016/08/06/22/14/swimming-pool-1575942_1280.jpg" alt="Alberca con chapoteadero (1 cuerpo)">
+            <span>Alberca + Chapoteadero (1 cuerpo)</span>
+          </label>
 
-        <label class="opcion-sistema">
-          <input type="radio" name="tipoSistema" value="jacuzziChapo1">
-          <img src="https://cdn.pixabay.com/photo/2017/03/09/21/15/jacuzzi-2138446_1280.jpg" alt="Jacuzzi + Chapoteadero (1 cuerpo)">
-          <span>Jacuzzi + Chapoteadero (1 cuerpo)</span>
-        </label>
+          <label class="opcion-sistema">
+            <input type="radio" name="tipoSistema" value="jacuzziChapo1">
+            <img src="https://cdn.pixabay.com/photo/2017/03/09/21/15/jacuzzi-2138446_1280.jpg" alt="Jacuzzi + Chapoteadero (1 cuerpo)">
+            <span>Jacuzzi + Chapoteadero (1 cuerpo)</span>
+          </label>
 
-        <label class="opcion-sistema">
-          <input type="radio" name="tipoSistema" value="albercaJacuzzi2">
-          <img src="https://cdn.pixabay.com/photo/2017/01/20/00/30/pool-1996826_1280.jpg" alt="Alberca + Jacuzzi (2 cuerpos)">
-          <span>Alberca + Jacuzzi (2 cuerpos)</span>
-        </label>
+          <label class="opcion-sistema">
+            <input type="radio" name="tipoSistema" value="albercaJacuzzi2">
+            <img src="https://cdn.pixabay.com/photo/2017/01/20/00/30/pool-1996826_1280.jpg" alt="Alberca + Jacuzzi (2 cuerpos)">
+            <span>Alberca + Jacuzzi (2 cuerpos)</span>
+          </label>
 
-        <label class="opcion-sistema">
-          <input type="radio" name="tipoSistema" value="albercaChapo2">
-          <img src="https://cdn.pixabay.com/photo/2017/08/30/06/08/pool-2691424_1280.jpg" alt="Alberca + Chapoteadero (2 cuerpos)">
-          <span>Alberca + Chapoteadero (2 cuerpos)</span>
-        </label>
+          <label class="opcion-sistema">
+            <input type="radio" name="tipoSistema" value="albercaChapo2">
+            <img src="https://cdn.pixabay.com/photo/2017/08/30/06/08/pool-2691424_1280.jpg" alt="Alberca + Chapoteadero (2 cuerpos)">
+            <span>Alberca + Chapoteadero (2 cuerpos)</span>
+          </label>
 
-        <label class="opcion-sistema">
-          <input type="radio" name="tipoSistema" value="jacuzziChapo2">
-          <img src="https://cdn.pixabay.com/photo/2016/06/06/16/40/hot-tub-1436680_1280.jpg" alt="Jacuzzi + Chapoteadero (2 cuerpos)">
-          <span>Jacuzzi + Chapoteadero (2 cuerpos)</span>
-        </label>
+          <label class="opcion-sistema">
+            <input type="radio" name="tipoSistema" value="jacuzziChapo2">
+            <img src="https://cdn.pixabay.com/photo/2016/06/06/16/40/hot-tub-1436680_1280.jpg" alt="Jacuzzi + Chapoteadero (2 cuerpos)">
+            <span>Jacuzzi + Chapoteadero (2 cuerpos)</span>
+          </label>
+        </div>
+              <!-- 🔹 Panel de datos dinámico (oculto al inicio) -->
+        <div id="panelDatosSistema" class="panel-datos-sistema" style="display: none;"></div>
       </div>
-            <!-- 🔹 Panel de datos dinámico (oculto al inicio) -->
-      <div id="panelDatosSistema" class="panel-datos-sistema" style="display: none;"></div>
-    </div>
 
-  <!-- Columna izquierda (inputs principales) -->
-  <div class="clima-form">
+    <!-- Columna izquierda (inputs principales) -->
+    <div class="clima-form">
 
-    <!-- 🔹 Uso del cuerpo de agua + Tasa de rotación -->
-    <div class="tarjeta-bdc tarjeta-calentamiento">
-      <div class="form-group inline fila-bdc">
-        <div class="campo-bdc">
-          <label class="label-calentamiento">Uso del cuerpo de agua:</label>
-          <select id="usoCuerpo" class="input-azul">
-            <option value="">-- Selecciona uso --</option>
-            <option value="residencial">Residencial</option>
-            <option value="publica">Pública</option>
-            <option value="competencia">Competencia</option>
-            <option value="parqueAcuatico">Parque acuático</option>
-          </select>
+      <!-- 🔹 Uso del cuerpo de agua + Tasa de rotación -->
+      <div class="tarjeta-bdc tarjeta-calentamiento">
+        <div class="form-group inline fila-bdc">
+          <div class="campo-bdc">
+            <label class="label-calentamiento">Uso del cuerpo de agua:</label>
+            <select id="usoCuerpo" class="input-azul">
+              <option value="">-- Selecciona uso --</option>
+              <option value="residencial">Residencial</option>
+              <option value="publica">Pública</option>
+              <option value="competencia">Competencia</option>
+              <option value="parqueAcuatico">Parque acuático</option>
+            </select>
+          </div>
+
+          <div class="campo-bdc" style="margin-left: 16px;">
+            <label class="label-calentamiento">Tasa de rotación (h):</label>
+            <select id="rotacion" class="input-azul">
+              <option value="0.5">0.5 horas</option>
+              <option value="1">1 hora</option>
+              <option value="4">4 horas</option>
+              <option value="6">6 horas</option>
+              <option value="8">8 horas</option>
+              <option value="12">12 horas</option>
+              <option value="18">18 horas</option>
+              <option value="24">24 horas</option>
+            </select>
+          </div>
+              <div class="campo-bdc" style="margin-left: 16px;">
+            <label for="distCuarto">Distancia a cuarto de máquinas (m):</label>
+            <input type="number" id="distCuarto" class="input-azul" step="0.01">
+          </div>
+        </div>
+      </div>
+
+      <!-- 🔹 Tipo de desborde -->
+      <div class="tarjeta-bdc tarjeta-calentamiento">
+        <label class="label-calentamiento">Tipo de desborde:</label>
+        <div id="toggleDesborde" class="checkbox-row">
+          <label><input type="radio" name="desborde" value="infinity"> Infinity</label>
+          <label><input type="radio" name="desborde" value="canal"> Canal perimetral</label>
+          <label><input type="radio" name="desborde" value="ambos"> Ambos</label>
+          <label><input type="radio" name="desborde" value="ninguno"> Ninguno</label>
+        </div>
+      </div>
+
+      <!-- 🔹 Campos dinámicos de desborde -->
+      <div id="camposDesborde" style="display:none;">
+
+        <div id="campoInfinity" class="tarjeta-bdc tarjeta-calentamiento" style="display:none;">
+          <label class="label-calentamiento">Desborde Infinity:</label>
+
+          <div class="form-group inline">
+            <span>¿Motobomba independiente?</span>
+            <label><input type="radio" name="motobombaInfinity" value="si"> Sí</label>
+            <label><input type="radio" name="motobombaInfinity" value="no"> No</label>
+          </div>
+
+          <div class="form-group inline fila-bdc">
+            <div class="campo-bdc">
+              <label for="largoInfinity">Largo del muro (m):</label>
+              <input type="number" id="largoInfinity" class="input-azul" step="0.01">
+            </div>
+            <div class="campo-bdc">
+              <label for="alturaDesborde">Altura desborde (mm):</label>
+              <input type="number" id="alturaDesborde" class="input-azul" step="0.01">
+            </div>
+          </div>
         </div>
 
-        <div class="campo-bdc" style="margin-left: 16px;">
-          <label class="label-calentamiento">Tasa de rotación (h):</label>
-          <select id="rotacion" class="input-azul">
-            <option value="0.5">0.5 horas</option>
-            <option value="1">1 hora</option>
-            <option value="4">4 horas</option>
-            <option value="6">6 horas</option>
-            <option value="8">8 horas</option>
-            <option value="12">12 horas</option>
-            <option value="18">18 horas</option>
-            <option value="24">24 horas</option>
-          </select>
-        </div>
-            <div class="campo-bdc" style="margin-left: 16px;">
-          <label for="distCuarto">Distancia a cuarto de máquinas (m):</label>
-          <input type="number" id="distCuarto" class="input-azul" step="0.01">
+        <div id="campoCanal" class="tarjeta-bdc tarjeta-calentamiento" style="display:none;">
+          <label class="label-calentamiento">Canal perimetral:</label>
+          <div class="form-group inline fila-bdc">
+            <div class="campo-bdc">
+              <label for="largoCanal">Largo total del canal (m):</label>
+              <input type="number" id="largoCanal" class="input-azul" step="0.01">
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- 🔹 Tipo de desborde -->
-    <div class="tarjeta-bdc tarjeta-calentamiento">
-      <label class="label-calentamiento">Tipo de desborde:</label>
-      <div id="toggleDesborde" class="checkbox-row">
-        <label><input type="radio" name="desborde" value="infinity"> Infinity</label>
-        <label><input type="radio" name="desborde" value="canal"> Canal perimetral</label>
-        <label><input type="radio" name="desborde" value="ambos"> Ambos</label>
-        <label><input type="radio" name="desborde" value="ninguno"> Ninguno</label>
-      </div>
-    </div>
+      <!-- 🔹 Dimensiones físicas -->
+      <div class="tarjeta-bdc tarjeta-calentamiento">
+        <label class="label-calentamiento">Dimensiones físicas:</label>
 
-    <!-- 🔹 Campos dinámicos de desborde -->
-    <div id="camposDesborde" style="display:none;">
-
-      <div id="campoInfinity" class="tarjeta-bdc tarjeta-calentamiento" style="display:none;">
-        <label class="label-calentamiento">Desborde Infinity:</label>
-
-        <div class="form-group inline">
-          <span>¿Motobomba independiente?</span>
-          <label><input type="radio" name="motobombaInfinity" value="si"> Sí</label>
-          <label><input type="radio" name="motobombaInfinity" value="no"> No</label>
+        <div class="form-group">
+          <label for="area">Área (m²):</label>
+          <input type="number" id="area" class="input-azul" step="0.01">
         </div>
 
         <div class="form-group inline fila-bdc">
           <div class="campo-bdc">
-            <label for="largoInfinity">Largo del muro (m):</label>
-            <input type="number" id="largoInfinity" class="input-azul" step="0.01">
+            <label for="profMin">Prof. mínima (m):</label>
+            <input type="number" id="profMin" class="input-azul" step="0.01">
           </div>
           <div class="campo-bdc">
-            <label for="alturaDesborde">Altura desborde (mm):</label>
-            <input type="number" id="alturaDesborde" class="input-azul" step="0.01">
+            <label for="profMax">Prof. máxima (m):</label>
+            <input type="number" id="profMax" class="input-azul" step="0.01">
           </div>
         </div>
       </div>
+    </div>
 
-      <div id="campoCanal" class="tarjeta-bdc tarjeta-calentamiento" style="display:none;">
-        <label class="label-calentamiento">Canal perimetral:</label>
+    <!-- Columna derecha vacía (para futuro resumen o ayuda visual) -->
+    <div class="clima-tabla tarjeta-tabla" id="columnaDerechaDim" style="display:none;">
+      <div id="tiposCuerpoContainer"></div>
+    </div>
+  </div>
+  `,
+  calentamiento: `
+  <div class="form-section clima-layout">
+    <!-- Columna izquierda: Inputs -->
+    <div class="clima-form">
+
+      <!-- 👇 Ciudad + Temperatura -->
+      <div class="form-group inline fila-cuatro-inputs">
+        <div class="form-subgroup-inline">
+          <label for="ciudad">Ciudad:</label>
+          <select id="ciudad">
+            <option value="">-- Selecciona --</option>
+            <option value="guadalajara">Guadalajara</option>
+            <option value="mexicali">Mexicali</option>
+            <option value="losCabos">Los Cabos</option>
+            <option value="hermosillo">Hermosillo</option>
+            <option value="chihuahua">Chihuahua</option>
+            <option value="torreon">Torreón</option>
+            <option value="monterrey">Monterrey</option>
+            <option value="tampico">Tampico</option>
+            <option value="veracruz">Veracruz</option>
+            <option value="sanLuisPotosi">San Luis Potosí</option>
+            <option value="durango">Durango</option>
+            <option value="culiacan">Culiacán</option>
+            <option value="tepic">Tepic</option>
+            <option value="colima">Colima</option>
+            <option value="aguascalientes">Aguascalientes</option>
+            <option value="zacatecas">Zacatecas</option>
+            <option value="morelia">Morelia</option>
+            <option value="leon">León</option>
+            <option value="queretaro">Querétaro</option>
+            <option value="pachuca">Pachuca</option>
+            <option value="ciudadDeMexico">Ciudad de México</option>
+            <option value="acapulco">Acapulco</option>
+            <option value="cuernavaca">Cuernavaca</option>
+            <option value="puebla">Puebla</option>
+            <option value="tlaxcala">Tlaxcala</option>
+            <option value="oaxaca">Oaxaca</option>
+            <option value="villahermosa">Villahermosa</option>
+            <option value="tuxtlaGutierrez">Tuxtla Gutiérrez</option>
+            <option value="campeche">Campeche</option>
+            <option value="merida">Mérida</option>
+            <option value="cancun">Cancún</option>
+            <option value="manzanillo">Manzanillo</option>
+            <option value="puertoVallarta">Puerto Vallarta</option>
+            <option value="huatulco">Huatulco</option>
+            <option value="mazatlan">Mazatlán</option>
+            <option value="puertoPeñasco">Puerto Peñasco</option>
+            <option value="ixtapaZihuatanejo">Ixtapa / Zihuatanejo</option>
+            <option value="saltillo">Saltillo</option>
+          </select>
+        </div>
+        <div class="form-subgroup-inline">
+          <label for="tempDeseada">Temperatura deseada (°C):</label>
+  <input 
+    type="number" 
+    id="tempDeseada" 
+    step="0.5" 
+    min="20" 
+    max="40"
+    oninput="
+      const val = parseFloat(this.value);
+      if (!isNaN(val)) {
+        if (val < 20) this.value = 20;
+        if (val > 40) this.value = 40;
+      }
+    "
+  >
+        </div>
+
+        <div class="form-subgroup-inline">
+          <label for="cuerpoTechado">Cuerpo de agua techado:</label>
+          <select id="cuerpoTechado">
+            <option value="">-- Selecciona --</option>
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+
+        <div class="form-subgroup-inline">
+          <label for="cubiertaTermica">Con cubierta térmica:</label>
+          <select id="cubiertaTermica">
+            <option value="">-- Selecciona --</option>
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="width: 1000px; margin: -10px 0 px 0;">
+        <canvas id="graficaPerdidas"></canvas>
+      </div>
+
+      <!-- 👇 Selección de equipos dentro de tarjeta estilo inputs -->
+      <div class="tarjeta-bdc tarjeta-calentamiento">
+        <label class="label-calentamiento">Selecciona tu calentamiento:</label>
+        <div class="checkbox-row">
+          <label><input type="checkbox" id="chkBombaCalor"> Bomba de calor</label>
+          <label><input type="checkbox" id="chkPanel"> Panel solar</label>
+          <label><input type="checkbox" id="chkCaldera"> Caldera</label>
+        </div>
+      </div>
+
+      <!-- 🔥 Bomba de calor -->
+      <div id="campoBombaCalor" class="form-subgroup tarjeta-bdc">
+        <h4>Bomba de calor</h4>
         <div class="form-group inline fila-bdc">
           <div class="campo-bdc">
-            <label for="largoCanal">Largo total del canal (m):</label>
-            <input type="number" id="largoCanal" class="input-azul" step="0.01">
+            <label for="numBombasCalor">Número de bombas de calor:</label>
+            <input type="number" id="numBombasCalor" step="1" min="1" disabled>
+          </div>
+          <div class="campo-bdc">
+            <label for="recomendadaBC">Bomba de calor recomendada:</label>
+            <select id="recomendadaBC disabled">
+              <option value="">-- Selecciona --</option>
+              <option value="ejemplo1">Modelo AquaHeat 3000</option>
+              <option value="ejemplo2">Modelo ThermoMax Pro</option>
+              <option value="ejemplo3">Modelo EcoHeat XL</option>
+            </select>
+          </div>
+          <div class="campo-bdc">
+            <label for="capacidadBC">Capacidad de bomba de calor (kW):</label>
+            <input type="number" id="capacidadBC" step="0.1" min="0" disabled>
+          </div>
+          <div class="campo-bdc">
+            <label for="cargaEstaticaBC">Diferencia de altura: espejo de agua - bomba de calor (m):</label>
+            <input type="number" id="cargaEstaticaBC" step="0.01" disabled>
           </div>
         </div>
       </div>
+
+      <!-- ☀️ Panel solar -->
+      <div id="campoPanel" class="form-subgroup tarjeta-bdc">
+        <h4>Panel solar</h4>
+        <div class="form-group inline fila-bdc">
+          <div class="campo-bdc">
+            <label for="numPaneles">Número de paneles solares:</label>
+            <input type="number" id="numPaneles" step="1" min="1" disabled>
+          </div>
+          <div class="campo-bdc">
+            <label for="recomendadoPanel">Panel solar recomendado:</label>
+            <select id="recomendadoPanel">
+              <option value="">-- Selecciona --</option>
+              <option value="p1">Panel Solar Heliomax</option>
+              <option value="p2">Panel Solar SunTech Pro</option>
+              <option value="p3">Panel Solar EcoSun XL</option>
+            </select>
+          </div>
+          <div class="campo-bdc">
+            <label for="capacidadPanel">Capacidad de panel solar (kW):</label>
+            <input type="number" id="capacidadPanel" step="0.1" min="0" disabled>
+          </div>
+          <div class="campo-bdc">
+            <label for="cargaEstaticaPan">Diferencia de altura: espejo de agua - panel solar (m):</label>
+            <input type="number" id="cargaEstaticaPan" step="0.01" disabled>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🔥 Caldera -->
+      <div id="campoCaldera" class="form-subgroup tarjeta-bdc">
+        <h4>Caldera</h4>
+        <div class="form-group inline fila-bdc">
+          <div class="campo-bdc">
+            <label for="numCalderas">Número de calderas:</label>
+            <input type="number" id="numCalderas" step="1" min="1" disabled>
+          </div>
+          <div class="campo-bdc">
+            <label for="recomendadaCal">Caldera recomendada:</label>
+            <select id="recomendadaCal">
+              <option value="">-- Selecciona --</option>
+              <option value="c1">Caldera ThermoPlus 500</option>
+              <option value="c2">Caldera HeatPro XL</option>
+              <option value="c3">Caldera EcoTherm 900</option>
+            </select>
+          </div>
+          <div class="campo-bdc">
+            <label for="capacidadCal">Capacidad de caldera (kW):</label>
+            <input type="number" id="capacidadCal" step="0.1" min="0" disabled>
+          </div>
+          <div class="campo-bdc">
+            <label for="cargaEstaticaCal">Diferencia de altura: espejo de agua - caldera (m):</label>
+            <input type="number" id="cargaEstaticaCal" step="0.01" disabled>
+          </div>
+        </div>
+      </div>
+        <!-- 👉 Resumen debajo de inputs, ancho hasta tabla -->
+    <div class="clima-resumen">
     </div>
+    </div> <!-- cierre clima-form -->
 
-    <!-- 🔹 Dimensiones físicas -->
-    <div class="tarjeta-bdc tarjeta-calentamiento">
-      <label class="label-calentamiento">Dimensiones físicas:</label>
-
-      <div class="form-group">
-        <label for="area">Área (m²):</label>
-        <input type="number" id="area" class="input-azul" step="0.01">
-      </div>
-
-      <div class="form-group inline fila-bdc">
-        <div class="campo-bdc">
-          <label for="profMin">Prof. mínima (m):</label>
-          <input type="number" id="profMin" class="input-azul" step="0.01">
-        </div>
-        <div class="campo-bdc">
-          <label for="profMax">Prof. máxima (m):</label>
-          <input type="number" id="profMax" class="input-azul" step="0.01">
-        </div>
-      </div>
+    <!-- 👉 Columna derecha: Tabla clima con resumen debajo -->
+    <div class="clima-tabla tarjeta-tabla">
+      <div id="tablaClima" class="tabla-clima"></div>
+      <div id="contenedorMesFrio" class="resumen-clima"></div>
     </div>
   </div>
-
-  <!-- Columna derecha vacía (para futuro resumen o ayuda visual) -->
-  <div class="clima-tabla tarjeta-tabla" id="columnaDerechaDim" style="display:none;">
-    <div id="tiposCuerpoContainer"></div>
-  </div>
-</div>
-`,
-calentamiento: `
-<div class="form-section clima-layout">
-  <!-- Columna izquierda: Inputs -->
-  <div class="clima-form">
-
-    <!-- 👇 Ciudad + Temperatura -->
-    <div class="form-group inline fila-cuatro-inputs">
-      <div class="form-subgroup-inline">
-        <label for="ciudad">Ciudad:</label>
-        <select id="ciudad">
-          <option value="">-- Selecciona --</option>
-          <option value="guadalajara">Guadalajara</option>
-          <option value="mexicali">Mexicali</option>
-          <option value="losCabos">Los Cabos</option>
-          <option value="hermosillo">Hermosillo</option>
-          <option value="chihuahua">Chihuahua</option>
-          <option value="torreon">Torreón</option>
-          <option value="monterrey">Monterrey</option>
-          <option value="tampico">Tampico</option>
-          <option value="veracruz">Veracruz</option>
-          <option value="sanLuisPotosi">San Luis Potosí</option>
-          <option value="durango">Durango</option>
-          <option value="culiacan">Culiacán</option>
-          <option value="tepic">Tepic</option>
-          <option value="colima">Colima</option>
-          <option value="aguascalientes">Aguascalientes</option>
-          <option value="zacatecas">Zacatecas</option>
-          <option value="morelia">Morelia</option>
-          <option value="leon">León</option>
-          <option value="queretaro">Querétaro</option>
-          <option value="pachuca">Pachuca</option>
-          <option value="ciudadDeMexico">Ciudad de México</option>
-          <option value="acapulco">Acapulco</option>
-          <option value="cuernavaca">Cuernavaca</option>
-          <option value="puebla">Puebla</option>
-          <option value="tlaxcala">Tlaxcala</option>
-          <option value="oaxaca">Oaxaca</option>
-          <option value="villahermosa">Villahermosa</option>
-          <option value="tuxtlaGutierrez">Tuxtla Gutiérrez</option>
-          <option value="campeche">Campeche</option>
-          <option value="merida">Mérida</option>
-          <option value="cancun">Cancún</option>
-          <option value="manzanillo">Manzanillo</option>
-          <option value="puertoVallarta">Puerto Vallarta</option>
-          <option value="huatulco">Huatulco</option>
-          <option value="mazatlan">Mazatlán</option>
-          <option value="puertoPeñasco">Puerto Peñasco</option>
-          <option value="ixtapaZihuatanejo">Ixtapa / Zihuatanejo</option>
-          <option value="saltillo">Saltillo</option>
-        </select>
-      </div>
-      <div class="form-subgroup-inline">
-        <label for="tempDeseada">Temperatura deseada (°C):</label>
-<input 
-  type="number" 
-  id="tempDeseada" 
-  step="0.5" 
-  min="20" 
-  max="40"
-  oninput="
-    const val = parseFloat(this.value);
-    if (!isNaN(val)) {
-      if (val < 20) this.value = 20;
-      if (val > 40) this.value = 40;
-    }
-  "
->
-      </div>
-
-      <div class="form-subgroup-inline">
-        <label for="cuerpoTechado">Cuerpo de agua techado:</label>
-        <select id="cuerpoTechado">
-          <option value="">-- Selecciona --</option>
-          <option value="si">Sí</option>
-          <option value="no">No</option>
-        </select>
-      </div>
-
-      <div class="form-subgroup-inline">
-        <label for="cubiertaTermica">Con cubierta térmica:</label>
-        <select id="cubiertaTermica">
-          <option value="">-- Selecciona --</option>
-          <option value="si">Sí</option>
-          <option value="no">No</option>
-        </select>
-      </div>
-    </div>
-
-    <div style="width: 1000px; margin: -10px 0 px 0;">
-      <canvas id="graficaPerdidas"></canvas>
-    </div>
-
-    <!-- 👇 Selección de equipos dentro de tarjeta estilo inputs -->
-    <div class="tarjeta-bdc tarjeta-calentamiento">
-      <label class="label-calentamiento">Selecciona tu calentamiento:</label>
-      <div class="checkbox-row">
-        <label><input type="checkbox" id="chkBombaCalor"> Bomba de calor</label>
-        <label><input type="checkbox" id="chkPanel"> Panel solar</label>
-        <label><input type="checkbox" id="chkCaldera"> Caldera</label>
-      </div>
-    </div>
-
-    <!-- 🔥 Bomba de calor -->
-    <div id="campoBombaCalor" class="form-subgroup tarjeta-bdc">
-      <h4>Bomba de calor</h4>
-      <div class="form-group inline fila-bdc">
-        <div class="campo-bdc">
-          <label for="numBombasCalor">Número de bombas de calor:</label>
-          <input type="number" id="numBombasCalor" step="1" min="1" disabled>
-        </div>
-        <div class="campo-bdc">
-          <label for="recomendadaBC">Bomba de calor recomendada:</label>
-          <select id="recomendadaBC disabled">
-            <option value="">-- Selecciona --</option>
-            <option value="ejemplo1">Modelo AquaHeat 3000</option>
-            <option value="ejemplo2">Modelo ThermoMax Pro</option>
-            <option value="ejemplo3">Modelo EcoHeat XL</option>
-          </select>
-        </div>
-        <div class="campo-bdc">
-          <label for="capacidadBC">Capacidad de bomba de calor (kW):</label>
-          <input type="number" id="capacidadBC" step="0.1" min="0" disabled>
-        </div>
-        <div class="campo-bdc">
-          <label for="cargaEstaticaBC">Diferencia de altura: espejo de agua - bomba de calor (m):</label>
-          <input type="number" id="cargaEstaticaBC" step="0.01" disabled>
-        </div>
-      </div>
-    </div>
-
-    <!-- ☀️ Panel solar -->
-    <div id="campoPanel" class="form-subgroup tarjeta-bdc">
-      <h4>Panel solar</h4>
-      <div class="form-group inline fila-bdc">
-        <div class="campo-bdc">
-          <label for="numPaneles">Número de paneles solares:</label>
-          <input type="number" id="numPaneles" step="1" min="1" disabled>
-        </div>
-        <div class="campo-bdc">
-          <label for="recomendadoPanel">Panel solar recomendado:</label>
-          <select id="recomendadoPanel">
-            <option value="">-- Selecciona --</option>
-            <option value="p1">Panel Solar Heliomax</option>
-            <option value="p2">Panel Solar SunTech Pro</option>
-            <option value="p3">Panel Solar EcoSun XL</option>
-          </select>
-        </div>
-        <div class="campo-bdc">
-          <label for="capacidadPanel">Capacidad de panel solar (kW):</label>
-          <input type="number" id="capacidadPanel" step="0.1" min="0" disabled>
-        </div>
-        <div class="campo-bdc">
-          <label for="cargaEstaticaPan">Diferencia de altura: espejo de agua - panel solar (m):</label>
-          <input type="number" id="cargaEstaticaPan" step="0.01" disabled>
-        </div>
-      </div>
-    </div>
-
-    <!-- 🔥 Caldera -->
-    <div id="campoCaldera" class="form-subgroup tarjeta-bdc">
-      <h4>Caldera</h4>
-      <div class="form-group inline fila-bdc">
-        <div class="campo-bdc">
-          <label for="numCalderas">Número de calderas:</label>
-          <input type="number" id="numCalderas" step="1" min="1" disabled>
-        </div>
-        <div class="campo-bdc">
-          <label for="recomendadaCal">Caldera recomendada:</label>
-          <select id="recomendadaCal">
-            <option value="">-- Selecciona --</option>
-            <option value="c1">Caldera ThermoPlus 500</option>
-            <option value="c2">Caldera HeatPro XL</option>
-            <option value="c3">Caldera EcoTherm 900</option>
-          </select>
-        </div>
-        <div class="campo-bdc">
-          <label for="capacidadCal">Capacidad de caldera (kW):</label>
-          <input type="number" id="capacidadCal" step="0.1" min="0" disabled>
-        </div>
-        <div class="campo-bdc">
-          <label for="cargaEstaticaCal">Diferencia de altura: espejo de agua - caldera (m):</label>
-          <input type="number" id="cargaEstaticaCal" step="0.01" disabled>
-        </div>
-      </div>
-    </div>
-      <!-- 👉 Resumen debajo de inputs, ancho hasta tabla -->
-  <div class="clima-resumen">
-  </div>
-  </div> <!-- cierre clima-form -->
-
-  <!-- 👉 Columna derecha: Tabla clima con resumen debajo -->
-  <div class="clima-tabla tarjeta-tabla">
-    <div id="tablaClima" class="tabla-clima"></div>
-    <div id="contenedorMesFrio" class="resumen-clima"></div>
-  </div>
-</div>
-`,
+  `,
   sanitizacion: `
     <div class="form-section form-group inline">
       <label><input type="checkbox" id="chkGenerador"> Generador de cloro</label>
@@ -576,22 +576,60 @@ calentamiento: `
   `
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-  const opcionesSistema = document.querySelectorAll("input[name='tipoSistema']");
-  const panelDatos = document.getElementById("panelDatosSistema");
+// ✅ Función global para mostrar el formulario dinámico según el tipo
+function mostrarFormularioSistema(tipo) {
+  const contenedorPrincipal = document.getElementById("contenidoDerecho");
+  if (!contenedorPrincipal) return;
 
-  opcionesSistema.forEach(opcion => {
-    opcion.addEventListener("change", () => {
-      const tipo = opcion.value;
-      mostrarFormularioSistema(tipo);
-    });
-  });
+  // 📋 Configuración de cada tipo de sistema
+  const sistemas = {
+    alberca: { img: "alberca.jpg", cuerpos: 1, desborde: true },
+    jacuzzi: { img: "jacuzzi.jpg", cuerpos: 1, desborde: true },
+    chapoteadero: { img: "chapoteadero.jpg", cuerpos: 1, desborde: true },
+    espejoAgua: { img: "espejo.jpg", cuerpos: 1, desborde: true },
+    albercaJacuzzi1: { img: "albercaJacuzzi1.jpg", cuerpos: 2, desborde: true },
+    albercaChapo1: { img: "albercaChapo1.jpg", cuerpos: 2, desborde: true },
+    jacuzziChapo1: { img: "jacuzziChapo1.jpg", cuerpos: 2, desborde: true },
+    albercaJacuzzi2: { img: "albercaJacuzzi2.jpg", cuerpos: 2, desborde: true },
+    albercaChapo2: { img: "albercaChapo2.jpg", cuerpos: 2, desborde: true },
+    jacuzziChapo2: { img: "jacuzziChapo2.jpg", cuerpos: 2, desborde: true }
+  };
 
-  function mostrarFormularioSistema(tipo) {
-    panelDatos.style.display = "block";
-    panelDatos.innerHTML = `
-      <h3>Configuración para: ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</h3>
+  const config = sistemas[tipo];
+  if (!config) return;
 
+  // 🔹 Bloque de "Dimensiones físicas"
+  const bloqueDimensiones = (num) => `
+    <div class="tarjeta-bdc tarjeta-calentamiento">
+      <label class="label-calentamiento">
+        Dimensiones físicas${config.cuerpos > 1 ? ` (Cuerpo ${num})` : ""}:
+      </label>
+      <div class="form-group">
+        <label>Área (m²):</label>
+        <input type="number" step="0.01">
+      </div>
+      <div class="form-group inline fila-bdc">
+        <div class="campo-bdc">
+          <label>Profundidad mínima (m):</label>
+          <input type="number" step="0.01">
+        </div>
+        <div class="campo-bdc">
+          <label>Profundidad máxima (m):</label>
+          <input type="number" step="0.01">
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 🔹 Si tiene 2 cuerpos, duplicamos el bloque
+  let bloquesDimensiones = "";
+  for (let i = 1; i <= config.cuerpos; i++) {
+    bloquesDimensiones += bloqueDimensiones(i);
+  }
+
+  // 🔹 Bloque de uso, rotación y distancia
+  const bloqueUsoRotacion = `
+    <div class="tarjeta-bdc tarjeta-calentamiento">
       <div class="form-group inline fila-bdc">
         <div class="campo-bdc">
           <label>Uso del cuerpo de agua:</label>
@@ -600,13 +638,13 @@ document.addEventListener("DOMContentLoaded", () => {
             <option value="residencial">Residencial</option>
             <option value="publica">Pública</option>
             <option value="competencia">Competencia</option>
-            <option value="parqueAcuatico">Parque acuático</option>
+            <option value="parque">Parque acuático</option>
           </select>
         </div>
-
-        <div class="campo-bdc">
+        <div class="campo-bdc" style="margin-left: 16px;">
           <label>Tasa de rotación (h):</label>
           <select class="input-azul">
+            <option value="">-- Selecciona --</option>
             <option value="0.5">0.5</option>
             <option value="1">1</option>
             <option value="4">4</option>
@@ -617,32 +655,152 @@ document.addEventListener("DOMContentLoaded", () => {
             <option value="24">24</option>
           </select>
         </div>
-      </div>
-
-      <div class="form-group inline fila-bdc">
-        <div class="campo-bdc">
+        <div class="campo-bdc" style="margin-left: 16px;">
           <label>Distancia a cuarto de máquinas (m):</label>
-          <input type="number" step="0.01" class="input-azul">
+          <input type="number" step="0.1" placeholder="Ej. 15" class="input-azul">
         </div>
-        <div class="campo-bdc">
-          <label>Área (m²):</label>
-          <input type="number" step="0.01" class="input-azul">
+      </div>
+    </div>
+  `;
+
+  // 🔹 Bloque tipo de desborde
+  const bloqueDesborde = config.desborde ? `
+    <div class="tarjeta-bdc tarjeta-calentamiento">
+      <label class="label-calentamiento">Tipo de desborde:</label>
+      <div id="toggleDesborde" class="checkbox-row">
+        <label><input type="radio" name="desborde" value="infinity"> Infinity</label>
+        <label><input type="radio" name="desborde" value="canal"> Canal perimetral</label>
+        <label><input type="radio" name="desborde" value="ambos"> Ambos</label>
+        <label><input type="radio" name="desborde" value="ninguno"> Ninguno</label>
+      </div>
+    </div>
+
+    <div id="camposDesborde" style="display:none;">
+      <div id="campoInfinity" class="tarjeta-bdc tarjeta-calentamiento" style="display:none;">
+        <label class="label-calentamiento">Desborde Infinity:</label>
+        <div class="form-group inline">
+          <span>¿Motobomba independiente?</span>
+          <label><input type="radio" name="motobombaInfinity" value="si"> Sí</label>
+          <label><input type="radio" name="motobombaInfinity" value="no"> No</label>
+        </div>
+        <div class="form-group inline fila-bdc">
+          <div class="campo-bdc">
+            <label>Largo del muro (m):</label>
+            <input type="number" step="0.01">
+          </div>
+          <div class="campo-bdc">
+            <label>Altura desborde (mm):</label>
+            <input type="number" step="0.01">
+          </div>
         </div>
       </div>
 
-      <div class="form-group inline fila-bdc">
-        <div class="campo-bdc">
-          <label>Profundidad mínima (m):</label>
-          <input type="number" step="0.01" class="input-azul">
-        </div>
-        <div class="campo-bdc">
-          <label>Profundidad máxima (m):</label>
-          <input type="number" step="0.01" class="input-azul">
+      <div id="campoCanal" class="tarjeta-bdc tarjeta-calentamiento" style="display:none;">
+        <label class="label-calentamiento">Canal perimetral:</label>
+        <div class="form-group inline fila-bdc">
+          <div class="campo-bdc">
+            <label>Largo total del canal (m):</label>
+            <input type="number" step="0.01">
+          </div>
         </div>
       </div>
-    `;
-  }
+    </div>
+  ` : "";
+
+  // 🔹 Render final
+  contenedorPrincipal.innerHTML = `
+    <div class="form-section animacion-aparecer" style="font-family: inherit;">
+      <button id="btnVolverTipos" class="btn-volver">← Volver a tipos de sistema</button>
+      <h2 class="titulo-sistema-activo">${tipo.replace(/([A-Z])/g, " $1")}</h2>
+      <div class="sistema-contenido">
+        <div class="columna-izquierda">
+          ${bloquesDimensiones}
+          ${bloqueUsoRotacion}
+          ${bloqueDesborde}
+        </div>
+        <div class="columna-derecha">
+          <div class="tarjeta-bdc tarjeta-imagen">
+            <img src="./img/${config.img}" alt="${tipo}" class="imagen-sistema-activo">
+            <p class="texto-imagen">Vista del sistema seleccionado</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 👈 Listener para volver
+  document.getElementById("btnVolverTipos").addEventListener("click", () => {
+    renderSeccion("dimensiones");
+  });
+
+  // 👇 Listeners para mostrar los campos de desborde
+  const radiosDesborde = document.querySelectorAll("input[name='desborde']");
+  const camposDesborde = document.getElementById("camposDesborde");
+  const campoInfinity = document.getElementById("campoInfinity");
+  const campoCanal = document.getElementById("campoCanal");
+
+  radiosDesborde.forEach(radio => {
+    radio.addEventListener("change", () => {
+      if (!camposDesborde) return;
+      camposDesborde.style.display = "block";
+      campoInfinity.style.display = (radio.value === "infinity" || radio.value === "ambos") ? "block" : "none";
+      campoCanal.style.display = (radio.value === "canal" || radio.value === "ambos") ? "block" : "none";
+      if (radio.value === "ninguno") camposDesborde.style.display = "none";
+    });
+  });
+}
+// 👇 Deja este listener solo para enganchar los radios
+document.addEventListener("DOMContentLoaded", () => {
+  const opciones = document.querySelectorAll("input[name='tipoSistema']");
+  opciones.forEach(opcion => {
+    opcion.addEventListener("change", () => {
+      mostrarFormularioSistema(opcion.value);
+    });
+  });
 });
+function inicializarEventosTipoSistema() {
+  const opciones = document.querySelectorAll("input[name='tipoSistema']");
+  const panelDatos = document.getElementById("panelDatosSistema");
+
+  if (!panelDatos || opciones.length === 0) return;
+
+  opciones.forEach(opcion => {
+    opcion.addEventListener("change", () => {
+      const tipo = opcion.value;
+      mostrarFormularioSistema(tipo);
+    });
+  });
+}
+function actualizarValoresGlobales() {
+  // Detectar si existen varios cuerpos
+  const area1 = parseFloat(document.getElementById("area1")?.value) || 0;
+  const area2 = parseFloat(document.getElementById("area2")?.value) || 0;
+
+  const profMin1 = parseFloat(document.getElementById("profMin1")?.value) || 0;
+  const profMin2 = parseFloat(document.getElementById("profMin2")?.value) || 0;
+  const profMax1 = parseFloat(document.getElementById("profMax1")?.value) || 0;
+  const profMax2 = parseFloat(document.getElementById("profMax2")?.value) || 0;
+
+  const tasaRot = parseFloat(document.getElementById("tasaRotacion")?.value) || 0;
+  const distancia = parseFloat(document.getElementById("distancia")?.value) || 0;
+
+  // Calcular totales o promedios
+  const areaTotal = area1 + area2;
+  const profMinProm = (profMin1 + profMin2) / (area2 ? 2 : 1);
+  const profMaxProm = (profMax1 + profMax2) / (area2 ? 2 : 1);
+
+  // Actualizar los inputs globales (los que usan tus cálculos)
+  if (document.getElementById("area")) document.getElementById("area").value = areaTotal.toFixed(2);
+  if (document.getElementById("profMin")) document.getElementById("profMin").value = profMinProm.toFixed(2);
+  if (document.getElementById("profMax")) document.getElementById("profMax").value = profMaxProm.toFixed(2);
+  if (document.getElementById("tasaRotacion")) document.getElementById("tasaRotacion").value = tasaRot;
+  if (document.getElementById("distancia")) document.getElementById("distancia").value = distancia;
+
+  // Calcula volumen global si tu función lo necesita:
+  const volumenTotal = areaTotal * ((profMinProm + profMaxProm) / 2);
+  if (document.getElementById("volumen"))
+    document.getElementById("volumen").value = volumenTotal.toFixed(2);
+}
 
 // 🔹 Guardar datos antes de cambiar sección
 function guardarDatos() {
@@ -664,7 +822,9 @@ function guardarDatos() {
 function renderSeccion(seccion) {
   const contenedor = document.getElementById("contenidoDerecho");
   contenedor.innerHTML = secciones[seccion] || "Sin contenido";
-
+if (seccion === "dimensiones") {
+  inicializarEventosTipoSistema();
+}
   // Restaurar valores previos
   for (let key in datos) {
     const el = document.getElementById(key);
