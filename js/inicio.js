@@ -185,6 +185,8 @@ dimensiones: `
           <span>Jacuzzi + Chapoteadero (2 cuerpos)</span>
         </label>
       </div>
+            <!-- 🔹 Panel de datos dinámico (oculto al inicio) -->
+      <div id="panelDatosSistema" class="panel-datos-sistema" style="display: none;"></div>
     </div>
 
   <!-- Columna izquierda (inputs principales) -->
@@ -573,6 +575,74 @@ calentamiento: `
     </div>
   `
 };
+
+document.addEventListener("DOMContentLoaded", () => {
+  const opcionesSistema = document.querySelectorAll("input[name='tipoSistema']");
+  const panelDatos = document.getElementById("panelDatosSistema");
+
+  opcionesSistema.forEach(opcion => {
+    opcion.addEventListener("change", () => {
+      const tipo = opcion.value;
+      mostrarFormularioSistema(tipo);
+    });
+  });
+
+  function mostrarFormularioSistema(tipo) {
+    panelDatos.style.display = "block";
+    panelDatos.innerHTML = `
+      <h3>Configuración para: ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}</h3>
+
+      <div class="form-group inline fila-bdc">
+        <div class="campo-bdc">
+          <label>Uso del cuerpo de agua:</label>
+          <select class="input-azul">
+            <option value="">-- Selecciona uso --</option>
+            <option value="residencial">Residencial</option>
+            <option value="publica">Pública</option>
+            <option value="competencia">Competencia</option>
+            <option value="parqueAcuatico">Parque acuático</option>
+          </select>
+        </div>
+
+        <div class="campo-bdc">
+          <label>Tasa de rotación (h):</label>
+          <select class="input-azul">
+            <option value="0.5">0.5</option>
+            <option value="1">1</option>
+            <option value="4">4</option>
+            <option value="6">6</option>
+            <option value="8">8</option>
+            <option value="12">12</option>
+            <option value="18">18</option>
+            <option value="24">24</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group inline fila-bdc">
+        <div class="campo-bdc">
+          <label>Distancia a cuarto de máquinas (m):</label>
+          <input type="number" step="0.01" class="input-azul">
+        </div>
+        <div class="campo-bdc">
+          <label>Área (m²):</label>
+          <input type="number" step="0.01" class="input-azul">
+        </div>
+      </div>
+
+      <div class="form-group inline fila-bdc">
+        <div class="campo-bdc">
+          <label>Profundidad mínima (m):</label>
+          <input type="number" step="0.01" class="input-azul">
+        </div>
+        <div class="campo-bdc">
+          <label>Profundidad máxima (m):</label>
+          <input type="number" step="0.01" class="input-azul">
+        </div>
+      </div>
+    `;
+  }
+});
 
 // 🔹 Guardar datos antes de cambiar sección
 function guardarDatos() {
