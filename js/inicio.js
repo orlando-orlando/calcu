@@ -606,16 +606,16 @@ function mostrarFormularioSistema(tipo) {
       </label>
       <div class="form-group">
         <label>Área (m²):</label>
-        <input type="number" step="0.01">
+        <input type="number" id="area${num}" step="0.01">
       </div>
       <div class="form-group inline fila-bdc">
         <div class="campo-bdc">
           <label>Profundidad mínima (m):</label>
-          <input type="number" step="0.01">
+          <input type="number" id="profMin${num}" step="0.01">
         </div>
         <div class="campo-bdc">
           <label>Profundidad máxima (m):</label>
-          <input type="number" step="0.01">
+          <input type="number" id="profMax${num}" step="0.01">
         </div>
       </div>
     </div>
@@ -633,7 +633,7 @@ function mostrarFormularioSistema(tipo) {
       <div class="form-group inline fila-bdc">
         <div class="campo-bdc">
           <label>Uso del cuerpo de agua:</label>
-          <select class="input-azul">
+          <select id="usoCuerpo" class="input-azul">
             <option value="">-- Selecciona uso --</option>
             <option value="residencial">Residencial</option>
             <option value="publica">Pública</option>
@@ -643,7 +643,7 @@ function mostrarFormularioSistema(tipo) {
         </div>
         <div class="campo-bdc" style="margin-left: 16px;">
           <label>Tasa de rotación (h):</label>
-          <select class="input-azul">
+          <select id="tasaRotacion" class="input-azul">
             <option value="">-- Selecciona --</option>
             <option value="0.5">0.5</option>
             <option value="1">1</option>
@@ -657,7 +657,7 @@ function mostrarFormularioSistema(tipo) {
         </div>
         <div class="campo-bdc" style="margin-left: 16px;">
           <label>Distancia a cuarto de máquinas (m):</label>
-          <input type="number" step="0.1" placeholder="Ej. 15" class="input-azul">
+          <input type="number" id="distancia" step="0.1" placeholder="Ej. 15" class="input-azul">
         </div>
       </div>
     </div>
@@ -728,8 +728,21 @@ function mostrarFormularioSistema(tipo) {
     </div>
   `;
 
+  // ✅ Delegación: escucha cualquier input dentro del contenedor
+  document.addEventListener("input", (e) => {
+    if (e.target.closest("#contenidoDerecho")) {
+      actualizarValoresGlobales();
+    }
+  });
+  document.addEventListener("change", (e) => {
+    if (e.target.closest("#contenidoDerecho")) {
+      actualizarValoresGlobales();
+    }
+  });
+
   // 👈 Listener para volver
   document.getElementById("btnVolverTipos").addEventListener("click", () => {
+    guardarDatos();  // 👈 guarda antes de salir
     renderSeccion("dimensiones");
   });
 
@@ -748,15 +761,14 @@ function mostrarFormularioSistema(tipo) {
       if (radio.value === "ninguno") camposDesborde.style.display = "none";
     });
   });
+  actualizarValoresGlobales();
 }
-// 👇 Deja este listener solo para enganchar los radios
-document.addEventListener("DOMContentLoaded", () => {
-  const opciones = document.querySelectorAll("input[name='tipoSistema']");
-  opciones.forEach(opcion => {
-    opcion.addEventListener("change", () => {
-      mostrarFormularioSistema(opcion.value);
-    });
-  });
+// ✅ Detectar clics en cualquier radio name="tipoSistema", incluso si se crean dinámicamente
+document.addEventListener("change", (e) => {
+  if (e.target && e.target.name === "tipoSistema") {
+    console.log("Seleccionaste:", e.target.value);
+    mostrarFormularioSistema(e.target.value);
+  }
 });
 function inicializarEventosTipoSistema() {
   const opciones = document.querySelectorAll("input[name='tipoSistema']");
@@ -772,7 +784,6 @@ function inicializarEventosTipoSistema() {
   });
 }
 function actualizarValoresGlobales() {
-  // Detectar si existen varios cuerpos
   const area1 = parseFloat(document.getElementById("area1")?.value) || 0;
   const area2 = parseFloat(document.getElementById("area2")?.value) || 0;
 
@@ -784,26 +795,60 @@ function actualizarValoresGlobales() {
   const tasaRot = parseFloat(document.getElementById("tasaRotacion")?.value) || 0;
   const distancia = parseFloat(document.getElementById("distancia")?.value) || 0;
 
-  // Calcular totales o promedios
+  // Totales / promedios
   const areaTotal = area1 + area2;
   const profMinProm = (profMin1 + profMin2) / (area2 ? 2 : 1);
   const profMaxProm = (profMax1 + profMax2) / (area2 ? 2 : 1);
+  const volumenTotal = areaTotal * ((profMinProm + profMaxProm) / 2);
 
-  // Actualizar los inputs globales (los que usan tus cálculos)
-  if (document.getElementById("area")) document.getElementById("area").value = areaTotal.toFixed(2);
-  if (document.getElementById("profMin")) document.getElementById("profMin").value = profMinProm.toFixed(2);
-  if (document.getElementById("profMax")) document.getElementById("profMax").value = profMaxProm.toFixed(2);
+  // Guardar valores globales en un objeto JS (sin tocar inputs)
+  window.valoresGlobales = {
+    area: areaTotal,
+    profMin: profMinProm,
+    profMax: profMaxProm,
+    volumen: volumenTotal,
+    tasaRot,
+    distancia
+  };
+
+  console.log("📊 Actualizando valores globales:", window.valoresGlobales);
+
+  // Si quieres también reflejar los valores en inputs ocultos:
+  ["area", "profMin", "profMax", "volumen", "tasaRotacion", "distancia"].forEach(id => {
+    if (document.getElementById(id)) {
+      document.getElementById(id).value = window.valoresGlobales[id] || 0;
+    }
+  });
+  sincronizarDatosGlobales();
+}
+// 🔹 Sincronizar valores globales con el objeto `datos` y los cálculos
+function sincronizarDatosGlobales() {
+  if (!window.valoresGlobales) return;
+
+  const { area, profMin, profMax, volumen, tasaRot, distancia } = window.valoresGlobales;
+
+  // Guarda en el objeto `datos` global (usado en cálculos)
+  datos.area = area;
+  datos.profMin = profMin;
+  datos.profMax = profMax;
+  datos.volumen = volumen;
+  datos.tasaRotacion = tasaRot;
+  datos.distancia = distancia;
+
+  // También actualiza los inputs si existen
+  if (document.getElementById("area")) document.getElementById("area").value = area.toFixed(2);
+  if (document.getElementById("profMin")) document.getElementById("profMin").value = profMin.toFixed(2);
+  if (document.getElementById("profMax")) document.getElementById("profMax").value = profMax.toFixed(2);
+  if (document.getElementById("volumen")) document.getElementById("volumen").value = volumen.toFixed(2);
   if (document.getElementById("tasaRotacion")) document.getElementById("tasaRotacion").value = tasaRot;
   if (document.getElementById("distancia")) document.getElementById("distancia").value = distancia;
 
-  // Calcula volumen global si tu función lo necesita:
-  const volumenTotal = areaTotal * ((profMinProm + profMaxProm) / 2);
-  if (document.getElementById("volumen"))
-    document.getElementById("volumen").value = volumenTotal.toFixed(2);
+  console.log("💾 Sincronizado con datos globales:", datos);
 }
 
 // 🔹 Guardar datos antes de cambiar sección
 function guardarDatos() {
+  actualizarValoresGlobales(); // 👈 asegura que los globales estén actualizados
   const inputs = document.querySelectorAll("#contenidoDerecho input, #contenidoDerecho select");
   inputs.forEach(el => {
     if (el.type === "checkbox") {
