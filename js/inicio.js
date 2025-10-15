@@ -643,7 +643,7 @@ function mostrarFormularioSistema(tipo) {
         </div>
         <div class="campo-bdc" style="margin-left: 16px;">
           <label>Tasa de rotación (h):</label>
-          <select id="tasaRotacion" class="input-azul">
+          <select id="rotacion" class="input-azul">
             <option value="">-- Selecciona --</option>
             <option value="0.5">0.5</option>
             <option value="1">1</option>
@@ -657,7 +657,7 @@ function mostrarFormularioSistema(tipo) {
         </div>
         <div class="campo-bdc" style="margin-left: 16px;">
           <label>Distancia a cuarto de máquinas (m):</label>
-          <input type="number" id="distancia" step="0.1" placeholder="Ej. 15" class="input-azul">
+          <input type="number" id="distCuarto" step="0.1" placeholder="Ej. 15" class="input-azul">
         </div>
       </div>
     </div>
@@ -685,12 +685,12 @@ function mostrarFormularioSistema(tipo) {
         </div>
         <div class="form-group inline fila-bdc">
           <div class="campo-bdc">
-            <label>Largo del muro (m):</label>
-            <input type="number" step="0.01">
+            <label for="largoInfinity">Largo del muro (m):</label>
+            <input type="number" id="largoInfinity" step="0.01" class="input-azul">
           </div>
           <div class="campo-bdc">
-            <label>Altura desborde (mm):</label>
-            <input type="number" step="0.01">
+            <label for="alturaDesborde">Altura desborde (mm):</label>
+            <input type="number" id="alturaDesborde" step="0.01" class="input-azul">
           </div>
         </div>
       </div>
@@ -698,9 +698,10 @@ function mostrarFormularioSistema(tipo) {
       <div id="campoCanal" class="tarjeta-bdc tarjeta-calentamiento" style="display:none;">
         <label class="label-calentamiento">Canal perimetral:</label>
         <div class="form-group inline fila-bdc">
-          <div class="campo-bdc">
-            <label>Largo total del canal (m):</label>
-            <input type="number" step="0.01">
+            <div class="campo-bdc">
+              <label for="largoCanal">Largo total del canal (m):</label>
+              <input type="number" id="largoCanal" step="0.01" class="input-azul">
+            </div>
           </div>
         </div>
       </div>
@@ -728,18 +729,6 @@ function mostrarFormularioSistema(tipo) {
     </div>
   `;
 
-  // ✅ Delegación: escucha cualquier input dentro del contenedor
-  document.addEventListener("input", (e) => {
-    if (e.target.closest("#contenidoDerecho")) {
-      actualizarValoresGlobales();
-    }
-  });
-  document.addEventListener("change", (e) => {
-    if (e.target.closest("#contenidoDerecho")) {
-      actualizarValoresGlobales();
-    }
-  });
-
   // 👈 Listener para volver
   document.getElementById("btnVolverTipos").addEventListener("click", () => {
     guardarDatos();  // 👈 guarda antes de salir
@@ -763,6 +752,13 @@ function mostrarFormularioSistema(tipo) {
   });
   actualizarValoresGlobales();
 }
+// 🔄 Listener global para actualizar valores al escribir o cambiar algo
+document.addEventListener("input", (e) => {
+  if (e.target.closest("#contenidoDerecho")) actualizarValoresGlobales();
+});
+document.addEventListener("change", (e) => {
+  if (e.target.closest("#contenidoDerecho")) actualizarValoresGlobales();
+});
 // ✅ Detectar clics en cualquier radio name="tipoSistema", incluso si se crean dinámicamente
 document.addEventListener("change", (e) => {
   if (e.target && e.target.name === "tipoSistema") {
@@ -792,8 +788,12 @@ function actualizarValoresGlobales() {
   const profMax1 = parseFloat(document.getElementById("profMax1")?.value) || 0;
   const profMax2 = parseFloat(document.getElementById("profMax2")?.value) || 0;
 
-  const tasaRot = parseFloat(document.getElementById("tasaRotacion")?.value) || 0;
-  const distancia = parseFloat(document.getElementById("distancia")?.value) || 0;
+  const tasaRot = parseFloat(document.getElementById("rotacion")?.value) || 0;
+  const distancia = parseFloat(document.getElementById("distCuarto")?.value) || 0;
+
+  const largoInfinity = parseFloat(document.getElementById("largoInfinity")?.value) || 0;
+  const alturaDesborde = parseFloat(document.getElementById("alturaDesborde")?.value) || 0;
+  const largoCanal = parseFloat(document.getElementById("largoCanal")?.value) || 0;
 
   // Totales / promedios
   const areaTotal = area1 + area2;
@@ -808,7 +808,10 @@ function actualizarValoresGlobales() {
     profMax: profMaxProm,
     volumen: volumenTotal,
     tasaRot,
-    distancia
+    distancia,
+    largoInfinity,
+    alturaDesborde,
+    largoCanal
   };
 
   console.log("📊 Actualizando valores globales:", window.valoresGlobales);
@@ -834,7 +837,10 @@ function sincronizarDatosGlobales() {
   datos.volumen = volumen;
   datos.tasaRotacion = tasaRot;
   datos.distancia = distancia;
-
+  datos.largoInfinity = window.valoresGlobales.largoInfinity;
+  datos.alturaDesborde = window.valoresGlobales.alturaDesborde;
+  datos.largoCanal = window.valoresGlobales.largoCanal;
+  
   // También actualiza los inputs si existen
   if (document.getElementById("area")) document.getElementById("area").value = area.toFixed(2);
   if (document.getElementById("profMin")) document.getElementById("profMin").value = profMin.toFixed(2);
