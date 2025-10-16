@@ -693,23 +693,25 @@ select:disabled {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  width: 100%;
+  width: 92%;
 }
 
 .columna-derecha {
-  position: absolute; /* 🔹 La saca del flujo del grid */
-  top: 0;             /* 🔹 Fija arriba */
-  right: 0;           /* 🔹 Pegada al borde derecho */
-  width: 42%;         /* 🔹 Mismo ancho que en el grid */
+  position: absolute;
+  top: 42%;
+  right: 0;
+  width: 38%;
+  transform: translateY(-50%); /* centra verticalmente */
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: flex-start;
-  pointer-events: none; /* 🔹 Evita que bloquee clics sobre inputs si se superpone */
+  pointer-events: none;
 }
 
 .tarjeta-imagen {
+  margin-top: 0; /* elimina cualquier desplazamiento extra */
   width: 100%;
-  max-width: 480px;
+  max-width: 665px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
@@ -728,6 +730,14 @@ select:disabled {
   margin: 0 auto;
 }
 
+@media (max-width: 1024px) {
+  .columna-derecha {
+    position: static;
+    transform: none;
+    width: 100%;
+    margin-top: 16px;
+  }
+}
 
 
 

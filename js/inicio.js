@@ -579,7 +579,16 @@ const secciones = {
 // ✅ Función global para mostrar el formulario dinámico según el tipo
 function mostrarFormularioSistema(tipo) {
   const contenedorPrincipal = document.getElementById("contenidoDerecho");
-  if (!contenedorPrincipal) return;
+    if (!contenedorPrincipal) return;
+  // 🧩 Guardar el estado actual si ya había datos
+  guardarDatos();
+
+  // 🧩 Guardar si los campos de desborde estaban visibles
+  const estadoDesborde = {
+    camposVisible: document.getElementById("camposDesborde")?.style.display || "none",
+    infinityVisible: document.getElementById("campoInfinity")?.style.display || "none",
+    canalVisible: document.getElementById("campoCanal")?.style.display || "none"
+  };
 
   // 📋 Configuración de cada tipo de sistema
   const sistemas = {
@@ -741,6 +750,13 @@ function mostrarFormularioSistema(tipo) {
   const campoInfinity = document.getElementById("campoInfinity");
   const campoCanal = document.getElementById("campoCanal");
 
+// 🧩 Restaurar estado visual del desborde si había datos previos
+if (document.getElementById("camposDesborde")) {
+  document.getElementById("camposDesborde").style.display = estadoDesborde.camposVisible;
+  document.getElementById("campoInfinity").style.display = estadoDesborde.infinityVisible;
+  document.getElementById("campoCanal").style.display = estadoDesborde.canalVisible;
+}
+
   radiosDesborde.forEach(radio => {
     radio.addEventListener("change", () => {
       if (!camposDesborde) return;
@@ -750,7 +766,53 @@ function mostrarFormularioSistema(tipo) {
       if (radio.value === "ninguno") camposDesborde.style.display = "none";
     });
   });
+
+// 🧩 Restaurar valores previos guardados por tipo de sistema
+if (window.datosPorSistema && window.datosPorSistema[tipo]) {
+  const datosPrevios = window.datosPorSistema[tipo];
+
+  // Primero restauramos todos los valores
+  Object.entries(datosPrevios).forEach(([key, value]) => {
+    const el = document.getElementById(key) || document.querySelector(`[name='${key}'][value='${value}']`);
+    if (el) {
+      if (el.type === "radio" || el.type === "checkbox") el.checked = true;
+      else el.value = value;
+    }
+  });
+
+  // 🧩 Luego, restauramos manualmente los campos de área y profundidad (porque se regeneran dinámicamente)
+  const numCuerpos = Object.keys(datosPrevios)
+    .filter(k => k.startsWith("area") || k.startsWith("profMin") || k.startsWith("profMax"))
+    .reduce((max, k) => Math.max(max, parseInt(k.match(/\d+/)?.[0] || 0)), 0);
+
+  for (let i = 1; i <= numCuerpos; i++) {
+    const area = document.getElementById(`area${i}`);
+    const profMin = document.getElementById(`profMin${i}`);
+    const profMax = document.getElementById(`profMax${i}`);
+
+    if (area && datosPrevios[`area${i}`] !== undefined) area.value = datosPrevios[`area${i}`];
+    if (profMin && datosPrevios[`profMin${i}`] !== undefined) profMin.value = datosPrevios[`profMin${i}`];
+    if (profMax && datosPrevios[`profMax${i}`] !== undefined) profMax.value = datosPrevios[`profMax${i}`];
+  }
+
+  // 🧩 Finalmente, restauramos la visibilidad de los campos de desborde según el radio guardado
+  const valorDesborde = document.querySelector("input[name='desborde']:checked")?.value;
+  const camposDesborde = document.getElementById("camposDesborde");
+  const campoInfinity = document.getElementById("campoInfinity");
+  const campoCanal = document.getElementById("campoCanal");
+
+  if (valorDesborde && camposDesborde && campoInfinity && campoCanal) {
+    camposDesborde.style.display = (valorDesborde === "ninguno") ? "none" : "block";
+    campoInfinity.style.display = (valorDesborde === "infinity" || valorDesborde === "ambos") ? "block" : "none";
+    campoCanal.style.display = (valorDesborde === "canal" || valorDesborde === "ambos") ? "block" : "none";
+  }
+}
+
+// 🔁 Esperar un pequeño tiempo para que el DOM actualice los valores restaurados
+setTimeout(() => {
   actualizarValoresGlobales();
+}, 50);
+
 }
 // 🔄 Listener global para actualizar valores al escribir o cambiar algo
 document.addEventListener("input", (e) => {
@@ -823,7 +885,16 @@ function actualizarValoresGlobales() {
     }
   });
   sincronizarDatosGlobales();
+  // Si el formulario todavía no ha cargado (inputs sin valor visible), no hacer nada
+if (!document.getElementById("area1")) return;
 }
+// 🔄 Permitir volver a abrir el mismo tipo aunque ya esté seleccionado
+document.addEventListener("click", (e) => {
+  if (e.target && e.target.name === "tipoSistema") {
+    const tipo = e.target.value;
+    mostrarFormularioSistema(tipo);
+  }
+});
 // 🔹 Sincronizar valores globales con el objeto `datos` y los cálculos
 function sincronizarDatosGlobales() {
   if (!window.valoresGlobales) return;
@@ -855,16 +926,26 @@ function sincronizarDatosGlobales() {
 // 🔹 Guardar datos antes de cambiar sección
 function guardarDatos() {
   actualizarValoresGlobales(); // 👈 asegura que los globales estén actualizados
+  
+  // Detectar el tipo de sistema activo actual
+  const tipoActual = document.querySelector("input[name='tipoSistema']:checked")?.value;
+  if (!tipoActual) return;
+
+  // Aseguramos que exista el objeto global
+  window.datosPorSistema = window.datosPorSistema || {};
+  window.datosPorSistema[tipoActual] = window.datosPorSistema[tipoActual] || {};
+
   const inputs = document.querySelectorAll("#contenidoDerecho input, #contenidoDerecho select");
+  
   inputs.forEach(el => {
     if (el.type === "checkbox") {
-      datos[el.id] = el.checked;
+      window.datosPorSistema[tipoActual][el.id] = el.checked;
     } else if (el.type === "radio") {
       if (el.checked) {
-        datos[el.name] = el.value; // 🔑 Guardamos por "name", no por id
+        window.datosPorSistema[tipoActual][el.name] = el.value;
       }
     } else {
-      datos[el.id] = el.value;
+      window.datosPorSistema[tipoActual][el.id] = el.value;
     }
   });
 }
