@@ -671,29 +671,6 @@ select:disabled {
   background: #0056b3;
 }
 
-.sistema-contenido {
-  display: flex;
-  gap: 24px;
-}
-
-.columna-izquierda, .columna-derecha {
-  flex: 1;
-}
-
-.tarjeta-imagen {
-  text-align: center;
-}
-.imagen-sistema-activo {
-  width: 100%;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-.texto-imagen {
-  margin-top: 8px;
-  font-size: 14px;
-  color: #555;
-}
-
 .animacion-aparecer {
   animation: fadeIn 0.3s ease;
 }
@@ -703,59 +680,55 @@ select:disabled {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* 🔧 Alineación perfecta entre formulario e imagen */
 .sistema-contenido {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start; /* alineación vertical superior */
+  display: grid;
+  grid-template-columns: 58% 42%; /* 🔹 Ajuste de proporción */
   gap: 24px;
-  flex-wrap: nowrap; /* evita que la imagen se vaya abajo */
+  width: 100%;
+  align-items: start;
+  position: relative; /* 🔹 Para posicionar elementos internos */
 }
 
-/* Columna izquierda (inputs) */
 .columna-izquierda {
-  flex: 0 0 60%;
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-/* Columna derecha (imagen) */
-.columna-derecha {
-  flex: 0 0 40%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: stretch; /* 👈 asegura que la imagen ocupe todo el ancho disponible */
-}
-
-/* Tarjeta que contiene la imagen */
-.columna-derecha .tarjeta-imagen {
-  width: 100%; /* 👈 ocupa todo el ancho de la columna derecha */
-  max-width: none; /* 👈 elimina la restricción anterior */
-  margin: 0; /* elimina márgenes que puedan empujarla */
-  padding: 0;
-}
-
-/* Imagen ajustada al ancho del contenedor */
-.imagen-sistema-activo {
-  width: 100%; /* ocupa todo el ancho disponible */
-  height: auto;
-  display: block;
-  object-fit: cover; /* mantiene proporciones */
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-}
-
-/* Texto debajo de la imagen */
-.texto-imagen {
-  margin-top: 8px;
-  text-align: center;
-  color: #555;
-  font-size: 14px;
-}
-
-#contenidoDerecho {
-  display: block;
   width: 100%;
 }
+
+.columna-derecha {
+  position: absolute; /* 🔹 La saca del flujo del grid */
+  top: 0;             /* 🔹 Fija arriba */
+  right: 0;           /* 🔹 Pegada al borde derecho */
+  width: 42%;         /* 🔹 Mismo ancho que en el grid */
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  pointer-events: none; /* 🔹 Evita que bloquee clics sobre inputs si se superpone */
+}
+
+.tarjeta-imagen {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+  text-align: center;
+  pointer-events: auto; /* 🔹 Rehabilita clics dentro de la tarjeta */
+}
+
+.imagen-sistema-activo {
+  width: 100%;
+  max-height: 360px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+  display: block;
+  margin: 0 auto;
+}
+
+
+
+
+
