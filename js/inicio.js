@@ -189,111 +189,6 @@ const secciones = {
         <div id="panelDatosSistema" class="panel-datos-sistema" style="display: none;"></div>
       </div>
 
-    <!-- Columna izquierda (inputs principales) -->
-    <div class="clima-form">
-
-      <!-- 🔹 Uso del cuerpo de agua + Tasa de rotación -->
-      <div class="tarjeta-bdc tarjeta-calentamiento">
-        <div class="form-group inline fila-bdc">
-          <div class="campo-bdc">
-            <label class="label-calentamiento">Uso del cuerpo de agua:</label>
-            <select id="usoCuerpo" class="input-azul">
-              <option value="">-- Selecciona uso --</option>
-              <option value="residencial">Residencial</option>
-              <option value="publica">Pública</option>
-              <option value="competencia">Competencia</option>
-              <option value="parqueAcuatico">Parque acuático</option>
-            </select>
-          </div>
-
-          <div class="campo-bdc" style="margin-left: 16px;">
-            <label class="label-calentamiento">Tasa de rotación (h):</label>
-            <select id="rotacion" class="input-azul">
-              <option value="0.5">0.5 horas</option>
-              <option value="1">1 hora</option>
-              <option value="4">4 horas</option>
-              <option value="6">6 horas</option>
-              <option value="8">8 horas</option>
-              <option value="12">12 horas</option>
-              <option value="18">18 horas</option>
-              <option value="24">24 horas</option>
-            </select>
-          </div>
-              <div class="campo-bdc" style="margin-left: 16px;">
-            <label for="distCuarto">Distancia a cuarto de máquinas (m):</label>
-            <input type="number" id="distCuarto" class="input-azul" step="0.01">
-          </div>
-        </div>
-      </div>
-
-      <!-- 🔹 Tipo de desborde -->
-      <div class="tarjeta-bdc tarjeta-calentamiento">
-        <label class="label-calentamiento">Tipo de desborde:</label>
-        <div id="toggleDesborde" class="checkbox-row">
-          <label><input type="radio" name="desborde" value="infinity"> Infinity</label>
-          <label><input type="radio" name="desborde" value="canal"> Canal perimetral</label>
-          <label><input type="radio" name="desborde" value="ambos"> Ambos</label>
-          <label><input type="radio" name="desborde" value="ninguno"> Ninguno</label>
-        </div>
-      </div>
-
-      <!-- 🔹 Campos dinámicos de desborde -->
-      <div id="camposDesborde" style="display:none;">
-
-        <div id="campoInfinity" class="tarjeta-bdc tarjeta-calentamiento" style="display:none;">
-          <label class="label-calentamiento">Desborde Infinity:</label>
-
-          <div class="form-group inline">
-            <span>¿Motobomba independiente?</span>
-            <label><input type="radio" name="motobombaInfinity" value="si"> Sí</label>
-            <label><input type="radio" name="motobombaInfinity" value="no"> No</label>
-          </div>
-
-          <div class="form-group inline fila-bdc">
-            <div class="campo-bdc">
-              <label for="largoInfinity">Largo del muro (m):</label>
-              <input type="number" id="largoInfinity" class="input-azul" step="0.01">
-            </div>
-            <div class="campo-bdc">
-              <label for="alturaDesborde">Altura desborde (mm):</label>
-              <input type="number" id="alturaDesborde" class="input-azul" step="0.01">
-            </div>
-          </div>
-        </div>
-
-        <div id="campoCanal" class="tarjeta-bdc tarjeta-calentamiento" style="display:none;">
-          <label class="label-calentamiento">Canal perimetral:</label>
-          <div class="form-group inline fila-bdc">
-            <div class="campo-bdc">
-              <label for="largoCanal">Largo total del canal (m):</label>
-              <input type="number" id="largoCanal" class="input-azul" step="0.01">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 🔹 Dimensiones físicas -->
-      <div class="tarjeta-bdc tarjeta-calentamiento">
-        <label class="label-calentamiento">Dimensiones físicas:</label>
-
-        <div class="form-group">
-          <label for="area">Área (m²):</label>
-          <input type="number" id="area" class="input-azul" step="0.01">
-        </div>
-
-        <div class="form-group inline fila-bdc">
-          <div class="campo-bdc">
-            <label for="profMin">Prof. mínima (m):</label>
-            <input type="number" id="profMin" class="input-azul" step="0.01">
-          </div>
-          <div class="campo-bdc">
-            <label for="profMax">Prof. máxima (m):</label>
-            <input type="number" id="profMax" class="input-azul" step="0.01">
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Columna derecha vacía (para futuro resumen o ayuda visual) -->
     <div class="clima-tabla tarjeta-tabla" id="columnaDerechaDim" style="display:none;">
       <div id="tiposCuerpoContainer"></div>
@@ -869,6 +764,10 @@ function inicializarEventosTipoSistema() {
   });
 }
 function actualizarValoresGlobales() {
+    if (!document.getElementById("area1") && window.valoresGlobales) {
+    console.log("⚠️ No hay inputs de sistema visibles, se mantienen los valores globales previos.");
+    return; // 🚫 Evita reiniciar a 0
+  }
   const area1 = parseFloat(document.getElementById("area1")?.value) || 0;
   const area2 = parseFloat(document.getElementById("area2")?.value) || 0;
 
@@ -955,7 +854,6 @@ if (window.ultimoTipoSistema && window.ultimoTipoSistema !== tipo) {
 }
 
 function guardarDatos(tipoForzado) {
-  // No usamos actualizarValoresGlobales() aquí para evitar lecturas de inputs que no existen.
   const tipoActual = tipoForzado
     || window.ultimoTipoSistema
     || document.querySelector("input[name='tipoSistema']:checked")?.value;
@@ -965,7 +863,7 @@ function guardarDatos(tipoForzado) {
   window.datosPorSistema = window.datosPorSistema || {};
   window.datosPorSistema[tipoActual] = window.datosPorSistema[tipoActual] || {};
 
-  // Guardar todos los inputs/selects/checkboxes/radios actualmente visibles dentro de #contenidoDerecho
+  // 🔹 Guardar todos los inputs visibles
   const inputs = document.querySelectorAll("#contenidoDerecho input, #contenidoDerecho select");
   inputs.forEach(el => {
     if (!el) return;
@@ -974,11 +872,12 @@ function guardarDatos(tipoForzado) {
     } else if (el.type === "checkbox") {
       if (el.id) window.datosPorSistema[tipoActual][el.id] = el.checked;
     } else if (el.id) {
-      window.datosPorSistema[tipoActual][el.id] = el.value;
+      const val = el.value === "" ? null : el.value;
+      window.datosPorSistema[tipoActual][el.id] = val;
     }
   });
 
-  // Guardado explícito de áreas / profundidades por "cuerpo"
+  // 🔹 Determinar número de cuerpos
   const tipoConfig = {
     alberca: 1, jacuzzi: 1, chapoteadero: 1, espejoAgua: 1,
     albercaJacuzzi1: 2, albercaChapo1: 2, jacuzziChapo1: 2,
@@ -986,93 +885,66 @@ function guardarDatos(tipoForzado) {
   };
   const numCuerpos = tipoConfig[tipoActual] || 1;
 
-  let sumArea = 0, countArea = 0;
-  let sumProfMin = 0, sumProfMax = 0;
+  let sumArea = 0, sumProfMin = 0, sumProfMax = 0, count = 0;
 
   for (let i = 1; i <= numCuerpos; i++) {
-    // Preferimos leer del DOM si existe; si no, usamos lo que ya está en storage (si hay)
-    const areaId = `area${i}`;
-    const profMinId = `profMin${i}`;
-    const profMaxId = `profMax${i}`;
+    const areaVal = parseFloat(document.getElementById(`area${i}`)?.value || 0);
+    const profMinVal = parseFloat(document.getElementById(`profMin${i}`)?.value || 0);
+    const profMaxVal = parseFloat(document.getElementById(`profMax${i}`)?.value || 0);
 
-    const areaEl = document.getElementById(areaId);
-    const profMinEl = document.getElementById(profMinId);
-    const profMaxEl = document.getElementById(profMaxId);
-
-    let aVal = areaEl ? areaEl.value : window.datosPorSistema[tipoActual][areaId];
-    let pmVal = profMinEl ? profMinEl.value : window.datosPorSistema[tipoActual][profMinId];
-    let pMVal = profMaxEl ? profMaxEl.value : window.datosPorSistema[tipoActual][profMaxId];
-
-    if (aVal !== undefined && aVal !== null && aVal !== "") {
-      const n = parseFloat(aVal);
-      if (!isNaN(n)) {
-        window.datosPorSistema[tipoActual][areaId] = n;
-        sumArea += n;
-        countArea++;
-      }
+    if (!isNaN(areaVal) && areaVal > 0) {
+      window.datosPorSistema[tipoActual][`area${i}`] = areaVal;
+      sumArea += areaVal;
+      count++;
     }
 
-    if (pmVal !== undefined && pmVal !== null && pmVal !== "") {
-      const n = parseFloat(pmVal);
-      if (!isNaN(n)) {
-        window.datosPorSistema[tipoActual][profMinId] = n;
-        sumProfMin += n;
-      }
-    } else if (window.datosPorSistema[tipoActual][profMinId] !== undefined) {
-      const n = parseFloat(window.datosPorSistema[tipoActual][profMinId]);
-      if (!isNaN(n)) sumProfMin += n;
+    if (!isNaN(profMinVal) && profMinVal > 0) {
+      window.datosPorSistema[tipoActual][`profMin${i}`] = profMinVal;
+      sumProfMin += profMinVal;
     }
 
-    if (pMVal !== undefined && pMVal !== null && pMVal !== "") {
-      const n = parseFloat(pMVal);
-      if (!isNaN(n)) {
-        window.datosPorSistema[tipoActual][profMaxId] = n;
-        sumProfMax += n;
-      }
-    } else if (window.datosPorSistema[tipoActual][profMaxId] !== undefined) {
-      const n = parseFloat(window.datosPorSistema[tipoActual][profMaxId]);
-      if (!isNaN(n)) sumProfMax += n;
+    if (!isNaN(profMaxVal) && profMaxVal > 0) {
+      window.datosPorSistema[tipoActual][`profMax${i}`] = profMaxVal;
+      sumProfMax += profMaxVal;
     }
   }
 
-  // Si no encontramos ninguno con índice, intentar leer los inputs "globales" (sin número)
-  if (countArea === 0 && document.getElementById("area")) {
-    const av = parseFloat(document.getElementById("area").value);
-    if (!isNaN(av)) {
-      window.datosPorSistema[tipoActual]["area1"] = av;
-      sumArea = av;
-      countArea = 1;
-    }
+  // 🔹 También leer los inputs globales sin número (si existen)
+  const areaGlobal = parseFloat(document.getElementById("area")?.value || 0);
+  const profMinGlobal = parseFloat(document.getElementById("profMin")?.value || 0);
+  const profMaxGlobal = parseFloat(document.getElementById("profMax")?.value || 0);
+
+  if (!isNaN(areaGlobal) && areaGlobal > 0) {
+    window.datosPorSistema[tipoActual]["area1"] = areaGlobal;
+    sumArea = areaGlobal;
+    count = 1;
   }
-  if (sumProfMin === 0 && document.getElementById("profMin")) {
-    const pm = parseFloat(document.getElementById("profMin").value);
-    if (!isNaN(pm)) {
-      window.datosPorSistema[tipoActual]["profMin1"] = pm;
-      sumProfMin = pm;
-    }
+  if (!isNaN(profMinGlobal) && profMinGlobal > 0) {
+    window.datosPorSistema[tipoActual]["profMin1"] = profMinGlobal;
+    sumProfMin = profMinGlobal;
   }
-  if (sumProfMax === 0 && document.getElementById("profMax")) {
-    const pM = parseFloat(document.getElementById("profMax").value);
-    if (!isNaN(pM)) {
-      window.datosPorSistema[tipoActual]["profMax1"] = pM;
-      sumProfMax = pM;
-    }
+  if (!isNaN(profMaxGlobal) && profMaxGlobal > 0) {
+    window.datosPorSistema[tipoActual]["profMax1"] = profMaxGlobal;
+    sumProfMax = profMaxGlobal;
   }
 
-  // Agregados / promedios razonables
-  const aggArea = (countArea > 0) ? sumArea : (window.datosPorSistema[tipoActual].area !== undefined ? parseFloat(window.datosPorSistema[tipoActual].area) : (datos.area || 0));
-  const aggProfMin = (numCuerpos > 1) ? (sumProfMin / numCuerpos) : (sumProfMin || (window.datosPorSistema[tipoActual].profMin !== undefined ? parseFloat(window.datosPorSistema[tipoActual].profMin) : (datos.profMin || 0)));
-  const aggProfMax = (numCuerpos > 1) ? (sumProfMax / numCuerpos) : (sumProfMax || (window.datosPorSistema[tipoActual].profMax !== undefined ? parseFloat(window.datosPorSistema[tipoActual].profMax) : (datos.profMax || 0)));
+  // 🔹 Calcular agregados (promedio si hay más de un cuerpo)
+  const aggArea = count > 0 ? sumArea / count : 0;
+  const aggProfMin = numCuerpos > 1 ? (sumProfMin / numCuerpos) : sumProfMin;
+  const aggProfMax = numCuerpos > 1 ? (sumProfMax / numCuerpos) : sumProfMax;
 
-  // Guardar agregados en datos (para que renderSeccion los restaure)
+  // 🔹 Guardar en objetos globales
   datos.area = aggArea;
   datos.profMin = aggProfMin;
   datos.profMax = aggProfMax;
 
-  // Y también en el almacenamiento por sistema (por si usas esa estructura)
   window.datosPorSistema[tipoActual].area = aggArea;
   window.datosPorSistema[tipoActual].profMin = aggProfMin;
   window.datosPorSistema[tipoActual].profMax = aggProfMax;
+
+  console.log(`💾 Guardado [${tipoActual}]`, {
+    area: aggArea, profMin: aggProfMin, profMax: aggProfMax
+  });
 }
 
 // 🔹 Renderizar sección y restaurar valores
