@@ -581,7 +581,7 @@ function mostrarFormularioSistema(tipo) {
   const contenedorPrincipal = document.getElementById("contenidoDerecho");
     if (!contenedorPrincipal) return;
   // 🧩 Guardar el estado actual si ya había datos
-  guardarDatos();
+guardarDatos(window.ultimoTipoSistema);
 
   // 🧩 Guardar si los campos de desborde estaban visibles
   const estadoDesborde = {
@@ -808,10 +808,37 @@ if (window.datosPorSistema && window.datosPorSistema[tipo]) {
   }
 }
 
+// 🧩 Restaurar valores de área y profundidad si existen guardados
+if (window.datosPorSistema && window.datosPorSistema[tipo]) {
+  const datosPrevios = window.datosPorSistema[tipo];
+
+  // Detecta cuántos cuerpos tenía el sistema
+  const numCuerpos = Object.keys(datosPrevios)
+    .filter(k => k.startsWith("area") || k.startsWith("profMin") || k.startsWith("profMax"))
+    .reduce((max, k) => Math.max(max, parseInt(k.match(/\d+/)?.[0] || 0)), 0) || 1;
+
+  for (let i = 1; i <= numCuerpos; i++) {
+    const area = document.getElementById(`area${i}`);
+    const profMin = document.getElementById(`profMin${i}`);
+    const profMax = document.getElementById(`profMax${i}`);
+
+    if (area && datosPrevios[`area${i}`] !== undefined) {
+      area.value = datosPrevios[`area${i}`];
+    }
+    if (profMin && datosPrevios[`profMin${i}`] !== undefined) {
+      profMin.value = datosPrevios[`profMin${i}`];
+    }
+    if (profMax && datosPrevios[`profMax${i}`] !== undefined) {
+      profMax.value = datosPrevios[`profMax${i}`];
+    }
+  }
+}
+
 // 🔁 Esperar un pequeño tiempo para que el DOM actualice los valores restaurados
 setTimeout(() => {
   actualizarValoresGlobales();
 }, 50);
+window.ultimoTipoSistema = tipo;
 
 }
 // 🔄 Listener global para actualizar valores al escribir o cambiar algo
@@ -923,31 +950,129 @@ function sincronizarDatosGlobales() {
   console.log("💾 Sincronizado con datos globales:", datos);
 }
 
-// 🔹 Guardar datos antes de cambiar sección
-function guardarDatos() {
-  actualizarValoresGlobales(); // 👈 asegura que los globales estén actualizados
-  
-  // Detectar el tipo de sistema activo actual
-  const tipoActual = document.querySelector("input[name='tipoSistema']:checked")?.value;
+if (window.ultimoTipoSistema && window.ultimoTipoSistema !== tipo) {
+  guardarDatos(window.ultimoTipoSistema);
+}
+
+function guardarDatos(tipoForzado) {
+  // No usamos actualizarValoresGlobales() aquí para evitar lecturas de inputs que no existen.
+  const tipoActual = tipoForzado
+    || window.ultimoTipoSistema
+    || document.querySelector("input[name='tipoSistema']:checked")?.value;
+
   if (!tipoActual) return;
 
-  // Aseguramos que exista el objeto global
   window.datosPorSistema = window.datosPorSistema || {};
   window.datosPorSistema[tipoActual] = window.datosPorSistema[tipoActual] || {};
 
+  // Guardar todos los inputs/selects/checkboxes/radios actualmente visibles dentro de #contenidoDerecho
   const inputs = document.querySelectorAll("#contenidoDerecho input, #contenidoDerecho select");
-  
   inputs.forEach(el => {
-    if (el.type === "checkbox") {
-      window.datosPorSistema[tipoActual][el.id] = el.checked;
-    } else if (el.type === "radio") {
-      if (el.checked) {
-        window.datosPorSistema[tipoActual][el.name] = el.value;
-      }
-    } else {
+    if (!el) return;
+    if (el.type === "radio") {
+      if (el.checked) window.datosPorSistema[tipoActual][el.name] = el.value;
+    } else if (el.type === "checkbox") {
+      if (el.id) window.datosPorSistema[tipoActual][el.id] = el.checked;
+    } else if (el.id) {
       window.datosPorSistema[tipoActual][el.id] = el.value;
     }
   });
+
+  // Guardado explícito de áreas / profundidades por "cuerpo"
+  const tipoConfig = {
+    alberca: 1, jacuzzi: 1, chapoteadero: 1, espejoAgua: 1,
+    albercaJacuzzi1: 2, albercaChapo1: 2, jacuzziChapo1: 2,
+    albercaJacuzzi2: 2, albercaChapo2: 2, jacuzziChapo2: 2
+  };
+  const numCuerpos = tipoConfig[tipoActual] || 1;
+
+  let sumArea = 0, countArea = 0;
+  let sumProfMin = 0, sumProfMax = 0;
+
+  for (let i = 1; i <= numCuerpos; i++) {
+    // Preferimos leer del DOM si existe; si no, usamos lo que ya está en storage (si hay)
+    const areaId = `area${i}`;
+    const profMinId = `profMin${i}`;
+    const profMaxId = `profMax${i}`;
+
+    const areaEl = document.getElementById(areaId);
+    const profMinEl = document.getElementById(profMinId);
+    const profMaxEl = document.getElementById(profMaxId);
+
+    let aVal = areaEl ? areaEl.value : window.datosPorSistema[tipoActual][areaId];
+    let pmVal = profMinEl ? profMinEl.value : window.datosPorSistema[tipoActual][profMinId];
+    let pMVal = profMaxEl ? profMaxEl.value : window.datosPorSistema[tipoActual][profMaxId];
+
+    if (aVal !== undefined && aVal !== null && aVal !== "") {
+      const n = parseFloat(aVal);
+      if (!isNaN(n)) {
+        window.datosPorSistema[tipoActual][areaId] = n;
+        sumArea += n;
+        countArea++;
+      }
+    }
+
+    if (pmVal !== undefined && pmVal !== null && pmVal !== "") {
+      const n = parseFloat(pmVal);
+      if (!isNaN(n)) {
+        window.datosPorSistema[tipoActual][profMinId] = n;
+        sumProfMin += n;
+      }
+    } else if (window.datosPorSistema[tipoActual][profMinId] !== undefined) {
+      const n = parseFloat(window.datosPorSistema[tipoActual][profMinId]);
+      if (!isNaN(n)) sumProfMin += n;
+    }
+
+    if (pMVal !== undefined && pMVal !== null && pMVal !== "") {
+      const n = parseFloat(pMVal);
+      if (!isNaN(n)) {
+        window.datosPorSistema[tipoActual][profMaxId] = n;
+        sumProfMax += n;
+      }
+    } else if (window.datosPorSistema[tipoActual][profMaxId] !== undefined) {
+      const n = parseFloat(window.datosPorSistema[tipoActual][profMaxId]);
+      if (!isNaN(n)) sumProfMax += n;
+    }
+  }
+
+  // Si no encontramos ninguno con índice, intentar leer los inputs "globales" (sin número)
+  if (countArea === 0 && document.getElementById("area")) {
+    const av = parseFloat(document.getElementById("area").value);
+    if (!isNaN(av)) {
+      window.datosPorSistema[tipoActual]["area1"] = av;
+      sumArea = av;
+      countArea = 1;
+    }
+  }
+  if (sumProfMin === 0 && document.getElementById("profMin")) {
+    const pm = parseFloat(document.getElementById("profMin").value);
+    if (!isNaN(pm)) {
+      window.datosPorSistema[tipoActual]["profMin1"] = pm;
+      sumProfMin = pm;
+    }
+  }
+  if (sumProfMax === 0 && document.getElementById("profMax")) {
+    const pM = parseFloat(document.getElementById("profMax").value);
+    if (!isNaN(pM)) {
+      window.datosPorSistema[tipoActual]["profMax1"] = pM;
+      sumProfMax = pM;
+    }
+  }
+
+  // Agregados / promedios razonables
+  const aggArea = (countArea > 0) ? sumArea : (window.datosPorSistema[tipoActual].area !== undefined ? parseFloat(window.datosPorSistema[tipoActual].area) : (datos.area || 0));
+  const aggProfMin = (numCuerpos > 1) ? (sumProfMin / numCuerpos) : (sumProfMin || (window.datosPorSistema[tipoActual].profMin !== undefined ? parseFloat(window.datosPorSistema[tipoActual].profMin) : (datos.profMin || 0)));
+  const aggProfMax = (numCuerpos > 1) ? (sumProfMax / numCuerpos) : (sumProfMax || (window.datosPorSistema[tipoActual].profMax !== undefined ? parseFloat(window.datosPorSistema[tipoActual].profMax) : (datos.profMax || 0)));
+
+  // Guardar agregados en datos (para que renderSeccion los restaure)
+  datos.area = aggArea;
+  datos.profMin = aggProfMin;
+  datos.profMax = aggProfMax;
+
+  // Y también en el almacenamiento por sistema (por si usas esa estructura)
+  window.datosPorSistema[tipoActual].area = aggArea;
+  window.datosPorSistema[tipoActual].profMin = aggProfMin;
+  window.datosPorSistema[tipoActual].profMax = aggProfMax;
 }
 
 // 🔹 Renderizar sección y restaurar valores
