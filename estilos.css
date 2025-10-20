@@ -138,15 +138,6 @@ body {
   background-color: #e6f2ff;
 }
 
-.resumen-clima {
-  margin-top: 15px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: #f9f9f9;
-  font-size: 14px;
-}
-
 .resumen-clima h4 {
   margin-bottom: 8px;
   color: #0077cc;
@@ -538,15 +529,27 @@ select:disabled {
   border-radius: 10px;
 }
 
-/* 🔹 Contenedor general: ocupa todo el ancho visible del panel derecho */
+/* 🔹 Contenedor visual tipo panel, sin color pero con profundidad */
 .tipo-sistema-container {
   width: calc(100% + 40px);
   margin-left: -20px;
   margin-right: -20px;
-  background-color: #f9fbfd;
-  padding: 25px 0 35px 0; /* reduce un poco el padding superior */
+  padding: 40px 0 50px 0;
   text-align: center;
-  box-shadow: inset 0 -2px 8px rgba(0,0,0,0.05);
+  background: #fff; /* blanco puro, sin gris */
+  border-radius: 16px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.08),      /* sombra principal */
+    inset 0 1px 1px rgba(255, 255, 255, 0.6); /* brillo interno sutil */
+  border: 1px solid #e5e9ef; /* borde apenas visible para separar del fondo */
+}
+
+.tipo-sistema-container:hover {
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.12),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  transform: translateY(-2px);
+  transition: all 0.25s ease;
 }
 
 /* 🔹 Título de la sección */
@@ -623,37 +626,20 @@ select:disabled {
 }
 
 .panel-datos-sistema {
-  width: 50%; /* Mitad del panel derecho */
+  width: 50%;
   margin: 20px auto;
   padding: 20px;
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  transition: all 0.3s ease;
 }
 
 .panel-datos-sistema h3 {
   color: #004c91;
   margin-bottom: 15px;
   text-align: center;
-}
-
-.panel-datos-sistema {
-  transition: all 0.3s ease;
-}
-
-.animacion-aparecer {
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 .btn-volver {
@@ -669,15 +655,6 @@ select:disabled {
 
 .btn-volver:hover {
   background: #0056b3;
-}
-
-.animacion-aparecer {
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 .sistema-contenido {
@@ -739,6 +716,13 @@ select:disabled {
   }
 }
 
+.animacion-aparecer {
+  animation: fadeIn 0.3s ease;
+}
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 

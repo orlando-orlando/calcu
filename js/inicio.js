@@ -206,7 +206,7 @@ const secciones = {
           <label for="ciudad">Ciudad:</label>
           <select id="ciudad">
             <option value="">-- Selecciona --</option>
-            <option value="guadalajara">Guadalajara</option>
+            <option value="guadalajara" selected>Guadalajara</option>
             <option value="mexicali">Mexicali</option>
             <option value="losCabos">Los Cabos</option>
             <option value="hermosillo">Hermosillo</option>
@@ -251,9 +251,10 @@ const secciones = {
   <input 
     type="number" 
     id="tempDeseada" 
-    step="0.5" 
+    step="1" 
     min="20" 
     max="40"
+    value="28"
     oninput="
       const val = parseFloat(this.value);
       if (!isNaN(val)) {
@@ -474,11 +475,15 @@ const secciones = {
 // ✅ Función global para mostrar el formulario dinámico según el tipo
 function mostrarFormularioSistema(tipo) {
   const contenedorPrincipal = document.getElementById("contenidoDerecho");
-    if (!contenedorPrincipal) return;
-  // 🧩 Guardar el estado actual si ya había datos
-guardarDatos(window.ultimoTipoSistema);
+  if (!contenedorPrincipal) return;
 
-  // 🧩 Guardar si los campos de desborde estaban visibles
+  // 🧩 Guardar los datos del sistema anterior ANTES de destruir su DOM
+  if (window.ultimoTipoSistema) {
+    guardarDatos(window.ultimoTipoSistema);
+    console.log("💾 Datos guardados de:", window.ultimoTipoSistema);
+  }
+
+  // 🧩 Guardar estado de visibilidad de los campos de desborde (opcional)
   const estadoDesborde = {
     camposVisible: document.getElementById("camposDesborde")?.style.display || "none",
     infinityVisible: document.getElementById("campoInfinity")?.style.display || "none",
@@ -612,7 +617,7 @@ guardarDatos(window.ultimoTipoSistema);
     </div>
   ` : "";
 
-  // 🔹 Render final
+  // 🔹 Render final del formulario
   contenedorPrincipal.innerHTML = `
     <div class="form-section animacion-aparecer" style="font-family: inherit;">
       <button id="btnVolverTipos" class="btn-volver">← Volver a tipos de sistema</button>
@@ -645,12 +650,12 @@ guardarDatos(window.ultimoTipoSistema);
   const campoInfinity = document.getElementById("campoInfinity");
   const campoCanal = document.getElementById("campoCanal");
 
-// 🧩 Restaurar estado visual del desborde si había datos previos
-if (document.getElementById("camposDesborde")) {
-  document.getElementById("camposDesborde").style.display = estadoDesborde.camposVisible;
-  document.getElementById("campoInfinity").style.display = estadoDesborde.infinityVisible;
-  document.getElementById("campoCanal").style.display = estadoDesborde.canalVisible;
-}
+  // 🧩 Restaurar estado visual del desborde
+  if (document.getElementById("camposDesborde")) {
+    document.getElementById("camposDesborde").style.display = estadoDesborde.camposVisible;
+    document.getElementById("campoInfinity").style.display = estadoDesborde.infinityVisible;
+    document.getElementById("campoCanal").style.display = estadoDesborde.canalVisible;
+  }
 
   radiosDesborde.forEach(radio => {
     radio.addEventListener("change", () => {
@@ -662,79 +667,47 @@ if (document.getElementById("camposDesborde")) {
     });
   });
 
-// 🧩 Restaurar valores previos guardados por tipo de sistema
-if (window.datosPorSistema && window.datosPorSistema[tipo]) {
-  const datosPrevios = window.datosPorSistema[tipo];
+  // 🧩 Restaurar valores previos si existen
+  if (window.datosPorSistema && window.datosPorSistema[tipo]) {
+    const datosPrevios = window.datosPorSistema[tipo];
 
-  // Primero restauramos todos los valores
-  Object.entries(datosPrevios).forEach(([key, value]) => {
-    const el = document.getElementById(key) || document.querySelector(`[name='${key}'][value='${value}']`);
-    if (el) {
-      if (el.type === "radio" || el.type === "checkbox") el.checked = true;
-      else el.value = value;
+    Object.entries(datosPrevios).forEach(([key, value]) => {
+      const el = document.getElementById(key) || document.querySelector(`[name='${key}'][value='${value}']`);
+      if (el) {
+        if (el.type === "radio" || el.type === "checkbox") el.checked = true;
+        else el.value = value;
+      }
+    });
+
+    // 🧩 Restaurar campos dinámicos (área y profundidad)
+    const numCuerpos = Object.keys(datosPrevios)
+      .filter(k => k.startsWith("area") || k.startsWith("profMin") || k.startsWith("profMax"))
+      .reduce((max, k) => Math.max(max, parseInt(k.match(/\d+/)?.[0] || 0)), 0);
+
+    for (let i = 1; i <= numCuerpos; i++) {
+      const area = document.getElementById(`area${i}`);
+      const profMin = document.getElementById(`profMin${i}`);
+      const profMax = document.getElementById(`profMax${i}`);
+      if (area && datosPrevios[`area${i}`] !== undefined) area.value = datosPrevios[`area${i}`];
+      if (profMin && datosPrevios[`profMin${i}`] !== undefined) profMin.value = datosPrevios[`profMin${i}`];
+      if (profMax && datosPrevios[`profMax${i}`] !== undefined) profMax.value = datosPrevios[`profMax${i}`];
     }
-  });
 
-  // 🧩 Luego, restauramos manualmente los campos de área y profundidad (porque se regeneran dinámicamente)
-  const numCuerpos = Object.keys(datosPrevios)
-    .filter(k => k.startsWith("area") || k.startsWith("profMin") || k.startsWith("profMax"))
-    .reduce((max, k) => Math.max(max, parseInt(k.match(/\d+/)?.[0] || 0)), 0);
-
-  for (let i = 1; i <= numCuerpos; i++) {
-    const area = document.getElementById(`area${i}`);
-    const profMin = document.getElementById(`profMin${i}`);
-    const profMax = document.getElementById(`profMax${i}`);
-
-    if (area && datosPrevios[`area${i}`] !== undefined) area.value = datosPrevios[`area${i}`];
-    if (profMin && datosPrevios[`profMin${i}`] !== undefined) profMin.value = datosPrevios[`profMin${i}`];
-    if (profMax && datosPrevios[`profMax${i}`] !== undefined) profMax.value = datosPrevios[`profMax${i}`];
-  }
-
-  // 🧩 Finalmente, restauramos la visibilidad de los campos de desborde según el radio guardado
-  const valorDesborde = document.querySelector("input[name='desborde']:checked")?.value;
-  const camposDesborde = document.getElementById("camposDesborde");
-  const campoInfinity = document.getElementById("campoInfinity");
-  const campoCanal = document.getElementById("campoCanal");
-
-  if (valorDesborde && camposDesborde && campoInfinity && campoCanal) {
-    camposDesborde.style.display = (valorDesborde === "ninguno") ? "none" : "block";
-    campoInfinity.style.display = (valorDesborde === "infinity" || valorDesborde === "ambos") ? "block" : "none";
-    campoCanal.style.display = (valorDesborde === "canal" || valorDesborde === "ambos") ? "block" : "none";
-  }
-}
-
-// 🧩 Restaurar valores de área y profundidad si existen guardados
-if (window.datosPorSistema && window.datosPorSistema[tipo]) {
-  const datosPrevios = window.datosPorSistema[tipo];
-
-  // Detecta cuántos cuerpos tenía el sistema
-  const numCuerpos = Object.keys(datosPrevios)
-    .filter(k => k.startsWith("area") || k.startsWith("profMin") || k.startsWith("profMax"))
-    .reduce((max, k) => Math.max(max, parseInt(k.match(/\d+/)?.[0] || 0)), 0) || 1;
-
-  for (let i = 1; i <= numCuerpos; i++) {
-    const area = document.getElementById(`area${i}`);
-    const profMin = document.getElementById(`profMin${i}`);
-    const profMax = document.getElementById(`profMax${i}`);
-
-    if (area && datosPrevios[`area${i}`] !== undefined) {
-      area.value = datosPrevios[`area${i}`];
-    }
-    if (profMin && datosPrevios[`profMin${i}`] !== undefined) {
-      profMin.value = datosPrevios[`profMin${i}`];
-    }
-    if (profMax && datosPrevios[`profMax${i}`] !== undefined) {
-      profMax.value = datosPrevios[`profMax${i}`];
+    // 🧩 Restaurar visibilidad de desbordes según lo guardado
+    const valorDesborde = document.querySelector("input[name='desborde']:checked")?.value;
+    if (valorDesborde && camposDesborde && campoInfinity && campoCanal) {
+      camposDesborde.style.display = (valorDesborde === "ninguno") ? "none" : "block";
+      campoInfinity.style.display = (valorDesborde === "infinity" || valorDesborde === "ambos") ? "block" : "none";
+      campoCanal.style.display = (valorDesborde === "canal" || valorDesborde === "ambos") ? "block" : "none";
     }
   }
-}
 
-// 🔁 Esperar un pequeño tiempo para que el DOM actualice los valores restaurados
-setTimeout(() => {
-  actualizarValoresGlobales();
-}, 50);
-window.ultimoTipoSistema = tipo;
+  // 🔁 Esperar un poco para que se actualicen los valores globales
+  setTimeout(() => {
+    actualizarValoresGlobales();
+  }, 50);
 
+  window.ultimoTipoSistema = tipo;
 }
 // 🔄 Listener global para actualizar valores al escribir o cambiar algo
 document.addEventListener("input", (e) => {
@@ -764,10 +737,14 @@ function inicializarEventosTipoSistema() {
   });
 }
 function actualizarValoresGlobales() {
-    if (!document.getElementById("area1") && window.valoresGlobales) {
-    console.log("⚠️ No hay inputs de sistema visibles, se mantienen los valores globales previos.");
-    return; // 🚫 Evita reiniciar a 0
+  const tieneInputsSistema = document.getElementById("area1") || document.getElementById("area2");
+
+  // 🚫 Si no hay inputs de sistema visibles, no recalcular ni tocar los valores globales
+  if (!tieneInputsSistema) {
+    console.log("⚠️ No hay inputs de sistema visibles → se conserva window.valoresGlobales sin cambios.");
+    return;
   }
+
   const area1 = parseFloat(document.getElementById("area1")?.value) || 0;
   const area2 = parseFloat(document.getElementById("area2")?.value) || 0;
 
@@ -783,13 +760,34 @@ function actualizarValoresGlobales() {
   const alturaDesborde = parseFloat(document.getElementById("alturaDesborde")?.value) || 0;
   const largoCanal = parseFloat(document.getElementById("largoCanal")?.value) || 0;
 
-  // Totales / promedios
-  const areaTotal = area1 + area2;
-  const profMinProm = (profMin1 + profMin2) / (area2 ? 2 : 1);
-  const profMaxProm = (profMax1 + profMax2) / (area2 ? 2 : 1);
-  const volumenTotal = areaTotal * ((profMinProm + profMaxProm) / 2);
+  // medias de profundidad por cuerpo
+  const meanDepth1 = (profMin1 + profMax1) / 2;
+  const meanDepth2 = (profMin2 + profMax2) / 2;
 
-  // Guardar valores globales en un objeto JS (sin tocar inputs)
+  // Totales / volúmenes
+  const areaTotal = area1 + area2;
+  let volumenTotal = 0;
+  let profMinProm = 0, profMaxProm = 0;
+
+  if (area2 > 0) {
+    // Caso 2 cuerpos: volumen de cada cuerpo, luego profundidad promedio = volTotal / areaTotal
+    const vol1 = area1 * meanDepth1;
+    const vol2 = area2 * meanDepth2;
+    volumenTotal = vol1 + vol2;
+
+    const profPromedio = (areaTotal > 0) ? (volumenTotal / areaTotal) : meanDepth1;
+
+    // Mantiene mínimos y máximos reales entre los cuerpos
+    profMinProm = Math.min(profMin1, profMin2 || profMin1);
+    profMaxProm = Math.max(profMax1, profMax2 || profMax1);
+  } else {
+    // Caso 1 cuerpo: volumen y profundidades según el cuerpo 1
+    volumenTotal = area1 * meanDepth1;
+    profMinProm = profMin1;
+    profMaxProm = profMax1;
+  }
+
+  // Guardar valores globales
   window.valoresGlobales = {
     area: areaTotal,
     profMin: profMinProm,
@@ -804,15 +802,19 @@ function actualizarValoresGlobales() {
 
   console.log("📊 Actualizando valores globales:", window.valoresGlobales);
 
-  // Si quieres también reflejar los valores en inputs ocultos:
+  // Reflejar en inputs "globales" si existen
   ["area", "profMin", "profMax", "volumen", "tasaRotacion", "distancia"].forEach(id => {
     if (document.getElementById(id)) {
-      document.getElementById(id).value = window.valoresGlobales[id] || 0;
+      // formatea números cuando corresponde
+      if (id === "area" || id === "volumen" || id === "profMin" || id === "profMax") {
+        document.getElementById(id).value = (window.valoresGlobales[id] !== undefined) ? Number(window.valoresGlobales[id]).toFixed(2) : 0;
+      } else {
+        document.getElementById(id).value = window.valoresGlobales[id] || 0;
+      }
     }
   });
+
   sincronizarDatosGlobales();
-  // Si el formulario todavía no ha cargado (inputs sin valor visible), no hacer nada
-if (!document.getElementById("area1")) return;
 }
 // 🔄 Permitir volver a abrir el mismo tipo aunque ya esté seleccionado
 document.addEventListener("click", (e) => {
