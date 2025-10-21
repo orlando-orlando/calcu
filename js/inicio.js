@@ -308,7 +308,7 @@ const secciones = {
           </div>
           <div class="campo-bdc">
             <label for="recomendadaBC">Bomba de calor recomendada:</label>
-            <select id="recomendadaBC disabled">
+            <select id="recomendadaBC" disabled>
               <option value="">-- Selecciona --</option>
               <option value="ejemplo1">Modelo AquaHeat 3000</option>
               <option value="ejemplo2">Modelo ThermoMax Pro</option>
@@ -613,8 +613,6 @@ function mostrarFormularioSistema(tipo) {
             </div>
           </div>
         </div>
-      </div>
-    </div>
   ` : "";
 
   // 🔹 Render final del formulario
@@ -628,7 +626,13 @@ function mostrarFormularioSistema(tipo) {
           ${bloqueUsoRotacion}
           ${bloqueDesborde}
         </div>
-        <div class="columna-derecha">
+          <!-- 🔹 Botón para ir a calentamiento -->
+          <div style="margin-top:20px;">
+            <button id="btnIrCalentamiento" class="btn-principal">
+              Ir a calentamiento →
+            </button>
+          </div>
+         <div class="columna-derecha">
           <div class="tarjeta-bdc tarjeta-imagen">
             <img src="./img/${config.img}" alt="${tipo}" class="imagen-sistema-activo">
             <p class="texto-imagen">Vista del sistema seleccionado</p>
@@ -638,19 +642,28 @@ function mostrarFormularioSistema(tipo) {
     </div>
   `;
 
+  // 🧩 Normaliza profundidades sin interferir al escribir
+  attachDepthNormalizationListeners(true);
+
   // 👈 Listener para volver
   document.getElementById("btnVolverTipos").addEventListener("click", () => {
-    guardarDatos();  // 👈 guarda antes de salir
+    guardarDatos();
     renderSeccion("dimensiones");
   });
 
-  // 👇 Listeners para mostrar los campos de desborde
+  // 👇 Listener para ir a calentamiento
+  document.getElementById("btnIrCalentamiento").addEventListener("click", () => {
+    guardarDatos();
+    window.tipoSistemaActual = tipo;
+    renderSeccion("calentamiento");
+  });
+
+  // 👇 Listeners de desborde (igual que tu versión)
   const radiosDesborde = document.querySelectorAll("input[name='desborde']");
   const camposDesborde = document.getElementById("camposDesborde");
   const campoInfinity = document.getElementById("campoInfinity");
   const campoCanal = document.getElementById("campoCanal");
 
-  // 🧩 Restaurar estado visual del desborde
   if (document.getElementById("camposDesborde")) {
     document.getElementById("camposDesborde").style.display = estadoDesborde.camposVisible;
     document.getElementById("campoInfinity").style.display = estadoDesborde.infinityVisible;
@@ -667,10 +680,9 @@ function mostrarFormularioSistema(tipo) {
     });
   });
 
-  // 🧩 Restaurar valores previos si existen
+  // 🔁 Restaurar valores previos si existen (igual que tu versión)
   if (window.datosPorSistema && window.datosPorSistema[tipo]) {
     const datosPrevios = window.datosPorSistema[tipo];
-
     Object.entries(datosPrevios).forEach(([key, value]) => {
       const el = document.getElementById(key) || document.querySelector(`[name='${key}'][value='${value}']`);
       if (el) {
@@ -678,31 +690,8 @@ function mostrarFormularioSistema(tipo) {
         else el.value = value;
       }
     });
-
-    // 🧩 Restaurar campos dinámicos (área y profundidad)
-    const numCuerpos = Object.keys(datosPrevios)
-      .filter(k => k.startsWith("area") || k.startsWith("profMin") || k.startsWith("profMax"))
-      .reduce((max, k) => Math.max(max, parseInt(k.match(/\d+/)?.[0] || 0)), 0);
-
-    for (let i = 1; i <= numCuerpos; i++) {
-      const area = document.getElementById(`area${i}`);
-      const profMin = document.getElementById(`profMin${i}`);
-      const profMax = document.getElementById(`profMax${i}`);
-      if (area && datosPrevios[`area${i}`] !== undefined) area.value = datosPrevios[`area${i}`];
-      if (profMin && datosPrevios[`profMin${i}`] !== undefined) profMin.value = datosPrevios[`profMin${i}`];
-      if (profMax && datosPrevios[`profMax${i}`] !== undefined) profMax.value = datosPrevios[`profMax${i}`];
-    }
-
-    // 🧩 Restaurar visibilidad de desbordes según lo guardado
-    const valorDesborde = document.querySelector("input[name='desborde']:checked")?.value;
-    if (valorDesborde && camposDesborde && campoInfinity && campoCanal) {
-      camposDesborde.style.display = (valorDesborde === "ninguno") ? "none" : "block";
-      campoInfinity.style.display = (valorDesborde === "infinity" || valorDesborde === "ambos") ? "block" : "none";
-      campoCanal.style.display = (valorDesborde === "canal" || valorDesborde === "ambos") ? "block" : "none";
-    }
   }
 
-  // 🔁 Esperar un poco para que se actualicen los valores globales
   setTimeout(() => {
     actualizarValoresGlobales();
   }, 50);
@@ -737,57 +726,60 @@ function inicializarEventosTipoSistema() {
   });
 }
 function actualizarValoresGlobales() {
+  // ❌ No normalizamos aquí, porque esto se llama en cada input
+  // normalizeAllDepths();
+
   const tieneInputsSistema = document.getElementById("area1") || document.getElementById("area2");
 
-  // 🚫 Si no hay inputs de sistema visibles, no recalcular ni tocar los valores globales
   if (!tieneInputsSistema) {
     console.log("⚠️ No hay inputs de sistema visibles → se conserva window.valoresGlobales sin cambios.");
     return;
   }
 
-  const area1 = parseFloat(document.getElementById("area1")?.value) || 0;
-  const area2 = parseFloat(document.getElementById("area2")?.value) || 0;
-
-  const profMin1 = parseFloat(document.getElementById("profMin1")?.value) || 0;
-  const profMin2 = parseFloat(document.getElementById("profMin2")?.value) || 0;
-  const profMax1 = parseFloat(document.getElementById("profMax1")?.value) || 0;
-  const profMax2 = parseFloat(document.getElementById("profMax2")?.value) || 0;
+  let area1 = parseFloat(document.getElementById("area1")?.value) || 0;
+  let area2 = parseFloat(document.getElementById("area2")?.value) || 0;
+  let profMin1 = parseFloat(document.getElementById("profMin1")?.value) || 0;
+  let profMin2 = parseFloat(document.getElementById("profMin2")?.value) || 0;
+  let profMax1 = parseFloat(document.getElementById("profMax1")?.value) || 0;
+  let profMax2 = parseFloat(document.getElementById("profMax2")?.value) || 0;
 
   const tasaRot = parseFloat(document.getElementById("rotacion")?.value) || 0;
   const distancia = parseFloat(document.getElementById("distCuarto")?.value) || 0;
-
   const largoInfinity = parseFloat(document.getElementById("largoInfinity")?.value) || 0;
   const alturaDesborde = parseFloat(document.getElementById("alturaDesborde")?.value) || 0;
   const largoCanal = parseFloat(document.getElementById("largoCanal")?.value) || 0;
 
-  // medias de profundidad por cuerpo
+  // ✅ Normalizar localmente (no tocar los inputs mientras se escribe)
+  const min1 = Math.min(profMin1, profMax1);
+  const max1 = Math.max(profMin1, profMax1);
+  const min2 = Math.min(profMin2, profMax2);
+  const max2 = Math.max(profMin2, profMax2);
+
+  // Reasignar valores normalizados en variables
+  profMin1 = min1; profMax1 = max1;
+  profMin2 = min2; profMax2 = max2;
+
   const meanDepth1 = (profMin1 + profMax1) / 2;
   const meanDepth2 = (profMin2 + profMax2) / 2;
 
-  // Totales / volúmenes
   const areaTotal = area1 + area2;
   let volumenTotal = 0;
   let profMinProm = 0, profMaxProm = 0;
 
   if (area2 > 0) {
-    // Caso 2 cuerpos: volumen de cada cuerpo, luego profundidad promedio = volTotal / areaTotal
     const vol1 = area1 * meanDepth1;
     const vol2 = area2 * meanDepth2;
     volumenTotal = vol1 + vol2;
 
     const profPromedio = (areaTotal > 0) ? (volumenTotal / areaTotal) : meanDepth1;
-
-    // Mantiene mínimos y máximos reales entre los cuerpos
     profMinProm = Math.min(profMin1, profMin2 || profMin1);
     profMaxProm = Math.max(profMax1, profMax2 || profMax1);
   } else {
-    // Caso 1 cuerpo: volumen y profundidades según el cuerpo 1
     volumenTotal = area1 * meanDepth1;
     profMinProm = profMin1;
     profMaxProm = profMax1;
   }
 
-  // Guardar valores globales
   window.valoresGlobales = {
     area: areaTotal,
     profMin: profMinProm,
@@ -801,19 +793,6 @@ function actualizarValoresGlobales() {
   };
 
   console.log("📊 Actualizando valores globales:", window.valoresGlobales);
-
-  // Reflejar en inputs "globales" si existen
-  ["area", "profMin", "profMax", "volumen", "tasaRotacion", "distancia"].forEach(id => {
-    if (document.getElementById(id)) {
-      // formatea números cuando corresponde
-      if (id === "area" || id === "volumen" || id === "profMin" || id === "profMax") {
-        document.getElementById(id).value = (window.valoresGlobales[id] !== undefined) ? Number(window.valoresGlobales[id]).toFixed(2) : 0;
-      } else {
-        document.getElementById(id).value = window.valoresGlobales[id] || 0;
-      }
-    }
-  });
-
   sincronizarDatosGlobales();
 }
 // 🔄 Permitir volver a abrir el mismo tipo aunque ya esté seleccionado
@@ -856,6 +835,8 @@ if (window.ultimoTipoSistema && window.ultimoTipoSistema !== tipo) {
 }
 
 function guardarDatos(tipoForzado) {
+    // normalizar si corresponde (no interferirá si usuario aún está escribiendo)
+  normalizeAllDepths();
   const tipoActual = tipoForzado
     || window.ultimoTipoSistema
     || document.querySelector("input[name='tipoSistema']:checked")?.value;
@@ -953,10 +934,19 @@ function guardarDatos(tipoForzado) {
 function renderSeccion(seccion) {
   const contenedor = document.getElementById("contenidoDerecho");
   contenedor.innerHTML = secciones[seccion] || "Sin contenido";
-if (seccion === "dimensiones") {
-  inicializarEventosTipoSistema();
-}
-  // Restaurar valores previos
+  attachDepthNormalizationListeners();
+
+  // 🔹 Si estamos en "dimensiones"
+  if (seccion === "dimensiones") {
+    // Si venimos de un tipo de sistema activo, reabrirlo automáticamente
+    if (window.tipoSistemaActual) {
+      mostrarFormularioSistema(window.tipoSistemaActual);
+    } else {
+      inicializarEventosTipoSistema();
+    }
+  }
+
+  // 🔹 Restaurar valores previos globales
   for (let key in datos) {
     const el = document.getElementById(key);
     if (el) {
@@ -968,15 +958,14 @@ if (seccion === "dimensiones") {
     radios.forEach(radio => radio.checked = (radio.value === datos[key]));
   }
 
-  // Restaurar checkboxes de calentamiento
+  // 🔹 Restaurar checkboxes de calentamiento
   ["chkBombaCalor","chkPanel","chkCaldera"].forEach(id => {
     if (document.getElementById(id)) toggleInputs(id, "campo"+id.replace("chk",""));
   });
 
-  // Render tabla si hay ciudad seleccionada
+  // 🔹 Listeners para ciudad (si estamos en calentamiento)
   const ciudadSelect = document.getElementById("ciudad");
   if (ciudadSelect) {
-    // 👉 solo inicializamos listener una vez
     if (!ciudadSelect.dataset.listener) {
       ciudadSelect.addEventListener("change", () => {
         actualizarTablasClima();
@@ -989,7 +978,7 @@ if (seccion === "dimensiones") {
     if (ciudadSelect.value) renderTabla(ciudadSelect.value);
   }
 
-  // Listeners para checkboxes de calentamiento
+  // 🔹 Listeners para checkboxes de calentamiento
   ["chkBombaCalor","chkPanel","chkCaldera"].forEach(id => {
     const chk = document.getElementById(id);
     if (chk && !chk.dataset.listener) {
@@ -997,14 +986,94 @@ if (seccion === "dimensiones") {
       chk.dataset.listener = true;
     }
   });
-    // 👉 Si la sección es calentamiento, recalcular gráfica
+
+  // 🔹 Si estamos en calentamiento, preparar botón volver + cálculos
   if (seccion === "calentamiento") {
+    // Crear botón de volver
+    const volverBtn = document.createElement("button");
+    volverBtn.textContent = "← Volver a dimensiones";
+    volverBtn.className = "btn-volver";
+    volverBtn.style.marginBottom = "15px";
+
+    const form = contenedor.querySelector(".clima-form");
+    if (form) form.prepend(volverBtn);
+
+    volverBtn.addEventListener("click", () => {
+      guardarDatos(); // guarda cambios del calentamiento
+      // Si había un tipo de sistema activo, volver a él
+      if (window.tipoSistemaActual) {
+        mostrarFormularioSistema(window.tipoSistemaActual);
+      } else {
+        renderSeccion("dimensiones");
+      }
+    });
+
+    // Enganchar listeners y cálculos de calentamiento
     setTimeout(() => {
       engancharListenersCalentamiento();
       qEvaporacion();
       qTuberia();
     }, 50);
   }
+}
+
+// Normaliza sólo cuando ambos valores son números válidos (evita tocar mientras se escribe)
+function normalizeAllDepths() {
+  const pairs = [
+    ["profMin1", "profMax1"],
+    ["profMin2", "profMax2"]
+  ];
+
+  pairs.forEach(([minId, maxId]) => {
+    const minEl = document.getElementById(minId);
+    const maxEl = document.getElementById(maxId);
+    if (!minEl || !maxEl) return;
+
+    const minRaw = String(minEl.value).trim();
+    const maxRaw = String(maxEl.value).trim();
+
+    // si alguno está vacío, no normalizamos (permitir escritura)
+    if (minRaw === "" || maxRaw === "") return;
+
+    const minVal = Number(minRaw);
+    const maxVal = Number(maxRaw);
+
+    // solo si ambos son números válidos
+    if (!Number.isFinite(minVal) || !Number.isFinite(maxVal)) return;
+
+    if (minVal > maxVal) {
+      // intercambiar *los strings* para preservar formato que el usuario haya puesto
+      const tmp = minEl.value;
+      minEl.value = maxEl.value;
+      maxEl.value = tmp;
+      // opcional: añadir una pequeña señal visual (clase, console)
+      console.warn(`normalizeAllDepths: intercambiadas ${minId} <-> ${maxId}`);
+    }
+  });
+}
+// Añade listeners blur/change a los inputs de profundidad (para normalizar cuando el usuario termina)
+function attachDepthNormalizationListeners() {
+  const ids = ["profMin1", "profMax1", "profMin2", "profMax2"];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.dataset.depthListener) return; // evita doble enganchar
+    el.addEventListener("blur", () => {
+      normalizeAllDepths();
+      // opcional: recalcular después de normalizar
+      if (typeof actualizarValoresGlobales === "function") {
+        setTimeout(actualizarValoresGlobales, 10);
+      }
+    });
+    // también en change por si el usuario pega o usa flechas
+    el.addEventListener("change", () => {
+      normalizeAllDepths();
+      if (typeof actualizarValoresGlobales === "function") {
+        setTimeout(actualizarValoresGlobales, 10);
+      }
+    });
+    el.dataset.depthListener = "1";
+  });
 }
 
 function engancharListenersCalentamiento() {
@@ -2417,30 +2486,37 @@ nuevaVentana.document.close();
 }
 
 function volumen() {
-    let area = parseFloat(datos.area) || 0;
-    let profMin = parseFloat(datos.profMin) || 0;
-    let profMax = parseFloat(datos.profMax) || 0;
+  // ✅ Usa primero el volumen global calculado
+  if (window.valoresGlobales && !isNaN(window.valoresGlobales.volumen)) {
+    const volGlobal = parseFloat(window.valoresGlobales.volumen);
+    if (volGlobal > 0) return volGlobal;
+  }
 
-    let profProm = 0;
+  // ⚙️ Si no hay volumen global, usa el método tradicional
+  let area = parseFloat(datos.area) || 0;
+  let profMin = parseFloat(datos.profMin) || 0;
+  let profMax = parseFloat(datos.profMax) || 0;
 
-    if (profMin > 0 && profMax > 0) {
-        profProm = (profMin + profMax) / 2;
-    } else if (profMin > 0) {
-        profProm = profMin;
-    } else if (profMax > 0) {
-        profProm = profMax;
-    }
+  let profProm = 0;
+  if (profMin > 0 && profMax > 0) {
+    profProm = (profMin + profMax) / 2;
+  } else if (profMin > 0) {
+    profProm = profMin;
+  } else if (profMax > 0) {
+    profProm = profMax;
+  }
 
-    let vol = parseFloat((area * profProm).toFixed(1));
-    return vol;
+  let vol = parseFloat((area * profProm).toFixed(1));
+  return vol;
 }
 
 function flujoVolumen() {
-    let vol = volumen();
-    let rotacion1 = parseFloat(datos.rotacion) || 6; // si no eligió nada, que use 6h por defecto
-    let flujoVolumen = parseFloat((vol * 1000 / 60 / rotacion1).toFixed(1));
-    let flujoVolumen2 = parseFloat((flujoVolumen / 3.7854).toFixed(1));    
-    return flujoVolumen2;
+  // ✅ Ahora el flujo se calcula a partir del volumen global
+  const vol = volumen();
+  const rotacion1 = parseFloat(datos.rotacion) || 6; // si no eligió nada, usa 6h por defecto
+  const flujoVolumen = parseFloat((vol * 1000 / 60 / rotacion1).toFixed(1));
+  const flujoVolumen2 = parseFloat((flujoVolumen / 3.7854).toFixed(1));    
+  return flujoVolumen2;
 }
 
 function flujoInfinity(){
@@ -5169,6 +5245,7 @@ function qTransmision() {
 
   // 🔹 Convertimos a BTU/h
   const Q_BTU_h = Q * 3.412;
+  console.log(`prof max qTrans =`, profMax);
 
   console.log(`qTransmision = ${Q_BTU_h.toFixed(2)} BTU/h`);
 
