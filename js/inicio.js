@@ -133,7 +133,7 @@ const secciones = {
 
           <label class="opcion-sistema">
             <input type="radio" name="tipoSistema" value="jacuzzi">
-            <img src="https://cdn.pixabay.com/photo/2015/11/07/11/50/jacuzzi-1033270_1280.jpg" alt="Jacuzzi">
+            <img src="./img/jacuzzi.jpg" alt="Jacuzzi">
             <span>Jacuzzi</span>
           </label>
 
@@ -151,13 +151,13 @@ const secciones = {
 
           <label class="opcion-sistema">
             <input type="radio" name="tipoSistema" value="albercaJacuzzi1">
-            <img src="https://cdn.pixabay.com/photo/2016/06/09/17/05/pool-1449207_1280.jpg" alt="Alberca con jacuzzi (1 cuerpo)">
+            <img src="./img/alberca+jacuzzi1C.jpg" alt="Alberca con jacuzzi (1 cuerpo)">
             <span>Alberca + Jacuzzi (1 cuerpo)</span>
           </label>
 
           <label class="opcion-sistema">
             <input type="radio" name="tipoSistema" value="albercaChapo1">
-            <img src="https://cdn.pixabay.com/photo/2016/08/06/22/14/swimming-pool-1575942_1280.jpg" alt="Alberca con chapoteadero (1 cuerpo)">
+            <img src="./img/alberca+chapoteadero1C.jpg" alt="Alberca con chapoteadero (1 cuerpo)">
             <span>Alberca + Chapoteadero (1 cuerpo)</span>
           </label>
 
