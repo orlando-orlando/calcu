@@ -472,25 +472,17 @@ const secciones = {
   `
 };
 
-// ✅ Función global para mostrar el formulario dinámico según el tipo
 function mostrarFormularioSistema(tipo) {
   const contenedorPrincipal = document.getElementById("contenidoDerecho");
   if (!contenedorPrincipal) return;
 
-  // 🧩 Guardar los datos del sistema anterior ANTES de destruir su DOM
+  // 🧩 Guarda los datos del sistema anterior antes de cambiar
   if (window.ultimoTipoSistema) {
     guardarDatos(window.ultimoTipoSistema);
     console.log("💾 Datos guardados de:", window.ultimoTipoSistema);
   }
 
-  // 🧩 Guardar estado de visibilidad de los campos de desborde (opcional)
-  const estadoDesborde = {
-    camposVisible: document.getElementById("camposDesborde")?.style.display || "none",
-    infinityVisible: document.getElementById("campoInfinity")?.style.display || "none",
-    canalVisible: document.getElementById("campoCanal")?.style.display || "none"
-  };
-
-  // 📋 Configuración de cada tipo de sistema
+  // 📋 Configuración de los sistemas
   const sistemas = {
     alberca: { img: "alberca.jpg", cuerpos: 1, desborde: true },
     jacuzzi: { img: "jacuzzi.jpg", cuerpos: 1, desborde: true },
@@ -507,7 +499,7 @@ function mostrarFormularioSistema(tipo) {
   const config = sistemas[tipo];
   if (!config) return;
 
-  // 🔹 Bloque de "Dimensiones físicas"
+  // 🔹 Construcción de bloques dinámicos
   const bloqueDimensiones = (num) => `
     <div class="tarjeta-bdc tarjeta-calentamiento">
       <label class="label-calentamiento">
@@ -515,22 +507,21 @@ function mostrarFormularioSistema(tipo) {
       </label>
       <div class="form-group">
         <label>Área (m²):</label>
-        <input type="number" id="area${num}" step="0.01">
+        <input type="number" id="area${num}" step="0.01" class="input-azul">
       </div>
       <div class="form-group inline fila-bdc">
         <div class="campo-bdc">
           <label>Profundidad mínima (m):</label>
-          <input type="number" id="profMin${num}" step="0.01">
+          <input type="number" id="profMin${num}" step="0.01" class="input-azul">
         </div>
         <div class="campo-bdc">
           <label>Profundidad máxima (m):</label>
-          <input type="number" id="profMax${num}" step="0.01">
+          <input type="number" id="profMax${num}" step="0.01" class="input-azul">
         </div>
       </div>
     </div>
   `;
 
-  // 🔹 Si tiene 2 cuerpos, duplicamos el bloque
   let bloquesDimensiones = "";
   for (let i = 1; i <= config.cuerpos; i++) {
     bloquesDimensiones += bloqueDimensiones(i);
@@ -607,32 +598,32 @@ function mostrarFormularioSistema(tipo) {
       <div id="campoCanal" class="tarjeta-bdc tarjeta-calentamiento" style="display:none;">
         <label class="label-calentamiento">Canal perimetral:</label>
         <div class="form-group inline fila-bdc">
-            <div class="campo-bdc">
-              <label for="largoCanal">Largo total del canal (m):</label>
-              <input type="number" id="largoCanal" step="0.01" class="input-azul">
-            </div>
+          <div class="campo-bdc">
+            <label for="largoCanal">Largo total del canal (m):</label>
+            <input type="number" id="largoCanal" step="0.01" class="input-azul">
           </div>
         </div>
+      </div>
+    </div>
   ` : "";
 
-  // 🔹 Render final del formulario
+  // 🔹 Render principal (se mantiene el formato intacto)
   contenedorPrincipal.innerHTML = `
     <div class="form-section animacion-aparecer" style="font-family: inherit;">
       <button id="btnVolverTipos" class="btn-volver">← Volver a tipos de sistema</button>
       <h2 class="titulo-sistema-activo">${tipo.replace(/([A-Z])/g, " $1")}</h2>
+
       <div class="sistema-contenido">
         <div class="columna-izquierda">
           ${bloquesDimensiones}
           ${bloqueUsoRotacion}
           ${bloqueDesborde}
-        </div>
-          <!-- 🔹 Botón para ir a calentamiento -->
           <div style="margin-top:20px;">
-            <button id="btnIrCalentamiento" class="btn-principal">
-              Ir a calentamiento →
-            </button>
+            <button id="btnIrCalentamiento" class="btn-principal">Ir a calentamiento →</button>
           </div>
-         <div class="columna-derecha">
+        </div>
+
+        <div class="columna-derecha">
           <div class="tarjeta-bdc tarjeta-imagen">
             <img src="./img/${config.img}" alt="${tipo}" class="imagen-sistema-activo">
             <p class="texto-imagen">Vista del sistema seleccionado</p>
@@ -642,60 +633,106 @@ function mostrarFormularioSistema(tipo) {
     </div>
   `;
 
-  // 🧩 Normaliza profundidades sin interferir al escribir
+  // 🧩 Reasignar eventos
   attachDepthNormalizationListeners(true);
+  inicializarEventosDesborde();
 
-  // 👈 Listener para volver
+  // 🔹 Botón volver a tipos de sistema — NO reabre el tipo automáticamente
   document.getElementById("btnVolverTipos").addEventListener("click", () => {
-    guardarDatos();
+    guardarDatos(tipo);
+    window.tipoSistemaActual = null; // ✅ limpiamos el tipo actual
     renderSeccion("dimensiones");
   });
 
-  // 👇 Listener para ir a calentamiento
+  // 🔹 Botón ir a calentamiento
   document.getElementById("btnIrCalentamiento").addEventListener("click", () => {
-    guardarDatos();
-    window.tipoSistemaActual = tipo;
+    guardarDatos(tipo);
+    window.tipoSistemaActual = tipo; // persistimos el tipo actual globalmente
     renderSeccion("calentamiento");
   });
 
-  // 👇 Listeners de desborde (igual que tu versión)
-  const radiosDesborde = document.querySelectorAll("input[name='desborde']");
-  const camposDesborde = document.getElementById("camposDesborde");
-  const campoInfinity = document.getElementById("campoInfinity");
-  const campoCanal = document.getElementById("campoCanal");
+  function inicializarEventosDesborde() {
+    const radiosDesborde = document.querySelectorAll("input[name='desborde']");
+    const campos = document.getElementById("camposDesborde");
+    const campoInfinity = document.getElementById("campoInfinity");
+    const campoCanal = document.getElementById("campoCanal");
 
-  if (document.getElementById("camposDesborde")) {
-    document.getElementById("camposDesborde").style.display = estadoDesborde.camposVisible;
-    document.getElementById("campoInfinity").style.display = estadoDesborde.infinityVisible;
-    document.getElementById("campoCanal").style.display = estadoDesborde.canalVisible;
+    if (!radiosDesborde.length) return;
+
+    radiosDesborde.forEach(radio => {
+      radio.addEventListener("change", () => {
+        if (!campos) return;
+        campos.style.display = "block";
+        campoInfinity.style.display = "none";
+        campoCanal.style.display = "none";
+
+        switch (radio.value) {
+          case "infinity":
+            campoInfinity.style.display = "block";
+            break;
+          case "canal":
+            campoCanal.style.display = "block";
+            break;
+          case "ambos":
+            campoInfinity.style.display = "block";
+            campoCanal.style.display = "block";
+            break;
+          case "ninguno":
+            campos.style.display = "none";
+            break;
+        }
+      });
+    });
   }
 
-  radiosDesborde.forEach(radio => {
-    radio.addEventListener("change", () => {
-      if (!camposDesborde) return;
-      camposDesborde.style.display = "block";
-      campoInfinity.style.display = (radio.value === "infinity" || radio.value === "ambos") ? "block" : "none";
-      campoCanal.style.display = (radio.value === "canal" || radio.value === "ambos") ? "block" : "none";
-      if (radio.value === "ninguno") camposDesborde.style.display = "none";
-    });
-  });
-
-  // 🔁 Restaurar valores previos si existen (igual que tu versión)
-  if (window.datosPorSistema && window.datosPorSistema[tipo]) {
+setTimeout(() => {
+  if (window.datosPorSistema?.[tipo]) {
     const datosPrevios = window.datosPorSistema[tipo];
+
     Object.entries(datosPrevios).forEach(([key, value]) => {
-      const el = document.getElementById(key) || document.querySelector(`[name='${key}'][value='${value}']`);
+      if (value === null || value === undefined) return;
+
+      // 🔸 Primero intenta por ID
+      const el = document.getElementById(key);
+      // 🔸 Luego intenta por name si no hay ID
+      const radios = document.querySelectorAll(`input[name='${key}']`);
+
       if (el) {
-        if (el.type === "radio" || el.type === "checkbox") el.checked = true;
-        else el.value = value;
+        if (el.type === "checkbox") el.checked = !!value;
+        else if (el.tagName === "SELECT") el.value = value;
+        else if (el.type === "number" || el.type === "text") el.value = value;
+      } else if (radios.length > 0) {
+        radios.forEach(r => {
+          r.checked = (r.value === String(value));
+        });
       }
     });
+
+    // ✅ Forzar visualización correcta del desborde
+    if (datosPrevios.desborde) {
+      const radio = document.querySelector(`input[name='desborde'][value='${datosPrevios.desborde}']`);
+      if (radio) {
+        radio.checked = true;
+        // 🔸 Mostramos el bloque correspondiente manualmente
+        const evento = new Event("change");
+        radio.dispatchEvent(evento);
+      }
+    }
+
+    // ✅ Si hay motobombaInfinity o canal, los mostramos después
+    if (datosPrevios.motobombaInfinity) {
+      const radio = document.querySelector(`input[name='motobombaInfinity'][value='${datosPrevios.motobombaInfinity}']`);
+      if (radio) radio.checked = true;
+    }
+
+    if (datosPrevios.motobombaCanal) {
+      const radio = document.querySelector(`input[name='motobombaCanal'][value='${datosPrevios.motobombaCanal}']`);
+      if (radio) radio.checked = true;
+    }
   }
+}, 100); // <-- aumentamos a 100 ms para asegurar que el DOM esté listo
 
-  setTimeout(() => {
-    actualizarValoresGlobales();
-  }, 50);
-
+  // Guardar el último tipo mostrado
   window.ultimoTipoSistema = tipo;
 }
 // 🔄 Listener global para actualizar valores al escribir o cambiar algo
@@ -986,40 +1023,43 @@ function guardarDatos(tipoForzado) {
   console.log(`💾 guardarDatos(): guardado para [${tipoActual}]`, datosSistema);
 }
 
-// 🔹 Renderizar sección y restaurar valores
 function renderSeccion(seccion) {
   const contenedor = document.getElementById("contenidoDerecho");
   contenedor.innerHTML = secciones[seccion] || "Sin contenido";
   attachDepthNormalizationListeners();
 
-  // 🔹 Si estamos en "dimensiones"
+  // 🟢 Si estamos en "dimensiones"
   if (seccion === "dimensiones") {
-    // Si venimos de un tipo de sistema activo, reabrirlo automáticamente
-    if (window.tipoSistemaActual) {
+    if (window._preventAutoOpenTipo) {
+      // Se pidió no autoabrir (por botón "volver a tipos")
+      window._preventAutoOpenTipo = false;
+      inicializarEventosTipoSistema();
+    } else if (window.tipoSistemaActual) {
+      // Reabrir automáticamente el tipo de sistema actual
       mostrarFormularioSistema(window.tipoSistemaActual);
+      return;
     } else {
       inicializarEventosTipoSistema();
     }
   }
 
-  // 🔹 Restaurar valores previos globales
+  // 🟡 Restaurar valores previos globales (si aplica)
   for (let key in datos) {
     const el = document.getElementById(key);
     if (el) {
       if (el.type === "checkbox") el.checked = datos[key];
       else el.value = datos[key];
     }
-
     const radios = document.querySelectorAll(`input[name="${key}"]`);
-    radios.forEach(radio => radio.checked = (radio.value === datos[key]));
+    radios.forEach(radio => (radio.checked = radio.value === datos[key]));
   }
 
-  // 🔹 Restaurar checkboxes de calentamiento
-  ["chkBombaCalor","chkPanel","chkCaldera"].forEach(id => {
-    if (document.getElementById(id)) toggleInputs(id, "campo"+id.replace("chk",""));
+  // 🟢 Restaurar checkboxes de calentamiento
+  ["chkBombaCalor", "chkPanel", "chkCaldera"].forEach(id => {
+    if (document.getElementById(id)) toggleInputs(id, "campo" + id.replace("chk", ""));
   });
 
-  // 🔹 Listeners para ciudad (si estamos en calentamiento)
+  // 🟢 Listeners de ciudad (calentamiento)
   const ciudadSelect = document.getElementById("ciudad");
   if (ciudadSelect) {
     if (!ciudadSelect.dataset.listener) {
@@ -1030,22 +1070,22 @@ function renderSeccion(seccion) {
       ciudadSelect.dataset.listener = true;
     }
     actualizarTablasClima();
-
     if (ciudadSelect.value) renderTabla(ciudadSelect.value);
   }
 
-  // 🔹 Listeners para checkboxes de calentamiento
-  ["chkBombaCalor","chkPanel","chkCaldera"].forEach(id => {
+  // 🟢 Listeners de calentamiento (checkboxes)
+  ["chkBombaCalor", "chkPanel", "chkCaldera"].forEach(id => {
     const chk = document.getElementById(id);
     if (chk && !chk.dataset.listener) {
-      chk.addEventListener("change", () => toggleInputs(id,"campo"+id.replace("chk","")));
+      chk.addEventListener("change", () =>
+        toggleInputs(id, "campo" + id.replace("chk", ""))
+      );
       chk.dataset.listener = true;
     }
   });
 
-  // 🔹 Si estamos en calentamiento, preparar botón volver + cálculos
+  // 🔥 Si estamos en calentamiento, añadir botón de volver
   if (seccion === "calentamiento") {
-    // Crear botón de volver
     const volverBtn = document.createElement("button");
     volverBtn.textContent = "← Volver a dimensiones";
     volverBtn.className = "btn-volver";
@@ -1055,16 +1095,15 @@ function renderSeccion(seccion) {
     if (form) form.prepend(volverBtn);
 
     volverBtn.addEventListener("click", () => {
-      guardarDatos(); // guarda cambios del calentamiento
-      // Si había un tipo de sistema activo, volver a él
+      guardarDatos();
       if (window.tipoSistemaActual) {
         mostrarFormularioSistema(window.tipoSistemaActual);
       } else {
+        window._preventAutoOpenTipo = true;
         renderSeccion("dimensiones");
       }
     });
 
-    // Enganchar listeners y cálculos de calentamiento
     setTimeout(() => {
       engancharListenersCalentamiento();
       qEvaporacion();
