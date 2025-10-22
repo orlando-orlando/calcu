@@ -835,32 +835,20 @@ if (window.ultimoTipoSistema && window.ultimoTipoSistema !== tipo) {
 }
 
 function guardarDatos(tipoForzado) {
-    // normalizar si corresponde (no interferirá si usuario aún está escribiendo)
-  normalizeAllDepths();
+  // Normalizar en DOM si hace falta (deja mínimo <= máximo)
+  if (typeof normalizeAllDepths === "function") normalizeAllDepths();
+
   const tipoActual = tipoForzado
     || window.ultimoTipoSistema
     || document.querySelector("input[name='tipoSistema']:checked")?.value;
 
   if (!tipoActual) return;
 
+  // Asegurar objeto global
   window.datosPorSistema = window.datosPorSistema || {};
-  window.datosPorSistema[tipoActual] = window.datosPorSistema[tipoActual] || {};
+  const datosSistema = window.datosPorSistema[tipoActual] = window.datosPorSistema[tipoActual] || {};
 
-  // 🔹 Guardar todos los inputs visibles
-  const inputs = document.querySelectorAll("#contenidoDerecho input, #contenidoDerecho select");
-  inputs.forEach(el => {
-    if (!el) return;
-    if (el.type === "radio") {
-      if (el.checked) window.datosPorSistema[tipoActual][el.name] = el.value;
-    } else if (el.type === "checkbox") {
-      if (el.id) window.datosPorSistema[tipoActual][el.id] = el.checked;
-    } else if (el.id) {
-      const val = el.value === "" ? null : el.value;
-      window.datosPorSistema[tipoActual][el.id] = val;
-    }
-  });
-
-  // 🔹 Determinar número de cuerpos
+  // Configuración: cuántos cuerpos tiene cada tipo
   const tipoConfig = {
     alberca: 1, jacuzzi: 1, chapoteadero: 1, espejoAgua: 1,
     albercaJacuzzi1: 2, albercaChapo1: 2, jacuzziChapo1: 2,
@@ -868,66 +856,134 @@ function guardarDatos(tipoForzado) {
   };
   const numCuerpos = tipoConfig[tipoActual] || 1;
 
-  let sumArea = 0, sumProfMin = 0, sumProfMax = 0, count = 0;
+  // ---- Recolectar y procesar por cuerpos ----
+  let sumArea = 0;
+  let volumenTotal = 0;
+  const profMinList = [];
+  const profMaxList = [];
+  const meanDepths = [];
 
   for (let i = 1; i <= numCuerpos; i++) {
-    const areaVal = parseFloat(document.getElementById(`area${i}`)?.value || 0);
-    const profMinVal = parseFloat(document.getElementById(`profMin${i}`)?.value || 0);
-    const profMaxVal = parseFloat(document.getElementById(`profMax${i}`)?.value || 0);
+    const areaEl = document.getElementById(`area${i}`);
+    const minEl = document.getElementById(`profMin${i}`);
+    const maxEl = document.getElementById(`profMax${i}`);
 
-    if (!isNaN(areaVal) && areaVal > 0) {
-      window.datosPorSistema[tipoActual][`area${i}`] = areaVal;
-      sumArea += areaVal;
-      count++;
+    const areaRaw = areaEl?.value?.toString().trim() ?? "";
+    const minRaw  = minEl?.value?.toString().trim() ?? "";
+    const maxRaw  = maxEl?.value?.toString().trim() ?? "";
+
+    const area = areaRaw === "" ? null : parseFloat(areaRaw);
+    let profMin = minRaw === "" ? null : parseFloat(minRaw);
+    let profMax = maxRaw === "" ? null : parseFloat(maxRaw);
+
+    // Si ambos son números, forzamos profMin <= profMax
+    if (Number.isFinite(profMin) && Number.isFinite(profMax) && profMin > profMax) {
+      // Intercambiar en variables y en DOM (por si normalize no lo hizo)
+      const tmp = minEl.value;
+      if (minEl && maxEl) {
+        minEl.value = maxEl.value;
+        maxEl.value = tmp;
+      }
+      [profMin, profMax] = [profMax, profMin];
     }
 
-    if (!isNaN(profMinVal) && profMinVal > 0) {
-      window.datosPorSistema[tipoActual][`profMin${i}`] = profMinVal;
-      sumProfMin += profMinVal;
+    // Guardar valores individuales (null si no hay dato)
+    datosSistema[`area${i}`] = (Number.isFinite(area) ? area : null);
+    datosSistema[`profMin${i}`] = (Number.isFinite(profMin) ? profMin : null);
+    datosSistema[`profMax${i}`] = (Number.isFinite(profMax) ? profMax : null);
+
+    // Cálculo de mean depth y volumen por cuerpo
+    let meanDepth = null;
+    if (Number.isFinite(profMin) && Number.isFinite(profMax)) {
+      meanDepth = (profMin + profMax) / 2;
+      profMinList.push(profMin);
+      profMaxList.push(profMax);
+    } else if (Number.isFinite(profMin) && !Number.isFinite(profMax)) {
+      meanDepth = profMin;
+      profMinList.push(profMin);
+    } else if (!Number.isFinite(profMin) && Number.isFinite(profMax)) {
+      meanDepth = profMax;
+      profMaxList.push(profMax);
     }
 
-    if (!isNaN(profMaxVal) && profMaxVal > 0) {
-      window.datosPorSistema[tipoActual][`profMax${i}`] = profMaxVal;
-      sumProfMax += profMaxVal;
-    }
+    meanDepths.push(meanDepth);
+
+    const volumenCuerpo = (Number.isFinite(area) && Number.isFinite(meanDepth)) ? (area * meanDepth) : 0;
+    datosSistema[`volumen${i}`] = volumenCuerpo || 0;
+
+    if (Number.isFinite(area)) sumArea += area;
+    volumenTotal += volumenCuerpo;
   }
 
-  // 🔹 También leer los inputs globales sin número (si existen)
-  const areaGlobal = parseFloat(document.getElementById("area")?.value || 0);
-  const profMinGlobal = parseFloat(document.getElementById("profMin")?.value || 0);
-  const profMaxGlobal = parseFloat(document.getElementById("profMax")?.value || 0);
+  // ---- Agregados ----
+  const areaTotal = sumArea || 0;
+  const profundidadPromedio = areaTotal > 0
+    ? (volumenTotal / areaTotal)
+    : (meanDepths.filter(d => d != null).length ? (meanDepths.filter(d => d != null).reduce((a,b) => a+b,0) / meanDepths.filter(d => d != null).length) : null);
 
-  if (!isNaN(areaGlobal) && areaGlobal > 0) {
-    window.datosPorSistema[tipoActual]["area1"] = areaGlobal;
-    sumArea = areaGlobal;
-    count = 1;
+  const profMinAgg = profMinList.length ? Math.min(...profMinList) : null;
+  const profMaxAgg = profMaxList.length ? Math.max(...profMaxList) : null;
+
+  datosSistema.area = areaTotal || 0;
+  datosSistema.volumen = volumenTotal || 0;
+  datosSistema.profMin = profMinAgg;
+  datosSistema.profMax = profMaxAgg;
+  datosSistema.profMedio = (Number.isFinite(profundidadPromedio) ? profundidadPromedio : null);
+
+  // ---- Campos adicionales (uso, rotación, distancia, desborde, etc.) ----
+  datosSistema.usoCuerpo = document.getElementById("usoCuerpo")?.value || null;
+  datosSistema.rotacion = document.getElementById("rotacion")?.value || null;
+  datosSistema.distCuarto = (() => {
+    const v = document.getElementById("distCuarto")?.value;
+    return v === undefined || v === "" ? null : parseFloat(v);
+  })();
+
+  // Desborde y sus campos
+  datosSistema.desborde = document.querySelector("input[name='desborde']:checked")?.value || null;
+  if (datosSistema.desborde === "infinity" || datosSistema.desborde === "ambos") {
+    datosSistema.motobombaInfinity = document.querySelector("input[name='motobombaInfinity']:checked")?.value || null;
+    datosSistema.largoInfinity = (() => {
+      const v = document.getElementById("largoInfinity")?.value;
+      return v === undefined || v === "" ? null : parseFloat(v);
+    })();
+    datosSistema.alturaDesborde = (() => {
+      const v = document.getElementById("alturaDesborde")?.value;
+      return v === undefined || v === "" ? null : parseFloat(v);
+    })();
+  } else {
+    datosSistema.motobombaInfinity = null;
+    datosSistema.largoInfinity = null;
+    datosSistema.alturaDesborde = null;
   }
-  if (!isNaN(profMinGlobal) && profMinGlobal > 0) {
-    window.datosPorSistema[tipoActual]["profMin1"] = profMinGlobal;
-    sumProfMin = profMinGlobal;
+
+  if (datosSistema.desborde === "canal" || datosSistema.desborde === "ambos") {
+    datosSistema.largoCanal = (() => {
+      const v = document.getElementById("largoCanal")?.value;
+      return v === undefined || v === "" ? null : parseFloat(v);
+    })();
+  } else {
+    datosSistema.largoCanal = null;
   }
-  if (!isNaN(profMaxGlobal) && profMaxGlobal > 0) {
-    window.datosPorSistema[tipoActual]["profMax1"] = profMaxGlobal;
-    sumProfMax = profMaxGlobal;
-  }
 
-  // 🔹 Calcular agregados (promedio si hay más de un cuerpo)
-  const aggArea = count > 0 ? sumArea / count : 0;
-  const aggProfMin = numCuerpos > 1 ? (sumProfMin / numCuerpos) : sumProfMin;
-  const aggProfMax = numCuerpos > 1 ? (sumProfMax / numCuerpos) : sumProfMax;
-
-  // 🔹 Guardar en objetos globales
-  datos.area = aggArea;
-  datos.profMin = aggProfMin;
-  datos.profMax = aggProfMax;
-
-  window.datosPorSistema[tipoActual].area = aggArea;
-  window.datosPorSistema[tipoActual].profMin = aggProfMin;
-  window.datosPorSistema[tipoActual].profMax = aggProfMax;
-
-  console.log(`💾 Guardado [${tipoActual}]`, {
-    area: aggArea, profMin: aggProfMin, profMax: aggProfMax
+  // ---- Guardar checkboxes / radios globales si existen en DOM ----
+  // Ejemplo: si tienes checkboxes con id: chkBombaCalor, chkPanel, chkCaldera
+  ["chkBombaCalor","chkPanel","chkCaldera"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) datosSistema[id] = el.type === "checkbox" ? !!el.checked : (el.value || null);
   });
+
+  // ---- Sincronizar con objeto `datos` global (si existe) ----
+  window.datos = window.datos || {};
+  window.datos.area = datosSistema.area;
+  window.datos.profMin = datosSistema.profMin;
+  window.datos.profMax = datosSistema.profMax;
+  window.datos.volumen = datosSistema.volumen;
+  window.datos.tasaRotacion = datosSistema.rotacion ?? window.datos.tasaRotacion;
+  window.datos.distancia = datosSistema.distCuarto ?? window.datos.distancia;
+
+  // Guardado final
+  window.datosPorSistema[tipoActual] = datosSistema;
+  console.log(`💾 guardarDatos(): guardado para [${tipoActual}]`, datosSistema);
 }
 
 // 🔹 Renderizar sección y restaurar valores
