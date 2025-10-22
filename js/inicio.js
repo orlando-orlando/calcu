@@ -685,16 +685,16 @@ function mostrarFormularioSistema(tipo) {
     });
   }
 
-setTimeout(() => {
-  if (window.datosPorSistema?.[tipo]) {
-    const datosPrevios = window.datosPorSistema[tipo];
+  // ✅ Restaurar valores visuales de inputs (100% confiable)
+  setTimeout(() => {
+    const datosPrevios = window.datosPorSistema?.[tipo];
+    if (!datosPrevios) return;
 
+    // --- Rellenar inputs normales y selects ---
     Object.entries(datosPrevios).forEach(([key, value]) => {
       if (value === null || value === undefined) return;
 
-      // 🔸 Primero intenta por ID
       const el = document.getElementById(key);
-      // 🔸 Luego intenta por name si no hay ID
       const radios = document.querySelectorAll(`input[name='${key}']`);
 
       if (el) {
@@ -702,38 +702,65 @@ setTimeout(() => {
         else if (el.tagName === "SELECT") el.value = value;
         else if (el.type === "number" || el.type === "text") el.value = value;
       } else if (radios.length > 0) {
-        radios.forEach(r => {
-          r.checked = (r.value === String(value));
-        });
+        radios.forEach(r => (r.checked = r.value === String(value)));
       }
     });
 
-    // ✅ Forzar visualización correcta del desborde
+    // --- Restaurar desborde ---
     if (datosPrevios.desborde) {
       const radio = document.querySelector(`input[name='desborde'][value='${datosPrevios.desborde}']`);
       if (radio) {
         radio.checked = true;
-        // 🔸 Mostramos el bloque correspondiente manualmente
-        const evento = new Event("change");
-        radio.dispatchEvent(evento);
+        radio.dispatchEvent(new Event("change"));
       }
     }
 
-    // ✅ Si hay motobombaInfinity o canal, los mostramos después
+    // --- Restaurar subcampos de desborde (Infinity/Canal) ---
     if (datosPrevios.motobombaInfinity) {
       const radio = document.querySelector(`input[name='motobombaInfinity'][value='${datosPrevios.motobombaInfinity}']`);
       if (radio) radio.checked = true;
     }
-
     if (datosPrevios.motobombaCanal) {
       const radio = document.querySelector(`input[name='motobombaCanal'][value='${datosPrevios.motobombaCanal}']`);
       if (radio) radio.checked = true;
     }
-  }
-}, 100); // <-- aumentamos a 100 ms para asegurar que el DOM esté listo
+
+    // 🔁 Forzar una actualización global (profundidades, etc.)
+    actualizarValoresGlobales();
+
+    console.log(`✅ Restaurados los valores visuales del sistema: ${tipo}`);
+  }, 150); // 150ms da tiempo a que todo el DOM esté listo
 
   // Guardar el último tipo mostrado
   window.ultimoTipoSistema = tipo;
+}
+function restaurarInputsSistema(tipo) {
+  const datosPrevios = window.datosPorSistema?.[tipo];
+  if (!datosPrevios) return;
+
+  Object.entries(datosPrevios).forEach(([key, value]) => {
+    if (value === null || value === undefined) return;
+
+    const el = document.getElementById(key);
+    const radios = document.querySelectorAll(`input[name='${key}']`);
+
+    if (el) {
+      if (el.type === "checkbox") el.checked = !!value;
+      else if (el.tagName === "SELECT") el.value = value;
+      else if (el.type === "number" || el.type === "text") el.value = value;
+    } else if (radios.length > 0) {
+      radios.forEach(r => (r.checked = r.value === String(value)));
+    }
+  });
+
+  // 🔹 Reactivar la vista del desborde si aplica
+  if (datosPrevios.desborde) {
+    const radio = document.querySelector(`input[name='desborde'][value='${datosPrevios.desborde}']`);
+    if (radio) {
+      radio.checked = true;
+      radio.dispatchEvent(new Event("change"));
+    }
+  }
 }
 // 🔄 Listener global para actualizar valores al escribir o cambiar algo
 document.addEventListener("input", (e) => {
@@ -763,22 +790,19 @@ function inicializarEventosTipoSistema() {
   });
 }
 function actualizarValoresGlobales() {
-  // ❌ No normalizamos aquí, porque esto se llama en cada input
-  // normalizeAllDepths();
-
   const tieneInputsSistema = document.getElementById("area1") || document.getElementById("area2");
-
   if (!tieneInputsSistema) {
     console.log("⚠️ No hay inputs de sistema visibles → se conserva window.valoresGlobales sin cambios.");
     return;
   }
 
-  let area1 = parseFloat(document.getElementById("area1")?.value) || 0;
-  let area2 = parseFloat(document.getElementById("area2")?.value) || 0;
-  let profMin1 = parseFloat(document.getElementById("profMin1")?.value) || 0;
-  let profMin2 = parseFloat(document.getElementById("profMin2")?.value) || 0;
-  let profMax1 = parseFloat(document.getElementById("profMax1")?.value) || 0;
-  let profMax2 = parseFloat(document.getElementById("profMax2")?.value) || 0;
+  // ⚙️ Leemos los valores pero SIN forzar a 0 — si está vacío, será NaN
+  const area1 = parseFloat(document.getElementById("area1")?.value);
+  const area2 = parseFloat(document.getElementById("area2")?.value);
+  let profMin1 = parseFloat(document.getElementById("profMin1")?.value);
+  let profMax1 = parseFloat(document.getElementById("profMax1")?.value);
+  let profMin2 = parseFloat(document.getElementById("profMin2")?.value);
+  let profMax2 = parseFloat(document.getElementById("profMax2")?.value);
 
   const tasaRot = parseFloat(document.getElementById("rotacion")?.value) || 0;
   const distancia = parseFloat(document.getElementById("distCuarto")?.value) || 0;
@@ -786,35 +810,58 @@ function actualizarValoresGlobales() {
   const alturaDesborde = parseFloat(document.getElementById("alturaDesborde")?.value) || 0;
   const largoCanal = parseFloat(document.getElementById("largoCanal")?.value) || 0;
 
-  // ✅ Normalizar localmente (no tocar los inputs mientras se escribe)
-  const min1 = Math.min(profMin1, profMax1);
-  const max1 = Math.max(profMin1, profMax1);
-  const min2 = Math.min(profMin2, profMax2);
-  const max2 = Math.max(profMin2, profMax2);
+  // 🔹 Si ambos son NaN, los tratamos como 0. Si uno está vacío, dejamos el otro como válido.
+  const limpiar = v => (isNaN(v) ? null : v);
 
-  // Reasignar valores normalizados en variables
-  profMin1 = min1; profMax1 = max1;
-  profMin2 = min2; profMax2 = max2;
+  profMin1 = limpiar(profMin1);
+  profMax1 = limpiar(profMax1);
+  profMin2 = limpiar(profMin2);
+  profMax2 = limpiar(profMax2);
 
-  const meanDepth1 = (profMin1 + profMax1) / 2;
-  const meanDepth2 = (profMin2 + profMax2) / 2;
+  // Normalizar solo si ambos existen (para no forzar el vacío a 0)
+  const normalizar = (min, max) => {
+    if (min != null && max != null) {
+      return [Math.min(min, max), Math.max(min, max)];
+    }
+    return [min ?? max ?? 0, max ?? min ?? 0];
+  };
 
-  const areaTotal = area1 + area2;
+  [profMin1, profMax1] = normalizar(profMin1, profMax1);
+  [profMin2, profMax2] = normalizar(profMin2, profMax2);
+
+  // 🔹 Función auxiliar de profundidad media (usa solo los valores existentes)
+  function calcularProfundidadMedia(min, max) {
+    const tieneMin = min != null && !isNaN(min);
+    const tieneMax = max != null && !isNaN(max);
+
+    if (tieneMin && tieneMax) return (min + max) / 2;
+    if (tieneMin) return min;
+    if (tieneMax) return max;
+    return 0;
+  }
+
+  const meanDepth1 = calcularProfundidadMedia(profMin1, profMax1);
+  const meanDepth2 = calcularProfundidadMedia(profMin2, profMax2);
+
+  const a1 = isNaN(area1) ? 0 : area1;
+  const a2 = isNaN(area2) ? 0 : area2;
+  const areaTotal = a1 + a2;
+
   let volumenTotal = 0;
   let profMinProm = 0, profMaxProm = 0;
 
-  if (area2 > 0) {
-    const vol1 = area1 * meanDepth1;
-    const vol2 = area2 * meanDepth2;
+  if (a2 > 0) {
+    const vol1 = a1 * meanDepth1;
+    const vol2 = a2 * meanDepth2;
     volumenTotal = vol1 + vol2;
 
-    const profPromedio = (areaTotal > 0) ? (volumenTotal / areaTotal) : meanDepth1;
-    profMinProm = Math.min(profMin1, profMin2 || profMin1);
-    profMaxProm = Math.max(profMax1, profMax2 || profMax1);
+    const profPromedio = areaTotal > 0 ? volumenTotal / areaTotal : meanDepth1;
+    profMinProm = Math.min(profMin1 || profMin2 || 0, profMin2 || profMin1 || 0);
+    profMaxProm = Math.max(profMax1 || profMax2 || 0, profMax2 || profMax1 || 0);
   } else {
-    volumenTotal = area1 * meanDepth1;
-    profMinProm = profMin1;
-    profMaxProm = profMax1;
+    volumenTotal = a1 * meanDepth1;
+    profMinProm = profMin1 || 0;
+    profMaxProm = profMax1 || 0;
   }
 
   window.valoresGlobales = {
