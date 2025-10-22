@@ -685,16 +685,16 @@ function mostrarFormularioSistema(tipo) {
     });
   }
 
-  // ✅ Restaurar valores visuales de inputs (100% confiable)
-  setTimeout(() => {
-    const datosPrevios = window.datosPorSistema?.[tipo];
-    if (!datosPrevios) return;
+setTimeout(() => {
+  if (window.datosPorSistema?.[tipo]) {
+    const datosPrevios = window.datosPorSistema[tipo];
 
-    // --- Rellenar inputs normales y selects ---
     Object.entries(datosPrevios).forEach(([key, value]) => {
       if (value === null || value === undefined) return;
 
+      // 🔸 Primero intenta por ID
       const el = document.getElementById(key);
+      // 🔸 Luego intenta por name si no hay ID
       const radios = document.querySelectorAll(`input[name='${key}']`);
 
       if (el) {
@@ -702,34 +702,35 @@ function mostrarFormularioSistema(tipo) {
         else if (el.tagName === "SELECT") el.value = value;
         else if (el.type === "number" || el.type === "text") el.value = value;
       } else if (radios.length > 0) {
-        radios.forEach(r => (r.checked = r.value === String(value)));
+        radios.forEach(r => {
+          r.checked = (r.value === String(value));
+        });
       }
     });
 
-    // --- Restaurar desborde ---
+    // ✅ Forzar visualización correcta del desborde
     if (datosPrevios.desborde) {
       const radio = document.querySelector(`input[name='desborde'][value='${datosPrevios.desborde}']`);
       if (radio) {
         radio.checked = true;
-        radio.dispatchEvent(new Event("change"));
+        // 🔸 Mostramos el bloque correspondiente manualmente
+        const evento = new Event("change");
+        radio.dispatchEvent(evento);
       }
     }
 
-    // --- Restaurar subcampos de desborde (Infinity/Canal) ---
+    // ✅ Si hay motobombaInfinity o canal, los mostramos después
     if (datosPrevios.motobombaInfinity) {
       const radio = document.querySelector(`input[name='motobombaInfinity'][value='${datosPrevios.motobombaInfinity}']`);
       if (radio) radio.checked = true;
     }
+
     if (datosPrevios.motobombaCanal) {
       const radio = document.querySelector(`input[name='motobombaCanal'][value='${datosPrevios.motobombaCanal}']`);
       if (radio) radio.checked = true;
     }
-
-    // 🔁 Forzar una actualización global (profundidades, etc.)
-    actualizarValoresGlobales();
-
-    console.log(`✅ Restaurados los valores visuales del sistema: ${tipo}`);
-  }, 150); // 150ms da tiempo a que todo el DOM esté listo
+  }
+}, 100); // <-- aumentamos a 100 ms para asegurar que el DOM esté listo
 
   // Guardar el último tipo mostrado
   window.ultimoTipoSistema = tipo;
