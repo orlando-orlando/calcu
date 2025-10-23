@@ -725,4 +725,25 @@ select:disabled {
   to { opacity: 1; transform: translateY(0); }
 }
 
+.bloque-equipamiento {
+  background: #f7f7f7;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+}
+
+.bloque-equipamiento summary {
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.05em;
+  margin-bottom: 6px;
+}
+
+.checkbox-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 8px;
+}
 
