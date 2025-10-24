@@ -300,7 +300,7 @@ const secciones = {
         </div>
 
         <div class="form-group inline">
-          <span>¿Calentamiento con motobomba independiente?</span>
+          <span>¿Deseas trabajar el calentamiento con motobomba independiente al filtrado?</span>
           <label><input type="radio" name="motobombaCalentamiento" value="si"> Sí</label>
           <label><input type="radio" name="motobombaCalentamiento" value="no"> No</label>
         </div>
@@ -319,193 +319,214 @@ const secciones = {
       </div>
     </div>
   `,
-equipamiento: `
-  <div class="form-section" style="font-family: inherit;">
+  equipamiento: `
+    <div class="form-section clima-layout" style="font-family: inherit;">
+      <div class="clima-form">
 
-    <!-- ================= 🔥 CALENTAMIENTO ================= -->
-    <details class="bloque-equipamiento" open>
-      <summary>🔥 Calentamiento</summary>
+        <!-- 🔥 CALENTAMIENTO -->
+        <details open class="tarjeta-bdc" id="toggleCalentamiento">
+          <summary style="font-size:1.2em; display:flex; align-items:center; gap:8px; cursor:pointer;">
+            <span style="font-size:1.4em;">🔥</span> <strong>Calentamiento</strong>
+          </summary>
 
-      <div class="form-subgroup tarjeta-bdc">
-        <label>Selecciona tus equipos de calentamiento:</label>
-        <div class="checkbox-row">
-          <label><input type="checkbox" id="chkBombaCalorEQ"> Bomba de calor</label>
-          <label><input type="checkbox" id="chkPanelEQ"> Panel solar</label>
-          <label><input type="checkbox" id="chkCalderaEQ"> Caldera</label>
-          <label><input type="checkbox" id="chkNingunoEQ"> Ninguno</label>
+          <!-- Bomba de calor -->
+          <div class="form-subgroup tarjeta-bdc">
+            <h4>♨️ Bomba de calor</h4>
+            <div class="form-group inline fila-bdc">
+              <div class="campo-bdc">
+                <label for="numBombasCalor">Número de bombas de calor:</label>
+                <input type="number" id="numBombasCalor" step="1" min="1">
+              </div>
+              <div class="campo-bdc">
+                <label for="recomendadaBC">Bomba de calor recomendada:</label>
+                <select id="recomendadaBC">
+                  <option value="">-- Selecciona --</option>
+                  <option value="AquaHeat 3000">AquaHeat 3000</option>
+                  <option value="ThermoMax Pro">ThermoMax Pro</option>
+                  <option value="EcoHeat XL">EcoHeat XL</option>
+                </select>
+              </div>
+              <div class="campo-bdc">
+                <label for="capacidadBC">Capacidad (kW):</label>
+                <input type="number" id="capacidadBC" step="0.1" min="0">
+              </div>
+              <div class="campo-bdc">
+                <label for="distanciaBC">Distancia cuarto de máquinas → bomba de calor (m):</label>
+                <input type="number" id="distanciaBC" step="0.1" min="0">
+              </div>
+              <div class="campo-bdc">
+                <label for="alturaBC">Altura del espejo de agua → bomba de calor (m):</label>
+                <input type="number" id="alturaBC" step="0.1" min="0">
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel solar -->
+          <div class="form-subgroup tarjeta-bdc">
+            <h4>☀️ Panel solar</h4>
+            <div class="form-group inline fila-bdc">
+              <div class="campo-bdc">
+                <label for="numPaneles">Número de paneles:</label>
+                <input type="number" id="numPaneles" step="1" min="1">
+              </div>
+              <div class="campo-bdc">
+                <label for="recomendadoPanel">Panel recomendado:</label>
+                <select id="recomendadoPanel">
+                  <option value="">-- Selecciona --</option>
+                  <option value="Heliomax">Heliomax</option>
+                  <option value="SunTech Pro">SunTech Pro</option>
+                  <option value="EcoSun XL">EcoSun XL</option>
+                </select>
+              </div>
+              <div class="campo-bdc">
+                <label for="capacidadPanel">Capacidad (kW):</label>
+                <input type="number" id="capacidadPanel" step="0.1" min="0">
+              </div>
+              <div class="campo-bdc">
+                <label for="distanciaPanel">Distancia cuarto de máquinas → panel solar (m):</label>
+                <input type="number" id="distanciaPanel" step="0.1" min="0">
+              </div>
+              <div class="campo-bdc">
+                <label for="alturaPanel">Altura del espejo de agua → panel solar (m):</label>
+                <input type="number" id="alturaPanel" step="0.1" min="0">
+              </div>
+            </div>
+          </div>
+
+          <!-- Caldera -->
+          <div class="form-subgroup tarjeta-bdc">
+            <h4>🔥 Caldera</h4>
+            <div class="form-group inline fila-bdc">
+              <div class="campo-bdc">
+                <label for="numCalderas">Número de calderas:</label>
+                <input type="number" id="numCalderas" step="1" min="1">
+              </div>
+              <div class="campo-bdc">
+                <label for="recomendadaCal">Caldera recomendada:</label>
+                <select id="recomendadaCal">
+                  <option value="">-- Selecciona --</option>
+                  <option value="ThermoPlus 500">ThermoPlus 500</option>
+                  <option value="HeatPro XL">HeatPro XL</option>
+                  <option value="EcoTherm 900">EcoTherm 900</option>
+                </select>
+              </div>
+              <div class="campo-bdc">
+                <label for="capacidadCal">Capacidad (kW):</label>
+                <input type="number" id="capacidadCal" step="0.1" min="0">
+              </div>
+              <div class="campo-bdc">
+                <label for="distanciaCaldera">Distancia cuarto de máquinas → caldera (m):</label>
+                <input type="number" id="distanciaCaldera" step="0.1" min="0">
+              </div>
+              <div class="campo-bdc">
+                <label for="alturaCaldera">Altura del espejo de agua → caldera (m):</label>
+                <input type="number" id="alturaCaldera" step="0.1" min="0">
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- 💧 SANITIZACIÓN -->
+        <details class="tarjeta-bdc">
+          <summary style="font-size:1.2em; display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1.4em;">💧</span> <strong>Sanitización</strong>
+          </summary>
+
+          <div class="form-group inline">
+            <label><input type="checkbox" id="chkGenerador"> Generador de cloro</label>
+            <label><input type="checkbox" id="chkOzonificador"> Ozonificador</label>
+            <label><input type="checkbox" id="chkLamparaUV"> Lámpara UV</label>
+          </div>
+        </details>
+
+        <!-- 🌀 FILTRACIÓN -->
+        <details class="tarjeta-bdc">
+          <summary style="font-size:1.2em; display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1.4em;">🌀</span> <strong>Filtración</strong>
+          </summary>
+
+          <div class="form-group inline">
+            <label><input type="checkbox" id="chkPrefiltro"> Prefiltro</label>
+            <label><input type="checkbox" id="chkFiltroArena"> Filtro de arena</label>
+            <label><input type="checkbox" id="chkFiltroCartucho"> Filtro de cartucho</label>
+          </div>
+        </details>
+
+        <!-- ⚙️ EMPOTRABLES -->
+        <details class="tarjeta-bdc">
+          <summary style="font-size:1.2em; display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1.4em;">⚙️</span> <strong>Empotrables</strong>
+          </summary>
+
+          <div class="form-section">
+            <div class="form-group"><label for="retorno">Boquilla de retorno:</label>
+              <select id="retorno">
+                <option value="1.5">1.5in</option>
+                <option value="2.0">2.0in</option>
+              </select>
+            </div>
+            <div class="form-group"><label for="desnatador">Desnatador:</label>
+              <select id="desnatador">
+                <option value="1.5">1.5in</option>
+                <option value="2.0">2.0in</option>
+              </select>
+            </div>
+            <div class="form-group"><label for="drenFondo">Dren de fondo:</label>
+              <select id="drenFondo">
+                <option value="7.5">7.5in</option>
+                <option value="8.0">8.0in</option>
+                <option value="9.0">9.0in</option>
+                <option value="12.0">12.0in</option>
+                <option value="18.0">18.0in</option>
+              </select>
+            </div>
+            <div class="form-group"><label for="barredora">Boquilla de barredora:</label>
+              <select id="barredora">
+                <option value="1.5">1.5in</option>
+                <option value="2.0">2.0in</option>
+              </select>
+            </div>
+            <div class="form-group"><label for="mangueraBarredora">Largo manguera barredora:</label>
+              <select id="mangueraBarredora">
+                <option value="7.5">7.5m</option>
+                <option value="9.0">9.0m</option>
+                <option value="10.5">10.5m</option>
+                <option value="12.0">12.0m</option>
+                <option value="15.0">15.0m</option>
+              </select>
+            </div>
+          </div>
+        </details>
+
+        <!-- 🛁 EQUIPAMIENTO JACUZZI -->
+        <details id="bloqueJacuzzi" class="tarjeta-bdc" style="display:none;">
+          <summary style="font-size:1.2em; display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1.4em;">🛁</span> <strong>Equipamiento Jacuzzi</strong>
+          </summary>
+
+          <div class="form-group inline">
+            <label><input type="checkbox" id="chkMotobombaHidrojets"> Motobomba hidrojets</label>
+            <label><input type="checkbox" id="chkSopladorSaleros"> Soplador saleros</label>
+            <label><input type="checkbox" id="chkSopladorHidrojets"> Soplador hidrojets</label>
+            <label><input type="checkbox" id="chkMotobombaFiltradoJ"> Motobomba filtrado jacuzzi</label>
+          </div>
+        </details>
+
+        <!-- 🔙 BOTÓN VOLVER -->
+        <div style="margin-top:25px; text-align:right;">
+          <button id="btnVolverCalentamiento" class="boton-siguiente">⬅️ Volver a Calentamiento</button>
         </div>
+
       </div>
-
-      <div class="form-group inline">
-        <label for="distanciaCuartoCalentamiento">Distancia del cuarto de máquinas al calentamiento (m):</label>
-        <input type="number" id="distanciaCuartoCalentamiento" step="0.1" min="0" placeholder="Ej. 10">
-      </div>
-
-      <!-- 🔸 Equipos desplegables -->
-      <details>
-        <summary>🔹 Bomba de calor</summary>
-        <div class="form-group inline fila-bdc">
-          <div class="campo-bdc">
-            <label for="numBombasCalor">Número de bombas de calor:</label>
-            <input type="number" id="numBombasCalor" step="1" min="1">
-          </div>
-          <div class="campo-bdc">
-            <label for="recomendadaBC">Bomba de calor recomendada:</label>
-            <select id="recomendadaBC">
-              <option value="">-- Selecciona --</option>
-              <option value="ejemplo1">AquaHeat 3000</option>
-              <option value="ejemplo2">ThermoMax Pro</option>
-              <option value="ejemplo3">EcoHeat XL</option>
-            </select>
-          </div>
-          <div class="campo-bdc">
-            <label for="capacidadBC">Capacidad (kW):</label>
-            <input type="number" id="capacidadBC" step="0.1" min="0">
-          </div>
-          <div class="campo-bdc">
-            <label for="cargaEstaticaBC">Diferencia de altura (m):</label>
-            <input type="number" id="cargaEstaticaBC" step="0.01">
-          </div>
-        </div>
-      </details>
-
-      <details>
-        <summary>🔹 Panel solar</summary>
-        <div class="form-group inline fila-bdc">
-          <div class="campo-bdc">
-            <label for="numPaneles">Número de paneles solares:</label>
-            <input type="number" id="numPaneles" step="1" min="1">
-          </div>
-          <div class="campo-bdc">
-            <label for="recomendadoPanel">Panel solar recomendado:</label>
-            <select id="recomendadoPanel">
-              <option value="">-- Selecciona --</option>
-              <option value="p1">Heliomax</option>
-              <option value="p2">SunTech Pro</option>
-              <option value="p3">EcoSun XL</option>
-            </select>
-          </div>
-          <div class="campo-bdc">
-            <label for="capacidadPanel">Capacidad (kW):</label>
-            <input type="number" id="capacidadPanel" step="0.1" min="0">
-          </div>
-          <div class="campo-bdc">
-            <label for="cargaEstaticaPan">Diferencia de altura (m):</label>
-            <input type="number" id="cargaEstaticaPan" step="0.01">
-          </div>
-        </div>
-      </details>
-
-      <details>
-        <summary>🔹 Caldera</summary>
-        <div class="form-group inline fila-bdc">
-          <div class="campo-bdc">
-            <label for="numCalderas">Número de calderas:</label>
-            <input type="number" id="numCalderas" step="1" min="1">
-          </div>
-          <div class="campo-bdc">
-            <label for="recomendadaCal">Caldera recomendada:</label>
-            <select id="recomendadaCal">
-              <option value="">-- Selecciona --</option>
-              <option value="c1">ThermoPlus 500</option>
-              <option value="c2">HeatPro XL</option>
-              <option value="c3">EcoTherm 900</option>
-            </select>
-          </div>
-          <div class="campo-bdc">
-            <label for="capacidadCal">Capacidad (kW):</label>
-            <input type="number" id="capacidadCal" step="0.1" min="0">
-          </div>
-          <div class="campo-bdc">
-            <label for="cargaEstaticaCal">Diferencia de altura (m):</label>
-            <input type="number" id="cargaEstaticaCal" step="0.01">
-          </div>
-        </div>
-      </details>
-    </details>
-
-    <!-- ================= 💧 SANITIZACIÓN ================= -->
-    <details class="bloque-equipamiento">
-      <summary>💧 Sanitización</summary>
-      <div class="checkbox-row">
-        <label><input type="checkbox" id="chkGenerador"> Generador de cloro</label>
-        <label><input type="checkbox" id="chkLamparaUV"> Luz ultravioleta</label>
-        <label><input type="checkbox" id="chkOzonificador"> Ozonificador</label>
-      </div>
-    </details>
-
-    <!-- ================= 🧱 FILTRACIÓN ================= -->
-    <details class="bloque-equipamiento">
-      <summary>🧱 Filtración</summary>
-      <div class="checkbox-row">
-        <label><input type="checkbox" id="chkPrefiltro"> Prefiltro</label>
-        <label><input type="checkbox" id="chkFiltroArena"> Filtro de arena</label>
-        <label><input type="checkbox" id="chkFiltroCartucho"> Filtro de cartucho</label>
-      </div>
-    </details>
-
-    <!-- ================= ⚙️ EMPOTRABLES ================= -->
-    <details class="bloque-equipamiento">
-      <summary>⚙️ Empotrables</summary>
-      <div class="form-group inline">
-        <label for="retorno">Boquilla de retorno:</label>
-        <select id="retorno">
-          <option value="1.5">1.5in</option>
-          <option value="2.0">2.0in</option>
-        </select>
-
-        <label for="desnatador">Desnatador:</label>
-        <select id="desnatador">
-          <option value="1.5">1.5in</option>
-          <option value="2.0">2.0in</option>
-        </select>
-
-        <label for="drenFondo">Dren de fondo:</label>
-        <select id="drenFondo">
-          <option value="1.5">1.5in</option>
-          <option value="2.0">2.0in</option>
-          <option value="7.5">7.5in</option>
-          <option value="8.0">8.0in</option>
-          <option value="9.0">9.0in</option>
-          <option value="12.0">12.0in</option>
-          <option value="18.0">18.0in</option>
-        </select>
-
-        <label for="drenCanal">Dren de canal:</label>
-        <select id="drenCanal">
-          <option value="1.5">1.5in</option>
-          <option value="2.0">2.0in</option>
-          <option value="7.5">7.5in</option>
-          <option value="8.0">8.0in</option>
-          <option value="9.0">9.0in</option>
-        </select>
-
-        <label for="barredora">Boquilla de barredora:</label>
-        <select id="barredora">
-          <option value="1.5">1.5in</option>
-          <option value="2.0">2.0in</option>
-        </select>
-
-        <label for="mangueraBarredora">Manguera de barredora:</label>
-        <select id="mangueraBarredora">
-          <option value="7.5">7.5m</option>
-          <option value="9.0">9.0m</option>
-          <option value="10.5">10.5m</option>
-          <option value="12.0">12.0m</option>
-          <option value="15.0">15.0m</option>
-          <option value="50.0">50.0m</option>
-        </select>
-      </div>
-    </details>
-  </div>
-`,
-};
+    </div>
+  `,
+  };
 document.addEventListener("click", (e) => {
+  // 🔹 Ir a equipamiento
   if (e.target && e.target.id === "btnIrEquipamiento") {
     e.preventDefault();
     console.log("🟢 Botón 'Ir a Equipamiento' presionado");
 
-    // Busca el <details> correspondiente
     const detailsEquip = document.querySelector('details[data-section="equipamiento"]');
     const panelDerecho = document.getElementById("contenidoDerecho");
 
@@ -514,18 +535,40 @@ document.addEventListener("click", (e) => {
       return;
     }
 
-    // Cierra los otros <details>
     document.querySelectorAll("details").forEach(d => d.open = false);
-
-    // Abre el de equipamiento
     detailsEquip.open = true;
 
-    // Carga el contenido HTML de la sección equipamiento en el panel derecho
     if (typeof secciones !== "undefined" && secciones.equipamiento) {
       panelDerecho.innerHTML = secciones.equipamiento;
       console.log("⚙️ Sección 'Equipamiento' cargada correctamente ✅");
+
+      // 🔹 Mostrar bloque jacuzzi si aplica
+      if (window.tipoSistemaActual && window.tipoSistemaActual.includes("jacuzzi")) {
+        const bloqueJacuzzi = document.getElementById("bloqueJacuzzi");
+        if (bloqueJacuzzi) {
+          bloqueJacuzzi.style.display = "block";
+          bloqueJacuzzi.open = true; // se abre automáticamente
+        }
+      }
     } else {
-      console.warn("❌ No se encontró el contenido de la sección 'equipamiento' en el objeto 'secciones'");
+      console.warn("❌ No se encontró el contenido de la sección 'equipamiento'");
+    }
+  }
+
+  // 🔹 Volver a calentamiento (delegado)
+  if (e.target && e.target.id === "btnVolverCalentamiento") {
+    e.preventDefault();
+    console.log("🔙 Volviendo a Calentamiento");
+    const detailsCal = document.querySelector('details[data-section="calentamiento"]');
+    const panelDerecho = document.getElementById("contenidoDerecho");
+
+    if (detailsCal && panelDerecho && secciones.calentamiento) {
+      document.querySelectorAll("details").forEach(d => d.open = false);
+      detailsCal.open = true;
+      panelDerecho.innerHTML = secciones.calentamiento;
+      console.log("🔥 Sección 'Calentamiento' restaurada correctamente ✅");
+    } else {
+      console.warn("❌ No se pudo volver a la sección de calentamiento.");
     }
   }
 });
@@ -637,7 +680,7 @@ function mostrarFormularioSistema(tipo) {
       <div id="campoInfinity" class="tarjeta-bdc tarjeta-calentamiento" style="display:none;">
         <label class="label-calentamiento">Desborde Infinity:</label>
         <div class="form-group inline">
-          <span>¿Motobomba independiente?</span>
+          <span>¿Deseas trabajar el infinity con motobomba independiente al filtrado?</span>
           <label><input type="radio" name="motobombaInfinity" value="si"> Sí</label>
           <label><input type="radio" name="motobombaInfinity" value="no"> No</label>
         </div>
