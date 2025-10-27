@@ -747,3 +747,26 @@ select:disabled {
   margin-top: 8px;
 }
 
+/* 🧩 Distribución principal de Equipamiento */
+.equipamiento-layout {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr; /* Dos columnas reales */
+  gap: 24px;
+  align-items: start;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Columnas del equipamiento */
+.equipamiento-columna {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 300px;
+}

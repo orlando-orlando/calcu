@@ -320,28 +320,26 @@ const secciones = {
     </div>
   `,
   equipamiento: `
-    <div class="form-section clima-layout" style="font-family: inherit;">
-      <div class="clima-form">
-        <h2 class="titulo-sistema-activo">⚙️ Equipamiento</h2>
+    <div class="form-section">
+      <h2 class="titulo-sistema-activo">⚙️ Equipamiento</h2>
 
-        <div id="equipamientoContainer" class="equipamiento-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-          <!-- 🔹 Columna izquierda: cuerpo principal -->
-          <div id="equipamientoIzquierda" class="tarjeta-bdc columna-eq">
-            <h3>🩵 Cuerpo principal</h3>
-            <div id="equipamientoIzquierdaContenido"></div>
-          </div>
-
-          <!-- 🔹 Columna derecha: cuerpo secundario o jacuzzi -->
-          <div id="equipamientoDerecha" class="tarjeta-bdc columna-eq">
-            <h3>💦 Segundo cuerpo / Jacuzzi</h3>
-            <div id="equipamientoDerechaContenido"></div>
-          </div>
+      <!-- 🧩 Grid principal del equipamiento -->
+      <div id="equipamientoContainer" class="equipamiento-layout">
+        <!-- 🩵 Columna izquierda -->
+        <div id="equipamientoIzquierda" class="equipamiento-columna">
+          <h3>💧 Cuerpo principal</h3>
+          <div id="equipamientoIzquierdaContenido"></div>
         </div>
 
-        <!-- 🔙 Botón volver -->
-        <div style="margin-top:25px; text-align:right;">
-          <button id="btnVolverCalentamiento" class="boton-siguiente">⬅️ Volver a Calentamiento</button>
+        <!-- 💦 Columna derecha -->
+        <div id="equipamientoDerecha" class="equipamiento-columna">
+          <h3>🌊 Segundo cuerpo / Jacuzzi</h3>
+          <div id="equipamientoDerechaContenido"></div>
         </div>
+      </div>
+
+      <div style="text-align:right; margin-top:20px;">
+        <button id="btnVolverCalentamiento" class="btn-volver">⬅️ Volver a Calentamiento</button>
       </div>
     </div>
   `,
@@ -661,121 +659,95 @@ setTimeout(() => {
   // Guardar el último tipo mostrado
   window.ultimoTipoSistema = tipo;
 }
-function buildEquipamientoUI(tipo) {
-  console.log("⚙️ Generando UI de Equipamiento para:", tipo);
+function buildEquipamientoUI(tipoActual) {
+  console.log("⚙️ Generando UI de Equipamiento para:", tipoActual);
 
   const izquierda = document.getElementById("equipamientoIzquierdaContenido");
   const derecha = document.getElementById("equipamientoDerechaContenido");
-  if (!izquierda || !derecha) return console.warn("❌ No se encontró el contenedor de equipamiento");
 
-  // 🔹 Limpia contenido previo
+  if (!izquierda || !derecha) {
+    console.warn("❌ No se encontraron columnas de equipamiento.");
+    return;
+  }
+
+  // Limpia ambas columnas antes de generar
   izquierda.innerHTML = "";
   derecha.innerHTML = "";
 
-  // --- 🔸 Bloques base ---
-  const bloqueCalentamiento = `
-    <details open class="tarjeta-bdc">
-      <summary><strong>🔥 Calentamiento</strong></summary>
-      <div class="form-group inline fila-bdc">
-        <div class="campo-bdc">
-          <label>Número de equipos:</label>
-          <input type="number" data-eq="numCalentamiento" value="1">
-        </div>
-        <div class="campo-bdc">
-          <label>Equipo recomendado:</label>
-          <select data-eq="eqCalentamiento">
-            <option value="">-- Selecciona --</option>
-            <option value="AquaHeat 3000">AquaHeat 3000</option>
-            <option value="ThermoMax Pro">ThermoMax Pro</option>
-            <option value="EcoHeat XL">EcoHeat XL</option>
-          </select>
-        </div>
-        <div class="campo-bdc">
-          <label>Capacidad (kW):</label>
-          <input type="number" step="0.1" data-eq="capCalentamiento" value="12">
-        </div>
+  // 🧱 Función auxiliar para crear un bloque
+  const crearBloque = (titulo, opciones) => {
+    const bloque = document.createElement("details");
+    bloque.classList.add("bloque-equipamiento");
+    bloque.open = true;
+    bloque.innerHTML = `
+      <summary>${titulo}</summary>
+      <div class="checkbox-row">
+        ${opciones.map(op => `
+          <label><input type="checkbox" name="${op.toLowerCase()}"> ${op}</label>
+        `).join("")}
       </div>
-    </details>`;
+    `;
+    return bloque;
+  };
 
-  const bloqueFiltracion = `
-    <details class="tarjeta-bdc">
-      <summary><strong>🌀 Filtración</strong></summary>
-      <div class="form-group inline">
-        <label><input type="checkbox" data-eq="filtroArena"> Filtro de arena</label>
-        <label><input type="checkbox" data-eq="prefiltro"> Prefiltro</label>
-      </div>
-    </details>`;
+  // 🟦 Bloques base (equipamiento general)
+  const bloquesGenerales = [
+    crearBloque("Filtrado", ["Bomba", "Filtro", "Válvulas", "Tubería"]),
+    crearBloque("Iluminación", ["Focos LED", "Controlador", "Transformador"]),
+    crearBloque("Llenado y drenado", ["Llenado automático", "Drenado", "Desagüe"])
+  ];
 
-  const bloqueSanitizacion = `
-    <details class="tarjeta-bdc">
-      <summary><strong>💧 Sanitización</strong></summary>
-      <div class="form-group inline">
-        <label><input type="checkbox" data-eq="genCloro"> Generador de cloro</label>
-        <label><input type="checkbox" data-eq="lamparaUV"> Lámpara UV</label>
-      </div>
-    </details>`;
+  // 🟩 Bloques especiales según tipo
+  const bloquesJacuzzi = [
+    crearBloque("Hidromasaje", ["Jets", "Bomba de hidromasaje", "Aireador"]),
+    crearBloque("Calentamiento", ["Bomba de calor", "Caldera", "Panel solar"])
+  ];
 
-  const bloqueEmpotrables = `
-    <details class="tarjeta-bdc">
-      <summary><strong>⚙️ Empotrables</strong></summary>
-      <div class="form-group">
-        <label>Boquilla de retorno:</label>
-        <select data-eq="boquillaRetorno"><option>1.5in</option><option>2.0in</option></select>
-      </div>
-      <div class="form-group">
-        <label>Desnatador:</label>
-        <select data-eq="desnatador"><option>1.5in</option><option>2.0in</option></select>
-      </div>
-    </details>`;
+  const bloquesChapoteadero = [
+    crearBloque("Seguridad", ["Válvula antirretorno", "Rejilla antiatrapamiento"]),
+    crearBloque("Decorativo", ["Cascada infantil", "Iluminación suave"])
+  ];
 
-  const bloqueJacuzzi = `
-    <details open class="tarjeta-bdc">
-      <summary><strong>🛁 Equipos de Jacuzzi</strong></summary>
-      <div class="form-group inline">
-        <label><input type="checkbox" data-eq="motobombaHidrojets"> Motobomba hidrojets</label>
-        <label><input type="checkbox" data-eq="sopladorSaleros"> Soplador saleros</label>
-        <label><input type="checkbox" data-eq="sopladorHidrojets"> Soplador hidrojets</label>
-        <label><input type="checkbox" data-eq="motobombaFiltradoJacuzzi"> Motobomba filtrado jacuzzi</label>
-      </div>
-    </details>`;
-
-  // --- 🔸 Composición dinámica ---
-  const bloqueBase = bloqueCalentamiento + bloqueFiltracion + bloqueSanitizacion + bloqueEmpotrables;
-
-  switch (tipo) {
-    // 🔹 1 cuerpo (alberca, chapoteadero, espejo)
+  // 🔹 Lógica de distribución
+  switch (tipoActual) {
     case "alberca":
-    case "chapoteadero":
-    case "espejoAgua":
-      izquierda.innerHTML = bloqueBase;
-      derecha.innerHTML = `<div class="placeholder-vacio">(Sin segundo cuerpo)</div>`;
+      bloquesGenerales.forEach(b => izquierda.appendChild(b));
       break;
 
-    // 🔹 Solo jacuzzi (un cuerpo)
     case "jacuzzi":
-      izquierda.innerHTML = bloqueCalentamiento + bloqueFiltracion + bloqueSanitizacion;
-      derecha.innerHTML = bloqueJacuzzi + bloqueEmpotrables;
+      [...bloquesGenerales, ...bloquesJacuzzi].forEach(b => izquierda.appendChild(b));
       break;
 
-    // 🔹 Alberca + Jacuzzi (dos cuerpos)
-    case "albercaJacuzzi1":
+    case "chapoteadero":
+      [...bloquesGenerales, ...bloquesChapoteadero].forEach(b => izquierda.appendChild(b));
+      break;
+
+    // 🔸 Casos combinados (2 cuerpos)
     case "albercaJacuzzi2":
-      izquierda.innerHTML = bloqueBase;
-      derecha.innerHTML = bloqueJacuzzi + bloqueEmpotrables;
+      bloquesGenerales.forEach(b => izquierda.appendChild(b));
+      bloquesJacuzzi.forEach(b => derecha.appendChild(b));
       break;
 
-    // 🔹 Alberca + Chapoteadero o Jacuzzi + Chapoteadero (dos cuerpos)
-    case "albercaChapo1":
     case "albercaChapo2":
-    case "jacuzziChapo1":
+      bloquesGenerales.forEach(b => izquierda.appendChild(b));
+      bloquesChapoteadero.forEach(b => derecha.appendChild(b));
+      break;
+
     case "jacuzziChapo2":
-      izquierda.innerHTML = bloqueBase;
-      derecha.innerHTML = bloqueEmpotrables;
+      bloquesJacuzzi.forEach(b => izquierda.appendChild(b));
+      bloquesChapoteadero.forEach(b => derecha.appendChild(b));
+      break;
+
+    // 🔹 Casos combinados de un solo cuerpo (todo en izquierda)
+    case "albercaJacuzzi1":
+    case "albercaChapo1":
+    case "jacuzziChapo1":
+      [...bloquesGenerales, ...bloquesJacuzzi, ...bloquesChapoteadero].forEach(b => izquierda.appendChild(b));
       break;
 
     default:
-      izquierda.innerHTML = bloqueBase;
-      derecha.innerHTML = `<div class="placeholder-vacio">⚙️ Sin configuración adicional</div>`;
+      izquierda.innerHTML = `<div class="placeholder-vacio">Selecciona un tipo de sistema válido para mostrar equipamiento.</div>`;
+      break;
   }
 
   console.log("✅ Equipamiento ajustado dinámicamente.");
