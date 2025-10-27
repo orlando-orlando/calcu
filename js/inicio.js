@@ -322,201 +322,26 @@ const secciones = {
   equipamiento: `
     <div class="form-section clima-layout" style="font-family: inherit;">
       <div class="clima-form">
+        <h2 class="titulo-sistema-activo">⚙️ Equipamiento</h2>
 
-        <!-- 🔥 CALENTAMIENTO -->
-        <details open class="tarjeta-bdc" id="toggleCalentamiento">
-          <summary style="font-size:1.2em; display:flex; align-items:center; gap:8px; cursor:pointer;">
-            <span style="font-size:1.4em;">🔥</span> <strong>Calentamiento</strong>
-          </summary>
-
-          <!-- Bomba de calor -->
-          <div class="form-subgroup tarjeta-bdc">
-            <h4>♨️ Bomba de calor</h4>
-            <div class="form-group inline fila-bdc">
-              <div class="campo-bdc">
-                <label for="numBombasCalor">Número de bombas de calor:</label>
-                <input type="number" id="numBombasCalor" step="1" min="1">
-              </div>
-              <div class="campo-bdc">
-                <label for="recomendadaBC">Bomba de calor recomendada:</label>
-                <select id="recomendadaBC">
-                  <option value="">-- Selecciona --</option>
-                  <option value="AquaHeat 3000">AquaHeat 3000</option>
-                  <option value="ThermoMax Pro">ThermoMax Pro</option>
-                  <option value="EcoHeat XL">EcoHeat XL</option>
-                </select>
-              </div>
-              <div class="campo-bdc">
-                <label for="capacidadBC">Capacidad (kW):</label>
-                <input type="number" id="capacidadBC" step="0.1" min="0">
-              </div>
-              <div class="campo-bdc">
-                <label for="distanciaBC">Distancia cuarto de máquinas → bomba de calor (m):</label>
-                <input type="number" id="distanciaBC" step="0.1" min="0">
-              </div>
-              <div class="campo-bdc">
-                <label for="alturaBC">Altura del espejo de agua → bomba de calor (m):</label>
-                <input type="number" id="alturaBC" step="0.1" min="0">
-              </div>
-            </div>
+        <div id="equipamientoContainer" class="equipamiento-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+          <!-- 🔹 Columna izquierda: cuerpo principal -->
+          <div id="equipamientoIzquierda" class="tarjeta-bdc columna-eq">
+            <h3>🩵 Cuerpo principal</h3>
+            <div id="equipamientoIzquierdaContenido"></div>
           </div>
 
-          <!-- Panel solar -->
-          <div class="form-subgroup tarjeta-bdc">
-            <h4>☀️ Panel solar</h4>
-            <div class="form-group inline fila-bdc">
-              <div class="campo-bdc">
-                <label for="numPaneles">Número de paneles:</label>
-                <input type="number" id="numPaneles" step="1" min="1">
-              </div>
-              <div class="campo-bdc">
-                <label for="recomendadoPanel">Panel recomendado:</label>
-                <select id="recomendadoPanel">
-                  <option value="">-- Selecciona --</option>
-                  <option value="Heliomax">Heliomax</option>
-                  <option value="SunTech Pro">SunTech Pro</option>
-                  <option value="EcoSun XL">EcoSun XL</option>
-                </select>
-              </div>
-              <div class="campo-bdc">
-                <label for="capacidadPanel">Capacidad (kW):</label>
-                <input type="number" id="capacidadPanel" step="0.1" min="0">
-              </div>
-              <div class="campo-bdc">
-                <label for="distanciaPanel">Distancia cuarto de máquinas → panel solar (m):</label>
-                <input type="number" id="distanciaPanel" step="0.1" min="0">
-              </div>
-              <div class="campo-bdc">
-                <label for="alturaPanel">Altura del espejo de agua → panel solar (m):</label>
-                <input type="number" id="alturaPanel" step="0.1" min="0">
-              </div>
-            </div>
+          <!-- 🔹 Columna derecha: cuerpo secundario o jacuzzi -->
+          <div id="equipamientoDerecha" class="tarjeta-bdc columna-eq">
+            <h3>💦 Segundo cuerpo / Jacuzzi</h3>
+            <div id="equipamientoDerechaContenido"></div>
           </div>
+        </div>
 
-          <!-- Caldera -->
-          <div class="form-subgroup tarjeta-bdc">
-            <h4>🔥 Caldera</h4>
-            <div class="form-group inline fila-bdc">
-              <div class="campo-bdc">
-                <label for="numCalderas">Número de calderas:</label>
-                <input type="number" id="numCalderas" step="1" min="1">
-              </div>
-              <div class="campo-bdc">
-                <label for="recomendadaCal">Caldera recomendada:</label>
-                <select id="recomendadaCal">
-                  <option value="">-- Selecciona --</option>
-                  <option value="ThermoPlus 500">ThermoPlus 500</option>
-                  <option value="HeatPro XL">HeatPro XL</option>
-                  <option value="EcoTherm 900">EcoTherm 900</option>
-                </select>
-              </div>
-              <div class="campo-bdc">
-                <label for="capacidadCal">Capacidad (kW):</label>
-                <input type="number" id="capacidadCal" step="0.1" min="0">
-              </div>
-              <div class="campo-bdc">
-                <label for="distanciaCaldera">Distancia cuarto de máquinas → caldera (m):</label>
-                <input type="number" id="distanciaCaldera" step="0.1" min="0">
-              </div>
-              <div class="campo-bdc">
-                <label for="alturaCaldera">Altura del espejo de agua → caldera (m):</label>
-                <input type="number" id="alturaCaldera" step="0.1" min="0">
-              </div>
-            </div>
-          </div>
-        </details>
-
-        <!-- 💧 SANITIZACIÓN -->
-        <details class="tarjeta-bdc">
-          <summary style="font-size:1.2em; display:flex; align-items:center; gap:8px;">
-            <span style="font-size:1.4em;">💧</span> <strong>Sanitización</strong>
-          </summary>
-
-          <div class="form-group inline">
-            <label><input type="checkbox" id="chkGenerador"> Generador de cloro</label>
-            <label><input type="checkbox" id="chkOzonificador"> Ozonificador</label>
-            <label><input type="checkbox" id="chkLamparaUV"> Lámpara UV</label>
-          </div>
-        </details>
-
-        <!-- 🌀 FILTRACIÓN -->
-        <details class="tarjeta-bdc">
-          <summary style="font-size:1.2em; display:flex; align-items:center; gap:8px;">
-            <span style="font-size:1.4em;">🌀</span> <strong>Filtración</strong>
-          </summary>
-
-          <div class="form-group inline">
-            <label><input type="checkbox" id="chkPrefiltro"> Prefiltro</label>
-            <label><input type="checkbox" id="chkFiltroArena"> Filtro de arena</label>
-            <label><input type="checkbox" id="chkFiltroCartucho"> Filtro de cartucho</label>
-          </div>
-        </details>
-
-        <!-- ⚙️ EMPOTRABLES -->
-        <details class="tarjeta-bdc">
-          <summary style="font-size:1.2em; display:flex; align-items:center; gap:8px;">
-            <span style="font-size:1.4em;">⚙️</span> <strong>Empotrables</strong>
-          </summary>
-
-          <div class="form-section">
-            <div class="form-group"><label for="retorno">Boquilla de retorno:</label>
-              <select id="retorno">
-                <option value="1.5">1.5in</option>
-                <option value="2.0">2.0in</option>
-              </select>
-            </div>
-            <div class="form-group"><label for="desnatador">Desnatador:</label>
-              <select id="desnatador">
-                <option value="1.5">1.5in</option>
-                <option value="2.0">2.0in</option>
-              </select>
-            </div>
-            <div class="form-group"><label for="drenFondo">Dren de fondo:</label>
-              <select id="drenFondo">
-                <option value="7.5">7.5in</option>
-                <option value="8.0">8.0in</option>
-                <option value="9.0">9.0in</option>
-                <option value="12.0">12.0in</option>
-                <option value="18.0">18.0in</option>
-              </select>
-            </div>
-            <div class="form-group"><label for="barredora">Boquilla de barredora:</label>
-              <select id="barredora">
-                <option value="1.5">1.5in</option>
-                <option value="2.0">2.0in</option>
-              </select>
-            </div>
-            <div class="form-group"><label for="mangueraBarredora">Largo manguera barredora:</label>
-              <select id="mangueraBarredora">
-                <option value="7.5">7.5m</option>
-                <option value="9.0">9.0m</option>
-                <option value="10.5">10.5m</option>
-                <option value="12.0">12.0m</option>
-                <option value="15.0">15.0m</option>
-              </select>
-            </div>
-          </div>
-        </details>
-
-        <!-- 🛁 EQUIPAMIENTO JACUZZI -->
-        <details id="bloqueJacuzzi" class="tarjeta-bdc" style="display:none;">
-          <summary style="font-size:1.2em; display:flex; align-items:center; gap:8px;">
-            <span style="font-size:1.4em;">🛁</span> <strong>Equipamiento Jacuzzi</strong>
-          </summary>
-
-          <div class="form-group inline">
-            <label><input type="checkbox" id="chkMotobombaHidrojets"> Motobomba hidrojets</label>
-            <label><input type="checkbox" id="chkSopladorSaleros"> Soplador saleros</label>
-            <label><input type="checkbox" id="chkSopladorHidrojets"> Soplador hidrojets</label>
-            <label><input type="checkbox" id="chkMotobombaFiltradoJ"> Motobomba filtrado jacuzzi</label>
-          </div>
-        </details>
-
-        <!-- 🔙 BOTÓN VOLVER -->
+        <!-- 🔙 Botón volver -->
         <div style="margin-top:25px; text-align:right;">
           <button id="btnVolverCalentamiento" class="boton-siguiente">⬅️ Volver a Calentamiento</button>
         </div>
-
       </div>
     </div>
   `,
@@ -538,23 +363,23 @@ document.addEventListener("click", (e) => {
     document.querySelectorAll("details").forEach(d => d.open = false);
     detailsEquip.open = true;
 
-    if (typeof secciones !== "undefined" && secciones.equipamiento) {
-      panelDerecho.innerHTML = secciones.equipamiento;
-      console.log("⚙️ Sección 'Equipamiento' cargada correctamente ✅");
+  if (typeof secciones !== "undefined" && secciones.equipamiento) {
+    panelDerecho.innerHTML = secciones.equipamiento;
+    console.log("⚙️ Sección 'Equipamiento' cargada correctamente ✅");
 
-      // 🔹 Mostrar bloque jacuzzi si aplica
-      if (window.tipoSistemaActual && window.tipoSistemaActual.includes("jacuzzi")) {
-        const bloqueJacuzzi = document.getElementById("bloqueJacuzzi");
-        if (bloqueJacuzzi) {
-          bloqueJacuzzi.style.display = "block";
-          bloqueJacuzzi.open = true; // se abre automáticamente
-        }
+    // determinar tipo actual (fallback al radio si no existe)
+    const tipoActual = window.tipoSistemaActual || document.querySelector("input[name='tipoSistema']:checked")?.value;
+
+    // Espera un ratito y construye los campos según el tipo
+    setTimeout(() => {
+      if (!tipoActual) {
+        console.warn("⚠️ No hay tipo de sistema definido para Equipamiento.");
+        return;
       }
-    } else {
-      console.warn("❌ No se encontró el contenido de la sección 'equipamiento'");
-    }
+      buildEquipamientoUI(tipoActual);
+    }, 40);
   }
-
+  }
   // 🔹 Volver a calentamiento (delegado)
   if (e.target && e.target.id === "btnVolverCalentamiento") {
     e.preventDefault();
@@ -835,6 +660,125 @@ setTimeout(() => {
 
   // Guardar el último tipo mostrado
   window.ultimoTipoSistema = tipo;
+}
+function buildEquipamientoUI(tipo) {
+  console.log("⚙️ Generando UI de Equipamiento para:", tipo);
+
+  const izquierda = document.getElementById("equipamientoIzquierdaContenido");
+  const derecha = document.getElementById("equipamientoDerechaContenido");
+  if (!izquierda || !derecha) return console.warn("❌ No se encontró el contenedor de equipamiento");
+
+  // 🔹 Limpia contenido previo
+  izquierda.innerHTML = "";
+  derecha.innerHTML = "";
+
+  // --- 🔸 Bloques base ---
+  const bloqueCalentamiento = `
+    <details open class="tarjeta-bdc">
+      <summary><strong>🔥 Calentamiento</strong></summary>
+      <div class="form-group inline fila-bdc">
+        <div class="campo-bdc">
+          <label>Número de equipos:</label>
+          <input type="number" data-eq="numCalentamiento" value="1">
+        </div>
+        <div class="campo-bdc">
+          <label>Equipo recomendado:</label>
+          <select data-eq="eqCalentamiento">
+            <option value="">-- Selecciona --</option>
+            <option value="AquaHeat 3000">AquaHeat 3000</option>
+            <option value="ThermoMax Pro">ThermoMax Pro</option>
+            <option value="EcoHeat XL">EcoHeat XL</option>
+          </select>
+        </div>
+        <div class="campo-bdc">
+          <label>Capacidad (kW):</label>
+          <input type="number" step="0.1" data-eq="capCalentamiento" value="12">
+        </div>
+      </div>
+    </details>`;
+
+  const bloqueFiltracion = `
+    <details class="tarjeta-bdc">
+      <summary><strong>🌀 Filtración</strong></summary>
+      <div class="form-group inline">
+        <label><input type="checkbox" data-eq="filtroArena"> Filtro de arena</label>
+        <label><input type="checkbox" data-eq="prefiltro"> Prefiltro</label>
+      </div>
+    </details>`;
+
+  const bloqueSanitizacion = `
+    <details class="tarjeta-bdc">
+      <summary><strong>💧 Sanitización</strong></summary>
+      <div class="form-group inline">
+        <label><input type="checkbox" data-eq="genCloro"> Generador de cloro</label>
+        <label><input type="checkbox" data-eq="lamparaUV"> Lámpara UV</label>
+      </div>
+    </details>`;
+
+  const bloqueEmpotrables = `
+    <details class="tarjeta-bdc">
+      <summary><strong>⚙️ Empotrables</strong></summary>
+      <div class="form-group">
+        <label>Boquilla de retorno:</label>
+        <select data-eq="boquillaRetorno"><option>1.5in</option><option>2.0in</option></select>
+      </div>
+      <div class="form-group">
+        <label>Desnatador:</label>
+        <select data-eq="desnatador"><option>1.5in</option><option>2.0in</option></select>
+      </div>
+    </details>`;
+
+  const bloqueJacuzzi = `
+    <details open class="tarjeta-bdc">
+      <summary><strong>🛁 Equipos de Jacuzzi</strong></summary>
+      <div class="form-group inline">
+        <label><input type="checkbox" data-eq="motobombaHidrojets"> Motobomba hidrojets</label>
+        <label><input type="checkbox" data-eq="sopladorSaleros"> Soplador saleros</label>
+        <label><input type="checkbox" data-eq="sopladorHidrojets"> Soplador hidrojets</label>
+        <label><input type="checkbox" data-eq="motobombaFiltradoJacuzzi"> Motobomba filtrado jacuzzi</label>
+      </div>
+    </details>`;
+
+  // --- 🔸 Composición dinámica ---
+  const bloqueBase = bloqueCalentamiento + bloqueFiltracion + bloqueSanitizacion + bloqueEmpotrables;
+
+  switch (tipo) {
+    // 🔹 1 cuerpo (alberca, chapoteadero, espejo)
+    case "alberca":
+    case "chapoteadero":
+    case "espejoAgua":
+      izquierda.innerHTML = bloqueBase;
+      derecha.innerHTML = `<div class="placeholder-vacio">(Sin segundo cuerpo)</div>`;
+      break;
+
+    // 🔹 Solo jacuzzi (un cuerpo)
+    case "jacuzzi":
+      izquierda.innerHTML = bloqueCalentamiento + bloqueFiltracion + bloqueSanitizacion;
+      derecha.innerHTML = bloqueJacuzzi + bloqueEmpotrables;
+      break;
+
+    // 🔹 Alberca + Jacuzzi (dos cuerpos)
+    case "albercaJacuzzi1":
+    case "albercaJacuzzi2":
+      izquierda.innerHTML = bloqueBase;
+      derecha.innerHTML = bloqueJacuzzi + bloqueEmpotrables;
+      break;
+
+    // 🔹 Alberca + Chapoteadero o Jacuzzi + Chapoteadero (dos cuerpos)
+    case "albercaChapo1":
+    case "albercaChapo2":
+    case "jacuzziChapo1":
+    case "jacuzziChapo2":
+      izquierda.innerHTML = bloqueBase;
+      derecha.innerHTML = bloqueEmpotrables;
+      break;
+
+    default:
+      izquierda.innerHTML = bloqueBase;
+      derecha.innerHTML = `<div class="placeholder-vacio">⚙️ Sin configuración adicional</div>`;
+  }
+
+  console.log("✅ Equipamiento ajustado dinámicamente.");
 }
 function restaurarInputsSistema(tipo) {
   const datosPrevios = window.datosPorSistema?.[tipo];
@@ -1167,6 +1111,20 @@ function guardarDatos(tipoForzado) {
   window.datos.tasaRotacion = datosSistema.rotacion ?? window.datos.tasaRotacion;
   window.datos.distancia = datosSistema.distCuarto ?? window.datos.distancia;
 
+  // ---- Capturar inputs dinámicos de equipamiento (todos los que tengan data-eq)
+  try {
+    const equipElems = document.querySelectorAll('#contenidoDerecho [data-eq]');
+    equipElems.forEach(el => {
+      const key = el.dataset.eq;
+      if (!key) return;
+      if (el.type === "checkbox") datosSistema[key] = !!el.checked;
+      else if (el.type === "number") datosSistema[key] = el.value === "" ? null : parseFloat(el.value);
+      else datosSistema[key] = el.value === "" ? null : el.value;
+    });
+  } catch (err) {
+    console.warn("Error guardando inputs equipamiento:", err);
+  }
+
   // Guardado final
   window.datosPorSistema[tipoActual] = datosSistema;
   console.log(`💾 guardarDatos(): guardado para [${tipoActual}]`, datosSistema);
@@ -1257,6 +1215,22 @@ function renderSeccion(seccion) {
       engancharListenersCalentamiento();
       qEvaporacion();
       qTuberia();
+    }, 50);
+  }
+  
+// ⚙️ Si estamos en equipamiento, generar UI dinámica
+  if (seccion === "equipamiento") {
+    console.log("⚙️ Sección 'Equipamiento' cargada correctamente ✅");
+
+    // Esperamos un momento para asegurar que el HTML ya se pintó
+    setTimeout(() => {
+      if (typeof buildEquipamientoUI === "function") {
+        const tipo = window.tipoSistemaActual || window.ultimoTipoSistema || null;
+        console.log("⚙️ Generando UI de Equipamiento para:", tipo);
+        buildEquipamientoUI(tipo);
+      } else {
+        console.warn("⚠️ buildEquipamientoUI() no está definida todavía");
+      }
     }, 50);
   }
 }
