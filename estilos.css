@@ -770,3 +770,25 @@ select:disabled {
   gap: 16px;
   min-height: 300px;
 }
+
+.detalle-equipo summary {
+  font-weight: 600;
+  color: #004c91;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.detalle-equipo {
+  background: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}
+
+.placeholder-vacio {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+  padding: 20px;
+}
