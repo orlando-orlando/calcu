@@ -822,33 +822,55 @@ function buildEquipamientoUI(tipoActual) {
 
   // 🔹 Mostrar motobombas independientes
   const getCheckedValue = name => {
+    // Primero busca en el DOM
     const radio = document.querySelector(`input[name='${name}']:checked`);
     if (radio) return radio.value;
+
+    // Si no está en el DOM, busca en los datos guardados del sistema
     const saved = window.datosPorSistema?.[window.ultimoTipoSistema]?.[name];
     return saved || "no";
   };
 
   function updateIndependientes() {
     const showInf = getCheckedValue("motobombaInfinity") === "si";
-    const showCal = getCheckedValue("motobombaIndepCalentamiento") === "si" || getCheckedValue("motobombaCalentamiento") === "si";
+    const showCal = getCheckedValue("motobombaCalentamiento") === "si";
 
     // Infinity
     const existingInf = document.getElementById("block_indep_infinity");
-    if (showInf && !existingInf) derecha.append(bloqueMotobombaIndepInfinity);
-    else if (!showInf && existingInf) existingInf.remove();
+    if (showInf && !existingInf) {
+      derecha.append(bloqueMotobombaIndepInfinity);
+      console.log("⚙️ Motobomba independiente de Infinity agregada ✅");
+    } else if (!showInf && existingInf) {
+      existingInf.remove();
+      console.log("🧹 Motobomba independiente de Infinity removida");
+    }
 
     // Calentamiento
     const existingCal = document.getElementById("block_indep_cal");
-    if (showCal && !existingCal) derecha.append(bloqueMotobombaIndepCal);
-    else if (!showCal && existingCal) existingCal.remove();
+    if (showCal && !existingCal) {
+      derecha.append(bloqueMotobombaIndepCal);
+      console.log("⚙️ Motobomba independiente de Calentamiento agregada ✅");
+    } else if (!showCal && existingCal) {
+      existingCal.remove();
+      console.log("🧹 Motobomba independiente de Calentamiento removida");
+    }
   }
 
-  ["motobombaInfinity", "motobombaCalentamiento", "motobombaIndepCalentamiento"].forEach(name => {
+  // Escucha cambios de radio (si existen)
+  ["motobombaInfinity", "motobombaCalentamiento"].forEach(name => {
     document.querySelectorAll(`input[name='${name}']`).forEach(r => {
-      r.addEventListener("change", () => setTimeout(updateIndependientes, 100));
+      r.addEventListener("change", () => {
+        console.log(`🔄 Cambio detectado en ${name}:`, r.value);
+        setTimeout(updateIndependientes, 100);
+      });
     });
   });
 
+  // Observa el DOM por si se crean radios después (vista dinámica)
+  const observer = new MutationObserver(() => updateIndependientes());
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // Llamada inicial
   updateIndependientes();
   console.log("✅ Equipamiento ajustado dinámicamente para", tipoActual);
 }
