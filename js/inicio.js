@@ -660,220 +660,170 @@ setTimeout(() => {
   window.ultimoTipoSistema = tipo;
 }
 function buildEquipamientoUI(tipoActual) {
-  console.log("⚙️ Generando UI de Equipamiento para:", tipoActual);
+  const columnaIzquierda = document.getElementById("equipamientoIzquierdaContenido");
+  const columnaDerecha = document.getElementById("equipamientoDerechaContenido");
+  if (!columnaIzquierda || !columnaDerecha) return;
 
-  const izquierda = document.getElementById("equipamientoIzquierdaContenido");
-  const derecha = document.getElementById("equipamientoDerechaContenido");
-  if (!izquierda || !derecha) {
-    console.warn("❌ No se encontraron columnas de equipamiento.");
-    return;
-  }
+  columnaIzquierda.innerHTML = "";
+  columnaDerecha.innerHTML = "";
 
-  izquierda.innerHTML = "";
-  derecha.innerHTML = "";
-
-  const slug = s =>
-    String(s || "")
-      .toLowerCase()
-      .replace(/[^\w\s-]/g, "")
-      .trim()
-      .replace(/\s+/g, "_");
-
-  const crearEquipoToggle = (categoriaKey, nombre, opciones = [], placeholderCap = "Capacidad") => {
-    const keyBase = `${categoriaKey}_${slug(nombre)}`;
-    const detalle = document.createElement("details");
-    detalle.className = "detalle-equipo";
-    detalle.open = false;
-    detalle.innerHTML = `
-      <summary>${nombre}</summary>
-      <div class="fila-bdc" style="margin-top:10px;">
-        <div class="campo-bdc">
-          <label>Cantidad</label>
-          <input type="number" min="0" value="1" data-eq="${keyBase}_num" id="${keyBase}_num">
-        </div>
-        <div class="campo-bdc">
-          <label>Equipo recomendado</label>
-          <select data-eq="${keyBase}_model" id="${keyBase}_model">
-            <option value="">-- Selecciona --</option>
-            ${opciones.map(op => `<option value="${op}">${op}</option>`).join("")}
-          </select>
-        </div>
-        <div class="campo-bdc">
-          <label>${placeholderCap}</label>
-          <input type="number" placeholder="${placeholderCap}" data-eq="${keyBase}_cap" id="${keyBase}_cap">
-        </div>
+  // ✅ Helper para crear un bloque de inputs (cantidad, equipo, capacidad)
+  const crearBloqueEquipo = (label, opciones = []) => `
+    <div class="bloque-equipo">
+      <label>${label}</label>
+      <div class="form-inline">
+        <label>Cantidad:</label><input type="number" min="0" class="input-azul cantidad">
       </div>
-    `;
-    return detalle;
-  };
+      <div class="form-inline">
+        <label>Equipo recomendado:</label>
+        <select class="input-azul">
+          ${opciones.map(op => `<option value="${op}">${op}</option>`).join("")}
+        </select>
+      </div>
+      <div class="form-inline">
+        <label>Capacidad:</label><input type="text" class="input-azul capacidad">
+      </div>
+    </div>
+  `;
 
-  const crearBloque = (titulo, elementos = [], open = false, id = "") => {
-    const bloque = document.createElement("details");
-    bloque.className = "bloque-equipamiento";
-    bloque.open = open;
-    if (id) bloque.id = id;
-    bloque.innerHTML = `<summary>${titulo}</summary>`;
-    elementos.forEach(el => bloque.appendChild(el));
-    return bloque;
-  };
+  // ✅ Helper para crear toggles cerrados por defecto
+  const crearToggle = (titulo, contenido) => `
+    <details class="tarjeta-equipamiento">
+      <summary class="titulo-toggle">${titulo}</summary>
+      <div class="contenido-toggle">${contenido}</div>
+    </details>
+  `;
 
-  // 🔹 Bloques de categorías principales
-  const bloqueCalentamiento = crearBloque("Calentamiento", [
-    crearEquipoToggle("calentamiento", "Panel solar", ["Panel solar A", "Panel solar B"], "kcal/h"),
-    crearEquipoToggle("calentamiento", "Caldera", ["Caldera gas", "Caldera eléctrica"], "kcal/h"),
-    crearEquipoToggle("calentamiento", "Bomba de calor", ["Bomba 8kW", "Bomba 12kW", "Bomba 18kW"], "kcal/h")
-  ]);
+  // ---- Bloques base (izquierda) ----
+  const bloqueCalentamiento = crearToggle("Calentamiento", `
+    ${crearBloqueEquipo("Caldera", ["Caldera A", "Caldera B", "Caldera C"])}
+    ${crearBloqueEquipo("Bomba de calor", ["Bomba 3HP", "Bomba 5HP"])}
+    ${crearBloqueEquipo("Panel solar", ["Solar 1", "Solar 2"])}
+  `);
 
-  const bloqueFiltrado = crearBloque("Filtrado", [
-    crearEquipoToggle("filtrado", "Prefiltro", ["Prefiltro tipo Y", "Prefiltro cartucho"], "m³/h"),
-    crearEquipoToggle("filtrado", "Filtro de arena", ['Filtro 24"', 'Filtro 30"', 'Filtro 36"'], "m³/h"),
-    crearEquipoToggle("filtrado", "Filtro de cartucho", ["Cartucho simple", "Cartucho doble"], "m³/h")
-  ]);
+  const bloqueFiltrado = crearToggle("Filtrado", `
+    ${crearBloqueEquipo("Prefiltro", ["Prefiltro chico", "Prefiltro grande"])}
+    ${crearBloqueEquipo("Filtro de arena", ["Arena 24\"", "Arena 30\""])}
+    ${crearBloqueEquipo("Filtro de cartucho", ["Cartucho 50ft", "Cartucho 100ft"])}
+  `);
 
-  const bloqueSanitizacion = crearBloque("Sanitización", [
-    crearEquipoToggle("sanitizacion", "Generador de cloro", ["Clorador salino", "Clorador automático"], "m³/h"),
-    crearEquipoToggle("sanitizacion", "Ozonificador", ["Ozono compacto", "Ozono industrial"], "m³/h"),
-    crearEquipoToggle("sanitizacion", "Lámpara UV", ["UV 40W", "UV 80W"], "m³/h")
-  ]);
+  const bloqueSanitizacion = crearToggle("Sanitización", `
+    ${crearBloqueEquipo("Generador de cloro", ["Clorador salino", "Dosificador"])}
+    ${crearBloqueEquipo("Ozonificador", ["Ozono 10g", "Ozono 20g"])}
+    ${crearBloqueEquipo("Lámpara UV", ["UV Compacta", "UV Industrial"])}
+  `);
 
-  const bloqueEmpotrables = crearBloque("Empotrables (generales)", [
-    crearEquipoToggle("empotrables", "Boquilla de retorno", ['Retorno 1.5"', 'Retorno 2"']),
-    crearEquipoToggle("empotrables", "Dren de fondo", ["Circular", "Cuadrado"]),
-    crearEquipoToggle("empotrables", "Desnatador", ["Desnatador ABS", "Desnatador inoxidable"]),
-    crearEquipoToggle("empotrables", "Barredora", ["Manual", "Automática"]),
-    crearEquipoToggle("empotrables", "Manguera barredora", ["7m", "10m", "15m"])
-  ]);
+  const bloqueEmpotrables = crearToggle("Empotrables", `
+    ${crearBloqueEquipo("Boquilla de retorno", ["PVC", "Acero inoxidable"])}
+    ${crearBloqueEquipo("Dren de fondo", ["Circular", "Cuadrado"])}
+    ${crearBloqueEquipo("Dren canal", ["Canal largo", "Canal corto"])}
+    ${crearBloqueEquipo("Desnatador", ["Estándar", "Ancho"])}
+    ${crearBloqueEquipo("Barredora", ["Manual", "Automática"])}
+    ${crearBloqueEquipo("Manguera barredora", ["10m", "15m"])}
+  `);
 
-  const bloqueMotobombaGeneral = crearBloque("Motobomba general", [
-    crearEquipoToggle("motobomba", "Motobomba general", ["Modelo A", "Modelo B", "Modelo C"], "HP")
-  ]);
+  const bloqueIluminacion = crearToggle("Iluminación", `
+    ${crearBloqueEquipo("Foco LED", ["RGB", "Blanco cálido"])}
+    ${crearBloqueEquipo("Controlador", ["Control remoto", "Wi-Fi"])}
+    ${crearBloqueEquipo("Transformador", ["12V", "24V"])}
+  `);
 
-  const bloqueJacuzzi = crearBloque("Equipos Jacuzzi", [
-    crearEquipoToggle("jacuzzi", "Bomba de hidromasaje", ["Bomba 1.5HP", "Bomba 2HP"], "HP"),
-    crearEquipoToggle("jacuzzi", "Soplador de aire", ["Soplador 1HP", "Soplador 2HP"], "HP"),
-    crearEquipoToggle("jacuzzi", "Empotrables jacuzzi", ["Jet estándar", "Jet masaje"])
-  ]);
+  const bloqueMotobomba = crearToggle("Motobomba Filtrado", `
+    ${crearBloqueEquipo("Motobomba", ["1HP", "1.5HP", "2HP"])}
+  `);
 
-  const bloqueEmpotrablesCuerpo2 = crearBloque("Empotrables — Cuerpo 2", [
-    crearEquipoToggle("c2_emp", "Boquilla retorno (Cuerpo2)", ['Retorno 1.5"', 'Retorno 2"']),
-    crearEquipoToggle("c2_emp", "Dren de fondo (Cuerpo2)", ["Circular", "Cuadrado"]),
-    crearEquipoToggle("c2_emp", "Desnatador (Cuerpo2)", ["Desnatador ABS", "Desnatador inoxidable"])
-  ]);
+  // ---- Bloques especiales (derecha) ----
+  const empotrablesJacuzzi = crearToggle("Empotrables Jacuzzi", `
+    ${crearBloqueEquipo("Jets", ["Jet lateral", "Jet masaje"])}
+    ${crearBloqueEquipo("Dren Jacuzzi", ["Fondo redondo", "Fondo plano"])}
+    ${crearBloqueEquipo("Boquilla aire", ["Aire 1", "Aire 2"])}
+  `);
 
-  const bloqueMotobombaIndepInfinity = crearBloque(
-    "Motobomba independiente — Infinity",
-    [crearEquipoToggle("indep_infinity", "Motobomba Infinity", ["Modelo A", "Modelo B"], "HP")],
-    false,
-    "block_indep_infinity"
-  );
+  const motobombaHidrojets = crearToggle("Motobomba Hidrojets", `
+    ${crearBloqueEquipo("Motobomba Hidrojets", ["2HP", "3HP", "4HP"])}
+  `);
 
-  const bloqueMotobombaIndepCal = crearBloque(
-    "Motobomba independiente — Calentamiento",
-    [crearEquipoToggle("indep_cal", "Motobomba Calentamiento", ["Modelo A", "Modelo B"], "HP")],
-    false,
-    "block_indep_cal"
-  );
+  const sopladoresJacuzzi = crearToggle("Sopladores Jacuzzi", `
+    ${crearBloqueEquipo("Soplador", ["Soplador 1HP", "Soplador 2HP"])}
+  `);
 
-  // 🔹 Distribución por tipo de sistema
+  const empotrablesCuerpo2 = crearToggle("Empotrables Cuerpo 2", `
+    ${crearBloqueEquipo("Boquilla retorno (Cuerpo 2)", ["PVC", "Acero inoxidable"])}
+    ${crearBloqueEquipo("Dren fondo (Cuerpo 2)", ["Circular", "Cuadrado"])}
+    ${crearBloqueEquipo("Desnatador (Cuerpo 2)", ["Estándar", "Ancho"])}
+  `);
+
+  const motobombaInfinity = crearToggle("Motobomba independiente Infinity", `
+    ${crearBloqueEquipo("Motobomba Infinity", ["1HP", "1.5HP", "2HP"])}
+  `);
+
+  const motobombaCalentamiento = crearToggle("Motobomba independiente Calentamiento", `
+    ${crearBloqueEquipo("Motobomba Calentamiento", ["1HP", "1.5HP", "2HP"])}
+  `);
+
+  const placeholder = crearToggle("Sin segundo cuerpo", `<p>No hay equipos adicionales.</p>`);
+
+  // ---- Recuperar radios globales ----
+  const datosDim = window.datosPorSistema?.[tipoActual] || {};
+  const llevaInfinity = datosDim.motobombaInfinity === "si";
+  const llevaCalentamiento = datosDim.motobombaCalentamiento === "si";
+
+  let motobombasIndependientes = "";
+  if (llevaInfinity) motobombasIndependientes += motobombaInfinity;
+  if (llevaCalentamiento) motobombasIndependientes += motobombaCalentamiento;
+
+  // ---- Armar columna izquierda ----
+  columnaIzquierda.innerHTML =
+    bloqueCalentamiento +
+    bloqueFiltrado +
+    bloqueSanitizacion +
+    bloqueEmpotrables +
+    bloqueIluminacion +
+    bloqueMotobomba;
+
+  // ---- Armar columna derecha según tipo de sistema ----
+  let derechaHTML = "";
+
   switch (tipoActual) {
-    // Un solo cuerpo
     case "alberca":
     case "chapoteadero":
     case "espejoAgua":
-      izquierda.append(bloqueCalentamiento, bloqueFiltrado, bloqueSanitizacion, bloqueEmpotrables, bloqueMotobombaGeneral);
-      derecha.innerHTML = `<div class="placeholder-vacio">Sin segundo cuerpo</div>`;
-      break;
-
-    // Jacuzzi solo → todo jacuzzi a la derecha
-    case "jacuzzi":
-      izquierda.append(bloqueCalentamiento, bloqueFiltrado, bloqueSanitizacion, bloqueEmpotrables, bloqueMotobombaGeneral);
-      derecha.append(bloqueJacuzzi);
-      break;
-
-    // 1 cuerpo compartido
-    case "albercaJacuzzi1":
     case "albercaChapo1":
-    case "jacuzziChapo1":
-      izquierda.append(bloqueCalentamiento, bloqueFiltrado, bloqueSanitizacion, bloqueEmpotrables, bloqueMotobombaGeneral);
-      derecha.append(bloqueJacuzzi, bloqueEmpotrablesCuerpo2);
+      derechaHTML = motobombasIndependientes || placeholder;
       break;
 
-    // 2 cuerpos
-    case "albercaJacuzzi2":
-      izquierda.append(bloqueCalentamiento, bloqueFiltrado, bloqueSanitizacion, bloqueEmpotrables, bloqueMotobombaGeneral);
-      derecha.append(bloqueJacuzzi);
+    case "jacuzzi":
+    case "albercaJacuzzi1":
+    case "jacuzziChapo1":
+      derechaHTML =
+        empotrablesJacuzzi +
+        motobombaHidrojets +
+        sopladoresJacuzzi +
+        motobombasIndependientes;
       break;
 
     case "albercaChapo2":
-      izquierda.append(bloqueCalentamiento, bloqueFiltrado, bloqueSanitizacion, bloqueEmpotrables, bloqueMotobombaGeneral);
-      derecha.append(bloqueEmpotrablesCuerpo2);
+      derechaHTML = empotrablesCuerpo2 + motobombasIndependientes;
       break;
 
+    case "albercaJacuzzi2":
     case "jacuzziChapo2":
-      izquierda.append(bloqueCalentamiento, bloqueFiltrado, bloqueSanitizacion, bloqueMotobombaGeneral);
-      derecha.append(bloqueJacuzzi, bloqueEmpotrablesCuerpo2);
+      derechaHTML =
+        empotrablesJacuzzi +
+        motobombaHidrojets +
+        sopladoresJacuzzi +
+        empotrablesCuerpo2 +
+        motobombasIndependientes;
       break;
 
     default:
-      izquierda.append(bloqueCalentamiento, bloqueFiltrado, bloqueSanitizacion, bloqueEmpotrables, bloqueMotobombaGeneral);
-      derecha.innerHTML = `<div class="placeholder-vacio">Selecciona un tipo de sistema válido</div>`;
-      break;
+      derechaHTML = placeholder;
   }
 
-  // 🔹 Mostrar motobombas independientes
-  const getCheckedValue = name => {
-    // Primero busca en el DOM
-    const radio = document.querySelector(`input[name='${name}']:checked`);
-    if (radio) return radio.value;
-
-    // Si no está en el DOM, busca en los datos guardados del sistema
-    const saved = window.datosPorSistema?.[window.ultimoTipoSistema]?.[name];
-    return saved || "no";
-  };
-
-  function updateIndependientes() {
-    const showInf = getCheckedValue("motobombaInfinity") === "si";
-    const showCal = getCheckedValue("motobombaCalentamiento") === "si";
-
-    // Infinity
-    const existingInf = document.getElementById("block_indep_infinity");
-    if (showInf && !existingInf) {
-      derecha.append(bloqueMotobombaIndepInfinity);
-      console.log("⚙️ Motobomba independiente de Infinity agregada ✅");
-    } else if (!showInf && existingInf) {
-      existingInf.remove();
-      console.log("🧹 Motobomba independiente de Infinity removida");
-    }
-
-    // Calentamiento
-    const existingCal = document.getElementById("block_indep_cal");
-    if (showCal && !existingCal) {
-      derecha.append(bloqueMotobombaIndepCal);
-      console.log("⚙️ Motobomba independiente de Calentamiento agregada ✅");
-    } else if (!showCal && existingCal) {
-      existingCal.remove();
-      console.log("🧹 Motobomba independiente de Calentamiento removida");
-    }
-  }
-
-  // Escucha cambios de radio (si existen)
-  ["motobombaInfinity", "motobombaCalentamiento"].forEach(name => {
-    document.querySelectorAll(`input[name='${name}']`).forEach(r => {
-      r.addEventListener("change", () => {
-        console.log(`🔄 Cambio detectado en ${name}:`, r.value);
-        setTimeout(updateIndependientes, 100);
-      });
-    });
-  });
-
-  // Observa el DOM por si se crean radios después (vista dinámica)
-  const observer = new MutationObserver(() => updateIndependientes());
-  observer.observe(document.body, { childList: true, subtree: true });
-
-  // Llamada inicial
-  updateIndependientes();
-  console.log("✅ Equipamiento ajustado dinámicamente para", tipoActual);
+  columnaDerecha.innerHTML = derechaHTML;
 }
+
+
 function restaurarInputsSistema(tipo) {
   const datosPrevios = window.datosPorSistema?.[tipo];
   if (!datosPrevios) return;
