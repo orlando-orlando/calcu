@@ -358,26 +358,55 @@ document.addEventListener("click", (e) => {
       return;
     }
 
+    // cerrar otras secciones y abrir la de equipamiento (visual)
     document.querySelectorAll("details").forEach(d => d.open = false);
     detailsEquip.open = true;
 
-  if (typeof secciones !== "undefined" && secciones.equipamiento) {
-    panelDerecho.innerHTML = secciones.equipamiento;
-    console.log("⚙️ Sección 'Equipamiento' cargada correctamente ✅");
-
-    // determinar tipo actual (fallback al radio si no existe)
+    // Determinar tipo actual (si ya estaba guardado o por radio)
     const tipoActual = window.tipoSistemaActual || document.querySelector("input[name='tipoSistema']:checked")?.value;
+    if (!tipoActual) {
+      console.warn("⚠️ No hay tipo de sistema definido para Equipamiento.");
+      // de todas formas renderizamos la sección por si acaso
+      panelDerecho.innerHTML = secciones.equipamiento;
+      return;
+    }
 
-    // Espera un ratito y construye los campos según el tipo
+    // ----------------------------
+    // LEER radios ANTES de sustituir el DOM
+    // ----------------------------
+    const readRadio = name => document.querySelector(`input[name="${name}"]:checked`)?.value ?? null;
+
+    const motobombaInfinity_dom = readRadio("motobombaInfinity"); // viene de Dimensiones / Desborde
+    const motobombaCalentamiento_dom = readRadio("motobombaCalentamiento"); // viene de Calentamiento
+
+    // Fallback a lo ya guardado en memoria si no hay radios en DOM
+    window.datosPorSistema = window.datosPorSistema || {};
+    window.datosPorSistema[tipoActual] = window.datosPorSistema[tipoActual] || {};
+
+    const motobombaInfinity = motobombaInfinity_dom ?? window.datosPorSistema[tipoActual].motobombaInfinity ?? "no";
+    const motobombaCalentamiento = motobombaCalentamiento_dom ?? window.datosPorSistema[tipoActual].motobombaCalentamiento ?? "no";
+
+    // Guardamos los valores (así buildEquipamientoUI podrá leerlos desde window.datosPorSistema)
+    window.datosPorSistema[tipoActual].motobombaInfinity = motobombaInfinity;
+    window.datosPorSistema[tipoActual].motobombaCalentamiento = motobombaCalentamiento;
+
+    console.log("💾 Valores recogidos antes de cargar Equipamiento:", {
+      tipoActual,
+      motobombaInfinity,
+      motobombaCalentamiento
+    });
+
+    // Ahora sí renderizamos la sección de equipamiento (reemplaza el DOM)
+    panelDerecho.innerHTML = secciones.equipamiento;
+
+    // Le damos un pequeño delay para que el DOM del equipamiento se monte y luego construimos la UI
     setTimeout(() => {
-      if (!tipoActual) {
-        console.warn("⚠️ No hay tipo de sistema definido para Equipamiento.");
-        return;
-      }
       buildEquipamientoUI(tipoActual);
     }, 40);
+
+    return;
   }
-  }
+
   // 🔹 Volver a calentamiento (delegado)
   if (e.target && e.target.id === "btnVolverCalentamiento") {
     e.preventDefault();
@@ -822,8 +851,6 @@ function buildEquipamientoUI(tipoActual) {
 
   columnaDerecha.innerHTML = derechaHTML;
 }
-
-
 function restaurarInputsSistema(tipo) {
   const datosPrevios = window.datosPorSistema?.[tipo];
   if (!datosPrevios) return;
