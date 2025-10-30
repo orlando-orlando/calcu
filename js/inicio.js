@@ -1023,20 +1023,16 @@ if (window.ultimoTipoSistema && window.ultimoTipoSistema !== tipo) {
 }
 
 function guardarDatos(tipoForzado) {
-  // Normalizar en DOM si hace falta (deja mínimo <= máximo)
   if (typeof normalizeAllDepths === "function") normalizeAllDepths();
 
   const tipoActual = tipoForzado
     || window.ultimoTipoSistema
     || document.querySelector("input[name='tipoSistema']:checked")?.value;
-
   if (!tipoActual) return;
 
-  // Asegurar objeto global
   window.datosPorSistema = window.datosPorSistema || {};
   const datosSistema = window.datosPorSistema[tipoActual] = window.datosPorSistema[tipoActual] || {};
 
-  // Configuración: cuántos cuerpos tiene cada tipo
   const tipoConfig = {
     alberca: 1, jacuzzi: 1, chapoteadero: 1, espejoAgua: 1,
     albercaJacuzzi1: 2, albercaChapo1: 2, jacuzziChapo1: 2,
@@ -1044,9 +1040,19 @@ function guardarDatos(tipoForzado) {
   };
   const numCuerpos = tipoConfig[tipoActual] || 1;
 
-  // ---- Recolectar y procesar por cuerpos ----
-  let sumArea = 0;
+  // 👉 Ignora ceros al promediar
+  function computeMeanDepth(pmin, pmax) {
+    const minValid = Number.isFinite(pmin) && pmin > 0;
+    const maxValid = Number.isFinite(pmax) && pmax > 0;
+    if (minValid && maxValid) return (pmin + pmax) / 2;
+    if (minValid) return pmin;
+    if (maxValid) return pmax;
+    if (pmin === 0 && pmax === 0) return 0; // caso explícito ambos 0
+    return null;
+  }
+
   let volumenTotal = 0;
+  let areaTotal = 0;
   const profMinList = [];
   const profMaxList = [];
   const meanDepths = [];
@@ -1056,137 +1062,75 @@ function guardarDatos(tipoForzado) {
     const minEl = document.getElementById(`profMin${i}`);
     const maxEl = document.getElementById(`profMax${i}`);
 
-    const areaRaw = areaEl?.value?.toString().trim() ?? "";
-    const minRaw  = minEl?.value?.toString().trim() ?? "";
-    const maxRaw  = maxEl?.value?.toString().trim() ?? "";
+    if (areaEl) datosSistema[`area${i}`] = parseFloat(areaEl.value) || 0;
+    if (minEl) datosSistema[`profMin${i}`] = parseFloat(minEl.value) || 0;
+    if (maxEl) datosSistema[`profMax${i}`] = parseFloat(maxEl.value) || 0;
 
-    const area = areaRaw === "" ? null : parseFloat(areaRaw);
-    let profMin = minRaw === "" ? null : parseFloat(minRaw);
-    let profMax = maxRaw === "" ? null : parseFloat(maxRaw);
+    const a = datosSistema[`area${i}`];
+    const pmin = datosSistema[`profMin${i}`];
+    const pmax = datosSistema[`profMax${i}`];
 
-    // Si ambos son números, forzamos profMin <= profMax
-    if (Number.isFinite(profMin) && Number.isFinite(profMax) && profMin > profMax) {
-      // Intercambiar en variables y en DOM (por si normalize no lo hizo)
-      const tmp = minEl.value;
-      if (minEl && maxEl) {
-        minEl.value = maxEl.value;
-        maxEl.value = tmp;
-      }
-      [profMin, profMax] = [profMax, profMin];
+    const meanDepth = computeMeanDepth(pmin, pmax);
+    datosSistema[`volumen${i}`] = (a > 0 && meanDepth !== null) ? a * meanDepth : 0;
+
+    if (a > 0 && meanDepth !== null && meanDepth > 0) {
+      volumenTotal += a * meanDepth;
+      areaTotal += a;
+      meanDepths.push(meanDepth);
     }
 
-    // Guardar valores individuales (null si no hay dato)
-    datosSistema[`area${i}`] = (Number.isFinite(area) ? area : null);
-    datosSistema[`profMin${i}`] = (Number.isFinite(profMin) ? profMin : null);
-    datosSistema[`profMax${i}`] = (Number.isFinite(profMax) ? profMax : null);
-
-    // Cálculo de mean depth y volumen por cuerpo
-    let meanDepth = null;
-    if (Number.isFinite(profMin) && Number.isFinite(profMax)) {
-      meanDepth = (profMin + profMax) / 2;
-      profMinList.push(profMin);
-      profMaxList.push(profMax);
-    } else if (Number.isFinite(profMin) && !Number.isFinite(profMax)) {
-      meanDepth = profMin;
-      profMinList.push(profMin);
-    } else if (!Number.isFinite(profMin) && Number.isFinite(profMax)) {
-      meanDepth = profMax;
-      profMaxList.push(profMax);
-    }
-
-    meanDepths.push(meanDepth);
-
-    const volumenCuerpo = (Number.isFinite(area) && Number.isFinite(meanDepth)) ? (area * meanDepth) : 0;
-    datosSistema[`volumen${i}`] = volumenCuerpo || 0;
-
-    if (Number.isFinite(area)) sumArea += area;
-    volumenTotal += volumenCuerpo;
+    if (pmin > 0) profMinList.push(pmin);
+    if (pmax > 0) profMaxList.push(pmax);
   }
-
-  // ---- Agregados ----
-  const areaTotal = sumArea || 0;
-  const profundidadPromedio = areaTotal > 0
-    ? (volumenTotal / areaTotal)
-    : (meanDepths.filter(d => d != null).length ? (meanDepths.filter(d => d != null).reduce((a,b) => a+b,0) / meanDepths.filter(d => d != null).length) : null);
 
   const profMinAgg = profMinList.length ? Math.min(...profMinList) : null;
   const profMaxAgg = profMaxList.length ? Math.max(...profMaxList) : null;
+  const profMedioAgg = meanDepths.length
+    ? (meanDepths.reduce((a,b) => a+b, 0) / meanDepths.length)
+    : null;
 
-  datosSistema.area = areaTotal || 0;
-  datosSistema.volumen = volumenTotal || 0;
+  datosSistema.area = areaTotal;
+  datosSistema.volumen = volumenTotal;
   datosSistema.profMin = profMinAgg;
   datosSistema.profMax = profMaxAgg;
-  datosSistema.profMedio = (Number.isFinite(profundidadPromedio) ? profundidadPromedio : null);
+  datosSistema.profMedio = profMedioAgg;
 
-  // ---- Campos adicionales (uso, rotación, distancia, desborde, etc.) ----
-  datosSistema.usoCuerpo = document.getElementById("usoCuerpo")?.value || null;
-  datosSistema.rotacion = document.getElementById("rotacion")?.value || null;
-  datosSistema.distCuarto = (() => {
-    const v = document.getElementById("distCuarto")?.value;
-    return v === undefined || v === "" ? null : parseFloat(v);
-  })();
+  // Campos adicionales
+  const usoEl = document.getElementById("usoCuerpo");
+  if (usoEl) datosSistema.usoCuerpo = usoEl.value || null;
+  const rotEl = document.getElementById("rotacion");
+  if (rotEl) datosSistema.rotacion = rotEl.value || null;
+  const distEl = document.getElementById("distCuarto");
+  if (distEl) datosSistema.distCuarto = parseFloat(distEl.value) || null;
 
-  // Desborde y sus campos
-  datosSistema.desborde = document.querySelector("input[name='desborde']:checked")?.value || null;
-  if (datosSistema.desborde === "infinity" || datosSistema.desborde === "ambos") {
-    datosSistema.motobombaInfinity = document.querySelector("input[name='motobombaInfinity']:checked")?.value || null;
-    datosSistema.largoInfinity = (() => {
-      const v = document.getElementById("largoInfinity")?.value;
-      return v === undefined || v === "" ? null : parseFloat(v);
-    })();
-    datosSistema.alturaDesborde = (() => {
-      const v = document.getElementById("alturaDesborde")?.value;
-      return v === undefined || v === "" ? null : parseFloat(v);
-    })();
-  } else {
-    datosSistema.motobombaInfinity = null;
-    datosSistema.largoInfinity = null;
-    datosSistema.alturaDesborde = null;
-  }
+  // Desborde
+  const desbEl = document.querySelector("input[name='desborde']:checked");
+  if (desbEl) datosSistema.desborde = desbEl.value;
 
-  if (datosSistema.desborde === "canal" || datosSistema.desborde === "ambos") {
-    datosSistema.largoCanal = (() => {
-      const v = document.getElementById("largoCanal")?.value;
-      return v === undefined || v === "" ? null : parseFloat(v);
-    })();
-  } else {
-    datosSistema.largoCanal = null;
-  }
-
-  // ---- Guardar checkboxes / radios globales si existen en DOM ----
-  // Ejemplo: si tienes checkboxes con id: chkBombaCalor, chkPanel, chkCaldera
-  ["chkBombaCalor","chkPanel","chkCaldera"].forEach(id => {
+  // Calentamiento
+  ["chkBombaCalor", "chkPanel", "chkCaldera"].forEach(id => {
     const el = document.getElementById(id);
-    if (el) datosSistema[id] = el.type === "checkbox" ? !!el.checked : (el.value || null);
+    if (el) datosSistema[id] = el.checked || false;
   });
 
-  // ---- Sincronizar con objeto `datos` global (si existe) ----
-  window.datos = window.datos || {};
-  window.datos.area = datosSistema.area;
-  window.datos.profMin = datosSistema.profMin;
-  window.datos.profMax = datosSistema.profMax;
-  window.datos.volumen = datosSistema.volumen;
-  window.datos.tasaRotacion = datosSistema.rotacion ?? window.datos.tasaRotacion;
-  window.datos.distancia = datosSistema.distCuarto ?? window.datos.distancia;
-
-  // ---- Capturar inputs dinámicos de equipamiento (todos los que tengan data-eq)
+  // Equipamiento dinámico
   try {
     const equipElems = document.querySelectorAll('#contenidoDerecho [data-eq]');
     equipElems.forEach(el => {
       const key = el.dataset.eq;
       if (!key) return;
-      if (el.type === "checkbox") datosSistema[key] = !!el.checked;
-      else if (el.type === "number") datosSistema[key] = el.value === "" ? null : parseFloat(el.value);
-      else datosSistema[key] = el.value === "" ? null : el.value;
+      if (el.type === "checkbox") datosSistema[key] = el.checked;
+      else if (el.type === "number") datosSistema[key] = parseFloat(el.value) || null;
+      else datosSistema[key] = el.value || null;
     });
   } catch (err) {
     console.warn("Error guardando inputs equipamiento:", err);
   }
 
-  // Guardado final
-  window.datosPorSistema[tipoActual] = datosSistema;
   console.log(`💾 guardarDatos(): guardado para [${tipoActual}]`, datosSistema);
 }
+
+
 
 function renderSeccion(seccion) {
   const contenedor = document.getElementById("contenidoDerecho");
@@ -1255,42 +1199,68 @@ function renderSeccion(seccion) {
     }
   });
 
-  // 🔥 Sección "calentamiento"
-  if (seccion === "calentamiento") {
-    const volverBtn = document.createElement("button");
-    volverBtn.textContent = "← Volver a dimensiones";
-    volverBtn.className = "btn-volver";
-    volverBtn.style.marginBottom = "15px";
+// 🔥 Sección "calentamiento"
+if (seccion === "calentamiento") {
+  const volverBtn = document.createElement("button");
+  volverBtn.textContent = "← Volver a dimensiones";
+  volverBtn.className = "btn-volver";
+  volverBtn.style.marginBottom = "15px";
 
-    const form = contenedor.querySelector(".clima-form");
-    if (form) form.prepend(volverBtn);
+  const form = contenedor.querySelector(".clima-form");
+  if (form) form.prepend(volverBtn);
 
-    volverBtn.addEventListener("click", () => {
-      // ✅ Guardamos los datos ANTES de volver
-      guardarDatos(window.tipoSistemaActual);
-      // 🔹 Volvemos al mismo tipo de sistema
-      if (window.tipoSistemaActual) {
-        mostrarFormularioSistema(window.tipoSistemaActual);
-      } else {
-        window._preventAutoOpenTipo = true;
-        renderSeccion("dimensiones");
-      }
-    });
-
-    // ⚙️ Inicializar funciones específicas de calentamiento
-    setTimeout(() => {
-      engancharListenersCalentamiento();
-      qEvaporacion();
-      qTuberia();
-    }, 50);
-
-    // ♻️ Si hay datos previos, restaurar campos sin perder valores
-    if (window.datosPorSistema?.[window.tipoSistemaActual]) {
-      setTimeout(() => {
-        restaurarInputsSistema(window.tipoSistemaActual);
-      }, 80);
+  volverBtn.addEventListener("click", () => {
+    const tipo = window.tipoSistemaActual;
+    if (!tipo) {
+      console.warn("⚠️ No hay tipoSistemaActual definido, regresando a selector general.");
+      renderSeccion("dimensiones");
+      return;
     }
-  }
+
+    console.log("💾 Guardando datos antes de volver del calentamiento:", tipo);
+    guardarDatos(tipo);
+
+    // 🔹 Aseguramos mantener el mismo tipo de sistema activo
+    window._preventAutoOpenTipo = true;
+
+    // 🔹 En lugar de renderizar toda la sección 'dimensiones', 
+    // simplemente reabrimos directamente el formulario del tipo actual
+    const contenedorPrincipal = document.getElementById("contenidoDerecho");
+    contenedorPrincipal.innerHTML = ""; // limpiar contenido viejo
+
+    // ✅ Mostrar el mismo formulario del sistema anterior
+    mostrarFormularioSistema(tipo);
+
+    // ✅ Restaurar valores guardados después de construir el formulario
+    setTimeout(() => {
+      if (typeof restaurarInputsSistema === "function") {
+        restaurarInputsSistema(tipo);
+        console.log("✅ Inputs restaurados para:", tipo);
+      }
+
+      // 🧩 Refuerzo visual manual (por si algún input se quedó vacío)
+      const datos = window.datosPorSistema?.[tipo];
+      if (datos) {
+        for (let key in datos) {
+          const el = document.getElementById(key);
+          if (el) {
+            if (el.type === "radio") el.checked = el.value === datos[key];
+            else if (el.type === "checkbox") el.checked = !!datos[key];
+            else el.value = datos[key];
+          }
+        }
+        console.log("✅ Valores visuales reestablecidos para:", tipo, datos);
+      }
+    }, 150);
+  });
+
+  // 🔥 Inicialización de cálculos de calentamiento
+  setTimeout(() => {
+    engancharListenersCalentamiento();
+    qEvaporacion();
+    qTuberia();
+  }, 50);
+}
 
   // ⚙️ Sección "equipamiento"
   if (seccion === "equipamiento") {
@@ -1312,6 +1282,44 @@ function renderSeccion(seccion) {
     console.log("♻️ Reinyectando valores del sistema:", window.tipoSistemaActual);
     setTimeout(() => restaurarInputsSistema(window.tipoSistemaActual), 120);
   }
+}
+// ♻️ Restaura los valores de "Calentamiento" al volver desde el botón ← Volver a dimensiones
+function restaurarInputsCalentamiento(tipo) {
+  const datosPrevios = window.datosPorSistema?.[tipo];
+  if (!datosPrevios) {
+    console.warn("⚠️ No hay datos previos de calentamiento para:", tipo);
+    return;
+  }
+
+  console.log("♻️ Restaurando datos de calentamiento para:", tipo, datosPrevios);
+
+  const asignarValor = (id, valor) => {
+    const el = document.getElementById(id);
+    if (!el || valor === undefined || valor === null) return;
+
+    if (el.type === "checkbox") el.checked = !!valor;
+    else if (el.tagName === "SELECT") el.value = valor;
+    else el.value = valor;
+  };
+
+  // 🔹 Restaurar inputs básicos
+  asignarValor("ciudad", datosPrevios.ciudad);
+  asignarValor("tempDeseada", datosPrevios.tempDeseada);
+  asignarValor("cuerpoTechado", datosPrevios.cuerpoTechado);
+  asignarValor("cubiertaTermica", datosPrevios.cubiertaTermica);
+
+  // 🔹 Restaurar checkboxes
+  ["chkBombaCalor", "chkPanel", "chkCaldera", "chkNinguno"].forEach(id => {
+    asignarValor(id, datosPrevios[id]);
+  });
+
+  // 🔹 Restaurar radio buttons
+  if (datosPrevios.motobombaCalentamiento) {
+    const radios = document.querySelectorAll('input[name="motobombaCalentamiento"]');
+    radios.forEach(r => r.checked = r.value === datosPrevios.motobombaCalentamiento);
+  }
+
+  console.log("✅ Valores de calentamiento restaurados correctamente.");
 }
 
 // Normaliza sólo cuando ambos valores son números válidos (evita tocar mientras se escribe)
