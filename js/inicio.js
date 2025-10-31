@@ -185,6 +185,23 @@ const secciones = {
             <span>Jacuzzi + Chapoteadero (2 cuerpos)</span>
           </label>
         </div>
+
+                <!-- FRANJA INTERACTIVA (insertar en secciones.dimensiones) -->
+        <div id="opcionesFooter" class="opciones-footer" style="display:none;">
+          <div class="opciones-preview">
+            <img class="opciones-preview-img" src="" alt="Preview sistema">
+            <div class="opciones-meta">
+              <div class="titulo">Selecciona un tipo</div>
+              <div class="desc">Pasa el cursor o haz clic en una opción para ver más.</div>
+              <div class="stats"></div>
+            </div>
+          </div>
+          <div class="opciones-actions">
+            <button id="btnAbrirPanel">Abrir formulario</button>
+            <button id="btnUsarPlantilla" class="secondary">Usar plantilla</button>
+          </div>
+        </div>
+
               <!-- 🔹 Panel de datos dinámico (oculto al inicio) -->
         <div id="panelDatosSistema" class="panel-datos-sistema" style="display: none;"></div>
       </div>
@@ -648,26 +665,63 @@ function buildEquipamientoUI(tipoActual) {
   columnaIzquierda.innerHTML = "";
   columnaDerecha.innerHTML = "";
 
-  // ✅ Helper para crear un bloque de inputs (cantidad, equipo, capacidad)
+  // ✅ Bloque de input bien alineado
   const crearBloqueEquipo = (label, opciones = []) => `
     <div class="bloque-equipo">
-      <label>${label}</label>
-      <div class="form-inline">
-        <label>Cantidad:</label><input type="number" min="0" class="input-azul cantidad">
-      </div>
-      <div class="form-inline">
-        <label>Equipo recomendado:</label>
-        <select class="input-azul">
-          ${opciones.map(op => `<option value="${op}">${op}</option>`).join("")}
-        </select>
-      </div>
-      <div class="form-inline">
-        <label>Capacidad:</label><input type="text" class="input-azul capacidad">
+      <div class="bloque-titulo">${label}</div>
+      <div class="bloque-campos">
+        <div class="campo">
+          <label>Cantidad:</label>
+          <input type="number" min="0" class="input-azul cantidad">
+        </div>
+        <div class="campo">
+          <label>Equipo recomendado:</label>
+          <select class="input-azul">
+            <option value="">-- Selecciona --</option>
+            ${opciones.map(op => `<option value="${op}">${op}</option>`).join("")}
+          </select>
+        </div>
+        <div class="campo">
+          <label>Capacidad:</label>
+          <input type="text" class="input-azul capacidad">
+        </div>
       </div>
     </div>
   `;
 
-  // ✅ Helper para crear toggles cerrados por defecto
+  // ✅ Bloque especial para equipos de calentamiento (con los 5 campos solicitados)
+  const crearBloqueEquipoCalentamiento = (label, opciones = []) => `
+    <div class="bloque-equipo">
+      <div class="bloque-titulo">${label}</div>
+      <div class="bloque-campos">
+        <div class="campo">
+          <label>Cantidad:</label>
+            <input type="number" min="0" max="999" class="input-azul cantidad input-corto" data-eq="${label}Cantidad" style="width:70px; text-align:center;">
+          </div>
+        <div class="campo">
+          <label>Equipo recomendado:</label>
+          <select class="input-azul" data-eq="${label}Recomendado">
+            <option value="">-- Selecciona --</option>
+            ${opciones.map(op => `<option value="${op}">${op}</option>`).join("")}
+          </select>
+        </div>
+        <div class="campo">
+          <label>Capacidad:</label>
+          <input type="text" class="input-azul capacidad" data-eq="${label}Capacidad">
+        </div>
+        <div class="campo">
+          <label>Altura espejo ↔ equipo (m):</label>
+          <input type="number" min="0" class="input-azul altura" data-eq="${label}Altura">
+        </div>
+        <div class="campo">
+          <label>Distancia cuarto ↔ equipo (m):</label>
+          <input type="number" min="0" class="input-azul distancia" data-eq="${label}Distancia">
+        </div>
+      </div>
+    </div>
+  `;
+
+  // ✅ Toggle general estilizado
   const crearToggle = (titulo, contenido) => `
     <details class="tarjeta-equipamiento">
       <summary class="titulo-toggle">${titulo}</summary>
@@ -675,76 +729,74 @@ function buildEquipamientoUI(tipoActual) {
     </details>
   `;
 
-  // ---- Bloques base (izquierda) ----
-  const bloqueCalentamiento = crearToggle("Calentamiento", `
-    ${crearBloqueEquipo("Caldera", ["Caldera A", "Caldera B", "Caldera C"])}
-    ${crearBloqueEquipo("Bomba de calor", ["Bomba 3HP", "Bomba 5HP"])}
-    ${crearBloqueEquipo("Panel solar", ["Solar 1", "Solar 2"])}
+  // ---- Bloques principales ----
+  const bloqueCalentamiento = crearToggle("🔥 Calentamiento", `
+    ${crearBloqueEquipoCalentamiento("Caldera", ["Caldera A", "Caldera B", "Caldera C"])}
+    ${crearBloqueEquipoCalentamiento("Bomba de calor", ["Bomba 3HP", "Bomba 5HP"])}
+    ${crearBloqueEquipoCalentamiento("Panel solar", ["Solar 1", "Solar 2"])}
   `);
 
-  const bloqueFiltrado = crearToggle("Filtrado", `
+  const bloqueFiltrado = crearToggle("💧 Filtrado", `
     ${crearBloqueEquipo("Prefiltro", ["Prefiltro chico", "Prefiltro grande"])}
-    ${crearBloqueEquipo("Filtro de arena", ["Arena 24\"", "Arena 30\""])}
-    ${crearBloqueEquipo("Filtro de cartucho", ["Cartucho 50ft", "Cartucho 100ft"])}
+    ${crearBloqueEquipo("Filtro de arena", ["Arena 24\"", "Arena 30\""]) }
   `);
 
-  const bloqueSanitizacion = crearToggle("Sanitización", `
-    ${crearBloqueEquipo("Generador de cloro", ["Clorador salino", "Dosificador"])}
-    ${crearBloqueEquipo("Ozonificador", ["Ozono 10g", "Ozono 20g"])}
-    ${crearBloqueEquipo("Lámpara UV", ["UV Compacta", "UV Industrial"])}
+  const bloqueSanitizacion = crearToggle("🧪 Sanitización", `
+    ${crearBloqueEquipo("Generador de cloro", ["Clorador salino", "Dosificador"]) }
+    ${crearBloqueEquipo("Ozonificador", ["Ozono 10g", "Ozono 20g"]) }
+    ${crearBloqueEquipo("Lámpara UV", ["UV Compacta", "UV Industrial"]) }
   `);
 
-  const bloqueEmpotrables = crearToggle("Empotrables", `
-    ${crearBloqueEquipo("Boquilla de retorno", ["PVC", "Acero inoxidable"])}
-    ${crearBloqueEquipo("Dren de fondo", ["Circular", "Cuadrado"])}
-    ${crearBloqueEquipo("Dren canal", ["Canal largo", "Canal corto"])}
-    ${crearBloqueEquipo("Desnatador", ["Estándar", "Ancho"])}
-    ${crearBloqueEquipo("Barredora", ["Manual", "Automática"])}
-    ${crearBloqueEquipo("Manguera barredora", ["10m", "15m"])}
+  const bloqueEmpotrables = crearToggle("🧱 Empotrables", `
+    ${crearBloqueEquipo("Boquilla de retorno", ["PVC", "Acero inoxidable"]) }
+    ${crearBloqueEquipo("Dren de fondo", ["Circular", "Cuadrado"]) }
+    ${crearBloqueEquipo("Desnatador", ["Estándar", "Ancho"]) }
+    ${crearBloqueEquipo("Barredora", ["Manual", "Automática"]) }
+    ${crearBloqueEquipo("Manguera barredora", ["10m", "15m"]) }
   `);
 
-  const bloqueIluminacion = crearToggle("Iluminación", `
-    ${crearBloqueEquipo("Foco LED", ["RGB", "Blanco cálido"])}
-    ${crearBloqueEquipo("Controlador", ["Control remoto", "Wi-Fi"])}
-    ${crearBloqueEquipo("Transformador", ["12V", "24V"])}
+  const bloqueIluminacion = crearToggle("💡 Iluminación", `
+    ${crearBloqueEquipo("Foco LED", ["RGB", "Blanco cálido"]) }
+    ${crearBloqueEquipo("Controlador", ["Control remoto", "Wi-Fi"]) }
+    ${crearBloqueEquipo("Transformador", ["12V", "24V"]) }
   `);
 
-  const bloqueMotobomba = crearToggle("Motobomba Filtrado", `
-    ${crearBloqueEquipo("Motobomba", ["1HP", "1.5HP", "2HP"])}
+  const bloqueMotobomba = crearToggle("⚙️ Motobomba Filtrado", `
+    ${crearBloqueEquipo("Motobomba", ["1HP", "1.5HP", "2HP"]) }
   `);
 
-  // ---- Bloques especiales (derecha) ----
-  const empotrablesJacuzzi = crearToggle("Empotrables Jacuzzi", `
-    ${crearBloqueEquipo("Jets", ["Jet lateral", "Jet masaje"])}
-    ${crearBloqueEquipo("Dren Jacuzzi", ["Fondo redondo", "Fondo plano"])}
-    ${crearBloqueEquipo("Boquilla aire", ["Aire 1", "Aire 2"])}
+  // ---- Bloques secundarios ----
+  const empotrablesJacuzzi = crearToggle("🌀 Empotrables Jacuzzi", `
+    ${crearBloqueEquipo("Jets", ["Jet lateral", "Jet masaje"]) }
+    ${crearBloqueEquipo("Dren Jacuzzi", ["Fondo redondo", "Fondo plano"]) }
+    ${crearBloqueEquipo("Boquilla aire", ["Aire 1", "Aire 2"]) }
   `);
 
-  const motobombaHidrojets = crearToggle("Motobomba Hidrojets", `
-    ${crearBloqueEquipo("Motobomba Hidrojets", ["2HP", "3HP", "4HP"])}
+  const motobombaHidrojets = crearToggle("💨 Motobomba Hidrojets", `
+    ${crearBloqueEquipo("Motobomba Hidrojets", ["2HP", "3HP", "4HP"]) }
   `);
 
-  const sopladoresJacuzzi = crearToggle("Sopladores Jacuzzi", `
-    ${crearBloqueEquipo("Soplador", ["Soplador 1HP", "Soplador 2HP"])}
+  const sopladoresJacuzzi = crearToggle("🌬️ Sopladores Jacuzzi", `
+    ${crearBloqueEquipo("Soplador", ["Soplador 1HP", "Soplador 2HP"]) }
   `);
 
-  const empotrablesCuerpo2 = crearToggle("Empotrables Cuerpo 2", `
-    ${crearBloqueEquipo("Boquilla retorno (Cuerpo 2)", ["PVC", "Acero inoxidable"])}
-    ${crearBloqueEquipo("Dren fondo (Cuerpo 2)", ["Circular", "Cuadrado"])}
-    ${crearBloqueEquipo("Desnatador (Cuerpo 2)", ["Estándar", "Ancho"])}
+  const empotrablesCuerpo2 = crearToggle("🌊 Empotrables Cuerpo 2", `
+    ${crearBloqueEquipo("Boquilla retorno (Cuerpo 2)", ["PVC", "Acero inoxidable"]) }
+    ${crearBloqueEquipo("Dren fondo (Cuerpo 2)", ["Circular", "Cuadrado"]) }
+    ${crearBloqueEquipo("Desnatador (Cuerpo 2)", ["Estándar", "Ancho"]) }
   `);
 
-  const motobombaInfinity = crearToggle("Motobomba independiente Infinity", `
-    ${crearBloqueEquipo("Motobomba Infinity", ["1HP", "1.5HP", "2HP"])}
+  const motobombaInfinity = crearToggle("♾️ Motobomba Infinity", `
+    ${crearBloqueEquipo("Motobomba Infinity", ["1HP", "1.5HP", "2HP"]) }
   `);
 
-  const motobombaCalentamiento = crearToggle("Motobomba independiente Calentamiento", `
-    ${crearBloqueEquipo("Motobomba Calentamiento", ["1HP", "1.5HP", "2HP"])}
+  const motobombaCalentamiento = crearToggle("🔥 Motobomba Calentamiento", `
+    ${crearBloqueEquipo("Motobomba Calentamiento", ["1HP", "1.5HP", "2HP"]) }
   `);
 
-  const placeholder = crearToggle("Sin segundo cuerpo", `<p>No hay equipos adicionales.</p>`);
+  const placeholder = crearToggle("⚠️ Sin segundo cuerpo", `<p>No hay equipos adicionales.</p>`);
 
-  // ---- Recuperar radios globales ----
+  // ---- Radios globales ----
   const datosDim = window.datosPorSistema?.[tipoActual] || {};
   const llevaInfinity = datosDim.motobombaInfinity === "si";
   const llevaCalentamiento = datosDim.motobombaCalentamiento === "si";
@@ -753,18 +805,18 @@ function buildEquipamientoUI(tipoActual) {
   if (llevaInfinity) motobombasIndependientes += motobombaInfinity;
   if (llevaCalentamiento) motobombasIndependientes += motobombaCalentamiento;
 
-  // ---- Armar columna izquierda ----
-  columnaIzquierda.innerHTML =
-    bloqueCalentamiento +
-    bloqueFiltrado +
-    bloqueSanitizacion +
-    bloqueEmpotrables +
-    bloqueIluminacion +
-    bloqueMotobomba;
+  // ---- Izquierda ----
+  columnaIzquierda.innerHTML = `
+    ${bloqueCalentamiento}
+    ${bloqueFiltrado}
+    ${bloqueSanitizacion}
+    ${bloqueEmpotrables}
+    ${bloqueIluminacion}
+    ${bloqueMotobomba}
+  `;
 
-  // ---- Armar columna derecha según tipo de sistema ----
+  // ---- Derecha ----
   let derechaHTML = "";
-
   switch (tipoActual) {
     case "alberca":
     case "chapoteadero":
@@ -1201,7 +1253,6 @@ function guardarDatos(tipoForzado) {
   console.log(`💾 guardarDatos(): guardado para [${tipoActual}]`, datosSistema);
 }
 
-
 function renderSeccion(seccion) {
   const contenedor = document.getElementById("contenidoDerecho");
   contenedor.innerHTML = secciones[seccion] || "Sin contenido";
@@ -1221,6 +1272,14 @@ function renderSeccion(seccion) {
     } else {
       inicializarEventosTipoSistema();
     }
+      // --- 👇 Agrega esto exactamente al final del bloque ---
+    setTimeout(() => {
+      try {
+        enhanceDimensionesUI(); // mejora visual de las tarjetas + franja inferior
+      } catch (err) {
+        console.warn("Error al mejorar UI de dimensiones:", err);
+      }
+    }, 60);
   }
 
   // 🟡 Restaurar valores generales globales si existen (checkboxes, radios, etc.)
@@ -1385,6 +1444,155 @@ function attachDepthNormalizationListeners() {
     });
     el.dataset.depthListener = "1";
   });
+}
+
+function enhanceDimensionesUI() {
+  const opcionesContainer = document.querySelector('.opciones-sistema');
+  if (!opcionesContainer) return;
+
+  // info corta por cada tipo (personalízalas)
+  const systemInfo = {
+    alberca: { title: 'Alberca', desc: 'Cuerpo único. Ideal para recreación y nado.', bodies: 1 },
+    jacuzzi: { title: 'Jacuzzi', desc: 'Cuerpo pequeño y caliente. Hidrojets disponibles.', bodies: 1 },
+    chapoteadero: { title: 'Chapoteadero', desc: 'Cuerpo muy superficial para niños.', bodies: 1 },
+    espejoAgua: { title: 'Espejo de agua', desc: 'Decorativo / estético.', bodies: 1 },
+    albercaJacuzzi1: { title: 'Alberca + Jacuzzi (1 cuerpo)', desc: 'Combinación con zona integrada.', bodies: 2 },
+    albercaChapo1: { title: 'Alberca + Chapoteadero (1 cuerpo)', desc: 'Zona recreativa para niños.', bodies: 2 },
+    jacuzziChapo1: { title: 'Jacuzzi + Chapoteadero (1 cuerpo)', desc: 'Jacuzzi con zona infantil.', bodies: 2 },
+    albercaJacuzzi2: { title: 'Alberca + Jacuzzi (2 cuerpos)', desc: 'Cuerpos separados.', bodies: 2 },
+    albercaChapo2: { title: 'Alberca + Chapoteadero (2 cuerpos)', desc: 'Cuerpos independientes.', bodies: 2 },
+    jacuzziChapo2: { title: 'Jacuzzi + Chapoteadero (2 cuerpos)', desc: 'Separados: jacuzzi y chapoteadero.', bodies: 2 }
+  };
+
+  const footer = document.getElementById('opcionesFooter');
+  // si el footer no existe (no lo hubieras pegado), lo creamos al final del contenedor
+  if (!footer) {
+    console.warn('enhanceDimensionesUI: No encontré #opcionesFooter. Creando uno dinámicamente.');
+    const created = document.createElement('div');
+    created.id = 'opcionesFooter';
+    created.className = 'opciones-footer';
+    created.innerHTML = `
+      <div class="opciones-preview">
+        <img class="opciones-preview-img" src="" alt="Preview sistema">
+        <div class="opciones-meta">
+          <div class="titulo">Selecciona un tipo</div>
+          <div class="desc">Pasa el cursor o haz clic en una opción para ver más.</div>
+          <div class="stats"></div>
+        </div>
+      </div>
+      <div class="opciones-actions">
+        <button id="btnAbrirPanel">Abrir formulario</button>
+        <button id="btnUsarPlantilla" class="secondary">Usar plantilla</button>
+      </div>`;
+    opcionesContainer.parentElement.insertBefore(created, opcionesContainer.nextSibling);
+  }
+
+  // ahora recargar referencia (asegura que existe)
+  const foot = document.getElementById('opcionesFooter');
+  const previewImg = foot.querySelector('.opciones-preview-img');
+  const metaTitulo = foot.querySelector('.opciones-meta .titulo');
+  const metaDesc = foot.querySelector('.opciones-meta .desc');
+  const metaStats = foot.querySelector('.opciones-meta .stats');
+  const btnAbrir = foot.querySelector('#btnAbrirPanel') || foot.querySelector('#btnAbrir');
+  const btnPlantilla = foot.querySelector('#btnUsarPlantilla');
+
+  // make footer visible
+  foot.style.display = 'flex';
+
+  // convertir cada label.opcion-sistema para mejorar interactividad
+  const labels = Array.from(opcionesContainer.querySelectorAll('.opcion-sistema'));
+  labels.forEach(label => {
+    label.tabIndex = 0;              // allow keyboard focus
+    const input = label.querySelector('input[type="radio"]');
+    const img = label.querySelector('img');
+    const span = label.querySelector('span');
+
+    // inyecta badge y overlay si no existen
+    if (!label.querySelector('.selected-badge')) {
+      const badge = document.createElement('div');
+      badge.className = 'selected-badge';
+      badge.textContent = 'Seleccionado';
+      label.appendChild(badge);
+    }
+    if (!label.querySelector('.desc-overlay')) {
+      const overlay = document.createElement('div');
+      overlay.className = 'desc-overlay';
+      const info = systemInfo[input.value] || {};
+      overlay.textContent = info.desc || '';
+      label.appendChild(overlay);
+    }
+
+    // keyboard support: Enter/Space toggles
+    label.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter' || ev.key === ' ') {
+        ev.preventDefault();
+        input.checked = true;
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    });
+
+    // cuando se selecciona, actualiza la franja
+    input.addEventListener('change', () => {
+      if (!input.checked) return;
+      const info = systemInfo[input.value] || { title: span?.textContent || input.value, desc: '' };
+      previewImg.src = img?.src || '';
+      metaTitulo.textContent = info.title || input.value;
+      metaDesc.textContent = info.desc || '';
+      // mostrar estadísticas previo si existen
+      const datos = window.datosPorSistema?.[input.value] || {};
+      const area = (datos.area != null) ? (datos.area + ' m²') : '—';
+      const pmin = (datos.profMin != null) ? (datos.profMin + ' m') : '—';
+      const pmax = (datos.profMax != null) ? (datos.profMax + ' m') : '—';
+      metaStats.textContent = `Cuerpos: ${info.bodies || '—'} • Área: ${area} • Prof: ${pmin} — ${pmax}`;
+      // guarda tipo actual para tu app
+      window.tipoSistemaActual = input.value;
+    });
+
+    // hover: previsualización rápida (no selecciona)
+    label.addEventListener('mouseenter', () => {
+      const info = systemInfo[input.value] || {};
+      previewImg.src = img?.src || '';
+      metaTitulo.textContent = info.title || input.value;
+      metaDesc.textContent = info.desc || '';
+      const datos = window.datosPorSistema?.[input.value] || {};
+      metaStats.textContent = datos.area ? `Área: ${datos.area} m²` : '';
+    });
+  });
+
+  // Acciones de la franja
+  foot.querySelector('#btnAbrirPanel')?.addEventListener('click', (ev) => {
+    const tipo = window.tipoSistemaActual || document.querySelector('input[name="tipoSistema"]:checked')?.value;
+    if (tipo && typeof mostrarFormularioSistema === 'function') {
+      mostrarFormularioSistema(tipo);
+      // abrir visiblemente el panel de datos
+      const panel = document.getElementById('panelDatosSistema');
+      if (panel) panel.style.display = 'block';
+    } else {
+      console.warn('btnAbrirPanel: no hay tipo seleccionado o falta mostrarFormularioSistema().');
+    }
+  });
+
+  foot.querySelector('#btnUsarPlantilla')?.addEventListener('click', () => {
+    const tipo = window.tipoSistemaActual || document.querySelector('input[name="tipoSistema"]:checked')?.value;
+    if (!tipo) return alert('Selecciona primero un tipo de sistema.');
+    // ejemplo: poner valores por plantilla
+    window.datosPorSistema = window.datosPorSistema || {};
+    window.datosPorSistema[tipo] = window.datosPorSistema[tipo] || {};
+    // plantilla ejemplo (personaliza)
+    window.datosPorSistema[tipo].area1 = window.datosPorSistema[tipo].area1 ?? 25;
+    window.datosPorSistema[tipo].profMin1 = window.datosPorSistema[tipo].profMin1 ?? 1.2;
+    window.datosPorSistema[tipo].profMax1 = window.datosPorSistema[tipo].profMax1 ?? 1.6;
+    // refrescar UI o llamar a función que restablezca inputs si la tienes:
+    if (typeof restaurarInputsSistema === 'function') {
+      restaurarInputsSistema(tipo);
+    } else {
+      console.log('Plantilla aplicada en memoria a', tipo, window.datosPorSistema[tipo]);
+    }
+  });
+
+  // si ya estaba seleccionado uno al abrir la sección, disparar update
+  const preSel = document.querySelector('input[name="tipoSistema"]:checked');
+  if (preSel) preSel.dispatchEvent(new Event('change'));
 }
 
 function engancharListenersCalentamiento() {
