@@ -1023,16 +1023,24 @@ if (window.ultimoTipoSistema && window.ultimoTipoSistema !== tipo) {
 }
 
 function guardarDatos(tipoForzado) {
-  if (typeof normalizeAllDepths === "function") normalizeAllDepths();
+  // Normalizar en DOM si hace falta (deja mínimo <= máximo)
+  if (typeof normalizeAllDepths === "function") {
+    const allDepthInputs = Array.from(document.querySelectorAll('[id^="profMin"], [id^="profMax"]'));
+    const hasZero = allDepthInputs.some(el => parseFloat(el.value) === 0);
+    if (!hasZero) normalizeAllDepths();
+  }
 
   const tipoActual = tipoForzado
     || window.ultimoTipoSistema
     || document.querySelector("input[name='tipoSistema']:checked")?.value;
+
   if (!tipoActual) return;
 
+  // Asegurar objeto global
   window.datosPorSistema = window.datosPorSistema || {};
   const datosSistema = window.datosPorSistema[tipoActual] = window.datosPorSistema[tipoActual] || {};
 
+  // Configuración: cuántos cuerpos tiene cada tipo
   const tipoConfig = {
     alberca: 1, jacuzzi: 1, chapoteadero: 1, espejoAgua: 1,
     albercaJacuzzi1: 2, albercaChapo1: 2, jacuzziChapo1: 2,
@@ -1040,96 +1048,158 @@ function guardarDatos(tipoForzado) {
   };
   const numCuerpos = tipoConfig[tipoActual] || 1;
 
-  // 👉 Ignora ceros al promediar
+  // ---- Helper: calcular profundidad media ignorando ceros ----
   function computeMeanDepth(pmin, pmax) {
-    const minValid = Number.isFinite(pmin) && pmin > 0;
-    const maxValid = Number.isFinite(pmax) && pmax > 0;
-    if (minValid && maxValid) return (pmin + pmax) / 2;
-    if (minValid) return pmin;
-    if (maxValid) return pmax;
-    if (pmin === 0 && pmax === 0) return 0; // caso explícito ambos 0
-    return null;
+    const minVal = Number.isFinite(pmin) && pmin > 0 ? pmin : null;
+    const maxVal = Number.isFinite(pmax) && pmax > 0 ? pmax : null;
+
+    if (minVal !== null && maxVal !== null) {
+      return (minVal + maxVal) / 2;
+    }
+    if (minVal !== null) return minVal;
+    if (maxVal !== null) return maxVal;
+
+    // Ambos son 0 o no válidos
+    return 0;
   }
 
-  let volumenTotal = 0;
-  let areaTotal = 0;
-  const profMinList = [];
-  const profMaxList = [];
-  const meanDepths = [];
-
+  // ---- Recolectar y procesar por cuerpos ----
   for (let i = 1; i <= numCuerpos; i++) {
     const areaEl = document.getElementById(`area${i}`);
     const minEl = document.getElementById(`profMin${i}`);
     const maxEl = document.getElementById(`profMax${i}`);
 
-    if (areaEl) datosSistema[`area${i}`] = parseFloat(areaEl.value) || 0;
-    if (minEl) datosSistema[`profMin${i}`] = parseFloat(minEl.value) || 0;
-    if (maxEl) datosSistema[`profMax${i}`] = parseFloat(maxEl.value) || 0;
+    if (areaEl) {
+      const areaRaw = (areaEl.value ?? "").toString().trim();
+      datosSistema[`area${i}`] = areaRaw === "" ? null : parseFloat(areaRaw);
+    }
+    if (minEl) {
+      const minRaw = (minEl.value ?? "").toString().trim();
+      datosSistema[`profMin${i}`] = minRaw === "" ? null : parseFloat(minRaw);
+    }
+    if (maxEl) {
+      const maxRaw = (maxEl.value ?? "").toString().trim();
+      datosSistema[`profMax${i}`] = maxRaw === "" ? null : parseFloat(maxRaw);
+    }
 
     const a = datosSistema[`area${i}`];
     const pmin = datosSistema[`profMin${i}`];
     const pmax = datosSistema[`profMax${i}`];
-
     const meanDepth = computeMeanDepth(pmin, pmax);
-    datosSistema[`volumen${i}`] = (a > 0 && meanDepth !== null) ? a * meanDepth : 0;
 
-    if (a > 0 && meanDepth !== null && meanDepth > 0) {
-      volumenTotal += a * meanDepth;
-      areaTotal += a;
-      meanDepths.push(meanDepth);
-    }
-
-    if (pmin > 0) profMinList.push(pmin);
-    if (pmax > 0) profMaxList.push(pmax);
+    datosSistema[`volumen${i}`] =
+      (Number.isFinite(a) && Number.isFinite(meanDepth) && meanDepth > 0)
+        ? (a * meanDepth)
+        : (datosSistema[`volumen${i}`] ?? 0);
   }
 
-  const profMinAgg = profMinList.length ? Math.min(...profMinList) : null;
-  const profMaxAgg = profMaxList.length ? Math.max(...profMaxList) : null;
-  const profMedioAgg = meanDepths.length
-    ? (meanDepths.reduce((a,b) => a+b, 0) / meanDepths.length)
-    : null;
+  // ---- Agregados corrigiendo el promedio con ceros ----
+  let sumArea = 0;
+  let volumenTotal = 0;
+  const profMinList = [];
+  const profMaxList = [];
+  const meanDepths = [];
 
-  datosSistema.area = areaTotal;
-  datosSistema.volumen = volumenTotal;
+  for (let i = 1; i <= numCuerpos; i++) {
+    const a = datosSistema[`area${i}`];
+    const pmin = datosSistema[`profMin${i}`];
+    const pmax = datosSistema[`profMax${i}`];
+    const meanDepth = computeMeanDepth(pmin, pmax);
+
+    if (Number.isFinite(a)) sumArea += a;
+
+    if (Number.isFinite(pmin) && pmin > 0) profMinList.push(pmin);
+    if (Number.isFinite(pmax) && pmax > 0) profMaxList.push(pmax);
+
+    // ✅ Solo considerar valores de profundidad > 0
+    if (Number.isFinite(a) && Number.isFinite(meanDepth) && meanDepth > 0) {
+      volumenTotal += a * meanDepth;
+      meanDepths.push(meanDepth);
+    }
+  }
+
+  // ✅ Filtrar por si acaso algún cero pasó
+  const validMeanDepths = meanDepths.filter(d => d > 0);
+  const allZeros = validMeanDepths.length === 0 && volumenTotal === 0;
+
+  const areaTotal = sumArea || 0;
+  const profundidadPromedio = allZeros
+    ? 0
+    : areaTotal > 0
+      ? (volumenTotal / areaTotal)
+      : (validMeanDepths.length ? (validMeanDepths.reduce((a, b) => a + b, 0) / validMeanDepths.length) : 0);
+
+  const profMinAgg = profMinList.length ? Math.min(...profMinList) : (allZeros ? 0 : null);
+  const profMaxAgg = profMaxList.length ? Math.max(...profMaxList) : (allZeros ? 0 : null);
+
+  datosSistema.area = areaTotal || 0;
+  datosSistema.volumen = volumenTotal || 0;
   datosSistema.profMin = profMinAgg;
   datosSistema.profMax = profMaxAgg;
-  datosSistema.profMedio = profMedioAgg;
+  datosSistema.profMedio = Number.isFinite(profundidadPromedio) ? profundidadPromedio : null;
 
-  // Campos adicionales
+  // ---- Campos adicionales ----
   const usoEl = document.getElementById("usoCuerpo");
   if (usoEl) datosSistema.usoCuerpo = usoEl.value || null;
+
   const rotEl = document.getElementById("rotacion");
   if (rotEl) datosSistema.rotacion = rotEl.value || null;
+
   const distEl = document.getElementById("distCuarto");
-  if (distEl) datosSistema.distCuarto = parseFloat(distEl.value) || null;
+  if (distEl) {
+    const v = (distEl.value ?? "").toString().trim();
+    datosSistema.distCuarto = v === "" ? null : parseFloat(v);
+  }
 
-  // Desborde
+  // ---- Desborde ----
   const desbEl = document.querySelector("input[name='desborde']:checked");
-  if (desbEl) datosSistema.desborde = desbEl.value;
+  if (desbEl) {
+    datosSistema.desborde = desbEl.value;
+    if (desbEl.value === "infinity" || desbEl.value === "ambos") {
+      const motInf = document.querySelector("input[name='motobombaInfinity']:checked");
+      if (motInf) datosSistema.motobombaInfinity = motInf.value;
+      const lI = document.getElementById("largoInfinity");
+      if (lI) datosSistema.largoInfinity = lI.value === "" ? null : parseFloat(lI.value);
+      const aD = document.getElementById("alturaDesborde");
+      if (aD) datosSistema.alturaDesborde = aD.value === "" ? null : parseFloat(aD.value);
+    } else {
+      if (document.querySelector("input[name='motobombaInfinity']")) datosSistema.motobombaInfinity = datosSistema.motobombaInfinity ?? null;
+      if (document.getElementById("largoInfinity")) datosSistema.largoInfinity = null;
+      if (document.getElementById("alturaDesborde")) datosSistema.alturaDesborde = null;
+    }
 
-  // Calentamiento
+    if (desbEl.value === "canal" || desbEl.value === "ambos") {
+      const lC = document.getElementById("largoCanal");
+      if (lC) datosSistema.largoCanal = lC.value === "" ? null : parseFloat(lC.value);
+    } else {
+      if (document.getElementById("largoCanal")) datosSistema.largoCanal = null;
+    }
+  }
+
+  // ---- Checkboxes / radios globales ----
   ["chkBombaCalor", "chkPanel", "chkCaldera"].forEach(id => {
     const el = document.getElementById(id);
-    if (el) datosSistema[id] = el.checked || false;
+    if (el) datosSistema[id] = el.type === "checkbox" ? !!el.checked : (el.value || null);
   });
 
-  // Equipamiento dinámico
+  // ---- Inputs dinámicos ----
   try {
     const equipElems = document.querySelectorAll('#contenidoDerecho [data-eq]');
     equipElems.forEach(el => {
       const key = el.dataset.eq;
       if (!key) return;
-      if (el.type === "checkbox") datosSistema[key] = el.checked;
-      else if (el.type === "number") datosSistema[key] = parseFloat(el.value) || null;
-      else datosSistema[key] = el.value || null;
+      if (el.type === "checkbox") datosSistema[key] = !!el.checked;
+      else if (el.type === "number") datosSistema[key] = el.value === "" ? null : parseFloat(el.value);
+      else datosSistema[key] = el.value === "" ? null : el.value;
     });
   } catch (err) {
     console.warn("Error guardando inputs equipamiento:", err);
   }
 
+  // Guardado final
+  window.datosPorSistema[tipoActual] = datosSistema;
   console.log(`💾 guardarDatos(): guardado para [${tipoActual}]`, datosSistema);
 }
-
 
 
 function renderSeccion(seccion) {
@@ -1199,68 +1269,42 @@ function renderSeccion(seccion) {
     }
   });
 
-// 🔥 Sección "calentamiento"
-if (seccion === "calentamiento") {
-  const volverBtn = document.createElement("button");
-  volverBtn.textContent = "← Volver a dimensiones";
-  volverBtn.className = "btn-volver";
-  volverBtn.style.marginBottom = "15px";
+  // 🔥 Sección "calentamiento"
+  if (seccion === "calentamiento") {
+    const volverBtn = document.createElement("button");
+    volverBtn.textContent = "← Volver a dimensiones";
+    volverBtn.className = "btn-volver";
+    volverBtn.style.marginBottom = "15px";
 
-  const form = contenedor.querySelector(".clima-form");
-  if (form) form.prepend(volverBtn);
+    const form = contenedor.querySelector(".clima-form");
+    if (form) form.prepend(volverBtn);
 
-  volverBtn.addEventListener("click", () => {
-    const tipo = window.tipoSistemaActual;
-    if (!tipo) {
-      console.warn("⚠️ No hay tipoSistemaActual definido, regresando a selector general.");
-      renderSeccion("dimensiones");
-      return;
-    }
+    volverBtn.addEventListener("click", () => {
+      // ✅ Guardamos los datos ANTES de volver
+      guardarDatos(window.tipoSistemaActual);
+      // 🔹 Volvemos al mismo tipo de sistema
+      if (window.tipoSistemaActual) {
+        mostrarFormularioSistema(window.tipoSistemaActual);
+      } else {
+        window._preventAutoOpenTipo = true;
+        renderSeccion("dimensiones");
+      }
+    });
 
-    console.log("💾 Guardando datos antes de volver del calentamiento:", tipo);
-    guardarDatos(tipo);
-
-    // 🔹 Aseguramos mantener el mismo tipo de sistema activo
-    window._preventAutoOpenTipo = true;
-
-    // 🔹 En lugar de renderizar toda la sección 'dimensiones', 
-    // simplemente reabrimos directamente el formulario del tipo actual
-    const contenedorPrincipal = document.getElementById("contenidoDerecho");
-    contenedorPrincipal.innerHTML = ""; // limpiar contenido viejo
-
-    // ✅ Mostrar el mismo formulario del sistema anterior
-    mostrarFormularioSistema(tipo);
-
-    // ✅ Restaurar valores guardados después de construir el formulario
+    // ⚙️ Inicializar funciones específicas de calentamiento
     setTimeout(() => {
-      if (typeof restaurarInputsSistema === "function") {
-        restaurarInputsSistema(tipo);
-        console.log("✅ Inputs restaurados para:", tipo);
-      }
+      engancharListenersCalentamiento();
+      qEvaporacion();
+      qTuberia();
+    }, 50);
 
-      // 🧩 Refuerzo visual manual (por si algún input se quedó vacío)
-      const datos = window.datosPorSistema?.[tipo];
-      if (datos) {
-        for (let key in datos) {
-          const el = document.getElementById(key);
-          if (el) {
-            if (el.type === "radio") el.checked = el.value === datos[key];
-            else if (el.type === "checkbox") el.checked = !!datos[key];
-            else el.value = datos[key];
-          }
-        }
-        console.log("✅ Valores visuales reestablecidos para:", tipo, datos);
-      }
-    }, 150);
-  });
-
-  // 🔥 Inicialización de cálculos de calentamiento
-  setTimeout(() => {
-    engancharListenersCalentamiento();
-    qEvaporacion();
-    qTuberia();
-  }, 50);
-}
+    // ♻️ Si hay datos previos, restaurar campos sin perder valores
+    if (window.datosPorSistema?.[window.tipoSistemaActual]) {
+      setTimeout(() => {
+        restaurarInputsSistema(window.tipoSistemaActual);
+      }, 80);
+    }
+  }
 
   // ⚙️ Sección "equipamiento"
   if (seccion === "equipamiento") {
@@ -1282,44 +1326,6 @@ if (seccion === "calentamiento") {
     console.log("♻️ Reinyectando valores del sistema:", window.tipoSistemaActual);
     setTimeout(() => restaurarInputsSistema(window.tipoSistemaActual), 120);
   }
-}
-// ♻️ Restaura los valores de "Calentamiento" al volver desde el botón ← Volver a dimensiones
-function restaurarInputsCalentamiento(tipo) {
-  const datosPrevios = window.datosPorSistema?.[tipo];
-  if (!datosPrevios) {
-    console.warn("⚠️ No hay datos previos de calentamiento para:", tipo);
-    return;
-  }
-
-  console.log("♻️ Restaurando datos de calentamiento para:", tipo, datosPrevios);
-
-  const asignarValor = (id, valor) => {
-    const el = document.getElementById(id);
-    if (!el || valor === undefined || valor === null) return;
-
-    if (el.type === "checkbox") el.checked = !!valor;
-    else if (el.tagName === "SELECT") el.value = valor;
-    else el.value = valor;
-  };
-
-  // 🔹 Restaurar inputs básicos
-  asignarValor("ciudad", datosPrevios.ciudad);
-  asignarValor("tempDeseada", datosPrevios.tempDeseada);
-  asignarValor("cuerpoTechado", datosPrevios.cuerpoTechado);
-  asignarValor("cubiertaTermica", datosPrevios.cubiertaTermica);
-
-  // 🔹 Restaurar checkboxes
-  ["chkBombaCalor", "chkPanel", "chkCaldera", "chkNinguno"].forEach(id => {
-    asignarValor(id, datosPrevios[id]);
-  });
-
-  // 🔹 Restaurar radio buttons
-  if (datosPrevios.motobombaCalentamiento) {
-    const radios = document.querySelectorAll('input[name="motobombaCalentamiento"]');
-    radios.forEach(r => r.checked = r.value === datosPrevios.motobombaCalentamiento);
-  }
-
-  console.log("✅ Valores de calentamiento restaurados correctamente.");
 }
 
 // Normaliza sólo cuando ambos valores son números válidos (evita tocar mientras se escribe)
