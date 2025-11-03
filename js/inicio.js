@@ -598,6 +598,11 @@ function mostrarFormularioSistema(tipo) {
             <img src="./img/${config.img}" alt="${tipo}" class="imagen-sistema-activo">
             <p class="texto-imagen">Vista del sistema seleccionado</p>
           </div>
+                  <!-- 🔹 Franja de ayuda contextual -->
+        <div id="ayudaContextual" class="ayuda-contextual" style="display:none;">
+          <div class="ayuda-titulo">Descripción del campo</div>
+          <div class="ayuda-texto">Pasa el cursor sobre un campo para ver su descripción.</div>
+        </div>
         </div>
       </div>
     </div>
@@ -605,6 +610,7 @@ function mostrarFormularioSistema(tipo) {
 
   attachDepthNormalizationListeners(true);
   inicializarEventosDesborde();
+  inicializarAyudaContextual();
 
   document.getElementById("btnVolverTipos").addEventListener("click", () => {
     guardarDatos(tipo);
@@ -656,6 +662,44 @@ function mostrarFormularioSistema(tipo) {
       });
     });
   }
+  function inicializarAyudaContextual() {
+  const ayuda = document.getElementById("ayudaContextual");
+  if (!ayuda) return;
+
+  const titulo = ayuda.querySelector(".ayuda-titulo");
+  const texto = ayuda.querySelector(".ayuda-texto");
+
+  // 📋 Diccionario de descripciones
+  const descripciones = {
+    area1: "Superficie del cuerpo de agua en metros cuadrados.",
+    profMin1: "Profundidad mínima del cuerpo de agua.",
+    profMax1: "Profundidad máxima del cuerpo de agua.",
+    usoCuerpo: "Define el uso del sistema: residencial, público o de competencia.",
+    rotacion: "Tiempo que tarda en filtrarse completamente el volumen total de agua.",
+    distCuarto: "Distancia entre la alberca y el cuarto de máquinas.",
+    largoInfinity: "Longitud total del muro tipo infinity.",
+    alturaDesborde: "Altura de caída del agua en el muro Infinity.",
+    largoCanal: "Longitud total del canal perimetral."
+  };
+
+  // 🧩 Escuchar eventos sobre inputs y selects
+  document.querySelectorAll(".columna-izquierda input, .columna-izquierda select").forEach(el => {
+    el.addEventListener("mouseenter", () => {
+      const id = el.id;
+      if (descripciones[id]) {
+        titulo.textContent = el.labels?.[0]?.innerText || "Campo";
+        texto.textContent = descripciones[id];
+        ayuda.style.display = "flex";
+        ayuda.style.opacity = "1";
+      }
+    });
+
+    el.addEventListener("mouseleave", () => {
+      ayuda.style.opacity = "0";
+      setTimeout(() => (ayuda.style.display = "none"), 250);
+    });
+  });
+}
 }
 function buildEquipamientoUI(tipoActual) {
   const columnaIzquierda = document.getElementById("equipamientoIzquierdaContenido");

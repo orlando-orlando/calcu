@@ -1151,3 +1151,27 @@ details.tarjeta-equipamiento[open] > .contenido-toggle {
   color: #444;
   font-size: 14px;
 }
+
+/* === Franja de ayuda contextual fija === */
+.ayuda-contextual {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #004b8d;
+  color: white;
+  font-size: 0.9rem;
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.25);
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.ayuda-contextual .ayuda-titulo {
+  font-weight: 600;
+  color: #5cd4ff;
+}
+
