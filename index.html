@@ -6,13 +6,13 @@
   <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
-
   <div class="contenedor">
     <!-- Panel izquierdo -->
     <div class="panel-izquierdo">
-      <h1>Calcula tu sistema</h1><br><br>
+      <h1>Calcula tu sistema</h1>
+      <br><br>
 
-      <details data-section="dimensiones">
+      <details data-section="dimensiones" open>
         <summary>Dimensiones del cuerpo de agua</summary>
       </details>
 
@@ -24,7 +24,8 @@
         <summary>Selecciona tus equipos</summary>
       </details>
 
-      <button onclick="calcular()">Calcular</button><br><br><br>
+      <button id="btnCalcular">Calcular</button>
+      <br><br><br>
 
       <details data-section="resultados">
         <summary>Resumen de resultados</summary>
@@ -33,12 +34,15 @@
 
     <!-- Panel derecho -->
     <div class="panel-derecho" id="contenidoDerecho">
-      <p>Selecciona un apartado en el menú de la izquierda para empezar.</p>
+      <!-- Aquí se cargan las secciones dinámicamente -->
     </div>
   </div>
 
-<script src="js/inicio.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <footer>
+    <p>© 2025 BlueDesign — Todos los derechos reservados. Versión 1.0</p>
+  </footer>
 
+  <script src="js/inicio.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>

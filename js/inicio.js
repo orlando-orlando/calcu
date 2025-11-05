@@ -6171,5 +6171,121 @@ function qCanal() {
   return Q_BTU_h;
 }
 
+// VARIABLES GLOBALES
+let datosDimensiones = {};
+let datosCalentamiento = {};
+let datosEquipamiento = {};
+
+// Elemento donde se cargan las secciones
+const contenedor = document.getElementById("contenidoDerecho");
+
+// ======== FUNCIONES DE CADA SECCIÓN ========
+
+// --- 1️⃣ Dimensiones ---
+function cargarDimensiones() {
+  contenedor.innerHTML = `
+    <h2>Dimensiones del cuerpo de agua</h2>
+    <div class="tarjetas">
+      <div class="tarjeta">
+        <h3>Sistema tipo A</h3>
+        <label>Área (m²):</label>
+        <input type="number" id="area" placeholder="Ej. 25">
+        <label>Profundidad (m):</label>
+        <input type="number" id="profundidad" placeholder="Ej. 1.5">
+      </div>
+
+      <div class="tarjeta">
+        <h3>Sistema tipo B</h3>
+        <label>Diámetro (m):</label>
+        <input type="number" id="diametro" placeholder="Ej. 5">
+      </div>
+    </div>
+
+    <button class="btn" id="btnSiguiente">Ir a Calentamiento</button>
+  `;
+
+  document.getElementById("btnSiguiente").onclick = () => {
+    datosDimensiones = {
+      area: document.getElementById("area")?.value,
+      profundidad: document.getElementById("profundidad")?.value,
+      diametro: document.getElementById("diametro")?.value
+    };
+    cargarCalentamiento();
+  };
+}
+
+// --- 2️⃣ Calentamiento ---
+function cargarCalentamiento() {
+  contenedor.innerHTML = `
+    <h2>Perfil de Calentamiento</h2>
+    <canvas id="graficaCalor"></canvas>
+    <button class="btn" id="btnAtras">Volver</button>
+    <button class="btn" id="btnEquipamiento">Ir a Equipamiento</button>
+  `;
+
+  document.getElementById("btnAtras").onclick = cargarDimensiones;
+  document.getElementById("btnEquipamiento").onclick = cargarEquipamiento;
+
+  // Grafica ejemplo con Chart.js
+  const ctx = document.getElementById("graficaCalor").getContext("2d");
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: ["Ene", "Feb", "Mar", "Abr", "May", "Jun"],
+      datasets: [{
+        label: "Pérdidas de energía",
+        data: [10, 8, 6, 7, 9, 11],
+        borderColor: "#007bff",
+        fill: false
+      }]
+    }
+  });
+}
+
+// --- 3️⃣ Equipamiento ---
+function cargarEquipamiento() {
+  contenedor.innerHTML = `
+    <h2>Selecciona tus equipos</h2>
+    <p>Basado en tus dimensiones, selecciona los equipos requeridos.</p>
+
+    <div class="tarjeta">
+      <label>Bomba:</label>
+      <input type="number" placeholder="Potencia (HP)" id="bomba">
+      <label>Filtro:</label>
+      <input type="text" placeholder="Tipo de filtro" id="filtro">
+    </div>
+
+    <button class="btn" id="btnVolver">Volver</button>
+    <button class="btn" id="btnFinal">Finalizar</button>
+  `;
+
+  document.getElementById("btnVolver").onclick = cargarCalentamiento;
+  document.getElementById("btnFinal").onclick = () => {
+    datosEquipamiento = {
+      bomba: document.getElementById("bomba").value,
+      filtro: document.getElementById("filtro").value
+    };
+    mostrarResumen();
+  };
+}
+
+// --- 4️⃣ Resultados finales ---
+function mostrarResumen() {
+  contenedor.innerHTML = `
+    <h2>Resumen de resultados</h2>
+    <pre>${JSON.stringify({
+      dimensiones: datosDimensiones,
+      calentamiento: datosCalentamiento,
+      equipamiento: datosEquipamiento
+    }, null, 2)}</pre>
+
+    <button class="btn" id="btnInicio">Volver al inicio</button>
+  `;
+
+  document.getElementById("btnInicio").onclick = cargarDimensiones;
+}
+
+// Inicializar vista
+cargarDimensiones();
 
 
