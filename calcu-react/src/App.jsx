@@ -1,10 +1,32 @@
+import { useState } from "react";
+import Navbar from "./components/Navbar.jsx";
+import Footer from "./components/Footer.jsx";
+import Dimensiones from "./pages/Dimensiones.jsx";
+import Calentamiento from "./pages/Calentamiento.jsx";
+import Equipamiento from "./pages/Equipamiento.jsx";
+import Resultado from "./pages/Resultado.jsx";
+
 export default function App() {
+  const [seccion, setSeccion] = useState("dimensiones");
+
+  const renderSeccion = () => {
+    switch (seccion) {
+      case "calentamiento":
+        return <Calentamiento />;
+      case "equipamiento":
+        return <Equipamiento />;
+      case "resultado":
+        return <Resultado />;
+      default:
+        return <Dimensiones />;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 p-6">
-      <h1 className="text-3xl font-bold text-blue-800 mb-4">
-        Calculadora Blue Design
-      </h1>
-      <p>Bienvenido a tu entorno React + Tailwind listo para desarrollo 🔧</p>
+    <div className="min-h-screen flex flex-col bg-gray-50 text-gray-800 font-sans">
+      <Navbar onChangeSeccion={setSeccion} />
+      <main className="flex-1 p-6">{renderSeccion()}</main>
+      <Footer />
     </div>
   );
 }
