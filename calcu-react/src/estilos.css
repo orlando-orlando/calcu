@@ -1243,3 +1243,47 @@ footer {
   text-align: center;
   padding: 10px;
 }
+
+.mensaje-inicial {
+  text-align: center;
+  margin-top: 4rem;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+/* Contenedor general de toda la app */
+.app-contenedor {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Para que el footer quede abajo */
+}
+
+/* Contenedor de secciones */
+.contenedor {
+  display: flex;
+  flex: 1; /* Ocupa todo el espacio disponible antes del footer */
+}
+
+/* Panel izquierdo */
+.panel-izquierdo {
+  width: 25%;
+  min-width: 250px;
+  background-color: #f3f3f3;
+  padding: 1rem;
+  border-right: 1px solid #ddd;
+}
+
+/* Panel derecho */
+.panel-derecho {
+  flex: 1;
+  padding: 2rem;
+  background-color: white;
+}
+
+/* Footer */
+footer {
+  background-color: #222;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+}
