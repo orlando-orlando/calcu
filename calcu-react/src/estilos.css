@@ -1,1289 +1,341 @@
-/* estilos.css */
+/* ==========================================================
+   🧱 estilos.css — versión optimizada + corrección layout
+   ========================================================== */
 
-input[type="number"],
-select {
-  width: 225px;
-  padding: 0.5rem;
-  font-size: 0.95rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-sizing: border-box;
+/* === Variables globales === */
+:root {
+  --color-primario: #034b80;
+  --color-secundario: #e8f0ff;
+  --color-fondo: #f8fbff;
+  --color-texto: #1a1a1a;
+  --color-borde: #d9e2ef;
+  --color-acento: #0077cc;
 }
 
-body {
+/* === Reset básico === */
+* {
   margin: 0;
-  font-family: Arial, sans-serif;
-}
-
-.contenedor {
-  display: flex;
-  height: 100vh;
-}
-
-.panel-izquierdo {
-  width: 15%;
-  padding: 15px;
-  background: #f2f2f2;
-  border-right: 1px solid #ccc;
-  overflow-y: auto;
-}
-
-.panel-izquierdo details {
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-
-.panel-izquierdo button {
-  margin-top: 20px;
-  width: 100%;
-  padding: 10px;
-  background: #0077cc;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.panel-izquierdo button:hover {
-  background: #005fa3;
-}
-
-.panel-derecho {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.form-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.form-group input,
-.form-group select {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 0.95rem;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: #0077cc;
-  box-shadow: 0 0 4px rgba(0, 119, 204, 0.3);
-}
-
-.form-group.inline {
-  flex-direction: row;
-  gap: 1rem;
-}
-
-.form-subgroup {
-  margin-left: 1rem;
-  padding-left: 1rem;
-  border-left: 2px solid #eee;
-}
-
-.tabla-clima {
-  margin-top: 20px;
-  overflow-x: auto;
-}
-
-.tabla-clima table {
-  width: 100%;
-  max-width: 600px;
-  border-collapse: collapse;
-  font-size: 14px;
-  text-align: center;
-}
-
-.tabla-clima th,
-.tabla-clima td {
-  border: 1px solid #ccc;
-  text-align: center;
-  padding: 6px;
-  width: 20%;
-}
-
-.tabla-clima th {
-  background-color: #f4f4f4;
-  font-weight: bold;
-  word-wrap: break-word;
-  white-space: normal;
-  padding: 6px;
-}
-
-.tabla-clima tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.tabla-clima tbody tr:nth-child(odd) {
-  background-color: #ffffff;
-}
-
-.tabla-clima tbody tr:hover {
-  background-color: #e6f2ff;
-}
-
-.resumen-clima h4 {
-  margin-bottom: 8px;
-  color: #0077cc;
-}
-
-.deshabilitado td {
-  color: #999;
-  background: #f1f1f1;
-}
-
-.deshabilitado td:first-child {
-  background: #fff;
-}
-
-.panel-centro {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.panel-clima {
-  width: 35%;
-  padding: 20px;
-  background: #fff;
-  border-left: 1px solid #ccc;
-  overflow-y: auto;
-}
-
-.panel-clima .tabla-clima {
-  margin-bottom: 20px;
-}
-
-.clima-layout {
-  display: grid;
-  grid-template-columns: minmax(460px, 1fr) 600px; /* columna izquierda flexible, columna derecha fija */
-  column-gap: 20px;
-  align-items: flex-start;
-}
-
-/* Columna izquierda (inputs) */
-.clima-form {
-  grid-column: 1;
-  grid-row: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-/* Resumen debajo de inputs, ancho estirado hasta la tabla */
-.clima-resumen {
-  grid-column: 1; /* empieza en la columna 1 */
-  grid-row: 2;        /* va en la fila 2 */
-}
-
-.resumen-clima {
-  width: 96.2%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: #f9f9f9;
-  font-size: 14px;
-}
-
-.clima-tabla {
-  grid-column: 2;
-  grid-row: 1; /* ocupa de la fila 1 hasta la 2 → queda a la derecha de ambos */
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-#campoBombaCalor .form-group.inline {
-  display: flex;
-  gap: 20px;       /* separación entre inputs */
-  flex-wrap: wrap;  /* permite que los inputs se bajen si no caben */
-}
-
-#campoBombaCalor .form-subgroup-inline {
-  display: flex;
-  flex-direction: column;
-  flex: 1;          /* para que se distribuyan proporcionalmente */
-  min-width: 150px; /* evita que se achiquen demasiado */
-}
-
-#campoBombaCalor .form-subgroup-inline label {
-  white-space: normal; /* permite que el label haga salto de línea si es largo */
-}
-
-/* Tarjeta contenedora */
-.tarjeta-bdc {
-  margin-left: 0;        /* deja la tarjeta alineada a la izquierda */
-  padding: 15px 20px;    /* espacio interno: 15px arriba/abajo, 20px izquierda/derecha */
-  background: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
-
-/* Título de la tarjeta */
-.tarjeta-bdc h4 {
-  margin: 0 0 15px 0;
-  font-size: 16px;
-  color: #0077cc;
-  font-weight: 700;
-}
-
-/* Fila de inputs */
-.fila-bdc {
-  display: flex;
-  gap: 20px;
-  align-items: flex-end; /* inputs alineados en la base */
-  flex-wrap: wrap;       /* que se acomoden si no caben */
-}
-
-/* Cada campo */
-.campo-bdc {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 180px;
-}
-
-/* Labels */
-.campo-bdc label {
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  line-height: 1.2;
-  color: #333;
-  white-space: normal; /* permite salto de línea */
-}
-
-/* Inputs y selects uniformes */
-.campo-bdc input,
-.campo-bdc select {
-  padding: 8px 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  width: 100%;
-  box-sizing: border-box;
-  background: #fafafa;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.campo-bdc input:focus,
-.campo-bdc select:focus {
-  outline: none;
-  border-color: #0077cc;
-  box-shadow: 0 0 4px rgba(0,119,204,0.3);
-}
-
-/* 👉 Estilo general de las tarjetas (igual que bombas/paneles) */
-.tarjeta-tabla {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 0px 15px 15px 15px; /* arriba 5px, derecha 15px, abajo 15px, izquierda 15px */
-  margin-top: 0px;
-  overflow-x: auto; /* scroll horizontal si la tabla es muy ancha */
-}
-
-/* 👉 Tablas dentro de tarjetas */
-.tabla-clima table,
-.resumen-clima table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.8rem;
-}
-
-/* 👉 Encabezado */
-.tabla-clima thead,
-.resumen-clima thead {
-  background: #f4f6f8;
-  color: #333;
-  text-align: center;
-}
-
-.tabla-clima th,
-.resumen-clima th {
-  padding: 8px 10px;
-  border-bottom: 2px solid #ddd;
-}
-
-/* 👉 Filas */
-.tabla-clima td,
-.resumen-clima td {
-  padding: 6px 10px;
-  border-bottom: 1px solid #eee;
-  text-align: center;
-}
-
-/* 👉 Zebra stripes */
-.tabla-clima tbody tr:nth-child(even),
-.resumen-clima tbody tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-/* 👉 Hover */
-.tabla-clima tbody tr:hover,
-.resumen-clima tbody tr:hover {
-  background-color: #f1f7ff;
-}
-
-/* 👉 Título del resumen */
-.resumen-clima h4 {
-  margin-top: 15px;
-  margin-bottom: 10px;
-  font-size: 1rem;
-  color: #444;
-  font-weight: 600;
-  text-align: center;
-}
-
-/* 👉 Ajuste visual extra para que la tabla clima se vea como tarjeta */
-.tarjeta-tabla table {
-  border-radius: 8px;          /* bordes redondeados */
-  overflow: hidden;            /* para que el redondeo afecte al contenido */
-}
-
-.tarjeta-tabla th {
-  background: #f4f6f8;
-  font-weight: 600;
-}
-
-.tarjeta-tabla td {
-  background: #fff;
-}
-
-/* Tarjeta de selección de calentamiento */
-.tarjeta-calentamiento {
-  display: flex;
-  flex-direction: row;  /* los checkbox e inputs irán en fila */
-  align-items: center;
-  justify-content: flex-start;
-  padding: 15px 20px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  background: #fff;
-  gap: 20px;            /* separación entre label y checkboxes */
-  flex-wrap: nowrap;     /* evita que se vayan a otra línea */
-}
-
-.label-calentamiento {
-  font-weight: 600;
-  color: #0077cc;
-  font-size: 16px;
-  min-width: 180px;      /* ancho del label para que quede alineado */
-}
-
-.checkbox-row {
-  display: flex;
-  gap: 60px;
-  flex-wrap: nowrap;     /* fuerza una sola fila */
-}
-
-.checkbox-row label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.fila-cuatro-inputs {
-  display: flex;
-  gap: 20px;              /* separación entre inputs */
-  flex-wrap: wrap;         /* que se acomoden si no caben */
-  align-items: flex-end;   /* alinea los inputs por la base, no por el label */
-}
-
-.fila-cuatro-inputs .form-subgroup-inline {
-  display: flex;
-  flex-direction: column;  
-  flex: 1 1 180px;         /* crece y se reduce proporcionalmente */
-  min-width: 150px;        
-}
-
-.fila-cuatro-inputs label {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  line-height: 1.2;
-  color: #333;
-  height: 1.8em;           /* fuerza altura uniforme de label para alinear inputs */
-  display: flex;
-  align-items: flex-end;    /* alinea el texto del label al final */
-}
-
-.fila-cuatro-inputs input,
-.fila-cuatro-inputs select {
-  padding: 8px 10px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  width: 100%;
-  box-sizing: border-box;
-  background: #fafafa;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.fila-cuatro-inputs input:focus,
-.fila-cuatro-inputs select:focus {
-  outline: none;
-  border-color: #0077cc;
-  box-shadow: 0 0 4px rgba(0,119,204,0.3);
-}
-
-input:disabled,
-select:disabled {
-  background: #f1f1f1;
-  color: #999;
-  border-color: #ddd;
-  cursor: not-allowed;
-}
-
-.disabled-table {
-  pointer-events: none;      /* No se puede interactuar */
-  opacity: 0.5;              /* Se ve atenuada */
-}
-
-.sistemas-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-}
-
-.grupo-sistemas h4 {
-  margin-bottom: 10px;
-  font-size: 16px;
-  color: #004c91;
-}
-
-.grupo-sistemas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-.sistema-opcion {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border: 2px solid transparent;
-  border-radius: 12px;
-  padding: 10px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  background-color: #f7f9fb;
-  width: 150px;
-}
-
-.sistema-opcion:hover {
-  border-color: #2196f3;
-  background-color: #e8f3ff;
-}
-
-.sistema-opcion input {
-  display: none;
-}
-
-.sistema-opcion img {
-  width: 100%;
-  height: auto;
-  border-radius: 10px;
-}
-
-.sistema-opcion span {
-  margin-top: 6px;
-  font-weight: 600;
-  text-align: center;
-  color: #333;
-  font-size: 14px;
-}
-
-/* 🔹 Cuando se selecciona */
-.sistema-opcion input:checked + img,
-.sistema-opcion input:checked ~ span {
-  filter: brightness(1.1);
-}
-
-.sistema-opcion input:checked ~ span {
-  color: #1976d2;
-}
-
-.sistema-opcion input:checked ~ img {
-  border: 2px solid #1976d2;
-  box-shadow: 0 0 8px rgba(25, 118, 210, 0.6);
-  border-radius: 10px;
-}
-
-/* 🔹 Contenedor visual tipo panel, sin color pero con profundidad */
-.tipo-sistema-container {
-  width: calc(100% + 40px);
-  margin-left: -20px;
-  margin-right: -20px;
-  padding: 40px 0 50px 0;
-  text-align: center;
-  background: #fff; /* blanco puro, sin gris */
-  border-radius: 16px;
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.08),      /* sombra principal */
-    inset 0 1px 1px rgba(255, 255, 255, 0.6); /* brillo interno sutil */
-  border: 1px solid #e5e9ef; /* borde apenas visible para separar del fondo */
-}
-
-.tipo-sistema-container:hover {
-  box-shadow:
-    0 6px 16px rgba(0, 0, 0, 0.12),
-    inset 0 1px 1px rgba(255, 255, 255, 0.6);
-  transform: translateY(-2px);
-  transition: all 0.25s ease;
-}
-
-/* 🔹 Título de la sección */
-.titulo-seccion {
-  font-size: 22px;
-  font-weight: 600;
-  color: #004c91;
-  margin-bottom: 25px;
-}
-
-/* 🔹 Grilla fija: 2 filas de 5 columnas que llenan todo el ancho */
-.opciones-sistema {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);  /* 5 columnas iguales */
-  grid-template-rows: repeat(2, auto);    /* 2 filas automáticas */
-  gap: 25px;
-  justify-items: center;
-  align-items: stretch;
-  width: 100%;
-  max-width: 100%;
-  padding: 0 40px;
+  padding: 0;
   box-sizing: border-box;
 }
 
-/* 🔹 Cada tarjeta/imagen ajustada al tamaño disponible */
-.opcion-sistema {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 2px solid transparent;
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  cursor: pointer;
-  width: 100%;
+html,
+body {
   height: 100%;
-  max-width: 200px; /* tamaño máximo de cada tarjeta */
-}
-
-.opcion-sistema:hover {
-  border-color: #007bff;
-  transform: translateY(-4px);
-}
-
-.opcion-sistema img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-bottom: 2px solid #e0e0e0;
-}
-
-.opcion-sistema span {
-  padding: 10px;
-  font-weight: 600;
-  color: #333;
-  text-align: center;
-  line-height: 1.2em;
-}
-
-.opcion-sistema input {
-  display: none;
-}
-
-/* 🔹 Estado seleccionado */
-.opcion-sistema input:checked + img {
-  border-bottom: 4px solid #007bff;
-  filter: brightness(1.1);
-}
-
-.opcion-sistema input:checked ~ span {
-  color: #007bff;
-}
-
-.panel-datos-sistema {
-  width: 50%;
-  margin: 20px auto;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  animation: fadeIn 0.3s ease;
-  transition: all 0.3s ease;
-}
-
-.panel-datos-sistema h3 {
-  color: #004c91;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-.btn-volver {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-bottom: 16px;
-  transition: background 0.2s;
-}
-
-.btn-volver:hover {
-  background: #0056b3;
-}
-
-.sistema-contenido {
-  display: grid;
-  grid-template-columns: 58% 42%; /* 🔹 Ajuste de proporción */
-  gap: 24px;
-  width: 100%;
-  align-items: start;
-  position: relative; /* 🔹 Para posicionar elementos internos */
-}
-
-.columna-izquierda {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 92%;
-}
-
-.columna-derecha {
-  position: absolute;
-  top: 42%;
-  right: 0;
-  width: 38%;
-  transform: translateY(-50%); /* centra verticalmente */
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-  pointer-events: none;
-}
-
-.tarjeta-imagen {
-  margin-top: 0; /* elimina cualquier desplazamiento extra */
-  width: 100%;
-  max-width: 665px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-  padding: 12px;
-  text-align: center;
-  pointer-events: auto; /* 🔹 Rehabilita clics dentro de la tarjeta */
-}
-
-.imagen-sistema-activo {
-  width: 100%;
-  max-height: 360px;
-  height: auto;
-  object-fit: contain;
-  border-radius: 10px;
-  display: block;
-  margin: 0 auto;
-}
-
-@media (max-width: 1024px) {
-  .columna-derecha {
-    position: static;
-    transform: none;
-    width: 100%;
-    margin-top: 16px;
-  }
-}
-
-.animacion-aparecer {
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.bloque-equipamiento {
-  background: #f7f7f7;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  padding: 10px 14px;
-}
-
-.bloque-equipamiento summary {
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 1.05em;
-  margin-bottom: 6px;
-}
-
-.checkbox-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 8px;
-}
-
-/* 🧩 Distribución principal de Equipamiento */
-.equipamiento-layout {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr; /* Dos columnas reales */
-  gap: 24px;
-  align-items: start;
-  width: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-/* Columnas del equipamiento */
-.equipamiento-columna {
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-height: 300px;
-}
-
-.detalle-equipo summary {
-  font-weight: 600;
-  color: #004c91;
-  cursor: pointer;
-  padding: 4px 0;
-}
-
-.detalle-equipo {
-  background: #fafafa;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 8px 12px;
-  margin-bottom: 8px;
-}
-
-.placeholder-vacio {
-  text-align: center;
-  color: #777;
-  font-style: italic;
-  padding: 20px;
-}
-
-/* --- Equipamiento refinado --- */
-.bloque-equipo {
-  background: #f8f9fb;
-  border-radius: 10px;
-  padding: 12px 14px;
-  margin-bottom: 12px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-.bloque-titulo {
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #0a4270;
-}
-
-.bloque-campos {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px;
-  align-items: center;
-}
-
-.campo label {
-  display: block;
-  font-size: 13px;
-  color: #333;
-  margin-bottom: 3px;
-}
-
-.input-azul {
-  width: 100%;
-  padding: 6px 8px;
-  border: 1px solid #ccd;
-  border-radius: 6px;
-  background-color: #fff;
-  font-family: inherit;
-}
-
-.tarjeta-equipamiento {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.titulo-toggle {
-  font-weight: 700;
-  color: #0077b6;
-  cursor: pointer;
-  padding: 10px 14px;
-}
-
-.contenido-toggle {
-  padding: 10px 16px 14px;
-  border-top: 1px solid #eee;
-}
-
-/* Responsive columns */
-.equipamiento-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-@media (max-width: 900px) {
-  .equipamiento-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* --- Animación suave de apertura para <details> --- */
-details.tarjeta-equipamiento[open] > .contenido-toggle {
-  animation: slideDown 0.3s ease forwards;
-}
-
-@keyframes slideDown {
-  0% {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Pequeño efecto al cerrar */
-details.tarjeta-equipamiento > .contenido-toggle {
-  transition: opacity 0.2s ease;
-  opacity: 0;
-}
-
-details.tarjeta-equipamiento[open] > .contenido-toggle {
-  opacity: 1;
-}
-
-.input-corto {
-  width: 70px !important;
-  min-width: 70px !important;
-  max-width: 70px !important;
-  text-align: center;
-  box-sizing: border-box;
-}
-
-/* Mejora tarjetas radio */
-.opcion-sistema {
-  max-width: 220px;
-  min-height: 170px;
-  padding: 8px;
-  position: relative;
-  transition: transform 0.20s, box-shadow 0.20s, border-color 0.20s;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: stretch;
-  cursor: pointer;
-  background: linear-gradient(180deg,#fff,#fbfdff);
-  border-radius: 12px;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: "Inter", "Segoe UI", sans-serif;
+  line-height: 1.5;
   overflow: hidden;
-  border: 1px solid transparent;
-}
-.opcion-sistema:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 24px rgba(12,40,80,0.08);
-  border-color: rgba(0,123,255,0.12);
 }
 
-.opcion-sistema img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 8px;
-  display: block;
-}
+/* ==========================================================
+   🧩 Layout general
+   ========================================================== */
 
-/* pequeña etiqueta tipo "seleccionado" */
-.opcion-sistema .selected-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: #1976d2;
-  color: #fff;
-  padding: 6px 8px;
-  border-radius: 999px;
-  font-size: 12px;
-  display: none;
-  box-shadow: 0 6px 12px rgba(25,118,210,0.14);
-}
-.opcion-sistema input:checked + img ~ .selected-badge,
-.opcion-sistema input:checked + img + span + .selected-badge {
-  display: inline-block;
-}
-
-/* overlay de descripción (se inyecta por JS) */
-.opcion-sistema .desc-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 8px 10px;
-  background: linear-gradient(180deg, rgba(10,25,40,0), rgba(0,0,0,0.45));
-  color: #fff;
-  font-size: 13px;
-  line-height: 1.1;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity .18s, transform .18s;
-  pointer-events: none;
-}
-.opcion-sistema:hover .desc-overlay { opacity: 1; transform: translateY(0); }
-
-/* Franja interactiva debajo de las tarjetas */
-.opciones-footer {
-  margin: 80px 40px 0 40px; /* ⬆️ antes era ~18px, ahora más amplio */
-  border-top: 1px solid #e8f0ff;
-  padding: 16px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  background: linear-gradient(180deg,#fff,#f7fbff);
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 6px 18px rgba(8,30,60,0.03);
-  transition: margin-top 0.3s ease;
-}
-
-/* preview y meta */
-.opciones-preview { display:flex; gap:14px; align-items:center; min-width:320px; }
-.opciones-preview img { width:100px; height:70px; object-fit:cover; border-radius:8px; border:1px solid #e6eefc; }
-.opciones-meta .titulo { font-weight:700; color:#0a4270; }
-.opciones-meta .desc { font-size:13px; color:#466; margin-top:4px; }
-.opciones-meta .stats { margin-top:6px; font-size:13px; color:#666; }
-
-/* acciones */
-.opciones-actions { display:flex; gap:8px; align-items:center; }
-.opciones-actions button {
-  background:#007bff;
-  color:#fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight:600;
-}
-.opciones-actions button.secondary {
-  background: #fff;
-  color: #007bff;
-  border: 1px solid #d9e9ff;
-}
-
-/* accesibilidad: focus */
-.opcion-sistema:focus { outline: 3px solid rgba(0,123,255,0.15); }
-
-/* responsive: reduce espacio en pantallas pequeñas */
-@media (max-width: 900px) {
-  .opciones-footer { margin: 12px 18px 0 18px; flex-direction: column; align-items: stretch; gap:10px;}
-  .opciones-preview img { width:80px; height:55px; }
-}
-
-/* --- Ajuste visual de las tarjetas tipo radio --- */
-.opciones-sistema {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 columnas fijas */
-  gap: 20px;
-  justify-items: center;
-}
-
-/* Tarjetas más grandes pero sin romper la grilla */
-.opcion-sistema {
-  max-width: 230px;    /* antes 220px */
-  min-height: 200px;   /* antes 170px */
-  padding: 10px;
-  border-radius: 14px;
-}
-
-/* Imagen más alta */
-.opcion-sistema img {
-  height: 140px;       /* antes 120px */
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 8px;
-}
-
-/* Texto más grande debajo de la imagen */
-.opcion-sistema span {
-  font-size: 15px;
-  font-weight: 600;
-  display: block;
-  text-align: center;
-  margin-top: 6px;
-  color: #034b80;
-}
-
-/* Pequeño efecto de selección */
-.opcion-sistema input[type="radio"]:checked + img {
-  outline: 4px solid #007bff;
-  outline-offset: 2px;
-  border-radius: 10px;
-}
-
-.opciones-sistema {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* mantiene las 5 columnas */
-  gap: 80px 20px; /* 💡 más espacio vertical (antes 20px) */
-  justify-items: center;
-  margin-top: 40px;
-}
-
-/* === SOLO aplica a la sección de tipo de sistema === */
-
-.sistema-contenido {
-  display: grid;
-  grid-template-columns: 1.6fr 1fr; /* 🔹 Columna izquierda más corta */
-  gap: 40px;
-  align-items: flex-start;
-  width: 100%;
-  margin: 0;
-  padding-left: 10px; /* 🔹 Antes 30px, ahora más pegado al borde izquierdo */
-}
-
-/* Columna izquierda: formularios */
-.sistema-contenido .columna-izquierda {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 95%; /* 🔹 Hace que no se extienda tanto hacia la derecha */
-  max-width: none;
-}
-
-/* Columna derecha: imagen o contenido visual */
-.sistema-contenido .columna-derecha {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-/* Botón volver */
-.btn-volver {
-  background: transparent;
-  color: #004b8d;
-  border: 2px solid #004b8d;
-  border-radius: 8px;
-  padding: 8px 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-volver:hover {
-  background: rgba(0, 75, 141, 0.08);
-  transform: scale(1.05);
-}
-
-/* Botón principal */
-.btn-principal {
-  background-color: #004b8d;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 18px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.25s ease;
-}
-
-.btn-principal:hover {
-  background-color: #004b8d;
-  box-shadow: 0 0 10px rgba(0, 75, 141, 0.3);
-  transform: scale(1.03);
-}
-
-/* Tarjetas */
-.tarjeta-bdc {
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.tarjeta-imagen {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.tarjeta-imagen img {
-  width: 100%;
-  max-width: 350px;
-  border-radius: 12px;
-}
-
-.texto-imagen {
-  text-align: center;
-  margin-top: 8px;
-  color: #444;
-  font-size: 14px;
-}
-
-/* === Franja de ayuda contextual fija === */
-.ayuda-contextual {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #004b8d;
-  color: white;
-  font-size: 0.9rem;
-  padding: 12px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  box-shadow: 0 -2px 8px rgba(0,0,0,0.25);
-  z-index: 1000;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-.ayuda-contextual .ayuda-titulo {
-  font-weight: 600;
-  color: #5cd4ff;
-}
-
-body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f7f9fc;
-}
-
-.contenedor {
-  display: flex;
-  min-height: 100vh;
-}
-
-.panel-izquierdo {
-  width: 280px;
-  background: #0a2342;
-  color: white;
-  padding: 2rem 1rem;
-}
-
-.panel-izquierdo h1 {
-  font-size: 1.3rem;
-  margin-bottom: 2rem;
-}
-
-.panel-izquierdo details summary {
-  background: #113a63;
-  padding: 10px;
-  margin: 6px 0;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.panel-derecho {
-  flex: 1;
-  padding: 2rem;
-}
-
-.tarjeta {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
-
-.tarjeta h3 {
-  color: #0a2342;
-}
-
-.btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  margin-top: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.btn:hover {
-  background-color: #0056b3;
-}
-
-footer {
-  background-color: #0a2342;
-  color: white;
-  text-align: center;
-  padding: 10px;
-}
-
-.mensaje-inicial {
-  text-align: center;
-  margin-top: 4rem;
-  font-size: 1.2rem;
-  color: #333;
-}
-
-/* Contenedor general de toda la app */
 .app-contenedor {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* Para que el footer quede abajo */
-}
-
-/* Contenedor de secciones */
-.contenedor {
-  display: flex;
-  flex: 1; /* Ocupa todo el espacio disponible antes del footer */
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
 }
 
 /* Panel izquierdo */
 .panel-izquierdo {
-  width: 25%;
-  min-width: 250px;
-  background-color: #f3f3f3;
-  padding: 1rem;
-  border-right: 1px solid #ddd;
+  background-color: var(--color-primario);
+  color: white;
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem 1rem;
+  flex-shrink: 0;
+}
+
+.titulo-panel {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Tabs laterales */
+.tab {
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+  margin-bottom: 0.25rem;
+  text-align: center;
+}
+
+.tab:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.tab.active {
+  background-color: white;
+  color: var(--color-primario);
+  font-weight: 600;
 }
 
 /* Panel derecho */
 .panel-derecho {
   flex: 1;
-  padding: 2rem;
+  display: flex;
+  flex-direction: column;
   background-color: white;
+  overflow: hidden;
 }
 
-/* Footer */
-footer {
-  background-color: #222;
-  color: white;
-  text-align: center;
-  padding: 1rem;
+/* Contenido principal del panel derecho */
+.panel-derecho-contenido {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
 }
+
+/* Footer solo dentro del panel derecho */
+footer {
+  width: 100%;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #666;
+  padding: 1rem 0;
+  border-top: 1px solid var(--color-borde);
+  background-color: var(--color-secundario);
+  flex-shrink: 0;
+}
+
+/* ==========================================================
+   🧩 Botones
+   ========================================================== */
+
+.btn-calcular,
+.btn-principal {
+  background-color: var(--color-acento);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.25s, transform 0.2s;
+}
+
+.btn-calcular:hover,
+.btn-principal:hover {
+  background-color: #005fa3;
+  transform: translateY(-2px);
+}
+
+.btn-volver {
+  color: var(--color-primario);
+  background: transparent;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.btn-volver:hover {
+  color: #0077cc;
+}
+
+/* ==========================================================
+   🧩 Formularios e inputs
+   ========================================================== */
+
+.input-azul,
+select.input-azul {
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.input-azul:focus {
+  border-color: var(--color-primario);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.inline {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ==========================================================
+   🧩 Tarjetas
+   ========================================================== */
+
+.tarjeta-bdc {
+  background-color: #ffffff;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+  transition: box-shadow 0.25s;
+}
+
+.tarjeta-bdc:hover {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================
+   🧩 Sección Dimensiones / Tipo de sistema
+   ========================================================== */
+
+.tipo-sistema-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Tarjeta contenedora general */
+.tarjeta-tipo-sistema {
+  background-color: #ffffff;
+  border: 1px solid var(--color-borde);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.25s ease;
+}
+
+.tarjeta-tipo-sistema:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* Título dentro de la tarjeta contenedora */
+.tarjeta-tipo-sistema .titulo-seccion {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-primario);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Grid de las tarjetas individuales */
+.opciones-sistema {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem;
+  justify-items: center;
+  align-items: stretch;
+}
+
+/* Tarjetas individuales */
+.opcion-sistema {
+  background-color: #fff;
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-borde);
+  padding: 1rem;
+  width: 100%;
+  max-width: 220px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.opcion-sistema:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* Imagen dentro de la tarjeta */
+.opcion-sistema img {
+  border-radius: 0.5rem;
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  margin-bottom: 0.75rem;
+}
+
+/* Nombre del sistema */
+.opcion-sistema span {
+  font-weight: 600;
+  color: var(--color-primario);
+  font-size: 0.95rem;
+}
+
+/* Ocultamos la franja de preview que ya no se usa */
+.opciones-footer {
+  display: none !important;
+}
+
+/* ==========================================================
+   🧩 Preview y footer dentro del panel
+   ========================================================== */
+
+.opciones-footer {
+  border-top: 1px solid var(--color-borde);
+  background: linear-gradient(180deg, #fff, var(--color-secundario));
+  padding: 0.75rem 1rem;
+}
+
+.opciones-preview {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.opciones-preview-img {
+  width: 100px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-borde);
+}
+
+.opciones-meta .titulo {
+  font-weight: 600;
+  color: var(--color-primario);
+}
+
+/* ==========================================================
+   🧩 Imagen activa y texto
+   ========================================================== */
+
+.imagen-sistema-activo {
+  width: 100%;
+  border-radius: 0.75rem;
+  object-fit: cover;
+}
+
+.texto-imagen {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #444;
+  margin-top: 0.5rem;
+}
+
+/* ==========================================================
+   🧩 Ayuda contextual
+   ========================================================== */
+
+.ayuda-contextual {
+  margin-top: 1.5rem;
+  background-color: var(--color-secundario);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+
+.ayuda-titulo {
+  font-weight: 600;
+  color: var(--color-primario);
+  margin-bottom: 0.25rem;
+}
+
+/* ==========================================================
+   ✅ Animaciones (definidas en tailwind.config.js)
+   ========================================================== */

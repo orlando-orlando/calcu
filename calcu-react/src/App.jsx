@@ -22,10 +22,8 @@ export default function App() {
         return <Resultado />;
       default:
         return (
-          <div className="panel-derecho">
-            <p className="mensaje-inicial">
-              Selecciona un apartado en el menú de la izquierda para empezar.
-            </p>
+          <div className="panel-derecho mensaje-inicial">
+            <p>Selecciona una pestaña de la izquierda para comenzar.</p>
           </div>
         );
     }
@@ -33,48 +31,46 @@ export default function App() {
 
   return (
     <div className="app-contenedor">
-      <div className="contenedor">
-        <div className="panel-izquierdo">
-          <h1>Calcula tu sistema</h1>
-          <br />
-          <details>
-            <summary onClick={() => setSeccion("dimensiones")}>
-              Dimensiones del cuerpo de agua
-            </summary>
-          </details>
+      <div className="panel-izquierdo">
+        <h2 className="titulo-panel">Simulador</h2>
 
-          <details>
-            <summary onClick={() => setSeccion("calentamiento")}>
-              Perfil de calentamiento
-            </summary>
-          </details>
-
-          <details>
-            <summary onClick={() => setSeccion("equipamiento")}>
-              Selecciona tus equipos
-            </summary>
-          </details>
-
-          <button className="btn" onClick={() => setSeccion("resultado")}>
-            Calcular
-          </button>
-
-          <br />
-          <br />
-          <br />
-
-          <details>
-            <summary onClick={() => setSeccion("resultado")}>
-              Resumen de resultados
-            </summary>
-          </details>
+        <div
+          className={`tab ${seccion === "dimensiones" ? "active" : ""}`}
+          onClick={() => setSeccion("dimensiones")}
+        >
+          Dimensiones
         </div>
 
-        {renderSeccion()}
+        <div
+          className={`tab ${seccion === "calentamiento" ? "active" : ""}`}
+          onClick={() => setSeccion("calentamiento")}
+        >
+          Calentamiento
+        </div>
+
+        <div
+          className={`tab ${seccion === "equipamiento" ? "active" : ""}`}
+          onClick={() => setSeccion("equipamiento")}
+        >
+          Equipamiento
+        </div>
+
+        <div
+          className={`tab ${seccion === "resultado" ? "active" : ""}`}
+          onClick={() => setSeccion("resultado")}
+        >
+          Resultados
+        </div>
+
+        <button className="btn-calcular" onClick={() => setSeccion("resultado")}>
+          Calcular
+        </button>
       </div>
 
-      {/* Footer fuera del contenedor principal */}
-      <Footer />
-    </div>
+      <div className="panel-derecho">
+        <div className="panel-derecho-contenido">{renderSeccion()}</div>
+        <Footer />
+      </div>
+    </div>  
   );
 }

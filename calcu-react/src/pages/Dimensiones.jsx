@@ -70,22 +70,25 @@ export default function Dimensiones() {
     <div className="form-section" style={{ fontFamily: "inherit" }}>
       {!mostrarPanel ? (
         <>
-          <div className="tipo-sistema-container full-width">
-            <div className="titulo-seccion">Selecciona el tipo de sistema</div>
+          <div className="tipo-sistema-container">
+            <div className="tarjeta-tipo-sistema">
+              <div className="titulo-seccion">Selecciona el tipo de sistema</div>
 
-            <div className="opciones-sistema">
-              {Object.entries(sistemas).map(([key, s]) => (
-                <label className="opcion-sistema" key={key}>
-                  <input
-                    type="radio"
-                    name="tipoSistema"
-                    value={key}
-                    onChange={() => handleSeleccion(key)}
-                  />
-                  <img src={s.img} alt={s.nombre} />
-                  <span>{s.nombre}</span>
-                </label>
-              ))}
+              <div className="opciones-sistema">
+                {Object.entries(sistemas).map(([key, s]) => (
+                  <label className="opcion-sistema" key={key}>
+                    <input
+                      type="radio"
+                      name="tipoSistema"
+                      value={key}
+                      onChange={() => handleSeleccion(key)}
+                      style={{ display: "none" }}
+                    />
+                    <img src={s.img} alt={s.nombre} />
+                    <span>{s.nombre}</span>
+                  </label>
+                ))}
+              </div>
             </div>
           </div>
 
