@@ -171,7 +171,7 @@ select.input-azul {
 }
 
 /* ==========================================================
-   🧩 Tarjetas
+   🧩 Tarjetas generales
    ========================================================== */
 
 .tarjeta-bdc {
@@ -198,7 +198,6 @@ select.input-azul {
   gap: 1.5rem;
 }
 
-/* Tarjeta contenedora general */
 .tarjeta-tipo-sistema {
   background-color: #ffffff;
   border: 1px solid var(--color-borde);
@@ -206,103 +205,157 @@ select.input-azul {
   padding: 1.5rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   transition: box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 700px;
 }
 
 .tarjeta-tipo-sistema:hover {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
-/* Título dentro de la tarjeta contenedora */
 .tarjeta-tipo-sistema .titulo-seccion {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 600;
   color: var(--color-primario);
   margin-bottom: 1rem;
   text-align: center;
 }
 
-/* Grid de las tarjetas individuales */
+/* Grid de tarjetas */
 .opciones-sistema {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1.25rem;
+  gap: 1.5rem;
   justify-items: center;
-  align-items: stretch;
 }
 
-/* Tarjetas individuales */
 .opcion-sistema {
   background-color: #fff;
-  border-radius: 0.75rem;
-  border: 1px solid var(--color-borde);
+  border-radius: 0.85rem;
+  border: 2px solid var(--color-borde);
   padding: 1rem;
   width: 100%;
-  max-width: 220px;
+  max-width: 240px;
+  height: 230px;
   text-align: center;
   cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: all 0.25s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
 }
 
 .opcion-sistema:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  transform: scale(1.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-color: var(--color-acento);
 }
 
-/* Imagen dentro de la tarjeta */
+.opcion-sistema.seleccionada {
+  border-color: var(--color-acento);
+  box-shadow: 0 4px 16px rgba(0, 119, 204, 0.25);
+  transform: scale(1.05);
+}
+
 .opcion-sistema img {
-  border-radius: 0.5rem;
+  border-radius: 0.6rem;
   width: 100%;
   height: 140px;
   object-fit: cover;
-  margin-bottom: 0.75rem;
 }
 
-/* Nombre del sistema */
 .opcion-sistema span {
   font-weight: 600;
   color: var(--color-primario);
-  font-size: 0.95rem;
-}
-
-/* Ocultamos la franja de preview que ya no se usa */
-.opciones-footer {
-  display: none !important;
+  font-size: 1rem;
 }
 
 /* ==========================================================
-   🧩 Preview y footer dentro del panel
+   🧩 Franja de Preview
    ========================================================== */
 
+@keyframes slideUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .opciones-footer {
-  border-top: 1px solid var(--color-borde);
-  background: linear-gradient(180deg, #fff, var(--color-secundario));
-  padding: 0.75rem 1rem;
+  margin-top: auto;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  border-top: 2px solid #e5e7eb;
+  border-radius: 0 0 1rem 1rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  overflow: hidden;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: slideUp 0.6s ease forwards;
+  box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.05);
 }
 
 .opciones-preview {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
+  gap: 2rem;
+  width: 90%;
+  max-width: 1100px;
 }
 
 .opciones-preview-img {
-  width: 100px;
-  height: 80px;
+  width: 200px;
+  height: 130px;
   object-fit: cover;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   border: 1px solid var(--color-borde);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.opciones-preview-img:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.opciones-meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 60%;
 }
 
 .opciones-meta .titulo {
-  font-weight: 600;
-  color: var(--color-primario);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #1f2937;
+}
+
+.opciones-meta .desc {
+  font-size: 1rem;
+  color: #4b5563;
+  margin-top: 6px;
+}
+
+.opciones-placeholder {
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+  padding: 12px;
 }
 
 /* ==========================================================
-   🧩 Imagen activa y texto
+   🧩 Imagen activa y ayuda contextual
    ========================================================== */
 
 .imagen-sistema-activo {
@@ -318,10 +371,6 @@ select.input-azul {
   margin-top: 0.5rem;
 }
 
-/* ==========================================================
-   🧩 Ayuda contextual
-   ========================================================== */
-
 .ayuda-contextual {
   margin-top: 1.5rem;
   background-color: var(--color-secundario);
@@ -335,7 +384,3 @@ select.input-azul {
   color: var(--color-primario);
   margin-bottom: 0.25rem;
 }
-
-/* ==========================================================
-   ✅ Animaciones (definidas en tailwind.config.js)
-   ========================================================== */

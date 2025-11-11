@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "../estilos.css";
 
 export default function Dimensiones() {
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [mostrarPanel, setMostrarPanel] = useState(false);
+  const [hoveredTipo, setHoveredTipo] = useState(null);
 
   // Configuración base de sistemas
   const sistemas = {
@@ -65,48 +66,64 @@ export default function Dimensiones() {
   };
 
   const config = tipoSeleccionado ? sistemas[tipoSeleccionado] : null;
+  const tipoHover = hoveredTipo || tipoSeleccionado;
 
   return (
     <div className="form-section" style={{ fontFamily: "inherit" }}>
       {!mostrarPanel ? (
         <>
+          {/* === SELECCIÓN DE TIPO DE SISTEMA === */}
           <div className="tipo-sistema-container">
             <div className="tarjeta-tipo-sistema">
               <div className="titulo-seccion">Selecciona el tipo de sistema</div>
 
               <div className="opciones-sistema">
                 {Object.entries(sistemas).map(([key, s]) => (
-                  <label className="opcion-sistema" key={key}>
-                    <input
-                      type="radio"
-                      name="tipoSistema"
-                      value={key}
-                      onChange={() => handleSeleccion(key)}
-                      style={{ display: "none" }}
-                    />
+                  <label
+                    className={`opcion-sistema ${tipoSeleccionado === key ? "seleccionada" : ""}`}
+                    key={key}
+                    onMouseEnter={() => setHoveredTipo(key)}
+                    onMouseLeave={() => setHoveredTipo(null)}
+                    onClick={() => handleSeleccion(key)}
+                  >
+                    <input type="radio" name="tipoSistema" value={key} style={{ display: "none" }} />
                     <img src={s.img} alt={s.nombre} />
                     <span>{s.nombre}</span>
                   </label>
                 ))}
               </div>
-            </div>
-          </div>
 
-          <div id="opcionesFooter" className="opciones-footer">
-            <div className="opciones-preview">
-              <img className="opciones-preview-img" src="" alt="Preview sistema" />
-              <div className="opciones-meta">
-                <div className="titulo">Selecciona un tipo</div>
-                <div className="desc">
-                  Pasa el cursor o haz clic en una opción para ver más.
+              {/* === FRANJA DE PREVIEW === */}
+              <div id="opcionesFooter" className="opciones-footer">
+                <div className="opciones-preview">
+                  {tipoHover ? (
+                    <>
+                      <img
+                        className="opciones-preview-img"
+                        src={sistemas[tipoHover].img}
+                        alt="Preview sistema"
+                      />
+                      <div className="opciones-meta">
+                        <div className="titulo">{sistemas[tipoHover].nombre}</div>
+                        <div className="desc">
+                          Sistema de {sistemas[tipoHover].cuerpos} cuerpo(s) con{" "}
+                          {sistemas[tipoHover].desborde ? "desborde activo" : "sin desborde"}.
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="opciones-placeholder">
+                      Pasa el cursor sobre un tipo para ver su vista previa.
+                    </div>
+                  )}
                 </div>
-                <div className="stats"></div>
               </div>
             </div>
           </div>
         </>
       ) : (
         config && (
+          /* === PANEL DE DIMENSIONES === */
           <div className="form-section animacion-aparecer">
             <button
               className="btn-volver"
@@ -121,9 +138,8 @@ export default function Dimensiones() {
             <h2 className="titulo-sistema-activo">{config.nombre}</h2>
 
             <div className="sistema-contenido">
-              {/* Columna izquierda */}
               <div className="columna-izquierda">
-                {/* Bloques de dimensiones */}
+                {/* Dimensiones físicas */}
                 {[...Array(config.cuerpos)].map((_, i) => (
                   <div className="tarjeta-bdc tarjeta-calentamiento" key={i}>
                     <label className="label-calentamiento">
@@ -172,12 +188,7 @@ export default function Dimensiones() {
                     </div>
                     <div className="campo-bdc" style={{ marginLeft: "16px" }}>
                       <label>Distancia a cuarto de máquinas (m):</label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        placeholder="Ej. 15"
-                        className="input-azul"
-                      />
+                      <input type="number" step="0.1" placeholder="Ej. 15" className="input-azul" />
                     </div>
                   </div>
                 </div>
@@ -208,14 +219,9 @@ export default function Dimensiones() {
                 </div>
               </div>
 
-              {/* Columna derecha */}
               <div className="columna-derecha">
                 <div className="tarjeta-bdc tarjeta-imagen">
-                  <img
-                    src={config.img}
-                    alt={config.nombre}
-                    className="imagen-sistema-activo"
-                  />
+                  <img src={config.img} alt={config.nombre} className="imagen-sistema-activo" />
                   <p className="texto-imagen">Vista del sistema seleccionado</p>
                 </div>
 
