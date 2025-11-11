@@ -169,7 +169,7 @@ const secciones = {
 
           <label class="opcion-sistema">
             <input type="radio" name="tipoSistema" value="albercaJacuzzi2">
-            <img src="https://cdn.pixabay.com/photo/2017/01/20/00/30/pool-1996826_1280.jpg" alt="Alberca + Jacuzzi (2 cuerpos)">
+            <img src="./img/alberca+jacuzzi2C.jpg">
             <span>Alberca + Jacuzzi (2 cuerpos)</span>
           </label>
 
@@ -195,10 +195,6 @@ const secciones = {
               <div class="desc">Pasa el cursor o haz clic en una opción para ver más.</div>
               <div class="stats"></div>
             </div>
-          </div>
-          <div class="opciones-actions">
-            <button id="btnAbrirPanel">Abrir formulario</button>
-            <button id="btnUsarPlantilla" class="secondary">Usar plantilla</button>
           </div>
         </div>
 
@@ -6171,16 +6167,16 @@ function qCanal() {
   return Q_BTU_h;
 }
 
-// VARIABLES GLOBALES
+/*// VARIABLES GLOBALES
 let datosDimensiones = {};
 let datosCalentamiento = {};
 let datosEquipamiento = {};
 
 // Elemento donde se cargan las secciones
 const contenedor = document.getElementById("contenidoDerecho");
-
+*/
 // ======== FUNCIONES DE CADA SECCIÓN ========
-
+/*
 // --- 1️⃣ Dimensiones ---
 function cargarDimensiones() {
   contenedor.innerHTML = `
@@ -6288,4 +6284,4 @@ function mostrarResumen() {
 // Inicializar vista
 cargarDimensiones();
 
-
+*/
