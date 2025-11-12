@@ -4,7 +4,8 @@
 
 /* === Variables globales === */
 :root {
-  --color-primario: #034b80;
+  --color-primario: #1e81ce;   /* azul más claro */
+  --color-acento: #4ea8de;
   --color-secundario: #e8f0ff;
   --color-fondo: #f8fbff;
   --color-texto: #1a1a1a;
@@ -46,16 +47,17 @@ body {
   overflow: hidden;
 }
 
-/* Panel izquierdo */
+/* === PANEL IZQUIERDO === */
 .panel-izquierdo {
-  background-color: var(--color-primario);
-  color: white;
+  background: #f0f4fa;
+  padding: 1rem;
   width: 360px;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 1.5rem 1rem;
-  flex-shrink: 0;
+  justify-content: flex-start;
+  position: relative;
+  overflow-y: auto;
 }
 
 .titulo-panel {
@@ -393,104 +395,132 @@ select.input-azul {
 }
 
 /* ==========================================================
-   🧩 TOGGLES - ajustados (solo esta parte fue cambiada)
+   🧩 TOGGLES — estilo card minimalista tipo dashboard
    ========================================================== */
 
-/* contenedor para unir botón y contenido (borde exterior que engloba ambos) */
 .toggle-seccion {
-  margin-top: 1rem;
-  border-radius: 0.5rem;
-  overflow: hidden; /* asegura unión visual */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  border: 1px solid var(--toggle-border);
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.02));
+  margin-top: 1.25rem;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden; /* unión real con contenido */
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+  border: 1px solid #d3deee;
 }
 
-/* Botón principal del toggle (usa variables para poder cambiar color fácilmente) */
+.toggle-seccion:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
 .toggle-boton {
   width: 100%;
-  background: var(--toggle-bg);
+  background: linear-gradient(135deg, #7fc2f1, #5ea4e5); /* azul más claro */
   color: #fff;
   border: none;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem 0.5rem 0 0; /* parte superior redondeada */
+  padding: 1rem 1.2rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.12s;
+  font-size: 0.9rem;
   text-align: left;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  transition: background 0.3s ease;
+  border-bottom: 1px solid #d3deee; /* une con tabla */
+}
+
+.toggle-boton span {
+  display: flex;
+  align-items: center;
   gap: 0.6rem;
-  /* ligero borde inferior para separar visualmente cuando no hay contenido */
-  box-shadow: inset 0 -1px 0 rgba(255,255,255,0.03);
+}
+
+.toggle-boton svg {
+  transition: transform 0.25s ease;
+}
+
+.toggle-boton.activo svg {
+  transform: rotate(180deg);
 }
 
 .toggle-boton:hover {
-  background-color: var(--toggle-bg-hover);
+  background: linear-gradient(135deg, #8cccfa, #67b0ec);
 }
 
-.toggle-boton.activo {
-  background-color: var(--toggle-bg-active);
-}
-
-/* Contenido (tabla) inmediatamente debajo del botón, sin doble borde, redondeo inferior */
+/* Contenido de la sección */
 .seccion-resultados {
   background: #ffffff;
-  border-top: none; /* para que parezca unido al botón */
-  border-radius: 0 0 0.5rem 0.5rem;
-  padding: 0.5rem;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
-  border: 1px solid var(--toggle-border);
-  border-top: 0; /* elimina la línea superior duplicada */
+  border-top: none; /* 🔹 sin borde duplicado */
+  padding: 1rem 1.25rem;
+  animation: fadeIn 0.3s ease;
 }
 
-/* Titular dentro de la sección de resultados */
 .seccion-resultados h3 {
-  margin-bottom: 0.4rem;
-  color: #245a94;
-  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  color: #225b97;
+  font-size: 0.95rem;
   font-weight: 700;
   text-align: center;
   border-bottom: 1px solid #d1d9e6;
-  padding-bottom: 0.25rem;
+  padding-bottom: 0.4rem;
 }
 
 /* ==========================================================
-   🧩 Tabla de resultados — bordes en cada celda (estilo Excel)
+   🧩 Tabla de resultados — minimalista y con bordes visibles
    ========================================================== */
 
 .tabla-resultados {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.76rem;
-  table-layout: fixed;
-  border: 1px solid #cfd6e4;
+  font-size: 0.78rem;
+  border: 1px solid #ccd8eb;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
 }
 
 .tabla-resultados th,
 .tabla-resultados td {
-  border: 1px solid #cfd6e4;
-  padding: 0.35rem 0.4rem;
+  border: 1px solid #d7e2f1;
+  padding: 0.5rem 0.6rem;
+  text-align: left;
   word-wrap: break-word;
 }
 
 .tabla-resultados th {
-  background-color: #eef2fa;
+  background-color: #f5f8fc;
+  color: #1e40af;
   font-weight: 600;
-  color: #2b4162;
-  text-align: left;
+  text-align: center;
 }
 
-.tabla-resultados td:first-child {
-  color: #475569;
-  width: 68%;
+.tabla-resultados td {
+  background: #ffffff;
+  color: #374151;
+}
+
+.tabla-resultados tr:hover td {
+  background: #f0f7ff;
 }
 
 .tabla-resultados td:last-child {
   text-align: right;
-  color: #245a94;
+  color: #2563eb;
   font-weight: 600;
-  width: 32%;
+}
+
+/* Animación suave al mostrar contenido */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ==========================================================
@@ -536,3 +566,169 @@ select.input-azul {
   }
 }
 
+/* estilos para .toggle-navegacion y sus botones */
+.toggle-navegacion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.toggle-navegacion button {
+  background: linear-gradient(135deg, #7fc2f1, #5ea4e5);
+  color: white;
+  border: none;
+  border-radius: 0.6rem 0.6rem 0 0; /* unión visual con la tarjeta */
+  padding: 0.7rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.toggle-navegacion button:hover {
+  background: linear-gradient(135deg, #8cccfa, #67b0ec);
+}
+
+.toggle-navegacion button.activo {
+  background: linear-gradient(135deg, #5ea4e5, #3b82f6);
+}
+
+/* === TOGGLES FIJOS ARRIBA === */
+.toggle-navegacion-fija {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: #f0f4fa;
+  padding-bottom: 0.75rem;
+}
+
+/* === BOTONES PRINCIPALES === */
+.toggle-boton-principal {
+  background: #ffffff;
+  color: #1e293b;
+  border: 1px solid #d0d7de;
+  border-bottom: none; /* une el botón con la sección que abre */
+  border-radius: 0.75rem 0.75rem 0 0;
+  padding: 0.8rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  z-index: 2;
+}
+
+.toggle-boton-principal:hover {
+  background: #f8fbff;
+  transform: translateY(-1px);
+}
+
+.toggle-boton-principal.activo {
+  background: #ffffff;
+  color: #0052a3;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #007aff;
+  border-bottom: 1px solid transparent; /* sin división con sección */
+}
+
+.panel-derecho-contenido,
+.seccion-resultados {
+  border-top: none;
+  border-radius: 0 0 0.75rem 0.75rem;
+  background: #ffffff;
+  margin-top: -2px;
+  position: relative;
+  z-index: 1;
+}
+
+.toggle-navegacion-fija button {
+  background: #fff; /* el botón sí es blanco */
+  color: #2b2b2b;
+  border: 1px solid #d0d7de;
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 0.7rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+
+.toggle-navegacion-fija button:hover {
+  background: #f7faff;
+  transform: translateX(2px);
+}
+
+.toggle-navegacion-fija button.activo {
+  background: #eef5ff;
+  border-left: 3px solid #007aff;
+  color: #0052a3;
+  transform: translateX(2px);
+}
+
+/* === SECCIÓN RESULTADOS === */
+.toggle-seccion.unida {
+  background: #ffffff;
+  border-radius: 0 0 0.75rem 0.75rem;
+  overflow: hidden;
+  margin-top: 1rem;
+  margin-right: -8px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.toggle-boton.activo {
+  background: #ffffff;
+  border: none;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* === TABLA RESULTADOS (versión refinada) === */
+.tabla-resultados {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  background: #ffffff;
+  border: 2px solid #000; /* 🔹 borde negro externo visible */
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.tabla-resultados th,
+.tabla-resultados td {
+  border: 1px solid #000; /* 🔹 bordes internos también negros */
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.tabla-resultados th {
+  background-color: #f2f6fc;
+  text-align: left;
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+.tabla-resultados td {
+  color: #1e293b;
+}
+
+.tabla-resultados tr:hover td {
+  background: #f0f7ff;
+}
+
+/* Si el título del toggle está en blanco, mantenemos legibilidad */
+.toggle-boton.activo span {
+  color: #1e3a8a; /* 🔹 azul oscuro legible sobre fondo blanco */
+}

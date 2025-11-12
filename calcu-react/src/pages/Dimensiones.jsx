@@ -11,7 +11,7 @@ export default function Dimensiones() {
     alberca: { img: "./img/alberca.jpg", cuerpos: 1, desborde: true, nombre: "Alberca" },
     jacuzzi: { img: "./img/jacuzzi.jpg", cuerpos: 1, desborde: true, nombre: "Jacuzzi" },
     chapoteadero: {
-      img: "https://cdn.pixabay.com/photo/2017/08/06/22/01/kids-2594035_1280.jpg",
+      img: "./img/chapoteadero.jpg",
       cuerpos: 1,
       desborde: true,
       nombre: "Chapoteadero",
@@ -41,7 +41,7 @@ export default function Dimensiones() {
       nombre: "Jacuzzi + Chapoteadero (1 cuerpo)",
     },
     albercaJacuzzi2: {
-      img: "https://cdn.pixabay.com/photo/2017/01/20/00/30/pool-1996826_1280.jpg",
+      img: "./img/alberca+jacuzzi2C.jpg",
       cuerpos: 2,
       desborde: true,
       nombre: "Alberca + Jacuzzi (2 cuerpos)",
