@@ -17,7 +17,7 @@ export default function Dimensiones() {
       nombre: "Chapoteadero",
     },
     espejoAgua: {
-      img: "https://cdn.pixabay.com/photo/2017/08/06/22/01/kids-2594035_1280.jpg",
+      img: "./img/espejo.jpg",
       cuerpos: 1,
       desborde: true,
       nombre: "Espejo de agua",
@@ -35,7 +35,7 @@ export default function Dimensiones() {
       nombre: "Alberca + Chapoteadero (1 cuerpo)",
     },
     jacuzziChapo1: {
-      img: "https://cdn.pixabay.com/photo/2017/03/09/21/15/jacuzzi-2138446_1280.jpg",
+      img: "./img/jacuzzi+chapoteadero1C.jpg",
       cuerpos: 2,
       desborde: true,
       nombre: "Jacuzzi + Chapoteadero (1 cuerpo)",
@@ -53,7 +53,7 @@ export default function Dimensiones() {
       nombre: "Alberca + Chapoteadero (2 cuerpos)",
     },
     jacuzziChapo2: {
-      img: "https://cdn.pixabay.com/photo/2016/06/06/16/40/hot-tub-1436680_1280.jpg",
+      img: "./img/jacuzzi+chapoteadero2C.jpg",
       cuerpos: 2,
       desborde: true,
       nombre: "Jacuzzi + Chapoteadero (2 cuerpos)",
