@@ -47,7 +47,7 @@ export default function Dimensiones() {
       nombre: "Alberca + Jacuzzi (2 cuerpos)",
     },
     albercaChapo2: {
-      img: "https://cdn.pixabay.com/photo/2017/08/30/06/08/pool-2691424_1280.jpg",
+      img: "./img/alberca+chapoteadero2C.jpg",
       cuerpos: 2,
       desborde: true,
       nombre: "Alberca + Chapoteadero (2 cuerpos)",
