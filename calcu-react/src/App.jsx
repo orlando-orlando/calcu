@@ -7,7 +7,7 @@ import Equipamiento from "./pages/Equipamiento.jsx";
 
 export default function App() {
   const [seccion, setSeccion] = useState("inicio");
-  const [mostrarResultados, setMostrarResultados] = useState(false);
+  const [mostrarResultados, setMostrarResultados] = useState(true);
 
   const renderSeccion = () => {
     switch (seccion) {
