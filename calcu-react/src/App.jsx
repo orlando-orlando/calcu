@@ -6,25 +6,8 @@ import Calentamiento from "./pages/Calentamiento.jsx";
 import Equipamiento from "./pages/Equipamiento.jsx";
 
 export default function App() {
-  const [seccion, setSeccion] = useState("inicio");
+  const [seccion, setSeccion] = useState("dimensiones");
   const [mostrarResultados, setMostrarResultados] = useState(true);
-
-  const renderSeccion = () => {
-    switch (seccion) {
-      case "dimensiones":
-        return <Dimensiones />;
-      case "calentamiento":
-        return <Calentamiento />;
-      case "equipamiento":
-        return <Equipamiento />;
-      default:
-        return (
-          <div className="panel-derecho mensaje-inicial">
-            <p>Selecciona una pestaña de la izquierda para comenzar.</p>
-          </div>
-        );
-    }
-  };
 
   return (
     <div className="app-contenedor">
@@ -32,37 +15,7 @@ export default function App() {
       <div className="panel-izquierdo">
         <h2 className="titulo-panel">Simulador</h2>
 
-        {/* === TOGGLES FIJOS ARRIBA === */}
-        <div className="toggle-navegacion-fija">
-          <button
-            className={`toggle-boton-principal ${
-              seccion === "dimensiones" ? "activo" : ""
-            }`}
-            onClick={() => setSeccion("dimensiones")}
-          >
-            📏 Dimensiones
-          </button>
-
-          <button
-            className={`toggle-boton-principal ${
-              seccion === "calentamiento" ? "activo" : ""
-            }`}
-            onClick={() => setSeccion("calentamiento")}
-          >
-            🔥 Calentamiento
-          </button>
-
-          <button
-            className={`toggle-boton-principal ${
-              seccion === "equipamiento" ? "activo" : ""
-            }`}
-            onClick={() => setSeccion("equipamiento")}
-          >
-            ⚙️ Equipamiento
-          </button>
-        </div>
-
-        {/* BOTÓN PRINCIPAL */}
+        {/* Botón principal */}
         <button
           className="btn-calcular"
           onClick={() => setMostrarResultados(!mostrarResultados)}
@@ -99,9 +52,9 @@ export default function App() {
                   <tr><th>Profundidad promedio</th><td>1.35 m</td></tr>
                   <tr><th>Volumen total</th><td>173 m³</td></tr>
                   <tr><th>Flujo filtrado</th><td>45 m³/h</td></tr>
-                  <tr><th>Flujo calentamiento (panel)</th><td>32 m³/h</td></tr>
-                  <tr><th>Flujo calentamiento (bomba de calor)</th><td>28 m³/h</td></tr>
-                  <tr><th>Flujo calentamiento (caldera)</th><td>24 m³/h</td></tr>
+                  <tr><th>Flujo panel solar</th><td>32 m³/h</td></tr>
+                  <tr><th>Flujo bomba de calor</th><td>28 m³/h</td></tr>
+                  <tr><th>Flujo caldera de gas</th><td>24 m³/h</td></tr>
                   <tr><th>Flujo infinity</th><td>12 m³/h</td></tr>
                   <tr><th>Flujo sanitizador</th><td>8 m³/h</td></tr>
                   <tr><th>Flujo máximo</th><td>65 m³/h</td></tr>
@@ -120,7 +73,38 @@ export default function App() {
 
       {/* PANEL DERECHO */}
       <div className="panel-derecho">
-        <div className="panel-derecho-contenido">{renderSeccion()}</div>
+
+        {/* === TABS estilo carpeta (EN EL LUGAR CORRECTO) === */}
+        <div className="tabs-derecha">
+          <div
+            className={`tab-carpeta ${seccion === "dimensiones" ? "activa" : ""}`}
+            onClick={() => setSeccion("dimensiones")}
+          >
+            Dimensiones
+          </div>
+
+          <div
+            className={`tab-carpeta ${seccion === "calentamiento" ? "activa" : ""}`}
+            onClick={() => setSeccion("calentamiento")}
+          >
+            Calentamiento
+          </div>
+
+          <div
+            className={`tab-carpeta ${seccion === "equipamiento" ? "activa" : ""}`}
+            onClick={() => setSeccion("equipamiento")}
+          >
+            Equipamiento
+          </div>
+        </div>
+
+        {/* === CONTENIDO DEL PANEL DERECHO === */}
+        <div className="panel-derecha-contenido">
+          {seccion === "dimensiones" && <Dimensiones />}
+          {seccion === "calentamiento" && <Calentamiento />}
+          {seccion === "equipamiento" && <Equipamiento />}
+        </div>
+
         <Footer />
       </div>
     </div>

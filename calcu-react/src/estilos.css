@@ -732,3 +732,79 @@ select.input-azul {
 .toggle-boton.activo span {
   color: #1e3a8a; /* 🔹 azul oscuro legible sobre fondo blanco */
 }
+
+/* Contenedor de las pestañas principales */
+.tabs-principales {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  border-bottom: 1px solid #d0d7de;
+}
+
+/* Pestañas estilo carpeta */
+.tab-carpeta {
+  padding: 10px 14px;
+  background: #e9eef3;
+  border: 1px solid #c8d0d8;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+/* Hover */
+.tab-carpeta:hover {
+  background: #f2f6fa;
+}
+
+/* Carpeta activa (la que está seleccionada) */
+.tab-carpeta.activa {
+  background: #ffffff;
+  border: 1px solid #c8d0d8;
+  border-bottom: 1px solid #ffffff; /* Se pega al contenido */
+  color: #2d3e50;
+}
+
+.panel-contenido {
+  background: #ffffff;
+  border: 1px solid #c8d0d8;
+  border-radius: 0 12px 12px 12px;
+  padding: 20px;
+  margin-top: -1px; /* truco para unir la pestaña */
+}
+
+.tabs-derecha {
+  display: flex;
+  gap: 8px;
+  padding: 0;
+  margin-bottom: -1px; /* se unen al contenido */
+}
+
+.tab-carpeta {
+  padding: 10px 16px;
+  background: #e9eef3;
+  border: 1px solid #c8d0d8;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.tab-carpeta:hover {
+  background: #f3f7fa;
+}
+
+.tab-carpeta.activa {
+  background: #ffffff;
+  border-bottom: 1px solid #ffffff; /* se une con el panel */
+}
+
+.panel-derecha-contenido {
+  background: #ffffff;
+  border: 1px solid #c8d0d8;
+  border-radius: 0 12px 12px 12px;
+  padding: 20px;
+  min-height: 350px;
+}
