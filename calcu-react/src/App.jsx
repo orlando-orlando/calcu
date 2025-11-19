@@ -11,20 +11,13 @@ export default function App() {
 
   return (
     <div className="app-contenedor">
+
       {/* PANEL IZQUIERDO */}
       <div className="panel-izquierdo">
         <h2 className="titulo-panel">Simulador</h2>
 
-        {/* Botón principal */}
-        <button
-          className="btn-calcular"
-          onClick={() => setMostrarResultados(!mostrarResultados)}
-        >
-          {mostrarResultados ? "Ocultar resultados" : "Mostrar resultados"}
-        </button>
-
-        {/* === SECCIÓN RESULTADOS === */}
-        {mostrarResultados && (
+        {/* === RESULTADOS GENERALES === */}
+        
           <div className="toggle-seccion unida">
             <button className="toggle-boton activo">
               <span>📊 Resultados generales</span>
@@ -68,13 +61,12 @@ export default function App() {
               </table>
             </div>
           </div>
-        )}
       </div>
 
       {/* PANEL DERECHO */}
       <div className="panel-derecho">
 
-        {/* === TABS estilo carpeta (EN EL LUGAR CORRECTO) === */}
+        {/* === TABS ESTILO CARPETA === */}
         <div className="tabs-derecha">
           <div
             className={`tab-carpeta ${seccion === "dimensiones" ? "activa" : ""}`}
@@ -98,14 +90,12 @@ export default function App() {
           </div>
         </div>
 
-        {/* === CONTENIDO DEL PANEL DERECHO === */}
-        <div className="panel-derecha-contenido">
+        {/* CONTENIDO DEL PANEL DERECHO */}
+        <div className="panel-derecha-contenido panel-carpeta">
           {seccion === "dimensiones" && <Dimensiones />}
           {seccion === "calentamiento" && <Calentamiento />}
           {seccion === "equipamiento" && <Equipamiento />}
         </div>
-
-        <Footer />
       </div>
     </div>
   );

@@ -733,78 +733,75 @@ select.input-azul {
   color: #1e3a8a; /* 🔹 azul oscuro legible sobre fondo blanco */
 }
 
-/* Contenedor de las pestañas principales */
-.tabs-principales {
+/* ==========================================================
+   📁 PANEL DERECHO — Carpeta Aqua
+   ========================================================== */
+
+.tabs-derecha {
   display: flex;
-  gap: 6px;
-  padding: 8px;
-  border-bottom: 1px solid #d0d7de;
+  gap: 10px;
+  padding-left: 15px;
+  margin-bottom: -2px;
+  margin-top: 18px; /* baja las pestañas */
 }
 
 /* Pestañas estilo carpeta */
 .tab-carpeta {
+  padding: 10px 18px;
+  background: #b9ddff;                /* tapa de carpeta */
+  border: 1px solid #7eb6e6;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.tab-carpeta:hover {
+  background: #c9e6ff;
+}
+
+.tab-carpeta.activa {
+  background: #d8ecff;                /* hoja activa */
+  border-bottom: 1px solid #d8ecff;
+  position: relative;
+  top: 1px;
+}
+
+/* Cuerpo de la carpeta */
+.panel-carpeta {
+  background: #d8ecff;
+  border: 1px solid #7eb6e6;
+  border-radius: 0 12px 12px 12px;
+  padding: 20px;
+  width: 99%;
+  margin: 0 auto;
+  margin-top: 0;
+}
+
+
+/* ==========================================================
+   📁 PANEL IZQUIERDO — Carpeta Resultados Aqua
+   ========================================================== */
+
+.toggle-seccion.unida {
+  width: 99%;
+  margin: 0 auto;
+  margin-top: 15px;
+}
+
+.toggle-boton.activo {
+  background: #b9ddff;                /* tapa carpeta */
+  border: 1px solid #7eb6e6;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
   padding: 10px 14px;
-  background: #e9eef3;
-  border: 1px solid #c8d0d8;
-  border-bottom: none;
-  border-radius: 10px 10px 0 0;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s ease;
+  cursor: default;
 }
 
-/* Hover */
-.tab-carpeta:hover {
-  background: #f2f6fa;
-}
-
-/* Carpeta activa (la que está seleccionada) */
-.tab-carpeta.activa {
-  background: #ffffff;
-  border: 1px solid #c8d0d8;
-  border-bottom: 1px solid #ffffff; /* Se pega al contenido */
-  color: #2d3e50;
-}
-
-.panel-contenido {
-  background: #ffffff;
-  border: 1px solid #c8d0d8;
+.seccion-resultados {
+  background: #d8ecff;
+  border: 1px solid #7eb6e6;
+  padding: 14px 18px;
   border-radius: 0 12px 12px 12px;
-  padding: 20px;
-  margin-top: -1px; /* truco para unir la pestaña */
-}
-
-.tabs-derecha {
-  display: flex;
-  gap: 8px;
-  padding: 0;
-  margin-bottom: -1px; /* se unen al contenido */
-}
-
-.tab-carpeta {
-  padding: 10px 16px;
-  background: #e9eef3;
-  border: 1px solid #c8d0d8;
-  border-bottom: none;
-  border-radius: 10px 10px 0 0;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.tab-carpeta:hover {
-  background: #f3f7fa;
-}
-
-.tab-carpeta.activa {
-  background: #ffffff;
-  border-bottom: 1px solid #ffffff; /* se une con el panel */
-}
-
-.panel-derecha-contenido {
-  background: #ffffff;
-  border: 1px solid #c8d0d8;
-  border-radius: 0 12px 12px 12px;
-  padding: 20px;
-  min-height: 350px;
 }
