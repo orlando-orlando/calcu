@@ -697,6 +697,8 @@ function mostrarFormularioSistema(tipo) {
   });
 }
 }
+/////////////////
+
 function buildEquipamientoUI(tipoActual) {
   const columnaIzquierda = document.getElementById("equipamientoIzquierdaContenido");
   const columnaDerecha = document.getElementById("equipamientoDerechaContenido");
