@@ -805,3 +805,48 @@ select.input-azul {
   padding: 14px 18px;
   border-radius: 0 12px 12px 12px;
 }
+
+/* ==========================================================
+   📌 Corrección del layout del panel de dimensiones
+   ========================================================== */
+
+.sistema-contenido {
+  display: flex;
+  gap: 2rem;
+  width: 100%;
+  height: calc(100vh - 180px); /* evita que la imagen quede fuera */
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.columna-izquierda {
+  flex: 1;
+  min-width: 350px;
+  max-width: 550px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.columna-derecha {
+  width: 380px;         /* columna derecha fija */
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tarjeta-imagen {
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.imagen-sistema-activo {
+  width: 100%;
+  height: auto;
+  max-height: 260px;
+  object-fit: cover;
+  border-radius: 0.75rem;
+}

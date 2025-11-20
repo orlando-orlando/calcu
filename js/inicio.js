@@ -139,13 +139,13 @@ const secciones = {
 
           <label class="opcion-sistema">
             <input type="radio" name="tipoSistema" value="chapoteadero">
-            <img src="https://cdn.pixabay.com/photo/2017/08/06/22/01/kids-2594035_1280.jpg" alt="Chapoteadero">
+            <img src="./img/chapoteadero.jpg" alt="Chapoteadero">
             <span>Chapoteadero</span>
           </label>
 
           <label class="opcion-sistema">
             <input type="radio" name="tipoSistema" value="espejoAgua">
-            <img src="https://cdn.pixabay.com/photo/2017/08/06/22/01/kids-2594035_1280.jpg" alt="Espejo de agua">
+            <img src="./img/espejo.jpg" alt="Espejo de agua">
             <span>Espejo de agua</span>
           </label>
 
@@ -163,7 +163,7 @@ const secciones = {
 
           <label class="opcion-sistema">
             <input type="radio" name="tipoSistema" value="jacuzziChapo1">
-            <img src="https://cdn.pixabay.com/photo/2017/03/09/21/15/jacuzzi-2138446_1280.jpg" alt="Jacuzzi + Chapoteadero (1 cuerpo)">
+            <img src="./img/jacuzzi+chapoteadero1C.jpg" alt="Jacuzzi + Chapoteadero (1 cuerpo)">
             <span>Jacuzzi + Chapoteadero (1 cuerpo)</span>
           </label>
 
@@ -175,13 +175,13 @@ const secciones = {
 
           <label class="opcion-sistema">
             <input type="radio" name="tipoSistema" value="albercaChapo2">
-            <img src="https://cdn.pixabay.com/photo/2017/08/30/06/08/pool-2691424_1280.jpg" alt="Alberca + Chapoteadero (2 cuerpos)">
+            <img src="./img/alberca+chapoteadero2C.jpg" alt="Alberca + Chapoteadero (2 cuerpos)">
             <span>Alberca + Chapoteadero (2 cuerpos)</span>
           </label>
 
           <label class="opcion-sistema">
             <input type="radio" name="tipoSistema" value="jacuzziChapo2">
-            <img src="https://cdn.pixabay.com/photo/2016/06/06/16/40/hot-tub-1436680_1280.jpg" alt="Jacuzzi + Chapoteadero (2 cuerpos)">
+            <img src="./img/jacuzzi+chapoteadero2C.jpg" alt="Jacuzzi + Chapoteadero (2 cuerpos)">
             <span>Jacuzzi + Chapoteadero (2 cuerpos)</span>
           </label>
         </div>
@@ -6166,122 +6166,3 @@ function qCanal() {
 
   return Q_BTU_h;
 }
-
-/*// VARIABLES GLOBALES
-let datosDimensiones = {};
-let datosCalentamiento = {};
-let datosEquipamiento = {};
-
-// Elemento donde se cargan las secciones
-const contenedor = document.getElementById("contenidoDerecho");
-*/
-// ======== FUNCIONES DE CADA SECCIÓN ========
-/*
-// --- 1️⃣ Dimensiones ---
-function cargarDimensiones() {
-  contenedor.innerHTML = `
-    <h2>Dimensiones del cuerpo de agua</h2>
-    <div class="tarjetas">
-      <div class="tarjeta">
-        <h3>Sistema tipo A</h3>
-        <label>Área (m²):</label>
-        <input type="number" id="area" placeholder="Ej. 25">
-        <label>Profundidad (m):</label>
-        <input type="number" id="profundidad" placeholder="Ej. 1.5">
-      </div>
-
-      <div class="tarjeta">
-        <h3>Sistema tipo B</h3>
-        <label>Diámetro (m):</label>
-        <input type="number" id="diametro" placeholder="Ej. 5">
-      </div>
-    </div>
-
-    <button class="btn" id="btnSiguiente">Ir a Calentamiento</button>
-  `;
-
-  document.getElementById("btnSiguiente").onclick = () => {
-    datosDimensiones = {
-      area: document.getElementById("area")?.value,
-      profundidad: document.getElementById("profundidad")?.value,
-      diametro: document.getElementById("diametro")?.value
-    };
-    cargarCalentamiento();
-  };
-}
-
-// --- 2️⃣ Calentamiento ---
-function cargarCalentamiento() {
-  contenedor.innerHTML = `
-    <h2>Perfil de Calentamiento</h2>
-    <canvas id="graficaCalor"></canvas>
-    <button class="btn" id="btnAtras">Volver</button>
-    <button class="btn" id="btnEquipamiento">Ir a Equipamiento</button>
-  `;
-
-  document.getElementById("btnAtras").onclick = cargarDimensiones;
-  document.getElementById("btnEquipamiento").onclick = cargarEquipamiento;
-
-  // Grafica ejemplo con Chart.js
-  const ctx = document.getElementById("graficaCalor").getContext("2d");
-  new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: ["Ene", "Feb", "Mar", "Abr", "May", "Jun"],
-      datasets: [{
-        label: "Pérdidas de energía",
-        data: [10, 8, 6, 7, 9, 11],
-        borderColor: "#007bff",
-        fill: false
-      }]
-    }
-  });
-}
-
-// --- 3️⃣ Equipamiento ---
-function cargarEquipamiento() {
-  contenedor.innerHTML = `
-    <h2>Selecciona tus equipos</h2>
-    <p>Basado en tus dimensiones, selecciona los equipos requeridos.</p>
-
-    <div class="tarjeta">
-      <label>Bomba:</label>
-      <input type="number" placeholder="Potencia (HP)" id="bomba">
-      <label>Filtro:</label>
-      <input type="text" placeholder="Tipo de filtro" id="filtro">
-    </div>
-
-    <button class="btn" id="btnVolver">Volver</button>
-    <button class="btn" id="btnFinal">Finalizar</button>
-  `;
-
-  document.getElementById("btnVolver").onclick = cargarCalentamiento;
-  document.getElementById("btnFinal").onclick = () => {
-    datosEquipamiento = {
-      bomba: document.getElementById("bomba").value,
-      filtro: document.getElementById("filtro").value
-    };
-    mostrarResumen();
-  };
-}
-
-// --- 4️⃣ Resultados finales ---
-function mostrarResumen() {
-  contenedor.innerHTML = `
-    <h2>Resumen de resultados</h2>
-    <pre>${JSON.stringify({
-      dimensiones: datosDimensiones,
-      calentamiento: datosCalentamiento,
-      equipamiento: datosEquipamiento
-    }, null, 2)}</pre>
-
-    <button class="btn" id="btnInicio">Volver al inicio</button>
-  `;
-
-  document.getElementById("btnInicio").onclick = cargarDimensiones;
-}
-
-// Inicializar vista
-cargarDimensiones();
-
-*/
