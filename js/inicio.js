@@ -697,7 +697,7 @@ function mostrarFormularioSistema(tipo) {
   });
 }
 }
-/////////////////
+/////////////////fin bloque, una vez que lo recibas me pasas el codigo para integrarlo a mi hook, considerando que ya tengo un bloque definido anterior a este
 
 function buildEquipamientoUI(tipoActual) {
   const columnaIzquierda = document.getElementById("equipamientoIzquierdaContenido");
@@ -1428,6 +1428,9 @@ function renderSeccion(seccion) {
     setTimeout(() => restaurarInputsSistema(window.tipoSistemaActual), 120);
   }
 }
+///////////////////////
+
+
 
 // Normaliza sólo cuando ambos valores son números válidos (evita tocar mientras se escribe)
 function normalizeAllDepths() {
