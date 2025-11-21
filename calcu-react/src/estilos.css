@@ -49,21 +49,19 @@ body {
 
 /* === PANEL IZQUIERDO === */
 .panel-izquierdo {
-  background: #f0f4fa;
-  padding: 1rem;
+  background: #f8fbff;
+  padding: 1.5rem 1rem;
   width: 360px;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  position: relative;
+  gap: 1rem;
   overflow-y: auto;
 }
 
 .titulo-panel {
   font-size: 1.25rem;
   font-weight: 700;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.rem;
   text-align: center;
 }
 
@@ -92,8 +90,9 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: white;
-  overflow: hidden;
+  background: #f8fbff; /* mismo fondo que el izquierdo */
+  overflow-y: auto;
+  padding: 1.5rem;
 }
 
 /* Contenido principal del panel derecho */
@@ -101,18 +100,6 @@ body {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
-}
-
-/* Footer solo dentro del panel derecho */
-footer {
-  width: 100%;
-  text-align: center;
-  font-size: 0.85rem;
-  color: #666;
-  padding: 1rem 0;
-  border-top: 1px solid var(--color-borde);
-  background-color: var(--color-secundario);
-  flex-shrink: 0;
 }
 
 /* ==========================================================
@@ -183,17 +170,16 @@ select.input-azul {
    ========================================================== */
 
 .tarjeta-bdc {
-  background-color: #ffffff;
-  border: 1px solid var(--color-borde);
   border-radius: 0.75rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  margin-bottom: 1.5rem;
-  transition: box-shadow 0.25s;
+  background: white;
+  transition: box-shadow 0.25s, transform 0.25s;
 }
 
 .tarjeta-bdc:hover {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
 /* ==========================================================
@@ -210,7 +196,7 @@ select.input-azul {
   background-color: #ffffff;
   border: 1px solid var(--color-borde);
   border-radius: 1rem;
-  padding: 1.5rem;
+  padding: 1.25rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   transition: box-shadow 0.25s ease;
   display: flex;
@@ -227,7 +213,7 @@ select.input-azul {
   font-size: 1.35rem;
   font-weight: 600;
   color: var(--color-primario);
-  margin-bottom: 1rem;
+  margin-bottom: 0rem;
   text-align: center;
 }
 
@@ -237,17 +223,17 @@ select.input-azul {
   grid-template-columns: repeat(5, 1fr);
   gap: 1.5rem;
   justify-items: center;
-  margin-top: 2.5rem; 
+  margin-top: 2rem; 
 }
 
 .opcion-sistema {
   background-color: #fff;
   border-radius: 0.85rem;
-  border: 2px solid var(--color-borde);
-  padding: 1rem;
+  border: 1px solid #d3deee;
+  padding: .5rem;
   width: 100%;
-  max-width: 240px;
-  height: 230px;
+  /*max-width: 240px;*/
+  height: 270px;
   text-align: center;
   cursor: pointer;
   transition: all 0.25s ease;
@@ -272,7 +258,7 @@ select.input-azul {
 .opcion-sistema img {
   border-radius: 0.6rem;
   width: 100%;
-  height: 140px;
+  height: 200px;
   object-fit: cover;
 }
 
@@ -308,7 +294,7 @@ select.input-azul {
   overflow: hidden;
   min-height: 170px;
   display: flex;
-  align-items: center;
+  align-items: left;
   justify-content: center;
   animation: slideUp 0.6s ease forwards;
   box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.05);
@@ -399,7 +385,7 @@ select.input-azul {
    ========================================================== */
 
 .toggle-seccion {
-  margin-top: 1.25rem;
+  margin-top: 1.rem;
   border-radius: 0.75rem;
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -450,10 +436,7 @@ select.input-azul {
 
 /* Contenido de la sección */
 .seccion-resultados {
-  background: #ffffff;
-  border-top: none; /* 🔹 sin borde duplicado */
-  padding: 1rem 1.25rem;
-  animation: fadeIn 0.3s ease;
+  padding: 0rem 0;
 }
 
 .seccion-resultados h3 {
@@ -467,69 +450,13 @@ select.input-azul {
 }
 
 /* ==========================================================
-   🧩 Tabla de resultados — minimalista y con bordes visibles
-   ========================================================== */
-
-.tabla-resultados {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.78rem;
-  border: 1px solid #ccd8eb;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  background: #ffffff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
-}
-
-.tabla-resultados th,
-.tabla-resultados td {
-  border: 1px solid #d7e2f1;
-  padding: 0.5rem 0.6rem;
-  text-align: left;
-  word-wrap: break-word;
-}
-
-.tabla-resultados th {
-  background-color: #f5f8fc;
-  color: #1e40af;
-  font-weight: 600;
-  text-align: center;
-}
-
-.tabla-resultados td {
-  background: #ffffff;
-  color: #374151;
-}
-
-.tabla-resultados tr:hover td {
-  background: #f0f7ff;
-}
-
-.tabla-resultados td:last-child {
-  text-align: right;
-  color: #2563eb;
-  font-weight: 600;
-}
-
-/* Animación suave al mostrar contenido */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* ==========================================================
    🧩 Responsive
    ========================================================== */
 
 @media (max-width: 1200px) {
   .opciones-sistema {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
   }
   .opcion-sistema {
     max-width: 220px;
@@ -566,123 +493,41 @@ select.input-azul {
   }
 }
 
-/* estilos para .toggle-navegacion y sus botones */
-.toggle-navegacion {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.toggle-navegacion button {
-  background: linear-gradient(135deg, #7fc2f1, #5ea4e5);
-  color: white;
-  border: none;
-  border-radius: 0.6rem 0.6rem 0 0; /* unión visual con la tarjeta */
-  padding: 0.7rem 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-.toggle-navegacion button:hover {
-  background: linear-gradient(135deg, #8cccfa, #67b0ec);
-}
-
-.toggle-navegacion button.activo {
-  background: linear-gradient(135deg, #5ea4e5, #3b82f6);
-}
-
 /* === TOGGLES FIJOS ARRIBA === */
 .toggle-navegacion-fija {
-  position: sticky;
-  top: 0;
-  z-index: 50;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  background: #f0f4fa;
-  padding-bottom: 0.75rem;
-}
-
-/* === BOTONES PRINCIPALES === */
-.toggle-boton-principal {
-  background: #ffffff;
-  color: #1e293b;
-  border: 1px solid #d0d7de;
-  border-bottom: none; /* une el botón con la sección que abre */
-  border-radius: 0.75rem 0.75rem 0 0;
-  padding: 0.8rem 1rem;
-  text-align: left;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: all 0.2s ease-in-out;
-  position: relative;
-  z-index: 2;
-}
-
-.toggle-boton-principal:hover {
-  background: #f8fbff;
-  transform: translateY(-1px);
-}
-
-.toggle-boton-principal.activo {
-  background: #ffffff;
-  color: #0052a3;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
-  border-left: 4px solid #007aff;
-  border-bottom: 1px solid transparent; /* sin división con sección */
-}
-
-.panel-derecho-contenido,
-.seccion-resultados {
-  border-top: none;
-  border-radius: 0 0 0.75rem 0.75rem;
-  background: #ffffff;
-  margin-top: -2px;
-  position: relative;
-  z-index: 1;
+  gap: 1rem;
+  width: 100%;
 }
 
 .toggle-navegacion-fija button {
-  background: #fff; /* el botón sí es blanco */
-  color: #2b2b2b;
-  border: 1px solid #d0d7de;
-  border-radius: 0.5rem 0.5rem 0 0;
-  padding: 0.7rem 1rem;
-  text-align: left;
+  background: #ffffff;
+  border-radius: 0.75rem;
+  padding: 1rem;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  text-align: left;
+  color: var(--color-primario);
   cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
 .toggle-navegacion-fija button:hover {
-  background: #f7faff;
-  transform: translateX(2px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  background: #fefefe;
 }
 
 .toggle-navegacion-fija button.activo {
-  background: #eef5ff;
-  border-left: 3px solid #007aff;
-  color: #0052a3;
-  transform: translateX(2px);
+  background: #1e81ce;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
 }
 
 /* === SECCIÓN RESULTADOS === */
-.toggle-seccion.unida {
-  background: #ffffff;
-  border-radius: 0 0 0.75rem 0.75rem;
-  overflow: hidden;
-  margin-top: 1rem;
-  margin-right: -8px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
-}
-
 .toggle-boton.activo {
   background: #ffffff;
   border: none;
@@ -699,111 +544,26 @@ select.input-azul {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.8rem;
-  background: #ffffff;
-  border: 2px solid #000; /* 🔹 borde negro externo visible */
   border-radius: 0.5rem;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: none;
 }
 
 .tabla-resultados th,
 .tabla-resultados td {
-  border: 1px solid #000; /* 🔹 bordes internos también negros */
-  padding: 6px 10px;
+  padding: 6px 8px;
   text-align: left;
 }
 
 .tabla-resultados th {
-  background-color: #f2f6fc;
-  text-align: left;
   font-weight: 600;
-  color: #1e3a8a;
-}
-
-.tabla-resultados td {
-  color: #1e293b;
-}
-
-.tabla-resultados tr:hover td {
-  background: #f0f7ff;
-}
-
-/* Si el título del toggle está en blanco, mantenemos legibilidad */
-.toggle-boton.activo span {
-  color: #1e3a8a; /* 🔹 azul oscuro legible sobre fondo blanco */
-}
-
-/* ==========================================================
-   📁 PANEL DERECHO — Carpeta Aqua
-   ========================================================== */
-
-.tabs-derecha {
-  display: flex;
-  gap: 10px;
-  padding-left: 15px;
-  margin-bottom: -2px;
-  margin-top: 18px; /* baja las pestañas */
-}
-
-/* Pestañas estilo carpeta */
-.tab-carpeta {
-  padding: 10px 18px;
-  background: #b9ddff;                /* tapa de carpeta */
-  border: 1px solid #7eb6e6;
-  border-bottom: none;
-  border-radius: 10px 10px 0 0;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.2s;
-}
-
-.tab-carpeta:hover {
-  background: #c9e6ff;
-}
-
-.tab-carpeta.activa {
-  background: #d8ecff;                /* hoja activa */
-  border-bottom: 1px solid #d8ecff;
-  position: relative;
-  top: 1px;
-}
-
-/* Cuerpo de la carpeta */
-.panel-carpeta {
-  background: #d8ecff;
-  border: 1px solid #7eb6e6;
-  border-radius: 0 12px 12px 12px;
-  padding: 20px;
-  width: 99%;
-  margin: 0 auto;
-  margin-top: 0;
-}
-
-
-/* ==========================================================
-   📁 PANEL IZQUIERDO — Carpeta Resultados Aqua
-   ========================================================== */
-
-.toggle-seccion.unida {
-  width: 99%;
-  margin: 0 auto;
-  margin-top: 15px;
+  color: var(--color-primario);
 }
 
 .toggle-boton.activo {
-  background: #b9ddff;                /* tapa carpeta */
-  border: 1px solid #7eb6e6;
-  border-bottom: none;
-  border-radius: 10px 10px 0 0;
-  padding: 10px 14px;
-  cursor: default;
-}
-
-.seccion-resultados {
-  background: #d8ecff;
-  border: 1px solid #7eb6e6;
-  padding: 14px 18px;
-  border-radius: 0 12px 12px 12px;
+  background: #1e81ce;
+  color: white;
+  border-radius: 0.75rem 0.75rem 0 0;
 }
 
 /* ==========================================================
@@ -850,3 +610,4 @@ select.input-azul {
   object-fit: cover;
   border-radius: 0.75rem;
 }
+

@@ -1,63 +1,35 @@
 import { useState } from "react";
 import "../estilos.css";
+import useCalculosHidraulicos from "../hooks/useCalculosHidraulicos";
 
-export default function Dimensiones() {
+export default function Dimensiones({ setSeccion }) {
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [mostrarPanel, setMostrarPanel] = useState(false);
   const [hoveredTipo, setHoveredTipo] = useState(null);
+
+  // Estado para inputs de cálculo
+  const [datos, setDatos] = useState({
+    area: "",
+    profMin: "",
+    profMax: "",
+    distCuarto: ""
+  });
+
+  const { retorno } = useCalculosHidraulicos(datos, (num) => num.toFixed(2));
+  const [resultadosRetorno, setResultadosRetorno] = useState(null);
 
   // Configuración base de sistemas
   const sistemas = {
     alberca: { img: "./img/alberca.jpg", cuerpos: 1, desborde: true, nombre: "Alberca" },
     jacuzzi: { img: "./img/jacuzzi.jpg", cuerpos: 1, desborde: true, nombre: "Jacuzzi" },
-    chapoteadero: {
-      img: "./img/chapoteadero.jpg",
-      cuerpos: 1,
-      desborde: true,
-      nombre: "Chapoteadero",
-    },
-    espejoAgua: {
-      img: "./img/espejo.jpg",
-      cuerpos: 1,
-      desborde: true,
-      nombre: "Espejo de agua",
-    },
-    albercaJacuzzi1: {
-      img: "./img/alberca+jacuzzi1C.jpg",
-      cuerpos: 2,
-      desborde: true,
-      nombre: "Alberca + Jacuzzi (1 cuerpo)",
-    },
-    albercaChapo1: {
-      img: "./img/alberca+chapoteadero1C.jpg",
-      cuerpos: 2,
-      desborde: true,
-      nombre: "Alberca + Chapoteadero (1 cuerpo)",
-    },
-    jacuzziChapo1: {
-      img: "./img/jacuzzi+chapoteadero1C.jpg",
-      cuerpos: 2,
-      desborde: true,
-      nombre: "Jacuzzi + Chapoteadero (1 cuerpo)",
-    },
-    albercaJacuzzi2: {
-      img: "./img/alberca+jacuzzi2C.jpg",
-      cuerpos: 2,
-      desborde: true,
-      nombre: "Alberca + Jacuzzi (2 cuerpos)",
-    },
-    albercaChapo2: {
-      img: "./img/alberca+chapoteadero2C.jpg",
-      cuerpos: 2,
-      desborde: true,
-      nombre: "Alberca + Chapoteadero (2 cuerpos)",
-    },
-    jacuzziChapo2: {
-      img: "./img/jacuzzi+chapoteadero2C.jpg",
-      cuerpos: 2,
-      desborde: true,
-      nombre: "Jacuzzi + Chapoteadero (2 cuerpos)",
-    },
+    chapoteadero: { img: "./img/chapoteadero.jpg", cuerpos: 1, desborde: true, nombre: "Chapoteadero" },
+    espejoAgua: { img: "./img/espejo.jpg", cuerpos: 1, desborde: true, nombre: "Espejo de agua" },
+    albercaJacuzzi1: { img: "./img/alberca+jacuzzi1C.jpg", cuerpos: 2, desborde: true, nombre: "Alberca + Jacuzzi (1 cuerpo)" },
+    albercaChapo1: { img: "./img/alberca+chapoteadero1C.jpg", cuerpos: 2, desborde: true, nombre: "Alberca + Chapoteadero (1 cuerpo)" },
+    jacuzziChapo1: { img: "./img/jacuzzi+chapoteadero1C.jpg", cuerpos: 2, desborde: true, nombre: "Jacuzzi + Chapoteadero (1 cuerpo)" },
+    albercaJacuzzi2: { img: "./img/alberca+jacuzzi2C.jpg", cuerpos: 2, desborde: true, nombre: "Alberca + Jacuzzi (2 cuerpos)" },
+    albercaChapo2: { img: "./img/alberca+chapoteadero2C.jpg", cuerpos: 2, desborde: true, nombre: "Alberca + Chapoteadero (2 cuerpos)" },
+    jacuzziChapo2: { img: "./img/jacuzzi+chapoteadero2C.jpg", cuerpos: 2, desborde: true, nombre: "Jacuzzi + Chapoteadero (2 cuerpos)" }
   };
 
   const handleSeleccion = (tipo) => {
@@ -76,7 +48,6 @@ export default function Dimensiones() {
           <div className="tipo-sistema-container">
             <div className="tarjeta-tipo-sistema">
               <div className="titulo-seccion">Selecciona el tipo de sistema</div>
-
               <div className="opciones-sistema">
                 {Object.entries(sistemas).map(([key, s]) => (
                   <label
@@ -98,16 +69,11 @@ export default function Dimensiones() {
                 <div className="opciones-preview">
                   {tipoHover ? (
                     <>
-                      <img
-                        className="opciones-preview-img"
-                        src={sistemas[tipoHover].img}
-                        alt="Preview sistema"
-                      />
+                      <img className="opciones-preview-img" src={sistemas[tipoHover].img} alt="Preview sistema" />
                       <div className="opciones-meta">
                         <div className="titulo">{sistemas[tipoHover].nombre}</div>
                         <div className="desc">
-                          Sistema de {sistemas[tipoHover].cuerpos} cuerpo(s) con{" "}
-                          {sistemas[tipoHover].desborde ? "desborde activo" : "sin desborde"}.
+                          Sistema de {sistemas[tipoHover].cuerpos} cuerpo(s) con {sistemas[tipoHover].desborde ? "desborde activo" : "sin desborde"}.
                         </div>
                       </div>
                     </>
@@ -123,7 +89,6 @@ export default function Dimensiones() {
         </>
       ) : (
         config && (
-          /* === PANEL DE DIMENSIONES === */
           <div className="form-section animacion-aparecer">
             <button
               className="btn-volver"
@@ -147,16 +112,34 @@ export default function Dimensiones() {
                     </label>
                     <div className="form-group">
                       <label>Área (m²):</label>
-                      <input type="number" step="0.01" className="input-azul" />
+                      <input
+                        type="number"
+                        step="0.01"
+                        className="input-azul"
+                        value={datos.area}
+                        onChange={(e) => setDatos({ ...datos, area: e.target.value })}
+                      />
                     </div>
                     <div className="form-group inline fila-bdc">
                       <div className="campo-bdc">
                         <label>Profundidad mínima (m):</label>
-                        <input type="number" step="0.01" className="input-azul" />
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="input-azul"
+                          value={datos.profMin}
+                          onChange={(e) => setDatos({ ...datos, profMin: e.target.value })}
+                        />
                       </div>
                       <div className="campo-bdc">
                         <label>Profundidad máxima (m):</label>
-                        <input type="number" step="0.01" className="input-azul" />
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="input-azul"
+                          value={datos.profMax}
+                          onChange={(e) => setDatos({ ...datos, profMax: e.target.value })}
+                        />
                       </div>
                     </div>
                   </div>
@@ -180,15 +163,20 @@ export default function Dimensiones() {
                       <select className="input-azul">
                         <option value="">-- Selecciona --</option>
                         {[0.5, 1, 4, 6, 8, 12, 18, 24].map((v) => (
-                          <option key={v} value={v}>
-                            {v}
-                          </option>
+                          <option key={v} value={v}>{v}</option>
                         ))}
                       </select>
                     </div>
                     <div className="campo-bdc" style={{ marginLeft: "16px" }}>
                       <label>Distancia a cuarto de máquinas (m):</label>
-                      <input type="number" step="0.1" placeholder="Ej. 15" className="input-azul" />
+                      <input
+                        type="number"
+                        step="0.1"
+                        placeholder="Ej. 15"
+                        className="input-azul"
+                        value={datos.distCuarto}
+                        onChange={(e) => setDatos({ ...datos, distCuarto: e.target.value })}
+                      />
                     </div>
                   </div>
                 </div>
@@ -198,25 +186,38 @@ export default function Dimensiones() {
                   <div className="tarjeta-bdc tarjeta-calentamiento">
                     <label className="label-calentamiento">Tipo de desborde:</label>
                     <div className="checkbox-row">
-                      <label>
-                        <input type="radio" name="desborde" value="infinity" /> Infinity
-                      </label>
-                      <label>
-                        <input type="radio" name="desborde" value="canal" /> Canal perimetral
-                      </label>
-                      <label>
-                        <input type="radio" name="desborde" value="ambos" /> Ambos
-                      </label>
-                      <label>
-                        <input type="radio" name="desborde" value="ninguno" /> Ninguno
-                      </label>
+                      <label><input type="radio" name="desborde" value="infinity" /> Infinity</label>
+                      <label><input type="radio" name="desborde" value="canal" /> Canal perimetral</label>
+                      <label><input type="radio" name="desborde" value="ambos" /> Ambos</label>
+                      <label><input type="radio" name="desborde" value="ninguno" /> Ninguno</label>
                     </div>
                   </div>
                 )}
 
+                {/* Botón nuevo para probar cálculo de retornos */}
                 <div style={{ marginTop: 20 }}>
-                  <button className="btn-principal">Ir a calentamiento →</button>
+                  <button
+                    className="btn-principal"
+                    onClick={() => {
+                      const resultados = retorno(100, "2.0"); // puedes cambiar los valores aquí
+                      setResultadosRetorno(resultados);
+                      console.log(resultados);
+                    }}
+                  >
+                    Calcular Retornos 💧
+                  </button>
                 </div>
+
+                {/* Mostrar resultados */}
+                {resultadosRetorno && (
+                  <div style={{ marginTop: 20 }}>
+                    <h3>Resultados del cálculo de retornos:</h3>
+                    <pre style={{ fontSize: 12 }}>
+                      {JSON.stringify(resultadosRetorno, null, 2)}
+                    </pre>
+                  </div>
+                )}
+
               </div>
 
               <div className="columna-derecha">
@@ -227,9 +228,7 @@ export default function Dimensiones() {
 
                 <div id="ayudaContextual" className="ayuda-contextual">
                   <div className="ayuda-titulo">Descripción del campo</div>
-                  <div className="ayuda-texto">
-                    Pasa el cursor sobre un campo para ver su descripción.
-                  </div>
+                  <div className="ayuda-texto">Pasa el cursor sobre un campo para ver su descripción.</div>
                 </div>
               </div>
             </div>
