@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import "../estilos.css";
 import useCalculosHidraulicos from "../hooks/useCalculosHidraulicos";
 
@@ -18,6 +18,9 @@ export default function Dimensiones({ setSeccion }) {
   const { retorno } = useCalculosHidraulicos(datos, (num) => num.toFixed(2));
   const [resultadosRetorno, setResultadosRetorno] = useState(null);
 
+  // Hover por campo para ayuda contextual
+  const [hoveredField, setHoveredField] = useState(null);
+
   // Configuración base de sistemas
   const sistemas = {
     alberca: { img: "./img/alberca.jpg", cuerpos: 1, desborde: true, nombre: "Alberca" },
@@ -34,19 +37,38 @@ export default function Dimensiones({ setSeccion }) {
 
   const handleSeleccion = (tipo) => {
     setTipoSeleccionado(tipo);
-    setMostrarPanel(true);
+    // pequeño delay para animación (no necesario pero mejora sensación)
+    setTimeout(() => setMostrarPanel(true), 60);
   };
 
   const config = tipoSeleccionado ? sistemas[tipoSeleccionado] : null;
   const tipoHover = hoveredTipo || tipoSeleccionado;
 
+  // Mensajes de ayuda por campo (puedes editarlos)
+  const ayudaMap = useMemo(() => ({
+    area: "Área del cuerpo de agua en metros cuadrados. Se usa para calcular longitudes y distribución de retornos.",
+    profMin: "Profundidad mínima del cuerpo (m). Influye en longitud de tiro y cálculos de volumen.",
+    profMax: "Profundidad máxima del cuerpo (m). Se toma el mayor entre profMin y profMax para cálculos críticos.",
+    distCuarto: "Distancia desde el cuerpo de agua hasta el cuarto de máquinas (m). Se usa para dimensionar el tramo especial.",
+    uso: "Tipo de uso (residencial, pública, competencia...) afecta tasas de recirculación recomendadas.",
+    rotacion: "Tasa de rotación deseada en horas. Controla caudal necesario para recircular el volumen.",
+    desborde: "Tipo de desborde (Infinity / Canal / Ambos) — afecta diseño del rebosadero y retornos."
+  }), []);
+
+  // Texto de ayuda a mostrar: hover de campo > hover general > instrucciones por defecto
+  const ayudaTexto = hoveredField
+    ? ayudaMap[hoveredField] || "Información del campo"
+    : tipoHover
+      ? `${sistemas[tipoHover].nombre} — selecciona un campo para ver ayuda contextual.`
+      : "Selecciona un tipo de sistema para ver detalles y ayuda contextual.";
+
   return (
-    <div className="form-section" style={{ fontFamily: "inherit" }}>
+    <div className={`form-section hero-wrapper ${mostrarPanel ? "expanded" : ""}`} style={{ fontFamily: "inherit" }}>
       {!mostrarPanel ? (
         <>
           {/* === SELECCIÓN DE TIPO DE SISTEMA === */}
           <div className="tipo-sistema-container">
-            <div className="tarjeta-tipo-sistema">
+            <div className="tarjeta-tipo-sistema tarjeta-entrada">
               <div className="titulo-seccion">Selecciona el tipo de sistema</div>
               <div className="opciones-sistema">
                 {Object.entries(sistemas).map(([key, s]) => (
@@ -89,146 +111,157 @@ export default function Dimensiones({ setSeccion }) {
         </>
       ) : (
         config && (
-          <div className="form-section animacion-aparecer">
-            <button
-              className="btn-volver"
-              onClick={() => {
-                setMostrarPanel(false);
-                setTipoSeleccionado(null);
+          <div className="tarjeta-expandida">
+            {/* HERO BACKGROUND: cubre el área derecha (fondo blur) */}
+            <div
+              className="hero-background"
+              style={{
+                backgroundImage: `url(${config.img})`
               }}
-            >
-              ← Volver a tipos de sistema
-            </button>
+            />
 
-            <h2 className="titulo-sistema-activo">{config.nombre}</h2>
+            {/* contenido en primer plano (paneles semitransparentes) */}
+            <div className="tarjeta-contenido">
+              <button
+                className="btn-volver minimal"
+                onClick={() => {
+                  setMostrarPanel(false);
+                  // hacemos small delay para que cierre animación
+                  setTimeout(() => setTipoSeleccionado(null), 300);
+                }}
+              >
+                ← Volver
+              </button>
 
-            <div className="sistema-contenido">
-              <div className="columna-izquierda">
-                {/* Dimensiones físicas */}
-                {[...Array(config.cuerpos)].map((_, i) => (
-                  <div className="tarjeta-bdc tarjeta-calentamiento" key={i}>
-                    <label className="label-calentamiento">
-                      Dimensiones físicas {config.cuerpos > 1 ? `(Cuerpo ${i + 1})` : ""}
-                    </label>
-                    <div className="form-group">
-                      <label>Área (m²):</label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        className="input-azul"
-                        value={datos.area}
-                        onChange={(e) => setDatos({ ...datos, area: e.target.value })}
-                      />
-                    </div>
-                    <div className="form-group inline fila-bdc">
-                      <div className="campo-bdc">
-                        <label>Profundidad mínima (m):</label>
+              <h2 className="titulo-sistema-activo">{config.nombre}</h2>
+
+              <div className="sistema-contenido overlay">
+                <div className="columna-izquierda overlay-card">
+                  {/* Dimensiones físicas */}
+                  {[...Array(config.cuerpos)].map((_, i) => (
+                    <div className="tarjeta-bdc tarjeta-calentamiento" key={i}>
+                      <label className="label-calentamiento">
+                        Dimensiones físicas {config.cuerpos > 1 ? `(Cuerpo ${i + 1})` : ""}
+                      </label>
+                      <div className="form-group">
+                        <label>Área (m²):</label>
                         <input
                           type="number"
                           step="0.01"
                           className="input-azul"
-                          value={datos.profMin}
-                          onChange={(e) => setDatos({ ...datos, profMin: e.target.value })}
+                          value={datos.area}
+                          onChange={(e) => setDatos({ ...datos, area: e.target.value })}
+                          onMouseEnter={() => setHoveredField("area")}
+                          onMouseLeave={() => setHoveredField(null)}
                         />
                       </div>
-                      <div className="campo-bdc">
-                        <label>Profundidad máxima (m):</label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          className="input-azul"
-                          value={datos.profMax}
-                          onChange={(e) => setDatos({ ...datos, profMax: e.target.value })}
-                        />
+                      <div className="form-group inline fila-bdc">
+                        <div className="campo-bdc">
+                          <label>Profundidad mínima (m):</label>
+                          <input
+                            type="number"
+                            step="0.01"
+                            className="input-azul"
+                            value={datos.profMin}
+                            onChange={(e) => setDatos({ ...datos, profMin: e.target.value })}
+                            onMouseEnter={() => setHoveredField("profMin")}
+                            onMouseLeave={() => setHoveredField(null)}
+                          />
+                        </div>
+                        <div className="campo-bdc">
+                          <label>Profundidad máxima (m):</label>
+                          <input
+                            type="number"
+                            step="0.01"
+                            className="input-azul"
+                            value={datos.profMax}
+                            onChange={(e) => setDatos({ ...datos, profMax: e.target.value })}
+                            onMouseEnter={() => setHoveredField("profMax")}
+                            onMouseLeave={() => setHoveredField(null)}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
 
-                {/* Uso y rotación */}
-                <div className="tarjeta-bdc tarjeta-calentamiento">
-                  <div className="form-group inline fila-bdc">
-                    <div className="campo-bdc">
-                      <label>Uso del cuerpo de agua:</label>
-                      <select className="input-azul">
-                        <option value="">-- Selecciona uso --</option>
-                        <option value="residencial">Residencial</option>
-                        <option value="publica">Pública</option>
-                        <option value="competencia">Competencia</option>
-                        <option value="parque">Parque acuático</option>
-                      </select>
-                    </div>
-                    <div className="campo-bdc" style={{ marginLeft: "16px" }}>
-                      <label>Tasa de rotación (h):</label>
-                      <select className="input-azul">
-                        <option value="">-- Selecciona --</option>
-                        {[0.5, 1, 4, 6, 8, 12, 18, 24].map((v) => (
-                          <option key={v} value={v}>{v}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="campo-bdc" style={{ marginLeft: "16px" }}>
-                      <label>Distancia a cuarto de máquinas (m):</label>
-                      <input
-                        type="number"
-                        step="0.1"
-                        placeholder="Ej. 15"
-                        className="input-azul"
-                        value={datos.distCuarto}
-                        onChange={(e) => setDatos({ ...datos, distCuarto: e.target.value })}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Tipo de desborde */}
-                {config.desborde && (
+                  {/* Uso y rotación */}
                   <div className="tarjeta-bdc tarjeta-calentamiento">
-                    <label className="label-calentamiento">Tipo de desborde:</label>
-                    <div className="checkbox-row">
-                      <label><input type="radio" name="desborde" value="infinity" /> Infinity</label>
-                      <label><input type="radio" name="desborde" value="canal" /> Canal perimetral</label>
-                      <label><input type="radio" name="desborde" value="ambos" /> Ambos</label>
-                      <label><input type="radio" name="desborde" value="ninguno" /> Ninguno</label>
+                    <div className="form-group inline fila-bdc">
+                      <div className="campo-bdc" onMouseEnter={() => setHoveredField("uso")} onMouseLeave={() => setHoveredField(null)}>
+                        <label>Uso del cuerpo de agua:</label>
+                        <select className="input-azul">
+                          <option value="">-- Selecciona uso --</option>
+                          <option value="residencial">Residencial</option>
+                          <option value="publica">Pública</option>
+                          <option value="competencia">Competencia</option>
+                          <option value="parque">Parque acuático</option>
+                        </select>
+                      </div>
+                      <div className="campo-bdc" style={{ marginLeft: "16px" }} onMouseEnter={() => setHoveredField("rotacion")} onMouseLeave={() => setHoveredField(null)}>
+                        <label>Tasa de rotación (h):</label>
+                        <select className="input-azul">
+                          <option value="">-- Selecciona --</option>
+                          {[0.5, 1, 4, 6, 8, 12, 18, 24].map((v) => (
+                            <option key={v} value={v}>{v}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="campo-bdc" style={{ marginLeft: "16px" }}>
+                        <label>Distancia a cuarto de máquinas (m):</label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          placeholder="Ej. 15"
+                          className="input-azul"
+                          value={datos.distCuarto}
+                          onChange={(e) => setDatos({ ...datos, distCuarto: e.target.value })}
+                          onMouseEnter={() => setHoveredField("distCuarto")}
+                          onMouseLeave={() => setHoveredField(null)}
+                        />
+                      </div>
                     </div>
                   </div>
-                )}
 
-                {/* Botón nuevo para probar cálculo de retornos */}
-                <div style={{ marginTop: 20 }}>
-                  <button
-                    className="btn-principal"
-                    onClick={() => {
-                      const resultados = retorno(100, "2.0"); // puedes cambiar los valores aquí
-                      setResultadosRetorno(resultados);
-                      console.log(resultados);
-                    }}
-                  >
-                    Calcular Retornos 💧
-                  </button>
+                  {/* Tipo de desborde */}
+                  {config.desborde && (
+                    <div className="tarjeta-bdc tarjeta-calentamiento">
+                      <label className="label-calentamiento">Tipo de desborde:</label>
+                      <div className="checkbox-row">
+                        <label><input type="radio" name="desborde" value="infinity" /> Infinity</label>
+                        <label><input type="radio" name="desborde" value="canal" /> Canal perimetral</label>
+                        <label><input type="radio" name="desborde" value="ambos" /> Ambos</label>
+                        <label><input type="radio" name="desborde" value="ninguno" /> Ninguno</label>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Mostrar resultados */}
+                  {resultadosRetorno && (
+                    <div style={{ marginTop: 14 }}>
+                      <h3>Resultados del cálculo de retornos:</h3>
+                      <pre style={{ fontSize: 12, maxHeight: 260, overflow: "auto" }}>
+                        {JSON.stringify(resultadosRetorno, null, 2)}
+                      </pre>
+                    </div>
+                  )}
                 </div>
 
-                {/* Mostrar resultados */}
-                {resultadosRetorno && (
-                  <div style={{ marginTop: 20 }}>
-                    <h3>Resultados del cálculo de retornos:</h3>
-                    <pre style={{ fontSize: 12 }}>
-                      {JSON.stringify(resultadosRetorno, null, 2)}
-                    </pre>
+                {/* Columna derecha convertida en overlay de ayuda (sin bordes) */}
+                <div className="columna-derecha overlay-card ayuda-area">
+                  <div className="tarjeta-imagen overlay-image" aria-hidden>
+                    {/* la imagen real ya está en hero-background, aquí podemos mostrar una mini o ícono */}
+                    <div className="imagen-placeholder">
+                      {/* opcional: small preview */}
+                      <img src={config.img} alt={config.nombre} className="imagen-mini" />
+                    </div>
                   </div>
-                )}
 
-              </div>
-
-              <div className="columna-derecha">
-                <div className="tarjeta-bdc tarjeta-imagen">
-                  <img src={config.img} alt={config.nombre} className="imagen-sistema-activo" />
-                  <p className="texto-imagen">Vista del sistema seleccionado</p>
-                </div>
-
-                <div id="ayudaContextual" className="ayuda-contextual">
-                  <div className="ayuda-titulo">Descripción del campo</div>
-                  <div className="ayuda-texto">Pasa el cursor sobre un campo para ver su descripción.</div>
+                  <div id="ayudaContextual" className="ayuda-contextual overlay-help">
+                    <div className="ayuda-titulo">Ayuda contextual</div>
+                    <div className="ayuda-texto">
+                      {ayudaTexto}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

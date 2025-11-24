@@ -1,613 +1,635 @@
 /* ==========================================================
-   🧱 estilos.css — versión optimizada (solo toggles ajustados)
+   🧱 estilos.css — versión consolidada (limpia)
    ========================================================== */
 
 /* === Variables globales === */
-:root {
-  --color-primario: #1e81ce;   /* azul más claro */
+:root{
+  --color-primario: #1e81ce;
   --color-acento: #4ea8de;
   --color-secundario: #e8f0ff;
   --color-fondo: #f8fbff;
   --color-texto: #1a1a1a;
   --color-borde: #d9e2ef;
-  --color-acento: #0077cc;
+  --color-acento-2: #0077cc;
 
-  /* variables específicas para toggles */
-  --toggle-bg: #2b6cb0;           /* color principal del botón (suave) */
-  --toggle-bg-hover: #265b93;     /* hover */
-  --toggle-bg-active: #3182ce;    /* activo */
-  --toggle-border: #d1d9e6;       /* borde que unifica botón + contenido */
+  /* toggles */
+  --toggle-bg: #2b6cb0;
+  --toggle-bg-hover: #265b93;
+  --toggle-bg-active: #3182ce;
+  --toggle-border: #d1d9e6;
 }
 
 /* === Reset básico === */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html,
-body {
-  height: 100%;
-  background-color: var(--color-fondo);
-  color: var(--color-texto);
-  font-family: "Inter", "Segoe UI", sans-serif;
-  line-height: 1.5;
-  overflow: hidden;
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body{
+  height:100%;
+  background-color:var(--color-fondo);
+  color:var(--color-texto);
+  font-family:"Inter","Segoe UI",sans-serif;
+  line-height:1.5;
 }
 
 /* ==========================================================
    🧩 Layout general
    ========================================================== */
 
-.app-contenedor {
-  display: flex;
-  height: 100vh;
-  width: 100%;
-  overflow: hidden;
+.app-contenedor{
+  display:flex;
+  height:100vh;
+  width:100%;
+  overflow:hidden;
 }
 
 /* === PANEL IZQUIERDO === */
-.panel-izquierdo {
-  background: #f8fbff;
-  padding: 1.5rem 1rem;
-  width: 360px;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  overflow-y: auto;
+.panel-izquierdo{
+  background:#f8fbff;
+  padding:1.5rem 1rem;
+  width:300px;
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+  overflow-y:auto;
 }
 
-.titulo-panel {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 1.rem;
-  text-align: center;
+.titulo-panel{
+  font-size:1.25rem;
+  font-weight:700;
+  margin-bottom:1rem;
+  text-align:center;
 }
 
 /* Tabs laterales */
-.tab {
-  cursor: pointer;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
-  transition: background-color 0.2s ease;
-  margin-bottom: 0.25rem;
-  text-align: center;
+.tab{
+  cursor:pointer;
+  padding:0.75rem 1rem;
+  border-radius:0.5rem;
+  transition:background-color .2s ease;
+  margin-bottom:.25rem;
+  text-align:center;
 }
-
-.tab:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-}
-
-.tab.active {
-  background-color: white;
-  color: var(--color-primario);
-  font-weight: 600;
-}
+.tab:hover{ background-color:rgba(255,255,255,.15); }
+.tab.active{ background:#fff; color:var(--color-primario); font-weight:600; }
 
 /* Panel derecho */
-.panel-derecho {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: #f8fbff; /* mismo fondo que el izquierdo */
-  overflow-y: auto;
-  padding: 1.5rem;
+.panel-derecho{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  background:#f8fbff;
+  overflow:hidden; /* dejo overflow en contenedores internos */
+  padding:1.5rem;
 }
 
-/* Contenido principal del panel derecho */
-.panel-derecho-contenido {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
+/* Contenido principal dentro del panel derecho (scroll aquí si hace falta) */
+.panel-derecho-contenido{
+  flex:1;
+  padding:2rem;
+  overflow:auto;
 }
 
 /* ==========================================================
    🧩 Botones
    ========================================================== */
 
-.btn-calcular,
-.btn-principal {
-  background-color: var(--color-acento);
-  color: white;
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.25s, transform 0.2s;
+.btn-calcular, .btn-principal{
+  background-color:var(--color-acento);
+  color:#fff;
+  font-weight:600;
+  padding:.75rem 1.5rem;
+  border:none;
+  border-radius:.5rem;
+  cursor:pointer;
+  transition:background-color .25s, transform .2s;
 }
+.btn-calcular:hover, .btn-principal:hover{ background-color:#005fa3; transform:translateY(-2px); }
 
-.btn-calcular:hover,
-.btn-principal:hover {
-  background-color: #005fa3;
-  transform: translateY(-2px);
+.btn-volver{
+  color:var(--color-primario);
+  background:transparent;
+  border:none;
+  font-weight:600;
+  cursor:pointer;
+  transition:color .2s;
 }
+.btn-volver:hover{ color:#0077cc; }
 
-.btn-volver {
-  color: var(--color-primario);
-  background: transparent;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: color 0.2s;
+/* versión minimal para overlay (botón pequeño blanco) */
+.btn-volver.minimal{
+  background:rgba(255,255,255,.06);
+  color:#fff;
+  border:none;
+  padding:6px 10px;
+  border-radius:6px;
+  align-self:flex-start;
+  margin-bottom:2px;
+  cursor:pointer;
+  transition:background .18s;
 }
-
-.btn-volver:hover {
-  color: #0077cc;
-}
+.btn-volver.minimal:hover{ background:rgba(255,255,255,.12); }
 
 /* ==========================================================
    🧩 Formularios e inputs
    ========================================================== */
 
-.input-azul,
-select.input-azul {
-  border: 1px solid var(--color-borde);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  outline: none;
-  transition: border-color 0.2s;
-  width: 100%;
+.input-azul, select.input-azul{
+  border:1px solid var(--color-borde);
+  border-radius:.5rem;
+  padding:.5rem .75rem;
+  outline:none;
+  transition:border-color .2s;
+  width:100%;
 }
+.input-azul:focus{ border-color:var(--color-primario); }
 
-.input-azul:focus {
-  border-color: var(--color-primario);
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.inline {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
+.form-group{ margin-bottom:1rem; }
+.inline{ display:flex; gap:1rem; flex-wrap:wrap; }
 
 /* ==========================================================
    🧩 Tarjetas generales
    ========================================================== */
 
-.tarjeta-bdc {
-  border-radius: 0.75rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  padding: 1rem;
-  background: white;
-  transition: box-shadow 0.25s, transform 0.25s;
+.tarjeta-bdc{
+  background:rgba(255,255,255,.96);
+  border:none;
+  padding:14px;
+  border-radius:.75rem;
+  box-shadow:0 8px 26px rgba(8,20,40,.06);
+  transition:transform .2s, box-shadow .25s;
+  will-change: transform;
 }
 
-.tarjeta-bdc:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+.tarjeta-bdc:hover{
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
 }
 
 /* ==========================================================
    🧩 Sección Dimensiones / Tipo de sistema
    ========================================================== */
 
-.tipo-sistema-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+.tipo-sistema-container{
+  display:flex;
+  flex-direction:column;
+  gap:1.5rem;
 }
 
-.tarjeta-tipo-sistema {
-  background-color: #ffffff;
-  border: 1px solid var(--color-borde);
-  border-radius: 1rem;
-  padding: 1.25rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  transition: box-shadow 0.25s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 700px;
+.tarjeta-tipo-sistema{
+  background:#fff;
+  border:1px solid var(--color-borde);
+  border-radius:1rem;
+  padding:1.25rem;
+  box-shadow:0 2px 6px rgba(0,0,0,.05);
+  transition:transform .2s, box-shadow .25s;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+
+  /* Unificación de altura y consistencia */
+  min-height:70vh;
+  max-height:95vh;
+  overflow:auto;
+
+  will-change: transform;
 }
 
-.tarjeta-tipo-sistema:hover {
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+.tarjeta-tipo-sistema:hover{
+  transform:translateY(-2px);
+  box-shadow:0 4px 14px rgba(0,0,0,.12);
 }
 
-.tarjeta-tipo-sistema .titulo-seccion {
-  font-size: 1.35rem;
-  font-weight: 600;
-  color: var(--color-primario);
-  margin-bottom: 0rem;
-  text-align: center;
+.tarjeta-tipo-sistema .titulo-seccion{
+  font-size:1.35rem;
+  font-weight:800; 
+  color:var(--color-primario); 
+  text-align:center;
+  transform:translateY(-2px);
 }
 
-/* Grid de tarjetas */
-.opciones-sistema {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1.5rem;
-  justify-items: center;
-  margin-top: 2rem; 
+.tarjeta-tipo-sistema::-webkit-scrollbar{
+  width:6px;
+}
+.tarjeta-tipo-sistema::-webkit-scrollbar-track{
+  background:transparent;
+}
+.tarjeta-tipo-sistema::-webkit-scrollbar-thumb{
+  background:rgba(0,0,0,.15);
+  border-radius:10px;
 }
 
-.opcion-sistema {
-  background-color: #fff;
-  border-radius: 0.85rem;
-  border: 1px solid #d3deee;
-  padding: .5rem;
-  width: 100%;
-  /*max-width: 240px;*/
-  height: 270px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
+/* Grid de tarjetas (opcion-sistema) */
+.opciones-sistema{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:1.5rem;
+  justify-items:center;
+  margin-top:2rem;
 }
 
-.opcion-sistema:hover {
-  transform: scale(1.08);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  border-color: var(--color-acento);
+/* Tarjeta individual de sistema */
+.opcion-sistema{
+  background:#fff;
+  border-radius:1rem;
+  border:1px solid #d3deee;
+  padding:.5rem;
+  width:100%;
+  height:270px;
+  text-align:center;
+  cursor:pointer;
+  transition:transform .25s ease, box-shadow .25s ease;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:space-between;
+  transform-origin:center;
+  position:relative;
+  z-index:1;
+}
+.opcion-sistema:not(.seleccionada):hover {
+  transform:scale(1.04);
+  box-shadow:0 8px 20px rgba(0,0,0,.15);
+  border-color:var(--color-acento);
+}
+
+.opcion-sistema img{
+  border-radius:.6rem;
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  /* alternativa: usar aspect-ratio si lo prefieres */
+}
+.opcion-sistema span{
+  font-weight:600;
+  color:var(--color-primario);
+  font-size:1rem;
 }
 
 .opcion-sistema.seleccionada {
+  animation: opcionSeleccion 0.45s ease forwards;
+  transform-origin: center;
   border-color: var(--color-acento);
-  box-shadow: 0 4px 16px rgba(0, 119, 204, 0.25);
-  transform: scale(1.05);
-}
-
-.opcion-sistema img {
-  border-radius: 0.6rem;
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
-
-.opcion-sistema span {
-  font-weight: 600;
-  color: var(--color-primario);
-  font-size: 1rem;
 }
 
 /* ==========================================================
-   🧩 Franja de Preview
+   ✔ Animación al seleccionar (OPCIÓN A — Zoom + Glow Premium)
    ========================================================== */
 
-@keyframes slideUp {
+@keyframes opcionSeleccion {
   0% {
-    transform: translateY(100%);
-    opacity: 0;
+    transform: scale(1) translateY(0);
+    box-shadow: 0 0 0 rgba(0, 150, 255, 0);
+  }
+  40% {
+    transform: scale(1.06) translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 150, 255, 0.18);
   }
   100% {
-    transform: translateY(0);
-    opacity: 1;
+    transform: scale(1.045) translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 150, 255, 0.16);
   }
 }
 
-.opciones-footer {
-  margin-top: 2.5rem;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.8);
-  border-top: 2px solid #e5e7eb;
-  border-radius: 0 0 1rem 1rem;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  overflow: hidden;
-  min-height: 170px;
-  display: flex;
-  align-items: left;
-  justify-content: center;
-  animation: slideUp 0.6s ease forwards;
-  box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.05);
+/* ==========================================================
+   🧩 Franja de Preview (footer)
+   ========================================================== */
+
+@keyframes slideUp{
+  0%{ transform:translateY(100%); opacity:0; }
+  100%{ transform:translateY(0); opacity:1; }
 }
 
-.opciones-preview {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  width: 90%;
-  max-width: 1100px;
-}
+.opciones-footer{
+  margin-top:2.5rem;
+  width:100%;
+  background:rgba(255,255,255,.8);
+  border-top:2px solid #e5e7eb;
+  border-radius:0 0 1rem 1rem;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  overflow:hidden;
 
-.opciones-preview-img {
-  width: 200px;
-  height: 130px;
-  object-fit: cover;
-  border-radius: 0.75rem;
-  border: 1px solid var(--color-borde);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+  min-height:195px;
 
-.opciones-preview-img:hover {
-  transform: scale(1.08);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-}
+  /* ⬇ corrección principal */
+  display:flex;
+  align-items:center;        /* centrado vertical */
+  justify-content:center;    /* centrado horizontal */
 
-.opciones-meta {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  max-width: 60%;
+  animation:slideUp .6s ease forwards;
+  box-shadow:0 -3px 10px rgba(0,0,0,.05);
+  padding:1rem 0;
 }
+.opciones-preview{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start; /* lo deja alineado a la izquierda */
+  gap:2rem;
+  width:100%;
+  max-width:1100px;
+  padding-left:1rem;         /* centrado a la izquierda más elegante */
+}
+.opciones-preview-img{
+  width:200px; height:130px; object-fit:cover; border-radius:.75rem;
+  border:1px solid var(--color-borde);
+  transition:transform .3s ease, box-shadow .3s ease;
+}
+.opciones-preview-img:hover{ transform:scale(1.08); box-shadow:0 4px 15px rgba(0,0,0,.25); }
 
-.opciones-meta .titulo {
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: #1f2937;
-}
-
-.opciones-meta .desc {
-  font-size: 1rem;
-  color: #4b5563;
-  margin-top: 6px;
-}
-
-.opciones-placeholder {
-  color: #9ca3af;
-  font-style: italic;
-  text-align: center;
-  padding: 12px;
-}
+.opciones-meta{ display:flex; flex-direction:column; justify-content:center; max-width:60%; }
+.opciones-meta .titulo{ font-weight:700; font-size:1.2rem; color:#1f2937; }
+.opciones-meta .desc{ font-size:1rem; color:#4b5563; margin-top:6px; }
+.opciones-placeholder{ color:#9ca3af; font-style:italic; text-align:center; padding:12px; }
 
 /* ==========================================================
    🧩 Imagen activa y ayuda contextual
    ========================================================== */
 
-.imagen-sistema-activo {
-  width: 100%;
-  border-radius: 0.75rem;
-  object-fit: cover;
+.texto-imagen{ text-align:center; font-size:.9rem; color:#444; margin-top:.5rem; }
+
+/* Ayuda contextual base */
+.ayuda-contextual{
+  margin-top:1.5rem;
+  background-color:var(--color-secundario);
+  border-radius:.75rem;
+  padding:1rem;
+  font-size:.9rem;
 }
 
-.texto-imagen {
-  text-align: center;
-  font-size: 0.9rem;
-  color: #444;
-  margin-top: 0.5rem;
+/* versión overlay (cuando está sobre el hero) */
+.ayuda-contextual.overlay-help{
+  width:100%;
+  padding:14px;
+  background:rgba(255,255,255,.92);
+  border-radius:.6rem;
+  box-shadow:0 6px 18px rgba(8,20,40,.06);
+  text-align:left;
 }
 
-.ayuda-contextual {
-  margin-top: 1.5rem;
-  background-color: var(--color-secundario);
-  border-radius: 0.75rem;
-  padding: 1rem;
-  font-size: 0.9rem;
+/* Evitar duplicidad de .ayuda-titulo: usar una única definición */
+.ayuda-titulo{
+  font-weight:700;
+  color:var(--color-primario);
+  margin-bottom:.4rem;
 }
-
-.ayuda-titulo {
-  font-weight: 600;
-  color: var(--color-primario);
-  margin-bottom: 0.25rem;
-}
+.ayuda-texto{ color:#334155; font-size:.95rem; line-height:1.4; }
 
 /* ==========================================================
    🧩 TOGGLES — estilo card minimalista tipo dashboard
    ========================================================== */
 
-.toggle-seccion {
-  margin-top: 1.rem;
-  border-radius: 0.75rem;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  overflow: hidden; /* unión real con contenido */
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
-  border: 1px solid #d3deee;
+.toggle-seccion{
+  margin-top:1rem; /* typo corregido */
+  border-radius:.75rem;
+  background:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+  overflow:hidden;
+  transition:box-shadow .25s ease, transform .25s ease;
+  border:1px solid #d3deee;
 }
+.toggle-seccion:hover{ box-shadow:0 4px 12px rgba(0,0,0,.08); transform:translateY(-2px); }
 
-.toggle-seccion:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
+.toggle-boton{
+  width:100%;
+  background:linear-gradient(135deg,#7fc2f1,#5ea4e5);
+  color:#fff;
+  border:none;
+  padding:1rem 1.2rem;
+  font-weight:600;
+  cursor:pointer;
+  font-size:.9rem;
+  text-align:left;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  transition:background .3s ease;
+  border-bottom:1px solid #d3deee;
 }
+.toggle-boton span{ display:flex; align-items:center; gap:.6rem; }
+.toggle-boton svg{ transition:transform .25s ease; }
+.toggle-boton.activo svg{ transform:rotate(180deg); }
+.toggle-boton:hover{ background:linear-gradient(135deg,#8cccfa,#67b0ec); }
 
-.toggle-boton {
-  width: 100%;
-  background: linear-gradient(135deg, #7fc2f1, #5ea4e5); /* azul más claro */
-  color: #fff;
-  border: none;
-  padding: 1rem 1.2rem;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 0.9rem;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: background 0.3s ease;
-  border-bottom: 1px solid #d3deee; /* une con tabla */
-}
-
-.toggle-boton span {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.toggle-boton svg {
-  transition: transform 0.25s ease;
-}
-
-.toggle-boton.activo svg {
-  transform: rotate(180deg);
-}
-
-.toggle-boton:hover {
-  background: linear-gradient(135deg, #8cccfa, #67b0ec);
-}
-
-/* Contenido de la sección */
-.seccion-resultados {
-  padding: 0rem 0;
-}
-
-.seccion-resultados h3 {
-  margin-bottom: 0.75rem;
-  color: #225b97;
-  font-size: 0.95rem;
-  font-weight: 700;
-  text-align: center;
-  border-bottom: 1px solid #d1d9e6;
-  padding-bottom: 0.4rem;
+/* estado activo (unificado y no conflictivo con otros .activo) */
+.toggle-boton.activo{
+  background:#1e81ce;
+  color:white;
+  border-radius:.75rem .75rem 0 0;
 }
 
 /* ==========================================================
-   🧩 Responsive
+   🧩 Responsive rules
    ========================================================== */
 
-@media (max-width: 1200px) {
-  .opciones-sistema {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-  }
-  .opcion-sistema {
-    max-width: 220px;
-    height: 220px;
-  }
+@media (max-width:1200px){
+  .opciones-sistema{ grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1.5rem; }
+  .opcion-sistema{ max-width:220px; height:220px; }
 }
-@media (max-width: 900px) {
-  .opciones-sistema {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-  .opciones-footer {
-    margin-top: 1.6rem;
-    min-height: 110px;
-  }
+@media (max-width:900px){
+  .opciones-sistema{ grid-template-columns:repeat(2,1fr); gap:1rem; }
+  .opciones-footer{ margin-top:1.6rem; min-height:110px; }
 }
-@media (max-width: 640px) {
-  .panel-izquierdo {
-    width: 100%;
-    position: relative;
-  }
-  .app-contenedor {
-    flex-direction: column;
-    height: auto;
-  }
-  .panel-derecho {
-    order: 2;
-  }
-  .panel-derecho-contenido {
-    padding: 1rem;
-  }
-  .opciones-sistema {
-    grid-template-columns: repeat(1, 1fr);
-  }
+@media (max-width:640px){
+  .panel-izquierdo{ width:100%; position:relative; }
+  .app-contenedor{ flex-direction:column; height:auto; }
+  .panel-derecho{ order:2; }
+  .panel-derecho-contenido{ padding:1rem; }
+  .opciones-sistema{ grid-template-columns:repeat(1,1fr); }
 }
 
-/* === TOGGLES FIJOS ARRIBA === */
-.toggle-navegacion-fija {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: 100%;
-}
+/* ==========================================================
+   🧩 Toggles fijos (navegación) — un solo estilo para evitar confusión
+   ========================================================== */
 
-.toggle-navegacion-fija button {
-  background: #ffffff;
-  border-radius: 0.75rem;
-  padding: 1rem;
-  font-weight: 600;
-  font-size: 1rem;
-  text-align: left;
-  color: var(--color-primario);
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+.toggle-navegacion-fija{ display:flex; flex-direction:column; gap:1rem; width:100%; }
+.toggle-navegacion-fija button{
+  background:#fff; border-radius:.75rem; padding:1rem; font-weight:600; font-size:1rem;
+  text-align:left; color:var(--color-primario); cursor:pointer;
+  box-shadow:0 2px 6px rgba(0,0,0,.05); transition:transform .2s, box-shadow .2s, background .2s;
 }
+.toggle-navegacion-fija button:hover{ transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,.08); background:#fefefe; }
+.toggle-navegacion-fija button.activo{ background:var(--color-primario); color:#fff; box-shadow:0 4px 16px rgba(0,0,0,.1); transform:translateY(-2px); }
 
-.toggle-navegacion-fija button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  background: #fefefe;
-}
+/* ==========================================================
+   🧩 TABLA RESULTADOS (simple)
+   ========================================================== */
 
-.toggle-navegacion-fija button.activo {
-  background: #1e81ce;
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-  transform: translateY(-2px);
-}
-
-/* === SECCIÓN RESULTADOS === */
-.toggle-boton.activo {
-  background: #ffffff;
-  border: none;
-  font-weight: 600;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-/* === TABLA RESULTADOS (versión refinada) === */
-.tabla-resultados {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.8rem;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  box-shadow: none;
-}
-
-.tabla-resultados th,
-.tabla-resultados td {
-  padding: 6px 8px;
-  text-align: left;
-}
-
-.tabla-resultados th {
-  font-weight: 600;
-  color: var(--color-primario);
-}
-
-.toggle-boton.activo {
-  background: #1e81ce;
-  color: white;
-  border-radius: 0.75rem 0.75rem 0 0;
-}
+.tabla-resultados{ width:100%; border-collapse:collapse; font-size:.8rem; border-radius:.5rem; overflow:hidden; box-shadow:none; }
+.tabla-resultados th, .tabla-resultados td{ padding:6px 8px; text-align:left; }
+.tabla-resultados th{ font-weight:600; color:var(--color-primario); }
 
 /* ==========================================================
    📌 Corrección del layout del panel de dimensiones
    ========================================================== */
 
-.sistema-contenido {
-  display: flex;
-  gap: 2rem;
-  width: 100%;
-  height: calc(100vh - 180px); /* evita que la imagen quede fuera */
-  overflow-y: auto;
-  padding-right: 10px;
+/* sistema-contenido: único contenedor que maneja el scroll del detalle */
+.sistema-contenido{
+  display:flex;
+  gap:2rem;
+  width:100%;
+  height:calc(100vh - 180px);
+  overflow:auto; /* scroll aquí */
+  padding-right:10px;
 }
 
-.columna-izquierda {
-  flex: 1;
-  min-width: 350px;
-  max-width: 550px;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  padding-right: 5px;
+/* columna izquierda y derecha (consistentes) */
+.columna-izquierda{ flex:1; min-width:350px; max-width:550px; display:flex; flex-direction:column; overflow:auto; padding-right:5px; }
+.columna-derecha{ width:380px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; }
+
+/* tarjeta imagen (mini) */
+.tarjeta-imagen{ width:100%; max-width:380px; text-align:center; }
+.imagen-sistema-activo{ width:100%; height:auto; max-height:260px; object-fit:cover; border-radius:.75rem; }
+
+/* ==========================================================
+   ---------------------------
+   HERO: fondo + expansión (Netflix-style)
+   ---------------------------
+   Un solo conjunto de clases, sin duplicados.
+   ========================================================== */
+
+/* hero wrapper controla el estado "expanded" */
+.hero-wrapper{ position:relative; overflow:hidden; min-height:90vh; }
+
+/* tarjeta-expandida: panel que aparece encima del layout al abrir un tipo */
+.tarjeta-expandida{
+  position:relative;
+  width:100%;
+  min-height:70vh;
+  border-radius:1rem;
+  overflow:hidden;
+  display:flex;
+  align-items:stretch;
+  justify-content:center;
+  transition:transform .4s cubic-bezier(.2,.9,.3,1), opacity .3s ease;
+  opacity:0;
+  transform:translateY(8px) scale(.995);
+  z-index:20;
+  margin-bottom: 20px;      /* 🔥 espacio real debajo */
+  max-height: 95vh;         /* 🔥 evita que toque los bordes */
+  border-radius: 1rem;      /* ya lo tienes, pero reforzamos */
 }
 
-.columna-derecha {
-  width: 380px;         /* columna derecha fija */
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* cuando el wrapper tiene .expanded mostramos contenido (unificado trigger) */
+.hero-wrapper.expanded .tarjeta-expandida,
+.hero-wrapper.expanded .tarjeta-contenido{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
 }
 
-.tarjeta-imagen {
-  width: 100%;
-  max-width: 380px;
-  text-align: center;
+/* Imagen principal fija y limpia */
+.hero-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  z-index: -1;
+  pointer-events: none;
+
+  /* Limpia, sin oscurecer, sin filtros */
+  filter: none;
 }
 
-.imagen-sistema-activo {
-  width: 100%;
-  height: auto;
-  max-height: 260px;
-  object-fit: cover;
-  border-radius: 0.75rem;
+/* Quitamos completamente el overlay */
+.hero-background::after {
+  content: none !important;
 }
 
+
+/* Contenido en primer plano centrado (glass effect) */
+.tarjeta-contenido{
+  position:relative;
+  z-index:2;
+  width:100%;
+  max-width:1200px;
+  padding:28px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  backdrop-filter:blur(4px);
+}
+
+/* overlay cards: tarjetas blancas sobre el fondo con transparencia sutil */
+.overlay{ display:flex; gap:1.6rem; align-items:flex-start; }
+.overlay-card{
+  background:rgba(255,255,255,.88);
+  border-radius:.75rem;
+  box-shadow:0 6px 22px rgba(8,20,40,.08);
+  padding:16px;
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+}
+
+/* columnas dentro del overlay (izquierda inputs, derecha ayuda) */
+.columna-izquierda.overlay-card{ flex:1; min-width:320px; max-width:780px; overflow:auto; max-height:calc(70vh); }
+.columna-derecha.overlay-card{ width:360px; flex-shrink:0; display:flex; flex-direction:column; gap:14px; align-items:center; }
+
+/* imagen mini decorativa */
+.imagen-mini{ width:100%; height:160px; object-fit:cover; border-radius:.6rem; box-shadow:0 6px 18px rgba(8,20,40,.06); }
+
+/* Scrollbar apenas visible para los overlays */
+.columna-izquierda.overlay-card::-webkit-scrollbar{ height:8px; width:8px; }
+.columna-izquierda.overlay-card::-webkit-scrollbar-thumb{ background:rgba(0,0,0,.08); border-radius:8px; }
+
+/* Adaptaciones responsive para overlay */
+@media (max-width:900px){
+  .overlay{ flex-direction:column; }
+  .columna-derecha.overlay-card{ width:100%; max-width:none; }
+  .columna-izquierda.overlay-card{ max-height:none; }
+  .tarjeta-expandida{ min-height:auto; }
+  .hero-background{ filter:blur(8px); }
+}
+
+/* Animación expandCard (efecto "salida" de la tarjeta seleccionada) */
+/* Nota: la animación de la tarjeta individual (opcion-sistema -> expand) se puede controlar desde JS/React
+   añadiendo la clase `.seleccionada` y aplicando esta keyframe si lo deseas. */
+@keyframes expandCard{
+  0%{ transform:scale(1) translate(0,0); opacity:1; }
+  100%{ transform:scale(2.6) translate(0,-10%); opacity:0; }
+}
+
+/* Animación fade del fondo hero */
+@keyframes fadeBg{ from{opacity:0} to{opacity:1} }
+
+/* Animación suave de aparición general (zoom + fade) */
+@keyframes zoomFadeIn{
+  0%{ opacity:0; transform:scale(.94); }
+  100%{ opacity:1; transform:scale(1); }
+}
+
+/* ==========================================================
+   🧩 Bloquear scroll cuando se abre overlay
+   ========================================================== */
+body.no-scroll{ overflow:hidden !important; }
+
+/* ==== ANIMACIÓN DE EXPANSIÓN REAL ==== */
+
+@keyframes expandirTarjetaSuave {
+  0% {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.03);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Aplicada solo a la versión grande */
+.tarjeta-expandida {
+  animation: expandirTarjetaSuave 0.45s ease-out forwards;
+  transform-origin: center;
+}
+
+@keyframes fadeNetflixOverlay {
+  0% { opacity:0; }
+  60% { opacity:1; }
+  100% { opacity:1; }
+}
