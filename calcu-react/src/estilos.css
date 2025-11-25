@@ -183,18 +183,36 @@ html,body{
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-
-  /* Unificación de altura y consistencia */
   min-height:70vh;
   max-height:95vh;
-  overflow:auto;
+  overflow:hidden;
+  position:relative;
 
+  /* Fix real de esquinas cuadradas */
+  clip-path: inset(-1px round 1rem);
   will-change: transform;
 }
 
 .tarjeta-tipo-sistema:hover{
-  transform:translateY(-2px);
+  transform:translate3d(0, -2px, 0); /* fix GPU */
   box-shadow:0 4px 14px rgba(0,0,0,.12);
+}
+
+.tarjeta-tipo-sistema::before {
+    content: "";
+    position: absolute;
+    top: -1px;     /* ← cubre el gap superior */
+    left: -1px;    /* ← evita halos en esquinas */
+    right: -1px;
+    bottom: -1px;
+    border-radius: inherit;
+    background: #fff;
+    z-index: 1;
+}
+
+.tarjeta-tipo-sistema > * {
+    position: relative;
+    z-index: 2;
 }
 
 .tarjeta-tipo-sistema .titulo-seccion{
@@ -243,11 +261,13 @@ html,body{
   transform-origin:center;
   position:relative;
   z-index:1;
+  overflow:hidden;
 }
 .opcion-sistema:not(.seleccionada):hover {
   transform:scale(1.04);
   box-shadow:0 8px 20px rgba(0,0,0,.15);
   border-color:var(--color-acento);
+  z-index:5;
 }
 
 .opcion-sistema img{
@@ -255,7 +275,8 @@ html,body{
   width:100%;
   height:200px;
   object-fit:cover;
-  /* alternativa: usar aspect-ratio si lo prefieres */
+  display:block;          
+  transform: translateZ(0); 
 }
 .opcion-sistema span{
   font-weight:600;
@@ -267,6 +288,10 @@ html,body{
   animation: opcionSeleccion 0.45s ease forwards;
   transform-origin: center;
   border-color: var(--color-acento);
+}
+
+.opcion-sistema::before{
+  content:none !important;
 }
 
 /* ==========================================================
@@ -633,3 +658,4 @@ body.no-scroll{ overflow:hidden !important; }
   60% { opacity:1; }
   100% { opacity:1; }
 }
+
