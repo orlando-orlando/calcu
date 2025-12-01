@@ -7,21 +7,26 @@ export default function Dimensiones({ setSeccion }) {
   const [mostrarPanel, setMostrarPanel] = useState(false);
   const [hoveredTipo, setHoveredTipo] = useState(null);
 
-  // Estado para inputs de cálculo
+  // Estado para inputs
   const [datos, setDatos] = useState({
     area: "",
     profMin: "",
     profMax: "",
-    distCuarto: ""
+    distCuarto: "",
+    desborde: "",
+    largoInfinity: "",
+    profCortina: "",
+    motobombaInfinity: "",
+    largoCanal: ""
   });
 
   const { retorno } = useCalculosHidraulicos(datos, (num) => num.toFixed(2));
   const [resultadosRetorno, setResultadosRetorno] = useState(null);
 
-  // Hover por campo para ayuda contextual
+  // Hover por campo
   const [hoveredField, setHoveredField] = useState(null);
 
-  // Configuración base de sistemas
+  // Catálogo de sistemas
   const sistemas = {
     alberca: { img: "./img/alberca.jpg", cuerpos: 1, desborde: true, nombre: "Alberca" },
     jacuzzi: { img: "./img/jacuzzi.jpg", cuerpos: 1, desborde: true, nombre: "Jacuzzi" },
@@ -37,36 +42,38 @@ export default function Dimensiones({ setSeccion }) {
 
   const handleSeleccion = (tipo) => {
     setTipoSeleccionado(tipo);
-    // pequeño delay para animación (no necesario pero mejora sensación)
     setTimeout(() => setMostrarPanel(true), 60);
   };
 
   const config = tipoSeleccionado ? sistemas[tipoSeleccionado] : null;
   const tipoHover = hoveredTipo || tipoSeleccionado;
 
-  // Mensajes de ayuda por campo (puedes editarlos)
-  const ayudaMap = useMemo(() => ({
-    area: "Área del cuerpo de agua en metros cuadrados. Se usa para calcular longitudes y distribución de retornos.",
-    profMin: "Profundidad mínima del cuerpo (m). Influye en longitud de tiro y cálculos de volumen.",
-    profMax: "Profundidad máxima del cuerpo (m). Se toma el mayor entre profMin y profMax para cálculos críticos.",
-    distCuarto: "Distancia desde el cuerpo de agua hasta el cuarto de máquinas (m). Se usa para dimensionar el tramo especial.",
-    uso: "Tipo de uso (residencial, pública, competencia...) afecta tasas de recirculación recomendadas.",
-    rotacion: "Tasa de rotación deseada en horas. Controla caudal necesario para recircular el volumen.",
-    desborde: "Tipo de desborde (Infinity / Canal / Ambos) — afecta diseño del rebosadero y retornos."
-  }), []);
+  const ayudaMap = useMemo(
+    () => ({
+      area: "Área del cuerpo de agua en m².",
+      profMin: "Profundidad mínima.",
+      profMax: "Profundidad máxima.",
+      distCuarto: "Distancia a cuarto de máquinas.",
+      desborde: "Selecciona tipo de desborde.",
+      largoInfinity: "Longitud de muro tipo infinity (m).",
+      profCortina: "Profundidad de cortina de agua (m).",
+      motobombaInfinity: "Motobomba independiente para infinity.",
+      largoCanal: "Longitud del canal perimetral (m)."
+    }),
+    []
+  );
 
-  // Texto de ayuda a mostrar: hover de campo > hover general > instrucciones por defecto
   const ayudaTexto = hoveredField
     ? ayudaMap[hoveredField] || "Información del campo"
     : tipoHover
-      ? `${sistemas[tipoHover].nombre} — selecciona un campo para ver ayuda contextual.`
-      : "Selecciona un tipo de sistema para ver detalles y ayuda contextual.";
+    ? `${sistemas[tipoHover].nombre} — selecciona un campo para ver ayuda contextual.`
+    : "Selecciona un tipo de sistema para ver detalles y ayuda contextual.";
 
   return (
     <div className={`form-section hero-wrapper ${mostrarPanel ? "expanded" : ""}`} style={{ fontFamily: "inherit" }}>
       {!mostrarPanel ? (
         <>
-          {/* === SELECCIÓN DE TIPO DE SISTEMA === */}
+          {/* SELECCIÓN DE SISTEMA */}
           <div className="tipo-sistema-container">
             <div className="tarjeta-tipo-sistema tarjeta-entrada">
               <div className="titulo-seccion">Selecciona el tipo de sistema</div>
@@ -86,23 +93,21 @@ export default function Dimensiones({ setSeccion }) {
                 ))}
               </div>
 
-              {/* === FRANJA DE PREVIEW === */}
               <div id="opcionesFooter" className="opciones-footer">
                 <div className="opciones-preview">
                   {tipoHover ? (
                     <>
-                      <img className="opciones-preview-img" src={sistemas[tipoHover].img} alt="Preview sistema" />
+                      <img className="opciones-preview-img" src={sistemas[tipoHover].img} alt="" />
                       <div className="opciones-meta">
                         <div className="titulo">{sistemas[tipoHover].nombre}</div>
                         <div className="desc">
-                          Sistema de {sistemas[tipoHover].cuerpos} cuerpo(s) con {sistemas[tipoHover].desborde ? "desborde activo" : "sin desborde"}.
+                          Sistema de {sistemas[tipoHover].cuerpos} cuerpo(s) con{" "}
+                          {sistemas[tipoHover].desborde ? "desborde activo" : "sin desborde"}.
                         </div>
                       </div>
                     </>
                   ) : (
-                    <div className="opciones-placeholder">
-                      Pasa el cursor sobre un tipo para ver su vista previa.
-                    </div>
+                    <div className="opciones-placeholder">Pasa el cursor para ver vista previa.</div>
                   )}
                 </div>
               </div>
@@ -112,21 +117,13 @@ export default function Dimensiones({ setSeccion }) {
       ) : (
         config && (
           <div className="tarjeta-expandida">
-            {/* HERO BACKGROUND: cubre el área derecha (fondo blur) */}
-            <div
-              className="hero-background"
-              style={{
-                backgroundImage: `url(${config.img})`
-              }}
-            />
+            <div className="hero-background" style={{ backgroundImage: `url(${config.img})` }} />
 
-            {/* contenido en primer plano (paneles semitransparentes) */}
             <div className="tarjeta-contenido">
               <button
                 className="btn-volver minimal"
                 onClick={() => {
                   setMostrarPanel(false);
-                  // hacemos small delay para que cierre animación
                   setTimeout(() => setTipoSeleccionado(null), 300);
                 }}
               >
@@ -137,17 +134,17 @@ export default function Dimensiones({ setSeccion }) {
 
               <div className="sistema-contenido overlay">
                 <div className="columna-izquierda overlay-card">
-                  {/* Dimensiones físicas */}
+                  {/* Dimensiones */}
                   {[...Array(config.cuerpos)].map((_, i) => (
                     <div className="tarjeta-bdc tarjeta-calentamiento" key={i}>
                       <label className="label-calentamiento">
                         Dimensiones físicas {config.cuerpos > 1 ? `(Cuerpo ${i + 1})` : ""}
                       </label>
+
                       <div className="form-group">
                         <label>Área (m²):</label>
                         <input
                           type="number"
-                          step="0.01"
                           className="input-azul"
                           value={datos.area}
                           onChange={(e) => setDatos({ ...datos, area: e.target.value })}
@@ -155,12 +152,12 @@ export default function Dimensiones({ setSeccion }) {
                           onMouseLeave={() => setHoveredField(null)}
                         />
                       </div>
+
                       <div className="form-group inline fila-bdc">
                         <div className="campo-bdc">
                           <label>Profundidad mínima (m):</label>
                           <input
                             type="number"
-                            step="0.01"
                             className="input-azul"
                             value={datos.profMin}
                             onChange={(e) => setDatos({ ...datos, profMin: e.target.value })}
@@ -168,11 +165,11 @@ export default function Dimensiones({ setSeccion }) {
                             onMouseLeave={() => setHoveredField(null)}
                           />
                         </div>
+
                         <div className="campo-bdc">
                           <label>Profundidad máxima (m):</label>
                           <input
                             type="number"
-                            step="0.01"
                             className="input-azul"
                             value={datos.profMax}
                             onChange={(e) => setDatos({ ...datos, profMax: e.target.value })}
@@ -184,34 +181,34 @@ export default function Dimensiones({ setSeccion }) {
                     </div>
                   ))}
 
-                  {/* Uso y rotación */}
+                  {/* Uso / Rotación */}
                   <div className="tarjeta-bdc tarjeta-calentamiento">
                     <div className="form-group inline fila-bdc">
-                      <div className="campo-bdc" onMouseEnter={() => setHoveredField("uso")} onMouseLeave={() => setHoveredField(null)}>
-                        <label>Uso del cuerpo de agua:</label>
+                      <div className="campo-bdc">
+                        <label>Uso:</label>
                         <select className="input-azul">
-                          <option value="">-- Selecciona uso --</option>
+                          <option value="">-- Selecciona --</option>
                           <option value="residencial">Residencial</option>
                           <option value="publica">Pública</option>
                           <option value="competencia">Competencia</option>
                           <option value="parque">Parque acuático</option>
                         </select>
                       </div>
-                      <div className="campo-bdc" style={{ marginLeft: "16px" }} onMouseEnter={() => setHoveredField("rotacion")} onMouseLeave={() => setHoveredField(null)}>
-                        <label>Tasa de rotación (h):</label>
+
+                      <div className="campo-bdc" style={{ marginLeft: "16px" }}>
+                        <label>Rotación (h):</label>
                         <select className="input-azul">
                           <option value="">-- Selecciona --</option>
                           {[0.5, 1, 4, 6, 8, 12, 18, 24].map((v) => (
-                            <option key={v} value={v}>{v}</option>
+                            <option key={v}>{v}</option>
                           ))}
                         </select>
                       </div>
+
                       <div className="campo-bdc" style={{ marginLeft: "16px" }}>
-                        <label>Distancia a cuarto de máquinas (m):</label>
+                        <label>Distancia a cuarto (m):</label>
                         <input
                           type="number"
-                          step="0.1"
-                          placeholder="Ej. 15"
                           className="input-azul"
                           value={datos.distCuarto}
                           onChange={(e) => setDatos({ ...datos, distCuarto: e.target.value })}
@@ -222,45 +219,116 @@ export default function Dimensiones({ setSeccion }) {
                     </div>
                   </div>
 
-                  {/* Tipo de desborde */}
+                  {/* === TIPO DE DESBORDE === */}
                   {config.desborde && (
                     <div className="tarjeta-bdc tarjeta-calentamiento">
                       <label className="label-calentamiento">Tipo de desborde:</label>
+
                       <div className="checkbox-row">
-                        <label><input type="radio" name="desborde" value="infinity" /> Infinity</label>
-                        <label><input type="radio" name="desborde" value="canal" /> Canal perimetral</label>
-                        <label><input type="radio" name="desborde" value="ambos" /> Ambos</label>
-                        <label><input type="radio" name="desborde" value="ninguno" /> Ninguno</label>
+                        {["infinity", "canal", "ambos", "ninguno"].map((v) => (
+                          <label key={v}>
+                            <input
+                              type="radio"
+                              name="desborde"
+                              value={v}
+                              checked={datos.desborde === v}
+                              onChange={(e) => setDatos({ ...datos, desborde: e.target.value })}
+                              onMouseEnter={() => setHoveredField("desborde")}
+                              onMouseLeave={() => setHoveredField(null)}
+                            />
+                            {v.charAt(0).toUpperCase() + v.slice(1)}
+                          </label>
+                        ))}
                       </div>
+
+                      {/* === Campos dinámicos === */}
+
+                      {(datos.desborde === "infinity" || datos.desborde === "ambos") && (
+                        <>
+                          <div className="form-group" style={{ marginTop: 10 }}>
+                            <label>Largo del muro infinity (m):</label>
+                            <input
+                              type="number"
+                              className="input-azul"
+                              value={datos.largoInfinity}
+                              onChange={(e) => setDatos({ ...datos, largoInfinity: e.target.value })}
+                              onMouseEnter={() => setHoveredField("largoInfinity")}
+                              onMouseLeave={() => setHoveredField(null)}
+                            />
+                          </div>
+
+                          <div className="form-group">
+                            <label>Profundidad de cortina (m):</label>
+                            <input
+                              type="number"
+                              className="input-azul"
+                              value={datos.profCortina}
+                              onChange={(e) => setDatos({ ...datos, profCortina: e.target.value })}
+                              onMouseEnter={() => setHoveredField("profCortina")}
+                              onMouseLeave={() => setHoveredField(null)}
+                            />
+                          </div>
+
+                          <div className="checkbox-row" style={{ marginTop: 10 }}>
+                            <label>
+                              <input
+                                type="radio"
+                                name="motobombaInfinity"
+                                value="si"
+                                checked={datos.motobombaInfinity === "si"}
+                                onChange={(e) => setDatos({ ...datos, motobombaInfinity: e.target.value })}
+                                onMouseEnter={() => setHoveredField("motobombaInfinity")}
+                                onMouseLeave={() => setHoveredField(null)}
+                              />
+                              Motobomba independiente
+                            </label>
+
+                            <label>
+                              <input
+                                type="radio"
+                                name="motobombaInfinity"
+                                value="no"
+                                checked={datos.motobombaInfinity === "no"}
+                                onChange={(e) => setDatos({ ...datos, motobombaInfinity: e.target.value })}
+                              />
+                              No independiente
+                            </label>
+                          </div>
+                        </>
+                      )}
+
+                      {(datos.desborde === "canal" || datos.desborde === "ambos") && (
+                        <div className="form-group" style={{ marginTop: 10 }}>
+                          <label>Largo canal perimetral (m):</label>
+                          <input
+                            type="number"
+                            className="input-azul"
+                            value={datos.largoCanal}
+                            onChange={(e) => setDatos({ ...datos, largoCanal: e.target.value })}
+                            onMouseEnter={() => setHoveredField("largoCanal")}
+                            onMouseLeave={() => setHoveredField(null)}
+                          />
+                        </div>
+                      )}
                     </div>
                   )}
 
-                  {/* Mostrar resultados */}
                   {resultadosRetorno && (
                     <div style={{ marginTop: 14 }}>
                       <h3>Resultados del cálculo de retornos:</h3>
-                      <pre style={{ fontSize: 12, maxHeight: 260, overflow: "auto" }}>
-                        {JSON.stringify(resultadosRetorno, null, 2)}
-                      </pre>
+                      <pre style={{ maxHeight: 260, overflow: "auto" }}>{JSON.stringify(resultadosRetorno, null, 2)}</pre>
                     </div>
                   )}
                 </div>
 
-                {/* Columna derecha convertida en overlay de ayuda (sin bordes) */}
                 <div className="columna-derecha overlay-card ayuda-area">
-                  <div className="tarjeta-imagen overlay-image" aria-hidden>
-                    {/* la imagen real ya está en hero-background, aquí podemos mostrar una mini o ícono */}
-                    <div className="imagen-placeholder">
-                      {/* opcional: small preview */}
-                      <img src={config.img} alt={config.nombre} className="imagen-mini" />
-                    </div>
+                  <div className="tarjeta-imagen overlay-image">
+                    <img src={config.img} alt="" className="imagen-mini" />
                   </div>
 
                   <div id="ayudaContextual" className="ayuda-contextual overlay-help">
                     <div className="ayuda-titulo">Ayuda contextual</div>
-                    <div className="ayuda-texto">
-                      {ayudaTexto}
-                    </div>
+                    <div className="ayuda-texto">{ayudaTexto}</div>
                   </div>
                 </div>
               </div>
