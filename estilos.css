@@ -10,16 +10,6 @@ select {
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
-
-.contenedor {
-  display: flex;
-  height: 100vh;
-}
-
 .panel-izquierdo {
   width: 15%;
   padding: 15px;
@@ -560,71 +550,6 @@ select:disabled {
   margin-bottom: 25px;
 }
 
-/* 🔹 Grilla fija: 2 filas de 5 columnas que llenan todo el ancho */
-.opciones-sistema {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);  /* 5 columnas iguales */
-  grid-template-rows: repeat(2, auto);    /* 2 filas automáticas */
-  gap: 25px;
-  justify-items: center;
-  align-items: stretch;
-  width: 100%;
-  max-width: 100%;
-  padding: 0 40px;
-  box-sizing: border-box;
-}
-
-/* 🔹 Cada tarjeta/imagen ajustada al tamaño disponible */
-.opcion-sistema {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 2px solid transparent;
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  cursor: pointer;
-  width: 100%;
-  height: 100%;
-  max-width: 200px; /* tamaño máximo de cada tarjeta */
-}
-
-.opcion-sistema:hover {
-  border-color: #007bff;
-  transform: translateY(-4px);
-}
-
-.opcion-sistema img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-bottom: 2px solid #e0e0e0;
-}
-
-.opcion-sistema span {
-  padding: 10px;
-  font-weight: 600;
-  color: #333;
-  text-align: center;
-  line-height: 1.2em;
-}
-
-.opcion-sistema input {
-  display: none;
-}
-
-/* 🔹 Estado seleccionado */
-.opcion-sistema input:checked + img {
-  border-bottom: 4px solid #007bff;
-  filter: brightness(1.1);
-}
-
-.opcion-sistema input:checked ~ span {
-  color: #007bff;
-}
-
 .panel-datos-sistema {
   width: 50%;
   margin: 20px auto;
@@ -898,73 +823,6 @@ details.tarjeta-equipamiento[open] > .contenido-toggle {
   box-sizing: border-box;
 }
 
-/* Mejora tarjetas radio */
-.opcion-sistema {
-  max-width: 220px;
-  min-height: 170px;
-  padding: 8px;
-  position: relative;
-  transition: transform 0.20s, box-shadow 0.20s, border-color 0.20s;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: stretch;
-  cursor: pointer;
-  background: linear-gradient(180deg,#fff,#fbfdff);
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid transparent;
-}
-.opcion-sistema:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 24px rgba(12,40,80,0.08);
-  border-color: rgba(0,123,255,0.12);
-}
-
-.opcion-sistema img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 8px;
-  display: block;
-}
-
-/* pequeña etiqueta tipo "seleccionado" */
-.opcion-sistema .selected-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: #1976d2;
-  color: #fff;
-  padding: 6px 8px;
-  border-radius: 999px;
-  font-size: 12px;
-  display: none;
-  box-shadow: 0 6px 12px rgba(25,118,210,0.14);
-}
-.opcion-sistema input:checked + img ~ .selected-badge,
-.opcion-sistema input:checked + img + span + .selected-badge {
-  display: inline-block;
-}
-
-/* overlay de descripción (se inyecta por JS) */
-.opcion-sistema .desc-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 8px 10px;
-  background: linear-gradient(180deg, rgba(10,25,40,0), rgba(0,0,0,0.45));
-  color: #fff;
-  font-size: 13px;
-  line-height: 1.1;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity .18s, transform .18s;
-  pointer-events: none;
-}
-.opcion-sistema:hover .desc-overlay { opacity: 1; transform: translateY(0); }
-
 /* Franja interactiva debajo de las tarjetas */
 .opciones-footer {
   margin: 80px 40px 0 40px; /* ⬆️ antes era ~18px, ahora más amplio */
@@ -1011,55 +869,6 @@ details.tarjeta-equipamiento[open] > .contenido-toggle {
 @media (max-width: 900px) {
   .opciones-footer { margin: 12px 18px 0 18px; flex-direction: column; align-items: stretch; gap:10px;}
   .opciones-preview img { width:80px; height:55px; }
-}
-
-/* --- Ajuste visual de las tarjetas tipo radio --- */
-.opciones-sistema {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 columnas fijas */
-  gap: 20px;
-  justify-items: center;
-}
-
-/* Tarjetas más grandes pero sin romper la grilla */
-.opcion-sistema {
-  max-width: 230px;    /* antes 220px */
-  min-height: 200px;   /* antes 170px */
-  padding: 10px;
-  border-radius: 14px;
-}
-
-/* Imagen más alta */
-.opcion-sistema img {
-  height: 140px;       /* antes 120px */
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 8px;
-}
-
-/* Texto más grande debajo de la imagen */
-.opcion-sistema span {
-  font-size: 15px;
-  font-weight: 600;
-  display: block;
-  text-align: center;
-  margin-top: 6px;
-  color: #034b80;
-}
-
-/* Pequeño efecto de selección */
-.opcion-sistema input[type="radio"]:checked + img {
-  outline: 4px solid #007bff;
-  outline-offset: 2px;
-  border-radius: 10px;
-}
-
-.opciones-sistema {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* mantiene las 5 columnas */
-  gap: 80px 20px; /* 💡 más espacio vertical (antes 20px) */
-  justify-items: center;
-  margin-top: 40px;
 }
 
 /* === SOLO aplica a la sección de tipo de sistema === */
@@ -1237,9 +1046,130 @@ body {
   background-color: #0056b3;
 }
 
-footer {
-  background-color: #0a2342;
-  color: white;
-  text-align: center;
+/* ===================== Tarjetas tipo sistema (opcion-sistema) ===================== */
+.opciones-sistema {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 columnas fijas */
+  gap: 80px 20px; /* espacio vertical y horizontal */
+  justify-items: center;
+  margin-top: 40px;
+}
+
+.opcion-sistema {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  cursor: pointer;
+  background: linear-gradient(180deg, #fff, #fbfdff);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid transparent;
+  max-width: 230px;
+  min-height: 200px;
+  width: 100%;
   padding: 10px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.opcion-sistema:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(12,40,80,0.08);
+  border-color: rgba(0,123,255,0.12);
+}
+
+.opcion-sistema img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.opcion-sistema span {
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 6px;
+  color: #034b80;
+}
+
+.opcion-sistema input[type="radio"] {
+  display: none;
+}
+
+/* Estado seleccionado */
+.opcion-sistema input:checked + img {
+  outline: 4px solid #007bff;
+  outline-offset: 2px;
+  filter: brightness(1.1);
+}
+
+.opcion-sistema input:checked ~ span {
+  color: #007bff;
+}
+
+/* Badge de seleccionado */
+.opcion-sistema .selected-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #1976d2;
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  display: none;
+  box-shadow: 0 6px 12px rgba(25,118,210,0.14);
+}
+
+.opcion-sistema input:checked + img ~ .selected-badge,
+.opcion-sistema input:checked + img + span + .selected-badge {
+  display: inline-block;
+}
+
+/* Overlay de descripción (opcional) */
+.opcion-sistema .desc-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8px 10px;
+  background: linear-gradient(180deg, rgba(10,25,40,0), rgba(0,0,0,0.45));
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.1;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.18s, transform 0.18s;
+  pointer-events: none;
+}
+
+.opcion-sistema:hover .desc-overlay {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===================== Responsive ===================== */
+@media (max-width: 900px) {
+  .opciones-sistema {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 40px 10px;
+  }
+
+  .opcion-sistema {
+    max-width: 180px;
+    min-height: 160px;
+  }
+
+  .opcion-sistema img {
+    height: 120px;
+  }
+
+  .opcion-sistema span {
+    font-size: 14px;
+  }
 }
