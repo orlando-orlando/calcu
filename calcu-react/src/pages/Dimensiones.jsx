@@ -130,7 +130,15 @@ export default function Dimensiones({ setSeccion }) {
                 ← Volver
               </button>
 
-              <h2 className="titulo-sistema-activo">{config.nombre}</h2>
+              <button
+                className="btn-volver minimal"
+                style={{ alignSelf: "flex-end" }}
+                onClick={() => setSeccion("calentamiento")}
+              >
+                Ir a calentamiento →
+              </button>
+
+                <h2 className="titulo-sistema-activo">{config.nombre}</h2>
 
               <div className="sistema-contenido overlay">
                 <div className="columna-izquierda overlay-card">

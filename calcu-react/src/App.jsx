@@ -64,9 +64,9 @@ export default function App() {
       {/* PANEL DERECHO */}
       <div className="panel-derecho">
         <div className="panel-derecha-contenido">
-          {seccion === "dimensiones" && <Dimensiones />}
-          {seccion === "calentamiento" && <Calentamiento />}
-          {seccion === "equipamiento" && <Equipamiento />}
+          {seccion === "dimensiones" && <Dimensiones setSeccion={setSeccion} />}
+          {seccion === "calentamiento" && <Calentamiento setSeccion={setSeccion} />}
+          {seccion === "equipamiento" && <Equipamiento setSeccion={setSeccion} />}
         </div>
       </div>
     </div>
