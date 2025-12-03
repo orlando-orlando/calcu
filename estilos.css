@@ -10,14 +10,6 @@ select {
   box-sizing: border-box;
 }
 
-.panel-izquierdo {
-  width: 15%;
-  padding: 15px;
-  background: #f2f2f2;
-  border-right: 1px solid #ccc;
-  overflow-y: auto;
-}
-
 .panel-izquierdo details {
   margin-bottom: 10px;
   cursor: pointer;
@@ -34,14 +26,9 @@ select {
   cursor: pointer;
 }
 
-.panel-izquierdo button:hover {
-  background: #005fa3;
-}
-
 .panel-derecho {
   flex: 1;
-  padding: 20px;
-  overflow-y: auto;
+  padding: 2rem;
 }
 
 .form-section {
@@ -87,19 +74,6 @@ select {
   border-left: 2px solid #eee;
 }
 
-.tabla-clima {
-  margin-top: 20px;
-  overflow-x: auto;
-}
-
-.tabla-clima table {
-  width: 100%;
-  max-width: 600px;
-  border-collapse: collapse;
-  font-size: 14px;
-  text-align: center;
-}
-
 .tabla-clima th,
 .tabla-clima td {
   border: 1px solid #ccc;
@@ -108,56 +82,15 @@ select {
   width: 20%;
 }
 
-.tabla-clima th {
-  background-color: #f4f4f4;
-  font-weight: bold;
-  word-wrap: break-word;
-  white-space: normal;
-  padding: 6px;
-}
-
-.tabla-clima tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.tabla-clima tbody tr:nth-child(odd) {
-  background-color: #ffffff;
-}
-
-.tabla-clima tbody tr:hover {
-  background-color: #e6f2ff;
-}
-
-.resumen-clima h4 {
-  margin-bottom: 8px;
-  color: #0077cc;
-}
-
 .deshabilitado td {
   color: #999;
   background: #f1f1f1;
-}
-
-.deshabilitado td:first-child {
-  background: #fff;
 }
 
 .panel-centro {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-}
-
-.panel-clima {
-  width: 35%;
-  padding: 20px;
-  background: #fff;
-  border-left: 1px solid #ccc;
-  overflow-y: auto;
-}
-
-.panel-clima .tabla-clima {
-  margin-bottom: 20px;
 }
 
 .clima-layout {
@@ -176,62 +109,19 @@ select {
   gap: 1rem;
 }
 
-/* Resumen debajo de inputs, ancho estirado hasta la tabla */
-.clima-resumen {
-  grid-column: 1; /* empieza en la columna 1 */
-  grid-row: 2;        /* va en la fila 2 */
-}
-
-.resumen-clima {
-  width: 96.2%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: #f9f9f9;
-  font-size: 14px;
-}
-
-.clima-tabla {
-  grid-column: 2;
-  grid-row: 1; /* ocupa de la fila 1 hasta la 2 → queda a la derecha de ambos */
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-#campoBombaCalor .form-group.inline {
-  display: flex;
-  gap: 20px;       /* separación entre inputs */
-  flex-wrap: wrap;  /* permite que los inputs se bajen si no caben */
-}
-
-#campoBombaCalor .form-subgroup-inline {
-  display: flex;
-  flex-direction: column;
-  flex: 1;          /* para que se distribuyan proporcionalmente */
-  min-width: 150px; /* evita que se achiquen demasiado */
-}
-
-#campoBombaCalor .form-subgroup-inline label {
-  white-space: normal; /* permite que el label haga salto de línea si es largo */
-}
-
-/* Tarjeta contenedora */
+/* Tarjetas */
 .tarjeta-bdc {
-  margin-left: 0;        /* deja la tarjeta alineada a la izquierda */
-  padding: 15px 20px;    /* espacio interno: 15px arriba/abajo, 20px izquierda/derecha */
-  background: #ffffff;
-  border: 1px solid #ddd;
+  background: white;
+  border: 1px solid #ccc;
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-/* Título de la tarjeta */
-.tarjeta-bdc h4 {
-  margin: 0 0 15px 0;
-  font-size: 16px;
-  color: #0077cc;
-  font-weight: 700;
+.tarjeta-imagen img {
+  width: 100%;
+  max-width: 350px;
+  border-radius: 12px;
 }
 
 /* Fila de inputs */
@@ -332,16 +222,6 @@ select {
   background-color: #f1f7ff;
 }
 
-/* 👉 Título del resumen */
-.resumen-clima h4 {
-  margin-top: 15px;
-  margin-bottom: 10px;
-  font-size: 1rem;
-  color: #444;
-  font-weight: 600;
-  text-align: center;
-}
-
 /* 👉 Ajuste visual extra para que la tabla clima se vea como tarjeta */
 .tarjeta-tabla table {
   border-radius: 8px;          /* bordes redondeados */
@@ -380,8 +260,9 @@ select {
 
 .checkbox-row {
   display: flex;
-  gap: 60px;
-  flex-wrap: nowrap;     /* fuerza una sola fila */
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 8px;
 }
 
 .checkbox-row label {
@@ -567,28 +448,20 @@ select:disabled {
   text-align: center;
 }
 
+/* Botón volver */
 .btn-volver {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 8px 14px;
+  background: transparent;
+  color: #004b8d;
+  border: 2px solid #004b8d;
   border-radius: 8px;
+  padding: 8px 14px;
   cursor: pointer;
-  margin-bottom: 16px;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .btn-volver:hover {
-  background: #0056b3;
-}
-
-.sistema-contenido {
-  display: grid;
-  grid-template-columns: 58% 42%; /* 🔹 Ajuste de proporción */
-  gap: 24px;
-  width: 100%;
-  align-items: start;
-  position: relative; /* 🔹 Para posicionar elementos internos */
+  background: rgba(0, 75, 141, 0.08);
+  transform: scale(1.05);
 }
 
 .columna-izquierda {
@@ -613,18 +486,18 @@ select:disabled {
 .tarjeta-imagen {
   margin-top: 0; /* elimina cualquier desplazamiento extra */
   width: 100%;
-  max-width: 665px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-  padding: 12px;
   text-align: center;
   pointer-events: auto; /* 🔹 Rehabilita clics dentro de la tarjeta */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .imagen-sistema-activo {
   width: 100%;
-  max-height: 360px;
   height: auto;
   object-fit: contain;
   border-radius: 10px;
@@ -663,13 +536,6 @@ select:disabled {
   cursor: pointer;
   font-size: 1.05em;
   margin-bottom: 6px;
-}
-
-.checkbox-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 8px;
 }
 
 /* 🧩 Distribución principal de Equipamiento */
@@ -776,13 +642,6 @@ select:disabled {
   border-top: 1px solid #eee;
 }
 
-/* Responsive columns */
-.equipamiento-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
 @media (max-width: 900px) {
   .equipamiento-layout {
     grid-template-columns: 1fr;
@@ -825,9 +684,9 @@ details.tarjeta-equipamiento[open] > .contenido-toggle {
 
 /* Franja interactiva debajo de las tarjetas */
 .opciones-footer {
-  margin: 80px 40px 0 40px; /* ⬆️ antes era ~18px, ahora más amplio */
+  margin: 30px 10px 0 20px; /* ⬆️ antes era ~18px, ahora más amplio */
+  padding: 0px 10px;
   border-top: 1px solid #e8f0ff;
-  padding: 16px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -839,8 +698,8 @@ details.tarjeta-equipamiento[open] > .contenido-toggle {
 }
 
 /* preview y meta */
-.opciones-preview { display:flex; gap:14px; align-items:center; min-width:320px; }
-.opciones-preview img { width:100px; height:70px; object-fit:cover; border-radius:8px; border:1px solid #e6eefc; }
+.opciones-preview { display:flex; gap:30px; align-items:center; min-width:320px; }
+.opciones-preview img { width:200px; height:100px; object-fit:cover; border-radius:8px; border:1px solid #e6eefc; margin-top: 40px; }
 .opciones-meta .titulo { font-weight:700; color:#0a4270; }
 .opciones-meta .desc { font-size:13px; color:#466; margin-top:4px; }
 .opciones-meta .stats { margin-top:6px; font-size:13px; color:#666; }
@@ -874,45 +733,20 @@ details.tarjeta-equipamiento[open] > .contenido-toggle {
 /* === SOLO aplica a la sección de tipo de sistema === */
 
 .sistema-contenido {
-  display: grid;
-  grid-template-columns: 1.6fr 1fr; /* 🔹 Columna izquierda más corta */
-  gap: 40px;
-  align-items: flex-start;
+  grid-template-columns: 50% 50%; /* 🔹 Ajuste de proporción */
   width: 100%;
+  position: relative; /* 🔹 Para posicionar elementos internos */
+  display: grid;
+  align-items: flex-start;
   margin: 0;
-  padding-left: 10px; /* 🔹 Antes 30px, ahora más pegado al borde izquierdo */
+  padding-left: 0px; /* 🔹 Antes 30px, ahora más pegado al borde izquierdo */
 }
 
 /* Columna izquierda: formularios */
 .sistema-contenido .columna-izquierda {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  width: 95%; /* 🔹 Hace que no se extienda tanto hacia la derecha */
   max-width: none;
-}
-
-/* Columna derecha: imagen o contenido visual */
-.sistema-contenido .columna-derecha {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-/* Botón volver */
-.btn-volver {
-  background: transparent;
-  color: #004b8d;
-  border: 2px solid #004b8d;
-  border-radius: 8px;
-  padding: 8px 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-volver:hover {
-  background: rgba(0, 75, 141, 0.08);
-  transform: scale(1.05);
 }
 
 /* Botón principal */
@@ -931,27 +765,6 @@ details.tarjeta-equipamiento[open] > .contenido-toggle {
   background-color: #004b8d;
   box-shadow: 0 0 10px rgba(0, 75, 141, 0.3);
   transform: scale(1.03);
-}
-
-/* Tarjetas */
-.tarjeta-bdc {
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.tarjeta-imagen {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.tarjeta-imagen img {
-  width: 100%;
-  max-width: 350px;
-  border-radius: 12px;
 }
 
 .texto-imagen {
@@ -996,7 +809,7 @@ body {
 }
 
 .panel-izquierdo {
-  width: 280px;
+  width: 240px;
   background: #0a2342;
   color: white;
   padding: 2rem 1rem;
@@ -1013,11 +826,6 @@ body {
   margin: 6px 0;
   border-radius: 6px;
   cursor: pointer;
-}
-
-.panel-derecho {
-  flex: 1;
-  padding: 2rem;
 }
 
 .tarjeta {
@@ -1050,9 +858,9 @@ body {
 .opciones-sistema {
   display: grid;
   grid-template-columns: repeat(5, 1fr); /* 5 columnas fijas */
-  gap: 80px 20px; /* espacio vertical y horizontal */
+  gap: 20px 20px; /* espacio vertical y horizontal */
   justify-items: center;
-  margin-top: 40px;
+  margin-top: 0px;
 }
 
 .opcion-sistema {
@@ -1065,12 +873,12 @@ body {
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid transparent;
-  max-width: 230px;
+  max-width: 240px;
   min-height: 200px;
   width: 100%;
   padding: 10px;
   position: relative;
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  transition: transform 0.2s, box-shadow 10.2s, border-color 0.2s;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
@@ -1082,11 +890,11 @@ body {
 
 .opcion-sistema img {
   width: 100%;
-  height: 140px;
+  height: 200px;
   object-fit: cover;
   border-radius: 10px;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 0px;
 }
 
 .opcion-sistema span {
@@ -1104,7 +912,7 @@ body {
 /* Estado seleccionado */
 .opcion-sistema input:checked + img {
   outline: 4px solid #007bff;
-  outline-offset: 2px;
+  outline-offset: 20px;
   filter: brightness(1.1);
 }
 
@@ -1137,7 +945,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 8px 10px;
+  padding: 80px 10px;
   background: linear-gradient(180deg, rgba(10,25,40,0), rgba(0,0,0,0.45));
   color: #fff;
   font-size: 13px;

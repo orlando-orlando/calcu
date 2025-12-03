@@ -201,10 +201,6 @@ const secciones = {
               <!-- 🔹 Panel de datos dinámico (oculto al inicio) -->
         <div id="panelDatosSistema" class="panel-datos-sistema" style="display: none;"></div>
       </div>
-
-    <!-- Columna derecha vacía (para futuro resumen o ayuda visual) -->
-    <div class="clima-tabla tarjeta-tabla" id="columnaDerechaDim" style="display:none;">
-      <div id="tiposCuerpoContainer"></div>
     </div>
   </div>
   `,
@@ -697,7 +693,6 @@ function mostrarFormularioSistema(tipo) {
   });
 }
 }
-/////////////////fin bloque, una vez que lo recibas me pasas el codigo para integrarlo a mi hook, considerando que ya tengo un bloque definido anterior a este
 
 function buildEquipamientoUI(tipoActual) {
   const columnaIzquierda = document.getElementById("equipamientoIzquierdaContenido");
@@ -1428,11 +1423,7 @@ function renderSeccion(seccion) {
     setTimeout(() => restaurarInputsSistema(window.tipoSistemaActual), 120);
   }
 }
-///////////////////////
 
-
-
-// Normaliza sólo cuando ambos valores son números válidos (evita tocar mientras se escribe)
 function normalizeAllDepths() {
   const pairs = [
     ["profMin1", "profMax1"],
