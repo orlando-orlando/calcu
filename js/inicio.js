@@ -169,7 +169,7 @@ const secciones = {
 
           <label class="opcion-sistema">
             <input type="radio" name="tipoSistema" value="albercaJacuzzi2">
-            <img src="./img/alberca+jacuzzi2C.jpg">
+            <img src="./img/alberca+jacuzzi2C.jpg" alt="Alberca + Jacuzzi (2 cuerpos)">
             <span>Alberca + Jacuzzi (2 cuerpos)</span>
           </label>
 
@@ -316,7 +316,7 @@ const secciones = {
 
         <!-- 🔘 Botón para ir a Equipamiento -->
         <div style="margin-top:20px; text-align:right;">
-          <button id="btnIrEquipamiento" class="boton-siguiente">Ir a Equipamiento ⚙️</button>
+          <button id="btnIrEquipamiento" class="btn-volver">Ir a Equipamiento ⚙️</button>
         </div>
 
       </div> <!-- cierre clima-form -->
@@ -459,10 +459,10 @@ function mostrarFormularioSistema(tipo) {
     espejoAgua: { img: "espejo.jpg", cuerpos: 1, desborde: true },
     albercaJacuzzi1: { img: "alberca+jacuzzi1C.jpg", cuerpos: 2, desborde: true },
     albercaChapo1: { img: "alberca+chapoteadero1C.jpg", cuerpos: 2, desborde: true },
-    jacuzziChapo1: { img: "jacuzziChapo1.jpg", cuerpos: 2, desborde: true },
-    albercaJacuzzi2: { img: "albercaJacuzzi2.jpg", cuerpos: 2, desborde: true },
-    albercaChapo2: { img: "albercaChapo2.jpg", cuerpos: 2, desborde: true },
-    jacuzziChapo2: { img: "jacuzziChapo2.jpg", cuerpos: 2, desborde: true }
+    jacuzziChapo1: { img: "jacuzzi+chapoteadero1C.jpg", cuerpos: 2, desborde: true },
+    albercaJacuzzi2: { img: "alberca+jacuzzi2C.jpg", cuerpos: 2, desborde: true },
+    albercaChapo2: { img: "alberca+chapoteadero2C.jpg", cuerpos: 2, desborde: true },
+    jacuzziChapo2: { img: "jacuzzi+chapoteadero2C.jpg", cuerpos: 2, desborde: true }
   };
 
   const config = sistemas[tipo];
@@ -582,7 +582,7 @@ function mostrarFormularioSistema(tipo) {
           ${bloqueUsoRotacion}
           ${bloqueDesborde}
           <div style="margin-top:20px;">
-            <button id="btnIrCalentamiento" class="btn-principal">Ir a calentamiento →</button>
+            <button id="btnIrCalentamiento" class="btn-volver">Ir a calentamiento →</button>
           </div>
         </div>
         <div class="columna-derecha">
