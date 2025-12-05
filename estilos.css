@@ -27,6 +27,10 @@ select {
   padding: 2rem;
 }
 
+.contenedor.panel-abierto .panel-derecho {
+  margin-left: 240px;
+}
+
 .form-section {
   display: flex;
   flex-direction: column;
@@ -958,5 +962,101 @@ body {
   .opcion-sistema span {
     font-size: 14px;
   }
+}
+
+    /* 🔵 Quitar flecha nativa del summary */
+    summary::-webkit-details-marker {
+      display: none;
+    }
+    summary::marker {
+      display: none;
+    }
+
+    /* 🔵 Estilos del panel izquierdo */
+  .panel-izquierdo {
+    width: 220px;
+    background: #f8fbff;
+    color: #0a2342;
+    padding: 2rem 1.4rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: 'Segoe UI', sans-serif;
+
+    position: fixed;
+    left: -260px;           /* 🔥 OCULTO AL INICIO */
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+
+    transition: left 0.35s ease;
+    z-index: 20;
+  }
+  
+/* 🔵 Cuando el panel se abre */
+.panel-izquierdo.abierto {
+  left: 0;
+}
+
+.panel-izquierdo summary {
+  padding: 10px 14px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  transition: none;
+}
+
+
+    /* 🔵 Hover estilo Tailwind */
+    .panel-izquierdo summary:hover {
+      background: rgba(0, 75, 141, 0.08);
+      transform: translateX(3px) scale(1.03);
+    }
+
+    /* 🔵 Flecha moderna (solo tu icono) */
+    .panel-izquierdo summary::after {
+      content: "›";
+      font-size: 1.1rem;
+      margin-left: auto;
+      color: #004b8d;
+      transition: transform 0.25s ease;
+    }
+
+    /* 🔵 Rotación cuando está expandido */
+    .panel-izquierdo details[open] summary::after {
+      transform: rotate(90deg);
+    }
+
+    /* 🔵 Botón del menú */
+.btn-menu {
+  position: fixed;
+  top: 850px;
+  left: 15px;
+  z-index: 30;
+  font-size: 26px;
+  background: #004b8d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.btn-menu:hover {
+  transform: scale(1.08);
+}
+
+/* Quitar fondo, borde, sombra y hover del panel que contiene las tarjetas */
+.tipo-sistema-container,
+.opciones-sistema {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 

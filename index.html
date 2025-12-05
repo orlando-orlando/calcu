@@ -5,66 +5,9 @@
   <title>Simulador sistemas hidráulicos</title>
   <link rel="stylesheet" href="estilos.css">
 
-  <style>
-    /* 🔵 Quitar flecha nativa del summary */
-    summary::-webkit-details-marker {
-      display: none;
-    }
-    summary::marker {
-      display: none;
-    }
-
-    /* 🔵 Estilos del panel izquierdo */
-    .panel-izquierdo {
-      width: 240px;
-      background: #f8fbff; /* mismo color que panel derecho */
-      color: #0a2342;
-      padding: 2rem 1.4rem;
-      border-right: none;
-      box-shadow: none;
-      font-size: 0.95rem;
-      font-weight: 500;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-    /* 🔵 Cada opción como botón */
-    .panel-izquierdo summary {
-      padding: 10px 14px;
-      border: 2px solid #004b8d;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-bottom: 10px;
-      font-weight: 600;
-      transition: all 0.25s ease;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: white;
-    }
-
-    /* 🔵 Hover estilo Tailwind */
-    .panel-izquierdo summary:hover {
-      background: rgba(0, 75, 141, 0.08);
-      transform: translateX(3px) scale(1.03);
-    }
-
-    /* 🔵 Flecha moderna (solo tu icono) */
-    .panel-izquierdo summary::after {
-      content: "›";
-      font-size: 1.1rem;
-      margin-left: auto;
-      color: #004b8d;
-      transition: transform 0.25s ease;
-    }
-
-    /* 🔵 Rotación cuando está expandido */
-    .panel-izquierdo details[open] summary::after {
-      transform: rotate(90deg);
-    }
-  </style>
-
 </head>
 <body>
+  <button id="btnMenu" class="btn-menu">☰</button>
   <div class="contenedor">
 
     <!-- Panel izquierdo -->
@@ -99,5 +42,17 @@
 
   <script src="js/inicio.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const panel = document.querySelector(".panel-izquierdo");
+  const contenedor = document.querySelector(".contenedor");
+  const btnMenu = document.getElementById("btnMenu");
+
+  btnMenu.addEventListener("click", () => {
+    panel.classList.toggle("abierto");
+    contenedor.classList.toggle("panel-abierto");
+  });
+</script>
+
 </body>
 </html>
