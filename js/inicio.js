@@ -304,7 +304,6 @@ const secciones = {
             <label><input type="checkbox" id="chkBombaCalor"> Bomba de calor</label>
             <label><input type="checkbox" id="chkPanel"> Panel solar</label>
             <label><input type="checkbox" id="chkCaldera"> Caldera</label>
-            <label><input type="checkbox" id="chkNinguno"> Ninguno</label>
           </div>
         </div>
 
@@ -404,6 +403,23 @@ document.addEventListener("click", (e) => {
       motobombaInfinity,
       motobombaCalentamiento
     });
+
+    // -----------------------------------------
+    // 🔥 LEER CALENTAMIENTO (ANTES DE borrar el DOM)
+    // -----------------------------------------
+    const calentamiento = {
+      bombaCalor: document.getElementById("chkBombaCalor")?.checked || false,
+      panelSolar: document.getElementById("chkPanel")?.checked || false,
+      caldera: document.getElementById("chkCaldera")?.checked || false,
+      ninguno: document.getElementById("chkNinguno")?.checked || false
+    };
+
+    // Guardar en memoria del sistema actual:
+    window.datosPorSistema = window.datosPorSistema || {};
+    window.datosPorSistema[tipoActual] = window.datosPorSistema[tipoActual] || {};
+    window.datosPorSistema[tipoActual].equiposCalentamiento = calentamiento;
+
+    console.log("🔥 Selección de calentamiento guardada:", calentamiento);
 
     // Ahora sí renderizamos la sección de equipamiento (reemplaza el DOM)
     panelDerecho.innerHTML = secciones.equipamiento;
@@ -702,7 +718,10 @@ function buildEquipamientoUI(tipoActual) {
   columnaIzquierda.innerHTML = "";
   columnaDerecha.innerHTML = "";
 
-  // ✅ Bloque de input bien alineado
+  // ----------------------------------------
+  // BLOQUES BASE
+  // ----------------------------------------
+
   const crearBloqueEquipo = (label, opciones = []) => `
     <div class="bloque-equipo">
       <div class="bloque-titulo">${label}</div>
@@ -726,39 +745,37 @@ function buildEquipamientoUI(tipoActual) {
     </div>
   `;
 
-  // ✅ Bloque especial para equipos de calentamiento (con los 5 campos solicitados)
   const crearBloqueEquipoCalentamiento = (label, opciones = []) => `
     <div class="bloque-equipo">
       <div class="bloque-titulo">${label}</div>
       <div class="bloque-campos">
         <div class="campo">
           <label>Cantidad:</label>
-            <input type="number" min="0" max="999" class="input-azul cantidad input-corto" data-eq="${label}Cantidad" style="width:70px; text-align:center;">
-          </div>
+          <input type="number" min="0" max="999" class="input-azul input-corto" style="width:70px;">
+        </div>
         <div class="campo">
           <label>Equipo recomendado:</label>
-          <select class="input-azul" data-eq="${label}Recomendado">
+          <select class="input-azul">
             <option value="">-- Selecciona --</option>
             ${opciones.map(op => `<option value="${op}">${op}</option>`).join("")}
           </select>
         </div>
         <div class="campo">
           <label>Capacidad:</label>
-          <input type="text" class="input-azul capacidad" data-eq="${label}Capacidad">
+          <input type="text" class="input-azul capacidad">
         </div>
         <div class="campo">
           <label>Altura espejo ↔ equipo (m):</label>
-          <input type="number" min="0" class="input-azul altura" data-eq="${label}Altura">
+          <input type="number" min="0" class="input-azul">
         </div>
         <div class="campo">
           <label>Distancia cuarto ↔ equipo (m):</label>
-          <input type="number" min="0" class="input-azul distancia" data-eq="${label}Distancia">
+          <input type="number" min="0" class="input-azul">
         </div>
       </div>
     </div>
   `;
 
-  // ✅ Toggle general estilizado
   const crearToggle = (titulo, contenido) => `
     <details class="tarjeta-equipamiento">
       <summary class="titulo-toggle">${titulo}</summary>
@@ -766,83 +783,95 @@ function buildEquipamientoUI(tipoActual) {
     </details>
   `;
 
-  // ---- Bloques principales ----
-  const bloqueCalentamiento = crearToggle("🔥 Calentamiento", `
-    ${crearBloqueEquipoCalentamiento("Caldera", ["Caldera A", "Caldera B", "Caldera C"])}
-    ${crearBloqueEquipoCalentamiento("Bomba de calor", ["Bomba 3HP", "Bomba 5HP"])}
-    ${crearBloqueEquipoCalentamiento("Panel solar", ["Solar 1", "Solar 2"])}
-  `);
+  // ----------------------------------------------------------------
+  // 🔥 GENERAR SOLO LOS EQUIPOS DE CALENTAMIENTO ELEGIDOS POR EL USUARIO
+  // ----------------------------------------------------------------
+  const cal = window.datosPorSistema?.[tipoActual]?.equiposCalentamiento || {};
+
+  let contenidoCalentamiento = "";
+
+  if (cal.caldera)
+    contenidoCalentamiento += crearBloqueEquipoCalentamiento("Caldera", ["Caldera A", "Caldera B", "Caldera C"]);
+
+  if (cal.bombaCalor)
+    contenidoCalentamiento += crearBloqueEquipoCalentamiento("Bomba de calor", ["Bomba 3HP", "Bomba 5HP"]);
+
+  if (cal.panelSolar)
+    contenidoCalentamiento += crearBloqueEquipoCalentamiento("Panel solar", ["Solar 1", "Solar 2"]);
+
+  const bloqueCalentamiento = crearToggle("🔥 Calentamiento", contenidoCalentamiento || "<p>No seleccionaste ningún método de calentamiento.</p>");
+
+  // ----------------------------------------------------------------
+  // 🔧 OTROS TOGGLES ORIGINALMENTE COMO LOS TENÍAS
+  // ----------------------------------------------------------------
 
   const bloqueFiltrado = crearToggle("💧 Filtrado", `
     ${crearBloqueEquipo("Prefiltro", ["Prefiltro chico", "Prefiltro grande"])}
-    ${crearBloqueEquipo("Filtro de arena", ["Arena 24\"", "Arena 30\""]) }
+    ${crearBloqueEquipo("Filtro de arena", ["Arena 24\"", "Arena 30\""])}
   `);
 
   const bloqueSanitizacion = crearToggle("🧪 Sanitización", `
-    ${crearBloqueEquipo("Generador de cloro", ["Clorador salino", "Dosificador"]) }
-    ${crearBloqueEquipo("Ozonificador", ["Ozono 10g", "Ozono 20g"]) }
-    ${crearBloqueEquipo("Lámpara UV", ["UV Compacta", "UV Industrial"]) }
+    ${crearBloqueEquipo("Generador de cloro", ["Clorador salino", "Dosificador"])}
+    ${crearBloqueEquipo("Ozonificador", ["Ozono 10g", "Ozono 20g"])}
+    ${crearBloqueEquipo("Lámpara UV", ["UV Compacta", "UV Industrial"])}
   `);
 
   const bloqueEmpotrables = crearToggle("🧱 Empotrables", `
-    ${crearBloqueEquipo("Boquilla de retorno", ["PVC", "Acero inoxidable"]) }
-    ${crearBloqueEquipo("Dren de fondo", ["Circular", "Cuadrado"]) }
-    ${crearBloqueEquipo("Desnatador", ["Estándar", "Ancho"]) }
-    ${crearBloqueEquipo("Barredora", ["Manual", "Automática"]) }
-    ${crearBloqueEquipo("Manguera barredora", ["10m", "15m"]) }
+    ${crearBloqueEquipo("Boquilla de retorno", ["PVC", "Acero inoxidable"])}
+    ${crearBloqueEquipo("Dren de fondo", ["Circular", "Cuadrado"])}
+    ${crearBloqueEquipo("Desnatador", ["Estándar", "Ancho"])}
+    ${crearBloqueEquipo("Barredora", ["Manual", "Automática"])}
+    ${crearBloqueEquipo("Manguera barredora", ["10m", "15m"])}
   `);
 
   const bloqueIluminacion = crearToggle("💡 Iluminación", `
-    ${crearBloqueEquipo("Foco LED", ["RGB", "Blanco cálido"]) }
-    ${crearBloqueEquipo("Controlador", ["Control remoto", "Wi-Fi"]) }
-    ${crearBloqueEquipo("Transformador", ["12V", "24V"]) }
+    ${crearBloqueEquipo("Foco LED", ["RGB", "Blanco cálido"])}
+    ${crearBloqueEquipo("Controlador", ["Control remoto", "Wi-Fi"])}
+    ${crearBloqueEquipo("Transformador", ["12V", "24V"])}
   `);
 
   const bloqueMotobomba = crearToggle("⚙️ Motobomba Filtrado", `
-    ${crearBloqueEquipo("Motobomba", ["1HP", "1.5HP", "2HP"]) }
+    ${crearBloqueEquipo("Motobomba", ["1HP", "1.5HP", "2HP"])}
   `);
 
-  // ---- Bloques secundarios ----
+  // ----------------------------------------------------------------
+  // Resto de bloques secundarios (JACUZZI, CUERPO 2, ETC)
+  // ----------------------------------------------------------------
   const empotrablesJacuzzi = crearToggle("🌀 Empotrables Jacuzzi", `
-    ${crearBloqueEquipo("Jets", ["Jet lateral", "Jet masaje"]) }
-    ${crearBloqueEquipo("Dren Jacuzzi", ["Fondo redondo", "Fondo plano"]) }
-    ${crearBloqueEquipo("Boquilla aire", ["Aire 1", "Aire 2"]) }
+    ${crearBloqueEquipo("Jets", ["Jet lateral", "Jet masaje"])}
+    ${crearBloqueEquipo("Dren Jacuzzi", ["Fondo redondo", "Fondo plano"])}
+    ${crearBloqueEquipo("Boquilla aire", ["Aire 1", "Aire 2"])}
   `);
 
   const motobombaHidrojets = crearToggle("💨 Motobomba Hidrojets", `
-    ${crearBloqueEquipo("Motobomba Hidrojets", ["2HP", "3HP", "4HP"]) }
+    ${crearBloqueEquipo("Motobomba Hidrojets", ["2HP", "3HP", "4HP"])}
   `);
 
   const sopladoresJacuzzi = crearToggle("🌬️ Sopladores Jacuzzi", `
-    ${crearBloqueEquipo("Soplador", ["Soplador 1HP", "Soplador 2HP"]) }
+    ${crearBloqueEquipo("Soplador", ["Soplador 1HP", "Soplador 2HP"])}
   `);
 
   const empotrablesCuerpo2 = crearToggle("🌊 Empotrables Cuerpo 2", `
-    ${crearBloqueEquipo("Boquilla retorno (Cuerpo 2)", ["PVC", "Acero inoxidable"]) }
-    ${crearBloqueEquipo("Dren fondo (Cuerpo 2)", ["Circular", "Cuadrado"]) }
-    ${crearBloqueEquipo("Desnatador (Cuerpo 2)", ["Estándar", "Ancho"]) }
+    ${crearBloqueEquipo("Boquilla retorno (Cuerpo 2)", ["PVC", "Acero inoxidable"])}
+    ${crearBloqueEquipo("Dren fondo (Cuerpo 2)", ["Circular", "Cuadrado"])}
+    ${crearBloqueEquipo("Desnatador (Cuerpo 2)", ["Estándar", "Ancho"])}
   `);
 
-  const motobombaInfinity = crearToggle("♾️ Motobomba Infinity", `
-    ${crearBloqueEquipo("Motobomba Infinity", ["1HP", "1.5HP", "2HP"]) }
-  `);
-
-  const motobombaCalentamiento = crearToggle("🔥 Motobomba Calentamiento", `
-    ${crearBloqueEquipo("Motobomba Calentamiento", ["1HP", "1.5HP", "2HP"]) }
-  `);
-
-  const placeholder = crearToggle("⚠️ Sin segundo cuerpo", `<p>No hay equipos adicionales.</p>`);
-
-  // ---- Radios globales ----
+  // Radios guardados
   const datosDim = window.datosPorSistema?.[tipoActual] || {};
   const llevaInfinity = datosDim.motobombaInfinity === "si";
   const llevaCalentamiento = datosDim.motobombaCalentamiento === "si";
 
   let motobombasIndependientes = "";
-  if (llevaInfinity) motobombasIndependientes += motobombaInfinity;
-  if (llevaCalentamiento) motobombasIndependientes += motobombaCalentamiento;
+  if (llevaInfinity) motobombasIndependientes += crearToggle("♾️ Motobomba Infinity", `${crearBloqueEquipo("Motobomba Infinity", ["1HP","1.5HP","2HP"])}`);
+  if (llevaCalentamiento) motobombasIndependientes += crearToggle("🔥 Motobomba Calentamiento", `${crearBloqueEquipo("Motobomba Calentamiento", ["1HP","1.5HP","2HP"])}`);
 
-  // ---- Izquierda ----
+  const placeholder = crearToggle("⚠️ Sin segundo cuerpo", `<p>No hay equipos adicionales.</p>`);
+
+  // ----------------------------------------------------------------
+  // ARMAR COLUMNA IZQUIERDA
+  // ----------------------------------------------------------------
+
   columnaIzquierda.innerHTML = `
     ${bloqueCalentamiento}
     ${bloqueFiltrado}
@@ -852,8 +881,12 @@ function buildEquipamientoUI(tipoActual) {
     ${bloqueMotobomba}
   `;
 
-  // ---- Derecha ----
+  // ----------------------------------------------------------------
+  // ARMAR COLUMNA DERECHA SEGÚN TIPO DE SISTEMA
+  // ----------------------------------------------------------------
+
   let derechaHTML = "";
+
   switch (tipoActual) {
     case "alberca":
     case "chapoteadero":
@@ -892,6 +925,7 @@ function buildEquipamientoUI(tipoActual) {
 
   columnaDerecha.innerHTML = derechaHTML;
 }
+
 function restaurarInputsSistema(tipo) {
   const datosPrevios = window.datosPorSistema?.[tipo];
   if (!datosPrevios) return;
@@ -1681,6 +1715,70 @@ document.addEventListener("change", (e) => {
     }
   }
 });
+
+function renderEquiposCalentamiento() {
+  const contIzq = document.getElementById("equipamientoIzquierdaContenido");
+  const contDer = document.getElementById("equipamientoDerechaContenido");
+
+  if (!contIzq || !contDer) return;
+
+  // Limpiar columnas
+  contIzq.innerHTML = "";
+  contDer.innerHTML = "";
+
+  // Leer selección de calentamiento
+  const bomba = document.getElementById("chkBombaCalor")?.checked;
+  const panel = document.getElementById("chkPanel")?.checked;
+  const caldera = document.getElementById("chkCaldera")?.checked;
+  const ninguno = document.getElementById("chkNinguno")?.checked;
+
+  if (ninguno) return;
+
+  const equipos = [];
+
+  if (bomba) equipos.push("bombaDeCalor");
+  if (panel) equipos.push("panelSolar");
+  if (caldera) equipos.push("caldera");
+
+  equipos.forEach((equipo, i) => {
+    const htmlEquipo = `
+      <div class="tarjeta-equipo">
+        <h4>${equipo.replace(/([A-Z])/g, " $1")}</h4>
+
+        <label>Cantidad de equipos:</label>
+        <select>
+          <option value="">Selecciona</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+        </select>
+
+        <label>Equipo recomendado:</label>
+        <select>
+          <option value="">-- Selecciona --</option>
+        </select>
+
+        <label>Capacidad:</label>
+        <input type="text" placeholder="Capacidad recomendada">
+
+        <label>Altura espejo de agua - equipo (m):</label>
+        <input type="number" step="0.1">
+
+        <label>Distancia cuarto de máquinas - equipo (m):</label>
+        <input type="number" step="0.1">
+      </div>
+    `;
+
+    // IZQUIERDA si i es par, DERECHA si es impar
+    if (i % 2 === 0) contIzq.innerHTML += htmlEquipo;
+    else contDer.innerHTML += htmlEquipo;
+  });
+}
+
+
+
+
+
 
 function calcular() {
     const vol = volumen();
@@ -6162,3 +6260,4 @@ function qCanal() {
 
   return Q_BTU_h;
 }
+
