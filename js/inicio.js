@@ -1716,65 +1716,6 @@ document.addEventListener("change", (e) => {
   }
 });
 
-function renderEquiposCalentamiento() {
-  const contIzq = document.getElementById("equipamientoIzquierdaContenido");
-  const contDer = document.getElementById("equipamientoDerechaContenido");
-
-  if (!contIzq || !contDer) return;
-
-  // Limpiar columnas
-  contIzq.innerHTML = "";
-  contDer.innerHTML = "";
-
-  // Leer selección de calentamiento
-  const bomba = document.getElementById("chkBombaCalor")?.checked;
-  const panel = document.getElementById("chkPanel")?.checked;
-  const caldera = document.getElementById("chkCaldera")?.checked;
-  const ninguno = document.getElementById("chkNinguno")?.checked;
-
-  if (ninguno) return;
-
-  const equipos = [];
-
-  if (bomba) equipos.push("bombaDeCalor");
-  if (panel) equipos.push("panelSolar");
-  if (caldera) equipos.push("caldera");
-
-  equipos.forEach((equipo, i) => {
-    const htmlEquipo = `
-      <div class="tarjeta-equipo">
-        <h4>${equipo.replace(/([A-Z])/g, " $1")}</h4>
-
-        <label>Cantidad de equipos:</label>
-        <select>
-          <option value="">Selecciona</option>
-          <option>1</option>
-          <option>2</option>
-          <option>3</option>
-        </select>
-
-        <label>Equipo recomendado:</label>
-        <select>
-          <option value="">-- Selecciona --</option>
-        </select>
-
-        <label>Capacidad:</label>
-        <input type="text" placeholder="Capacidad recomendada">
-
-        <label>Altura espejo de agua - equipo (m):</label>
-        <input type="number" step="0.1">
-
-        <label>Distancia cuarto de máquinas - equipo (m):</label>
-        <input type="number" step="0.1">
-      </div>
-    `;
-
-    // IZQUIERDA si i es par, DERECHA si es impar
-    if (i % 2 === 0) contIzq.innerHTML += htmlEquipo;
-    else contDer.innerHTML += htmlEquipo;
-  });
-}
-
 
 
 
