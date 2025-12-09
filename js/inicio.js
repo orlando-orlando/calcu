@@ -751,7 +751,7 @@ function buildEquipamientoUI(tipoActual) {
       <div class="bloque-campos">
         <div class="campo">
           <label>Cantidad:</label>
-          <input type="number" min="0" max="999" class="input-azul input-corto" style="width:70px;">
+          <input type="number" min="0" max="999" class="input-azul input-corto" style="width:10px;">
         </div>
         <div class="campo">
           <label>Equipo recomendado:</label>
@@ -1715,11 +1715,6 @@ document.addEventListener("change", (e) => {
     }
   }
 });
-
-
-
-
-
 
 function calcular() {
     const vol = volumen();

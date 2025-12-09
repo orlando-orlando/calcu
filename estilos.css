@@ -1060,3 +1060,31 @@ body {
   margin: 0 !important;
 }
 
+/* -------------------------------------------------------- */
+/* 🔥 Alinear en una sola línea los equipos de calentamiento */
+/* -------------------------------------------------------- */
+
+.bloque-equipo .bloque-campos {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.bloque-equipo .campo {
+  display: flex;
+  flex-direction: column;
+  min-width: 140px; /* para que no se colapsen */
+}
+
+.bloque-equipo input.input-azul,
+.bloque-equipo select.input-azul {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ajustes para inputs más pequeños */
+.bloque-equipo .input-corto {
+  width: 70px !important;
+  text-align: center;
+}
