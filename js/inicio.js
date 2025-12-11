@@ -521,6 +521,7 @@ function mostrarFormularioSistema(tipo) {
             <option value="publica">Pública</option>
             <option value="competencia">Competencia</option>
             <option value="parque">Parque acuático</option>
+            <option value="hidromasaje">Hidromasaje</option>
           </select>
         </div>
         <div class="campo-bdc" style="margin-left: 16px;">
@@ -5518,7 +5519,7 @@ const humedad = {
         promedio: [72, 70, 68, 64, 64, 65, 70, 75, 75, 74, 73, 72]
     },
     "tepic": {
-        promedio: [80, 78, 75, 70, 65, 60, 65, 70, 75, 80, 85, 88]
+        promedio: [70, 78, 75, 70, 65, 60, 65, 70, 75, 80, 85, 88]
     },
     "colima": {
         promedio: [75, 73, 70, 65, 60, 55, 60, 65, 70, 75, 80, 85]
