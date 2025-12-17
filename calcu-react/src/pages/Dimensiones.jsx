@@ -76,7 +76,7 @@ export default function Dimensiones({ setSeccion }) {
           {/* SELECCIÓN DE SISTEMA */}
           <div className="tipo-sistema-container">
             <div className="tarjeta-tipo-sistema tarjeta-entrada">
-              <div className="titulo-seccion">Selecciona el tipo de sistema</div>
+              <div className="toggle-boton activo">Selecciona el tipo de sistema</div>
               <div className="opciones-sistema">
                 {Object.entries(sistemas).map(([key, s]) => (
                   <label

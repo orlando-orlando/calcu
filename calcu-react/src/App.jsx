@@ -14,9 +14,14 @@ export default function App() {
 
       {/* PANEL IZQUIERDO */}
       <div className="panel-izquierdo">
-        <h2 className="titulo-panel">Panel de selección</h2>
 
-        {/* === NAVEGACIÓN PRINCIPAL === */}
+        {/* ❌ Título del menú (no es resultados generales) */}
+        {/*
+        <h2 className="titulo-panel">Menú de selección</h2>
+        */}
+
+        {/* ❌ NAVEGACIÓN PRINCIPAL (no es resultados generales) */}
+        {/*
         <div className="toggle-navegacion-fija">
           {["dimensiones", "calentamiento", "equipamiento"].map((s) => (
             <button
@@ -28,12 +33,14 @@ export default function App() {
             </button>
           ))}
         </div>
+        */}
 
-        {/* === RESULTADOS GENERALES === */}
+        {/* ✅ RESULTADOS GENERALES (ÚNICO CONTENIDO ACTIVO) */}
         <div className="toggle-seccion unida">
           <div className="toggle-boton activo">
             <h3>📊 Resultados generales</h3>
           </div>
+
           <div className="seccion-resultados">
             <table className="tabla-resultados">
               <tbody>
@@ -47,21 +54,35 @@ export default function App() {
                 <tr><th>Flujo infinity:</th><td>12 m³/h</td></tr>
                 <tr><th>Flujo sanitizador:</th><td>8 m³/h</td></tr>
                 <tr><th>Flujo máximo:</th><td>65 m³/h</td></tr>
-                <tr><th>BTU’s pérdida:</th><td>89,000</td></tr>
-                <tr><th>Temp. ambiente:</th><td>26 °C</td></tr>
+                <tr><th>Pérdida calor:</th><td>89,000</td></tr>
+                <tr><th>Energía necesaria 1°C:</th><td>89,000</td></tr>
                 <tr><th>Temp. deseada:</th><td>30 °C</td></tr>
                 <tr><th>Tubería succión:</th><td>3”</td></tr>
                 <tr><th>Tubería descarga:</th><td>2.5”</td></tr>
                 <tr><th>Cloro necesario:</th><td>2.1 kg/día</td></tr>
-                <tr><th>Carga total calculada:</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga total calculada:</th><td>0.0 psi</td></tr>
+                <tr><th>Ozono necesario:</th><td>2.1 kg/día</td></tr>
+                <tr><th>Carga retorno:</th><td>0.0 ftHd</td></tr>
+                <tr><th>Carga dren de fondo:</th><td>0.0 ftHd</td></tr>
+                <tr><th>Carga dren canal:</th><td>0.0 ftHd</td></tr>
+                <tr><th>Carga desnatador:</th><td>0.0 ftHd</td></tr>
+                <tr><th>Carga barredora:</th><td>0.0 ftHd</td></tr>
+                <tr><th>Carga filtro:</th><td>0.0 ftHd</td></tr>
+                <tr><th>Carga prefiltro:</th><td>0.0 ftHd</td></tr>
+                <tr><th>Carga panel solar:</th><td>0.0 ftHd</td></tr>
+                <tr><th>Carga bomba de calor:</th><td>0.0 ftHd</td></tr>
+                <tr><th>Carga caldera:</th><td>0.0 ftHd</td></tr>
+                <tr><th>Carga ozonificador:</th><td>0.0 ftHd</td></tr>
+                <tr><th>Carga clorador:</th><td>0.0 ftHd</td></tr>
+                <tr><th>Carga total (ftHd):</th><td>0.0 ftHd</td></tr>
+                <tr><th>Carga total (psi)):</th><td>0.0 psi</td></tr>
               </tbody>
             </table>
           </div>
         </div>
+
       </div>
 
-      {/* PANEL DERECHO */}
+      {/* PANEL DERECHO (NO TOCADO) */}
       <div className="panel-derecho">
         <div className="panel-derecha-contenido">
           {seccion === "dimensiones" && <Dimensiones setSeccion={setSeccion} />}
@@ -69,6 +90,7 @@ export default function App() {
           {seccion === "equipamiento" && <Equipamiento setSeccion={setSeccion} />}
         </div>
       </div>
+
     </div>
   );
 }

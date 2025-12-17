@@ -43,7 +43,7 @@ html,body{
 /* === PANEL IZQUIERDO === */
 .panel-izquierdo{
   background:#f8fbff;
-  padding:1.5rem 1rem;
+  padding: .5rem .75rem;
   width:300px;
   display:flex;
   flex-direction:column;
@@ -657,5 +657,52 @@ body.no-scroll{ overflow:hidden !important; }
   0% { opacity:0; }
   60% { opacity:1; }
   100% { opacity:1; }
+}
+
+/* ===============================
+   📊 Resultados generales — modo compacto
+   =============================== */
+
+.seccion-resultados{
+  overflow: hidden; /* nunca scroll */
+  
+}
+
+.tabla-resultados{
+  font-size: 0.72rem;          /* ↓ clave */
+  line-height: 1.2;            /* ↓ compacta filas */
+}
+
+.tabla-resultados th,
+.tabla-resultados td{
+  padding: 3px 6px;            /* ↓ menos alto */
+  white-space: nowrap;         /* evita saltos de línea */
+}
+
+.tabla-resultados th{
+  font-weight: 600;
+  color: #334155;
+}
+
+.tabla-resultados td{
+  text-align: right;
+  color: #1f2937;
+}
+
+.toggle-seccion.unida{
+  box-shadow: none;
+  border: 1px solid var(--color-borde);
+}
+
+.toggle-boton.activo{
+  background: transparent;
+  color: var(--color-primario);
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.toggle-boton h3{
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
