@@ -7,7 +7,7 @@
   --color-primario: #1e81ce;
   --color-acento: #4ea8de;
   --color-secundario: #e8f0ff;
-  --color-fondo: #f8fbff;
+  --color-fondo: #f8f8ff;
   --color-texto: #1a1a1a;
   --color-borde: #d9e2ef;
   --color-acento-2: #0077cc;
@@ -42,21 +42,49 @@ html,body{
 
 /* === PANEL IZQUIERDO === */
 .panel-izquierdo{
-  background:#f8fbff;
-  padding: .5rem .75rem;
-  width:300px;
-  display:flex;
-  flex-direction:column;
-  gap:1rem;
-  overflow-y:auto;
+  position: relative;
+  width: 280px;              /* o 260px si lo quieres más fino */
+  min-width: 260px;
+  height: 100vh;
+
+  background: #f9fbff;
+  border-right: 1px solid #dde5f0;
+
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1rem;
 }
 
+
+.panel-izquierdo::after{
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(96,165,250,0.35),
+    rgba(96,165,250,0.05)
+  );}
+
+
+
 .titulo-panel{
-  font-size:1.25rem;
-  font-weight:700;
-  margin-bottom:1rem;
-  text-align:center;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+
+  text-align: center;
+  margin: 1.5rem 0 2rem;
+
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  opacity: 0.85;
 }
+
+
 
 /* Tabs laterales */
 .tab{
@@ -692,6 +720,7 @@ body.no-scroll{ overflow:hidden !important; }
 .toggle-seccion.unida{
   box-shadow: none;
   border: 1px solid var(--color-borde);
+  background: #ffffff;
 }
 
 .toggle-boton.activo{
@@ -706,3 +735,200 @@ body.no-scroll{ overflow:hidden !important; }
   font-weight: 700;
 }
 
+/* ===============================
+   🔘 Navegación principal — minimal
+   =============================== */
+
+.toggle-navegacion-fija button{
+  background: transparent;
+  border: 1px solid transparent;
+  box-shadow: none;
+
+  padding: 0.45rem 0.75rem;   /* 👈 más delgado */
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+
+  color: #334155;
+  border-radius: 0.5rem;
+
+  transition:
+    background .2s ease,
+    color .2s ease,
+    border-color .2s ease;
+}
+
+/* hover sutil */
+.toggle-navegacion-fija button:hover{
+  background: #eef5ff;
+  border-color: #dbeafe;
+  transform: none;           /* ❌ quitamos elevación */
+  box-shadow: none;
+}
+
+/* activo = línea + color */
+.toggle-navegacion-fija button.activo{
+  background: transparent;
+  color: var(--color-primario);
+  font-weight: 600;
+
+  border-left: 3px solid var(--color-primario);
+  border-radius: 0.25rem;
+  padding-left: 0.6rem;
+}
+
+/* =========================================
+   🧱 Panel izquierdo — fondo técnico oscuro
+   ========================================= */
+
+.panel-izquierdo{
+  background: linear-gradient(
+    180deg,
+    #1e293b 0%,
+    #111827 100%
+  );
+  color: #e5e7eb;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+
+.titulo-panel{
+  color: #e5e7eb;
+  opacity: 0.85;
+}
+
+.toggle-navegacion-fija button{
+  color: #cbd5f5;
+}
+
+.toggle-navegacion-fija button:hover{
+  background: rgba(255,255,255,0.06);
+  color: #ffffff;
+}
+
+.toggle-navegacion-fija button.activo{
+  color: #ffffff;
+  border-left: 3px solid #60a5fa;
+}
+
+/* =========================================
+   🧱 PANEL IZQUIERDO — FONDO OSCURO PREMIUM
+   ========================================= */
+
+.panel-izquierdo{
+  background: linear-gradient(180deg, #0f172a, #020617);
+  color: #e5e7eb;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+
+/* =========================================
+   🔝 HEADER ICONOS
+   ========================================= */
+
+.panel-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:1.25rem;
+}
+
+/* botones de icono */
+.icon-btn{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 6px;
+  cursor: pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:
+    background .2s ease,
+    transform .15s ease;
+}
+
+.icon-btn:hover{
+  background: rgba(255,255,255,0.14);
+  transform: translateY(-1px);
+}
+
+/* =========================================
+   📌 NAVEGACIÓN LATERAL
+   ========================================= */
+
+.toggle-navegacion-fija button{
+  color: #cbd5f5;
+}
+
+.toggle-navegacion-fija button:hover{
+  background: rgba(255,255,255,0.08);
+}
+
+.toggle-navegacion-fija button.activo{
+  color: #60a5fa;
+  border-left: 3px solid #60a5fa;
+  background: rgba(96,165,250,0.12);
+}
+
+/* =========================================
+   📊 RESULTADOS GENERALES
+   ========================================= */
+
+.toggle-seccion.unida{
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.toggle-seccion.unida .toggle-boton{
+  color: #e5e7eb;
+}
+
+/* =========================================
+   📦 COLAPSADO
+   ========================================= */
+
+.panel-izquierdo.colapsado{
+  width:64px;
+  min-width:64px;
+  padding-left:0.5rem;
+  padding-right:0.5rem;
+}
+
+.panel-izquierdo.colapsado .toggle-navegacion-fija,
+.panel-izquierdo.colapsado .toggle-seccion{
+  display:none;
+}
+
+/* =====================================
+   📊 Resultados generales — texto claro
+   SOLO panel izquierdo
+   ===================================== */
+
+.panel-izquierdo .tabla-resultados th{
+  color: #c7d2fe;   /* azul claro elegante */
+}
+
+.panel-izquierdo .tabla-resultados td{
+  color: #e5e7eb;   /* gris claro, alta legibilidad */
+}
+
+/* =========================================
+   🔘 Navegación izquierda — coherente en fondo oscuro
+   ========================================= */
+
+.panel-izquierdo .toggle-navegacion-fija button{
+  color: #e5e7eb;                 /* texto claro */
+}
+
+.panel-izquierdo .toggle-navegacion-fija button:hover{
+  background: rgba(255,255,255,0.06);
+  color: #f8fafc;
+}
+
+/* ACTIVO: mismo color de texto, solo énfasis visual */
+.panel-izquierdo .toggle-navegacion-fija button.activo{
+  color: #f8fafc;                 /* ❗ NO azul */
+  font-weight: 600;
+  background: rgba(255,255,255,0.08);
+  border-left: 3px solid #60a5fa; /* azul elegante */
+}

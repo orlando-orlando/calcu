@@ -1,5 +1,7 @@
 import "./estilos.css";
 import { useState } from "react";
+import { Home, ChevronLeft, ChevronRight } from "lucide-react";
+
 import Footer from "./components/Footer.jsx";
 import Dimensiones from "./pages/Dimensiones.jsx";
 import Calentamiento from "./pages/Calentamiento.jsx";
@@ -7,21 +9,36 @@ import Equipamiento from "./pages/Equipamiento.jsx";
 
 export default function App() {
   const [seccion, setSeccion] = useState("dimensiones");
-  const [mostrarResultados, setMostrarResultados] = useState(true);
+  const [panelColapsado, setPanelColapsado] = useState(false);
 
   return (
     <div className="app-contenedor">
 
-      {/* PANEL IZQUIERDO */}
-      <div className="panel-izquierdo">
+      {/* =========================
+          PANEL IZQUIERDO
+      ========================== */}
+      <div className={`panel-izquierdo ${panelColapsado ? "colapsado" : ""}`}>
 
-        {/* ❌ Título del menú (no es resultados generales) */}
-        {/*
-        <h2 className="titulo-panel">Menú de selección</h2>
-        */}
+        {/* HEADER ICONOS */}
+        <div className="panel-header">
+          <button
+            className="icon-btn"
+            title="Inicio"
+            onClick={() => setSeccion("dimensiones")}
+          >
+            <Home size={20} />
+          </button>
 
-        {/* ❌ NAVEGACIÓN PRINCIPAL (no es resultados generales) */}
-        {/*
+          <button
+            className="icon-btn"
+            title="Contraer panel"
+            onClick={() => setPanelColapsado(!panelColapsado)}
+          >
+            {panelColapsado ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+          </button>
+        </div>
+
+        {/* NAVEGACIÓN */}
         <div className="toggle-navegacion-fija">
           {["dimensiones", "calentamiento", "equipamiento"].map((s) => (
             <button
@@ -33,9 +50,8 @@ export default function App() {
             </button>
           ))}
         </div>
-        */}
 
-        {/* ✅ RESULTADOS GENERALES (ÚNICO CONTENIDO ACTIVO) */}
+        {/* RESULTADOS GENERALES (NO SE TOCA) */}
         <div className="toggle-seccion unida">
           <div className="toggle-boton activo">
             <h3>📊 Resultados generales</h3>
@@ -74,7 +90,7 @@ export default function App() {
                 <tr><th>Carga ozonificador:</th><td>0.0 ftHd</td></tr>
                 <tr><th>Carga clorador:</th><td>0.0 ftHd</td></tr>
                 <tr><th>Carga total (ftHd):</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga total (psi)):</th><td>0.0 psi</td></tr>
+                <tr><th>Carga total (psi):</th><td>0.0 psi</td></tr>
               </tbody>
             </table>
           </div>
@@ -82,9 +98,11 @@ export default function App() {
 
       </div>
 
-      {/* PANEL DERECHO (NO TOCADO) */}
+      {/* =========================
+          PANEL DERECHO
+      ========================== */}
       <div className="panel-derecho">
-        <div className="panel-derecha-contenido">
+        <div className="panel-derecho-contenido">
           {seccion === "dimensiones" && <Dimensiones setSeccion={setSeccion} />}
           {seccion === "calentamiento" && <Calentamiento setSeccion={setSeccion} />}
           {seccion === "equipamiento" && <Equipamiento setSeccion={setSeccion} />}
