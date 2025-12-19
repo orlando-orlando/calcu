@@ -19,8 +19,10 @@ export default function App() {
       ========================== */}
       <div className={`panel-izquierdo ${panelColapsado ? "colapsado" : ""}`}>
 
-        {/* HEADER ICONOS */}
-        <div className="panel-header">
+      {/* HEADER ICONOS */}
+      <div className={`panel-header ${panelColapsado ? "solo-colapsar" : ""}`}>
+
+        {!panelColapsado && (
           <button
             className="icon-btn"
             title="Inicio"
@@ -28,28 +30,50 @@ export default function App() {
           >
             <Home size={20} />
           </button>
+        )}
 
-          <button
-            className="icon-btn"
-            title="Contraer panel"
-            onClick={() => setPanelColapsado(!panelColapsado)}
-          >
-            {panelColapsado ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-          </button>
-        </div>
+        <button
+          className="icon-btn"
+          title={panelColapsado ? "Expandir panel" : "Contraer panel"}
+          onClick={() => setPanelColapsado(!panelColapsado)}
+        >
+          {panelColapsado ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+        </button>
+
+      </div>
 
         {/* NAVEGACIÓN */}
-        <div className="toggle-navegacion-fija">
-          {["dimensiones", "calentamiento", "equipamiento"].map((s) => (
-            <button
-              key={s}
-              className={seccion === s ? "activo" : ""}
-              onClick={() => setSeccion(s)}
-            >
-              {s.charAt(0).toUpperCase() + s.slice(1)}
-            </button>
-          ))}
+        <div className="nav-vertical">
+
+          <button
+            className={`nav-item ${seccion === "dimensiones" ? "activo" : ""}`}
+            onClick={() => setSeccion("dimensiones")}
+            title="Dimensiones"
+          >
+            <span className="nav-icon">📐</span>
+            {!panelColapsado && <span className="nav-text">Dimensiones</span>}
+          </button>
+
+          <button
+            className={`nav-item ${seccion === "calentamiento" ? "activo" : ""}`}
+            onClick={() => setSeccion("calentamiento")}
+            title="Calentamiento"
+          >
+            <span className="nav-icon">🔥</span>
+            {!panelColapsado && <span className="nav-text">Calentamiento</span>}
+          </button>
+
+          <button
+            className={`nav-item ${seccion === "equipamiento" ? "activo" : ""}`}
+            onClick={() => setSeccion("equipamiento")}
+            title="Equipamiento"
+          >
+            <span className="nav-icon">⚙️</span>
+            {!panelColapsado && <span className="nav-text">Equipamiento</span>}
+          </button>
+
         </div>
+
 
         {/* RESULTADOS GENERALES (NO SE TOCA) */}
         <div className="toggle-seccion unida">

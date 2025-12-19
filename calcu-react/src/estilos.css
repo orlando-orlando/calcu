@@ -40,37 +40,6 @@ html,body{
   overflow:hidden;
 }
 
-/* === PANEL IZQUIERDO === */
-.panel-izquierdo{
-  position: relative;
-  width: 280px;              /* o 260px si lo quieres más fino */
-  min-width: 260px;
-  height: 100vh;
-
-  background: #f9fbff;
-  border-right: 1px solid #dde5f0;
-
-  display: flex;
-  flex-direction: column;
-  padding: 1.25rem 1rem;
-}
-
-
-.panel-izquierdo::after{
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 1px;
-  height: 100%;
-  background: linear-gradient(
-    180deg,
-    rgba(96,165,250,0.35),
-    rgba(96,165,250,0.05)
-  );}
-
-
-
 .titulo-panel{
   font-size: 0.95rem;
   font-weight: 600;
@@ -83,8 +52,6 @@ html,body{
   text-transform: uppercase;
   opacity: 0.85;
 }
-
-
 
 /* Tabs laterales */
 .tab{
@@ -100,20 +67,26 @@ html,body{
 
 /* Panel derecho */
 .panel-derecho{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  background:#f8fbff;
-  overflow:hidden; /* dejo overflow en contenedores internos */
-  padding:1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  background: #f8fbff;
+
+  height: 100vh;          /* clave */
+  overflow: hidden;      /* ⛔ evita scroll */
+  padding: 0;            /* ⛔ quitamos padding aquí */
 }
+
 
 /* Contenido principal dentro del panel derecho (scroll aquí si hace falta) */
 .panel-derecho-contenido{
-  flex:1;
-  padding:2rem;
-  overflow:auto;
+  flex: 1;               /* ocupa todo el espacio disponible */
+  padding: 1.5rem;       /* padding VA AQUÍ, no en el panel */
+  overflow: hidden;      /* ⛔ sin scroll */
+  box-sizing: border-box;
 }
+
 
 /* ==========================================================
    🧩 Botones
@@ -211,9 +184,9 @@ html,body{
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  min-height:70vh;
-  max-height:95vh;
-  overflow:hidden;
+  min-height: unset;
+  max-height: unset;
+  height: auto;
   position:relative;
 
   /* Fix real de esquinas cuadradas */
@@ -224,18 +197,6 @@ html,body{
 .tarjeta-tipo-sistema:hover{
   transform:translate3d(0, -2px, 0); /* fix GPU */
   box-shadow:0 4px 14px rgba(0,0,0,.12);
-}
-
-.tarjeta-tipo-sistema::before {
-    content: "";
-    position: absolute;
-    top: -1px;     /* ← cubre el gap superior */
-    left: -1px;    /* ← evita halos en esquinas */
-    right: -1px;
-    bottom: -1px;
-    border-radius: inherit;
-    background: #fff;
-    z-index: 1;
 }
 
 .tarjeta-tipo-sistema > * {
@@ -269,6 +230,8 @@ html,body{
   gap:1.5rem;
   justify-items:center;
   margin-top:2rem;
+  max-height: 520px;
+  overflow: visible;
 }
 
 /* Tarjeta individual de sistema */
@@ -518,9 +481,10 @@ html,body{
   display:flex;
   gap:2rem;
   width:100%;
-  height:calc(100vh - 180px);
-  overflow:auto; /* scroll aquí */
   padding-right:10px;
+  height: auto;
+  max-height: none;
+  overflow: visible;
 }
 
 /* columna izquierda y derecha (consistentes) */
@@ -539,13 +503,20 @@ html,body{
    ========================================================== */
 
 /* hero wrapper controla el estado "expanded" */
-.hero-wrapper{ position:relative; overflow:hidden; min-height:90vh; }
+.hero-wrapper{ position:relative; overflow:hidden; }
+
+.hero-wrapper,
+.tarjeta-expandida{
+  min-height: unset;
+  max-height: unset;
+  height: auto;
+}
 
 /* tarjeta-expandida: panel que aparece encima del layout al abrir un tipo */
 .tarjeta-expandida{
   position:relative;
   width:100%;
-  min-height:70vh;
+
   border-radius:1rem;
   overflow:hidden;
   display:flex;
@@ -553,10 +524,9 @@ html,body{
   justify-content:center;
   transition:transform .4s cubic-bezier(.2,.9,.3,1), opacity .3s ease;
   opacity:0;
-  transform:translateY(8px) scale(.995);
+  transform:none;        /* 🔥 clave */
   z-index:20;
   margin-bottom: 20px;      /* 🔥 espacio real debajo */
-  max-height: 95vh;         /* 🔥 evita que toque los bordes */
   border-radius: 1rem;      /* ya lo tienes, pero reforzamos */
 }
 
@@ -564,8 +534,6 @@ html,body{
 .hero-wrapper.expanded .tarjeta-expandida,
 .hero-wrapper.expanded .tarjeta-contenido{
   opacity:1;
-  transform:translateY(0) scale(1);
-  pointer-events:auto;
 }
 
 /* Imagen principal fija y limpia */
@@ -575,11 +543,9 @@ html,body{
   left: 0;
   width: 100vw;
   height: 100vh;
-
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-
   z-index: -1;
   pointer-events: none;
 
@@ -591,7 +557,6 @@ html,body{
 .hero-background::after {
   content: none !important;
 }
-
 
 /* Contenido en primer plano centrado (glass effect) */
 .tarjeta-contenido{
@@ -693,7 +658,6 @@ body.no-scroll{ overflow:hidden !important; }
 
 .seccion-resultados{
   overflow: hidden; /* nunca scroll */
-  
 }
 
 .tabla-resultados{
@@ -743,15 +707,12 @@ body.no-scroll{ overflow:hidden !important; }
   background: transparent;
   border: 1px solid transparent;
   box-shadow: none;
-
   padding: 0.45rem 0.75rem;   /* 👈 más delgado */
   font-size: 0.92rem;
   font-weight: 500;
   letter-spacing: 0.3px;
-
   color: #334155;
   border-radius: 0.5rem;
-
   transition:
     background .2s ease,
     color .2s ease,
@@ -777,20 +738,6 @@ body.no-scroll{ overflow:hidden !important; }
   padding-left: 0.6rem;
 }
 
-/* =========================================
-   🧱 Panel izquierdo — fondo técnico oscuro
-   ========================================= */
-
-.panel-izquierdo{
-  background: linear-gradient(
-    180deg,
-    #1e293b 0%,
-    #111827 100%
-  );
-  color: #e5e7eb;
-  border-right: 1px solid rgba(255,255,255,0.08);
-}
-
 .titulo-panel{
   color: #e5e7eb;
   opacity: 0.85;
@@ -808,16 +755,6 @@ body.no-scroll{ overflow:hidden !important; }
 .toggle-navegacion-fija button.activo{
   color: #ffffff;
   border-left: 3px solid #60a5fa;
-}
-
-/* =========================================
-   🧱 PANEL IZQUIERDO — FONDO OSCURO PREMIUM
-   ========================================= */
-
-.panel-izquierdo{
-  background: linear-gradient(180deg, #0f172a, #020617);
-  color: #e5e7eb;
-  border-right: 1px solid rgba(255,255,255,0.08);
 }
 
 /* =========================================
@@ -883,41 +820,106 @@ body.no-scroll{ overflow:hidden !important; }
   color: #e5e7eb;
 }
 
-/* =========================================
-   📦 COLAPSADO
-   ========================================= */
+/* =========================================================
+   🧱 PANEL IZQUIERDO — BASE ÚNICA (PREMIUM / DARK)
+   ========================================================= */
+
+.panel-izquierdo{
+  position: relative;
+  width: 280px;
+  min-width: 260px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem 1rem;
+  background: linear-gradient(180deg, #0f172a, #020617);
+  color: #e5e7eb;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Línea divisoria sutil (opcional pero elegante) */
+.panel-izquierdo::after{
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(96,165,250,0.35),
+    rgba(96,165,250,0.05)
+  );
+}
+
+/* =========================================================
+   📦 PANEL IZQUIERDO — COLAPSADO
+   ========================================================= */
 
 .panel-izquierdo.colapsado{
-  width:64px;
-  min-width:64px;
-  padding-left:0.5rem;
-  padding-right:0.5rem;
+  width: 64px;
+  min-width: 64px;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
 .panel-izquierdo.colapsado .toggle-navegacion-fija,
 .panel-izquierdo.colapsado .toggle-seccion{
-  display:none;
+  display: none;
 }
 
-/* =====================================
-   📊 Resultados generales — texto claro
-   SOLO panel izquierdo
-   ===================================== */
+/* =========================================================
+   🔝 HEADER ICONOS (HOME / COLAPSAR)
+   ========================================================= */
 
-.panel-izquierdo .tabla-resultados th{
-  color: #c7d2fe;   /* azul claro elegante */
+.panel-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
 }
 
-.panel-izquierdo .tabla-resultados td{
-  color: #e5e7eb;   /* gris claro, alta legibilidad */
+.icon-btn{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 6px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    background .2s ease,
+    transform .15s ease;
 }
 
-/* =========================================
-   🔘 Navegación izquierda — coherente en fondo oscuro
-   ========================================= */
+.icon-btn:hover{
+  background: rgba(255,255,255,0.14);
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   🔘 NAVEGACIÓN LATERAL — DARK COHERENTE
+   ========================================================= */
 
 .panel-izquierdo .toggle-navegacion-fija button{
-  color: #e5e7eb;                 /* texto claro */
+  background: transparent;
+  border: none;
+
+  color: #e5e7eb;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.5rem;
+
+  transition:
+    background .2s ease,
+    color .2s ease;
 }
 
 .panel-izquierdo .toggle-navegacion-fija button:hover{
@@ -925,10 +927,134 @@ body.no-scroll{ overflow:hidden !important; }
   color: #f8fafc;
 }
 
-/* ACTIVO: mismo color de texto, solo énfasis visual */
+/* Activo: MISMO COLOR, solo énfasis */
 .panel-izquierdo .toggle-navegacion-fija button.activo{
-  color: #f8fafc;                 /* ❗ NO azul */
+  color: #f8fafc;
   font-weight: 600;
+
   background: rgba(255,255,255,0.08);
-  border-left: 3px solid #60a5fa; /* azul elegante */
+  border-left: 3px solid #60a5fa;
+  border-radius: 0.25rem;
 }
+
+/* =========================================================
+   📊 RESULTADOS GENERALES — TEXTO CLARO
+   ========================================================= */
+
+.panel-izquierdo .tabla-resultados{
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.panel-izquierdo .tabla-resultados th{
+  color: #c7d2fe;
+  font-weight: 600;
+}
+
+.panel-izquierdo .tabla-resultados td{
+  color: #e5e7eb;
+  text-align: right;
+}
+
+/* =========================================
+   🔒 HEADER cuando el panel está colapsado
+   ========================================= */
+
+.panel-izquierdo.colapsado .panel-header{
+  justify-content: center;   /* botón centrado */
+}
+
+/* por si acaso (refuerzo visual) */
+.panel-izquierdo.colapsado .panel-header .icon-btn{
+  margin: 0;
+}
+
+/* =========================================================
+   🧭 NAVEGACIÓN VERTICAL — ICONOS PREMIUM
+   ========================================================= */
+
+.nav-vertical{
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1.25rem;
+}
+
+/* item base */
+.nav-item{
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+
+  background: transparent;
+  border: none;
+  border-radius: 0.6rem;
+
+  color: #e5e7eb;
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease;
+}
+
+/* icono */
+.nav-icon{
+  font-size: 1.15rem;
+  width: 24px;
+  text-align: center;
+}
+
+/* texto */
+.nav-text{
+  white-space: nowrap;
+}
+
+/* hover */
+.nav-item:hover{
+  background: rgba(255,255,255,0.06);
+  color: #f8fafc;
+}
+
+/* activo */
+.nav-item.activo{
+  background: rgba(96,165,250,0.15);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* =========================================================
+   📦 PANEL COLAPSADO — SOLO ICONOS
+   ========================================================= */
+
+.panel-izquierdo.colapsado .nav-item{
+  justify-content: center;
+  padding: 0.55rem;
+}
+
+.panel-izquierdo.colapsado .nav-icon{
+  font-size: 1.2rem;
+}
+
+/* =========================================================
+   🎞️ ANIMACIÓN SUAVE DEL PANEL
+   ========================================================= */
+
+.panel-izquierdo{
+  transition:
+    width 0.28s ease,
+    padding 0.28s ease;
+}
+
+/* suaviza contenido interno */
+.panel-izquierdo *{
+  transition: opacity 0.2s ease;
+}
+
