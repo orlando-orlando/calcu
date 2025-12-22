@@ -1058,3 +1058,307 @@ body.no-scroll{ overflow:hidden !important; }
   transition: opacity 0.2s ease;
 }
 
+/* =========================================
+   🧩 SELECTOR TÉCNICO DE SISTEMA
+   ========================================= */
+
+.selector-tecnico{
+  background: rgba(15,23,42,0.55);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 1.25rem;
+
+  /* 🔑 CLAVE */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+
+/* HEADER */
+.selector-header{
+  margin-bottom: 1rem;
+}
+
+.selector-titulo{
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.selector-subtitulo{
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* LISTA */
+.lista-sistemas{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  flex: 1;
+  justify-content: space-between; /* 🔑 CLAVE */
+
+  padding-bottom: 0.75rem;
+  overflow: hidden;
+}
+
+
+/* FILA */
+.fila-sistema{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 10px 12px;
+  border-radius: 8px;
+
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  min-height: 64px; /* o 64px si te gusta más */
+
+  cursor: pointer;
+  transition: background 160ms ease, border 160ms ease;
+}
+
+/* HOVER */
+.fila-sistema:hover{
+  background: rgba(255,255,255,0.05);
+}
+
+/* ACTIVO */
+.fila-sistema.activo{
+  background: linear-gradient(
+    90deg,
+    rgba(96,165,250,0.18),
+    rgba(96,165,250,0.06)
+  );
+
+  border-left: 3px solid #60a5fa;
+
+  box-shadow:
+    inset 0 0 0 1px rgba(96,165,250,0.15),
+    0 4px 10px rgba(0,0,0,0.25);
+
+  transform: translateX(2px);
+}
+
+.fila-sistema.hover:not(.activo){
+  background: rgba(255,255,255,0.06);
+}
+
+
+/* INFO */
+.sistema-info{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sistema-nombre{
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #f8fafc;
+}
+
+.sistema-meta{
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+/* IMAGEN */
+.sistema-imagen{
+  width: 56px;
+  height: 40px;
+  flex-shrink: 0;
+
+  border-radius: 6px;
+  overflow: hidden;
+
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sistema-imagen img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.9;
+}
+
+/* =========================================
+   🎞 Animación expansión vertical técnica
+   ========================================= */
+
+@keyframes expandVerticalSoft {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.selector-tecnico{
+  animation: expandVerticalSoft 0.35s ease-out forwards;
+}
+
+/* =========================================
+   🧱 Barra técnica inferior
+   ========================================= */
+
+.selector-footer{
+  flex-shrink: 0;
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+
+  border-top: 1px solid rgba(255,255,255,0.08);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 0.72rem;
+  color: #cbd5f5;
+  letter-spacing: 0.4px;
+}
+
+.selector-footer span{
+  opacity: 0.85;
+}
+
+/* =========================
+   FOOTER FIJO CON BLUR
+   ========================= */
+
+.selector-footer.fijo{
+  position: sticky;
+  bottom: 0;
+
+  margin-top: auto;
+  padding: 0.6rem 0.75rem;
+
+  background: rgba(15,23,42,0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  border-top: 1px solid rgba(255,255,255,0.08);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 0.72rem;
+  color: #cbd5f5;
+  letter-spacing: 0.35px;
+
+  z-index: 5;
+}
+
+/* =========================
+   🔢 BADGE DE CUERPOS
+   ========================= */
+
+.badge-cuerpo{
+  margin-left: 6px;
+  padding: 2px 6px;
+
+  font-size: 0.6rem;
+  font-weight: 600;
+  border-radius: 999px;
+
+  letter-spacing: 0.4px;
+  vertical-align: middle;
+}
+
+.badge-cuerpo.simple{
+  background: rgba(96,165,250,0.15);
+  color: #93c5fd;
+}
+
+.badge-cuerpo.doble{
+  background: rgba(34,197,94,0.18);
+  color: #86efac;
+}
+
+/* =========================
+   🖼️ PREVIEW IMAGEN TÉCNICO
+   ========================= */
+
+.sistema-imagen img{
+  transition:
+    transform 0.35s ease,
+    filter 0.35s ease;
+}
+
+.fila-sistema:hover .sistema-imagen img{
+  transform: scale(1.12);
+  filter: brightness(1.08);
+}
+
+.fila-sistema.activo .sistema-imagen img{
+  transform: scale(1.15);
+  filter: brightness(1.12);
+}
+
+/* =========================
+   📐 MODO EXPERTO / COMPACTO
+   ========================= */
+
+.modo-experto .fila-sistema{
+  padding: 10px 12px;
+}
+
+.modo-experto .sistema-nombre{
+  font-size: 0.8rem;
+}
+
+.modo-experto .sistema-meta{
+  font-size: 0.65rem;
+}
+
+.modo-experto .sistema-imagen{
+  width: 52px;
+  height: 36px;
+}
+
+.footer-highlight{
+  color: #e0e7ff;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.selector-footer.fijo:hover .footer-highlight{
+  color: #ffffff;
+}
+
+/* =========================================
+   🧠 TÍTULO DEL SISTEMA ACTIVO (HEADER)
+   ========================================= */
+
+.selector-titulo-sistema{
+  font-size: 0.95rem;        /* igual que labels técnicos */
+  font-weight: 600;
+  color: #f8fafc;
+
+  padding-left: 0.5rem;
+  border-left: 3px solid #60a5fa;
+
+  letter-spacing: 0.2px;
+}
+
+/* subtítulo técnico */
+.selector-subtitulo-tecnico{
+  margin-top: 2px;
+  font-size: 0.72rem;
+  color: #c7d2fe;
+  opacity: 0.85;
+}
