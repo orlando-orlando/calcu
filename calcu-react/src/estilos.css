@@ -1362,3 +1362,157 @@ body.no-scroll{ overflow:hidden !important; }
   color: #c7d2fe;
   opacity: 0.85;
 }
+
+/* =========================================
+   🧱 BLOQUE GENERAL DE INPUTS TÉCNICOS
+   ========================================= */
+
+.selector-bloque-inputs{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 1rem;
+}
+
+/* =========================================
+   📦 GRUPO (TARJETA TRANSPARENTE)
+   ========================================= */
+
+.selector-grupo{
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 0.9rem;
+
+  transition:
+    background 0.2s ease,
+    border 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.selector-grupo:hover{
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(96,165,250,0.25);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* subtítulo como fila-sistema */
+.selector-grupo .selector-subtitulo{
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.3px;
+  padding-left: 0.4rem;
+  border-left: 3px solid #60a5fa;
+}
+
+/* =========================================
+   🧩 GRID DE CAMPOS
+   ========================================= */
+
+.selector-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+/* =========================================
+   🔧 CAMPO INDIVIDUAL (LOOK FILA-SISTEMA)
+   ========================================= */
+
+.campo{
+  background: rgba(15,23,42,0.55);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  padding: 8px 10px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  transition:
+    background 0.2s ease,
+    border 0.2s ease;
+}
+
+.campo:hover{
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(96,165,250,0.35);
+}
+
+/* label estilo sistema */
+.campo label{
+  font-size: 0.65rem;
+  color: #c7d2fe;
+  letter-spacing: 0.4px;
+}
+
+/* input / select */
+.campo input,
+.campo select{
+  background: transparent;
+  border: none;
+  outline: none;
+
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 500;
+
+  padding: 4px 0;
+}
+
+/* placeholder */
+.campo input::placeholder{
+  color: #94a3b8;
+}
+
+/* =========================================
+   🔘 RADIOS TÉCNICOS (MISMO LOOK TARJETA)
+   ========================================= */
+
+.selector-radios{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin-top: 0.4rem;
+}
+
+.selector-radios label{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  background: rgba(15,23,42,0.55);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+
+  padding: 6px 8px;
+
+  font-size: 0.7rem;
+  color: #e5e7eb;
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border 0.2s ease,
+    color 0.2s ease;
+}
+
+.selector-radios label:hover{
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(96,165,250,0.35);
+  color: #ffffff;
+}
+
+.selector-radios input[type="radio"]{
+  accent-color: #60a5fa;
+}
+
+/* =========================================
+   🎞 ANIMACIÓN SUAVE DE APARICIÓN
+   ========================================= */
+
+.selector-grupo{
+  animation: expandVerticalSoft 0.35s ease-out both;
+}
