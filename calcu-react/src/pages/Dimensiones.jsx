@@ -194,7 +194,10 @@ export default function Dimensiones({ setSeccion }) {
         {tipoSeleccionado && renderCamposSistema()}
 
         <div className="lista-sistemas">
-          {Object.entries(sistemas).map(([key, s]) => (
+          {(tipoSeleccionado
+            ? [[tipoSeleccionado, sistemas[tipoSeleccionado]]]
+            : Object.entries(sistemas)
+          ).map(([key, s]) => (
             <div
               key={key}
               className={`fila-sistema ${tipoSeleccionado === key ? "activo" : ""}`}
