@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import "../estilos.css";
-import useCalculosHidraulicos from "../hooks/useCalculosHidraulicos";
 
 export default function Dimensiones({ setSeccion }) {
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
@@ -16,10 +15,18 @@ export default function Dimensiones({ setSeccion }) {
     largoInfinity: "",
     profCortina: "",
     motobombaInfinity: "",
-    largoCanal: ""
+    largoCanal: "",
+    tasaRotacion: "",   // 👈 NUEVO
+    uso: ""
   });
 
-  const { retorno } = useCalculosHidraulicos(datos, (n) => n.toFixed(2));
+    const tasasPorUso = {
+      residencial: 8,
+      publica: 6,
+      competencia: 6,
+      hidromasaje: 0.5,
+      parque: 4
+    };
 
   const sistemas = {
     alberca: { img: "./img/alberca.jpg", cuerpos: 1, desborde: true, nombre: "Alberca" },
@@ -83,16 +90,47 @@ export default function Dimensiones({ setSeccion }) {
           <div className="selector-subtitulo">Uso hidráulico</div>
 
           <div className="selector-grid">
+            {/* USO */}
             <div className="campo">
               <label>Uso</label>
-              <select>
-                <option>Residencial</option>
-                <option>Pública</option>
-                <option>Competencia</option>
-                <option>Parque acuático</option>
+              <select
+                value={datos.uso}
+                onChange={(e) => {
+                  const uso = e.target.value;
+                  setDatos((prev) => ({
+                    ...prev,
+                    uso,
+                    tasaRotacion: tasasPorUso[uso] ?? prev.tasaRotacion
+                  }));
+                }}
+              >
+                <option value="">Selecciona</option>
+                <option value="residencial">Residencial</option>
+                <option value="publica">Pública</option>
+                <option value="competencia">Competencia</option>
+                <option value="hidromasaje">Hidromasaje</option>
+                <option value="parque">Parque acuático</option>
               </select>
             </div>
 
+            {/* TASA DE ROTACIÓN */}
+            <div className="campo">
+              <label>Tasa de rotación (h)</label>
+              <select
+                value={datos.tasaRotacion}
+                onChange={(e) =>
+                  setDatos({ ...datos, tasaRotacion: e.target.value })
+                }
+              >
+                {[0.5, 1, 2, 3, 4, 6, 8, 12, 24].map((v) => (
+                  <option key={v} value={v}>
+                    {v}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* DISTANCIA */}
             <div className="campo">
               <label>Distancia a cuarto (m)</label>
               <input
