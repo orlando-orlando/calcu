@@ -1516,3 +1516,26 @@ body.no-scroll{ overflow:hidden !important; }
 .selector-grupo{
   animation: expandVerticalSoft 0.35s ease-out both;
 }
+
+/* SELECT CERRADO */
+select {
+  color: #ffffff;           /* texto blanco */
+  background-color: #1e1e1e; /* tu fondo oscuro */
+}
+
+/* OPCIONES DEL DROPDOWN */
+select option {
+  color: #000000;           /* texto negro */
+  background-color: #ffffff; /* fondo blanco */
+}
+
+/* OPCIÓN SELECCIONADA */
+select option:checked {
+  background-color: #e5e7eb;
+  color: #000000;
+}
+
+/* HOVER (algunos navegadores lo respetan) */
+select option:hover {
+  background-color: #d1d5db;
+}

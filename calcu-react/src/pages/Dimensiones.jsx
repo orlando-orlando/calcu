@@ -1,7 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState, useImperativeHandle, forwardRef } from "react";
 import "../estilos.css";
 
-export default function Dimensiones({ setSeccion }) {
+const Dimensiones = forwardRef(({ setSeccion }, ref) => {
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [hoveredTipo, setHoveredTipo] = useState(null);
   const [hoveredField, setHoveredField] = useState(null);
@@ -14,19 +14,37 @@ export default function Dimensiones({ setSeccion }) {
     desborde: "",
     largoInfinity: "",
     profCortina: "",
-    motobombaInfinity: "",
     largoCanal: "",
-    tasaRotacion: "",   // 👈 NUEVO
+    tasaRotacion: "",
     uso: ""
   });
 
-    const tasasPorUso = {
-      residencial: 8,
-      publica: 6,
-      competencia: 6,
-      hidromasaje: 0.5,
-      parque: 4
-    };
+  const descripcionesCampos = {
+    area: "Área superficial del cuerpo de agua",
+    profMin: "Profundidad mínima operativa",
+    profMax: "Profundidad máxima operativa",
+    uso: "Tipo de uso hidráulico del sistema",
+    tasaRotacion: "Tiempo en horas para renovar el volumen total",
+    distCuarto: "Distancia entre el cuerpo de agua y el cuarto de máquinas",
+    desborde: "Tipo de sistema de desborde del agua",
+    largoInfinity: "Longitud total del borde infinity",
+    profCortina: "Altura de la cortina hidráulica",
+    largoCanal: "Longitud del canal de desborde"
+  };
+
+  useImperativeHandle(ref, () => ({
+    resetDimensiones() {
+      setTipoSeleccionado(null);
+    }
+  }));
+
+  const tasasPorUso = {
+    residencial: 8,
+    publica: 6,
+    competencia: 6,
+    hidromasaje: 0.5,
+    parque: 4
+  };
 
   const sistemas = {
     alberca: { img: "./img/alberca.jpg", cuerpos: 1, desborde: true, nombre: "Alberca" },
@@ -48,7 +66,6 @@ export default function Dimensiones({ setSeccion }) {
 
     return (
       <div className="selector-bloque-inputs">
-
         {[...Array(config.cuerpos)].map((_, i) => (
           <div key={i} className="selector-grupo">
             <div className="selector-subtitulo">
@@ -62,6 +79,8 @@ export default function Dimensiones({ setSeccion }) {
                   type="number"
                   value={datos.area}
                   onChange={(e) => setDatos({ ...datos, area: e.target.value })}
+                  onMouseEnter={() => setHoveredField("area")}
+                  onMouseLeave={() => setHoveredField(null)}
                 />
               </div>
 
@@ -71,6 +90,8 @@ export default function Dimensiones({ setSeccion }) {
                   type="number"
                   value={datos.profMin}
                   onChange={(e) => setDatos({ ...datos, profMin: e.target.value })}
+                  onMouseEnter={() => setHoveredField("profMin")}
+                  onMouseLeave={() => setHoveredField(null)}
                 />
               </div>
 
@@ -80,6 +101,8 @@ export default function Dimensiones({ setSeccion }) {
                   type="number"
                   value={datos.profMax}
                   onChange={(e) => setDatos({ ...datos, profMax: e.target.value })}
+                  onMouseEnter={() => setHoveredField("profMax")}
+                  onMouseLeave={() => setHoveredField(null)}
                 />
               </div>
             </div>
@@ -90,7 +113,6 @@ export default function Dimensiones({ setSeccion }) {
           <div className="selector-subtitulo">Uso hidráulico</div>
 
           <div className="selector-grid">
-            {/* USO */}
             <div className="campo">
               <label>Uso</label>
               <select
@@ -103,6 +125,8 @@ export default function Dimensiones({ setSeccion }) {
                     tasaRotacion: tasasPorUso[uso] ?? prev.tasaRotacion
                   }));
                 }}
+                onMouseEnter={() => setHoveredField("uso")}
+                onMouseLeave={() => setHoveredField(null)}
               >
                 <option value="">Selecciona</option>
                 <option value="residencial">Residencial</option>
@@ -113,32 +137,28 @@ export default function Dimensiones({ setSeccion }) {
               </select>
             </div>
 
-            {/* TASA DE ROTACIÓN */}
             <div className="campo">
               <label>Tasa de rotación (h)</label>
               <select
                 value={datos.tasaRotacion}
-                onChange={(e) =>
-                  setDatos({ ...datos, tasaRotacion: e.target.value })
-                }
+                onChange={(e) => setDatos({ ...datos, tasaRotacion: e.target.value })}
+                onMouseEnter={() => setHoveredField("tasaRotacion")}
+                onMouseLeave={() => setHoveredField(null)}
               >
                 {[0.5, 1, 2, 3, 4, 6, 8, 12, 24].map((v) => (
-                  <option key={v} value={v}>
-                    {v}
-                  </option>
+                  <option key={v} value={v}>{v}</option>
                 ))}
               </select>
             </div>
 
-            {/* DISTANCIA */}
             <div className="campo">
               <label>Distancia a cuarto (m)</label>
               <input
                 type="number"
                 value={datos.distCuarto}
-                onChange={(e) =>
-                  setDatos({ ...datos, distCuarto: e.target.value })
-                }
+                onChange={(e) => setDatos({ ...datos, distCuarto: e.target.value })}
+                onMouseEnter={() => setHoveredField("distCuarto")}
+                onMouseLeave={() => setHoveredField(null)}
               />
             </div>
           </div>
@@ -150,7 +170,11 @@ export default function Dimensiones({ setSeccion }) {
 
             <div className="selector-radios">
               {["infinity", "canal", "ambos", "ninguno"].map((v) => (
-                <label key={v}>
+                <label
+                  key={v}
+                  onMouseEnter={() => setHoveredField("desborde")}
+                  onMouseLeave={() => setHoveredField(null)}
+                >
                   <input
                     type="radio"
                     checked={datos.desborde === v}
@@ -168,9 +192,9 @@ export default function Dimensiones({ setSeccion }) {
                   <input
                     type="number"
                     value={datos.largoInfinity}
-                    onChange={(e) =>
-                      setDatos({ ...datos, largoInfinity: e.target.value })
-                    }
+                    onChange={(e) => setDatos({ ...datos, largoInfinity: e.target.value })}
+                    onMouseEnter={() => setHoveredField("largoInfinity")}
+                    onMouseLeave={() => setHoveredField(null)}
                   />
                 </div>
 
@@ -179,9 +203,9 @@ export default function Dimensiones({ setSeccion }) {
                   <input
                     type="number"
                     value={datos.profCortina}
-                    onChange={(e) =>
-                      setDatos({ ...datos, profCortina: e.target.value })
-                    }
+                    onChange={(e) => setDatos({ ...datos, profCortina: e.target.value })}
+                    onMouseEnter={() => setHoveredField("profCortina")}
+                    onMouseLeave={() => setHoveredField(null)}
                   />
                 </div>
               </div>
@@ -193,9 +217,9 @@ export default function Dimensiones({ setSeccion }) {
                 <input
                   type="number"
                   value={datos.largoCanal}
-                  onChange={(e) =>
-                    setDatos({ ...datos, largoCanal: e.target.value })
-                  }
+                  onChange={(e) => setDatos({ ...datos, largoCanal: e.target.value })}
+                  onMouseEnter={() => setHoveredField("largoCanal")}
+                  onMouseLeave={() => setHoveredField(null)}
                 />
               </div>
             )}
@@ -268,11 +292,18 @@ export default function Dimensiones({ setSeccion }) {
               ? `Sistema ${Object.keys(sistemas).indexOf(hoveredTipo) + 1} / ${Object.keys(sistemas).length}`
               : `${Object.keys(sistemas).length} sistemas`}
           </span>
+
           <span className="footer-highlight">
-            {hoveredTipo ? sistemas[hoveredTipo].nombre : "Modo ingeniería"}
+            {hoveredField
+              ? descripcionesCampos[hoveredField]
+              : hoveredTipo
+                ? sistemas[hoveredTipo].nombre
+                : "Modo ingeniería"}
           </span>
         </div>
       </div>
     </div>
   );
-}
+});
+
+export default Dimensiones;

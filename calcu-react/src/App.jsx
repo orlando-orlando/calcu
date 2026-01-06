@@ -1,5 +1,5 @@
 import "./estilos.css";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Home, ChevronLeft, ChevronRight } from "lucide-react";
 
 import Footer from "./components/Footer.jsx";
@@ -11,6 +11,17 @@ export default function App() {
   const [seccion, setSeccion] = useState("dimensiones");
   const [panelColapsado, setPanelColapsado] = useState(false);
 
+  // 👉 REF PARA CONTROLAR DIMENSIONES
+  const dimensionesRef = useRef(null);
+
+  const handleHome = () => {
+    // Siempre ir a Dimensiones
+    setSeccion("dimensiones");
+
+    // Si Dimensiones ya está montado, resetea su estado interno
+    dimensionesRef.current?.resetDimensiones();
+  };
+
   return (
     <div className="app-contenedor">
 
@@ -19,35 +30,35 @@ export default function App() {
       ========================== */}
       <div className={`panel-izquierdo ${panelColapsado ? "colapsado" : ""}`}>
 
-      {/* HEADER ICONOS */}
-      <div className={`panel-header ${panelColapsado ? "solo-colapsar" : ""}`}>
+        {/* HEADER ICONOS */}
+        <div className={`panel-header ${panelColapsado ? "solo-colapsar" : ""}`}>
 
-        {!panelColapsado && (
+          {!panelColapsado && (
+            <button
+              className="icon-btn"
+              title="Inicio"
+              onClick={handleHome}
+            >
+              <Home size={20} />
+            </button>
+          )}
+
           <button
             className="icon-btn"
-            title="Inicio"
-            onClick={() => setSeccion("dimensiones")}
+            title={panelColapsado ? "Expandir panel" : "Contraer panel"}
+            onClick={() => setPanelColapsado(!panelColapsado)}
           >
-            <Home size={20} />
+            {panelColapsado ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </button>
-        )}
 
-        <button
-          className="icon-btn"
-          title={panelColapsado ? "Expandir panel" : "Contraer panel"}
-          onClick={() => setPanelColapsado(!panelColapsado)}
-        >
-          {panelColapsado ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-        </button>
-
-      </div>
+        </div>
 
         {/* NAVEGACIÓN */}
         <div className="nav-vertical">
 
           <button
             className={`nav-item ${seccion === "dimensiones" ? "activo" : ""}`}
-            onClick={() => setSeccion("dimensiones")}
+            onClick={handleHome}
             title="Dimensiones"
           >
             <span className="nav-icon">📐</span>
@@ -73,7 +84,6 @@ export default function App() {
           </button>
 
         </div>
-
 
         {/* RESULTADOS GENERALES (NO SE TOCA) */}
         <div className="toggle-seccion unida">
@@ -127,9 +137,20 @@ export default function App() {
       ========================== */}
       <div className="panel-derecho">
         <div className="panel-derecho-contenido">
-          {seccion === "dimensiones" && <Dimensiones setSeccion={setSeccion} />}
-          {seccion === "calentamiento" && <Calentamiento setSeccion={setSeccion} />}
-          {seccion === "equipamiento" && <Equipamiento setSeccion={setSeccion} />}
+          {seccion === "dimensiones" && (
+            <Dimensiones
+              ref={dimensionesRef}
+              setSeccion={setSeccion}
+            />
+          )}
+
+          {seccion === "calentamiento" && (
+            <Calentamiento setSeccion={setSeccion} />
+          )}
+
+          {seccion === "equipamiento" && (
+            <Equipamiento setSeccion={setSeccion} />
+          )}
         </div>
       </div>
 
