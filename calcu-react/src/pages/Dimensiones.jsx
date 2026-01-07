@@ -7,9 +7,9 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
   const [hoveredField, setHoveredField] = useState(null);
 
   const [datos, setDatos] = useState({
-    area: "",
-    profMin: "",
-    profMax: "",
+    cuerpos: [
+      { area: "", profMin: "", profMax: "" }
+    ],
     distCuarto: "",
     desborde: "",
     largoInfinity: "",
@@ -66,7 +66,7 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
 
     return (
       <div className="selector-bloque-inputs">
-        {[...Array(config.cuerpos)].map((_, i) => (
+          {datos.cuerpos.map((cuerpo, i) => (
           <div key={i} className="selector-grupo">
             <div className="selector-subtitulo">
               Dimensiones físicas {config.cuerpos > 1 && `(Cuerpo ${i + 1})`}
@@ -77,8 +77,13 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
                 <label>Área (m²)</label>
                 <input
                   type="number"
-                  value={datos.area}
-                  onChange={(e) => setDatos({ ...datos, area: e.target.value })}
+                  value={cuerpo.area}
+                  onChange={(e) => {
+                    const cuerpos = [...datos.cuerpos];
+                    cuerpos[i].area = e.target.value;
+                    setDatos({ ...datos, cuerpos });
+                  }}
+
                   onMouseEnter={() => setHoveredField("area")}
                   onMouseLeave={() => setHoveredField(null)}
                 />
@@ -88,8 +93,12 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
                 <label>Prof. mínima (m)</label>
                 <input
                   type="number"
-                  value={datos.profMin}
-                  onChange={(e) => setDatos({ ...datos, profMin: e.target.value })}
+                  value={cuerpo.profMin}
+                  onChange={(e) => {
+                    const cuerpos = [...datos.cuerpos];
+                    cuerpos[i].profMin = e.target.value;
+                    setDatos({ ...datos, cuerpos });
+                  }}
                   onMouseEnter={() => setHoveredField("profMin")}
                   onMouseLeave={() => setHoveredField(null)}
                 />
@@ -99,8 +108,12 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
                 <label>Prof. máxima (m)</label>
                 <input
                   type="number"
-                  value={datos.profMax}
-                  onChange={(e) => setDatos({ ...datos, profMax: e.target.value })}
+                  value={cuerpo.profMax}
+                  onChange={(e) => {
+                    const cuerpos = [...datos.cuerpos];
+                    cuerpos[i].profMax = e.target.value;
+                    setDatos({ ...datos, cuerpos });
+                  }}
                   onMouseEnter={() => setHoveredField("profMax")}
                   onMouseLeave={() => setHoveredField(null)}
                 />
@@ -263,7 +276,17 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
             <div
               key={key}
               className={`fila-sistema ${tipoSeleccionado === key ? "activo" : ""}`}
-              onClick={() => setTipoSeleccionado(key)}
+              onClick={() => {
+                setTipoSeleccionado(key);
+                setDatos((prev) => ({
+                  ...prev,
+                  cuerpos: Array.from({ length: s.cuerpos }, () => ({
+                    area: "",
+                    profMin: "",
+                    profMax: ""
+                  }))
+                }));
+              }}
               onMouseEnter={() => setHoveredTipo(key)}
               onMouseLeave={() => setHoveredTipo(null)}
             >
