@@ -1,15 +1,21 @@
 import { useState, useImperativeHandle, forwardRef } from "react";
 import "../estilos.css";
 
-const Dimensiones = forwardRef(({ setSeccion }, ref) => {
+  const Dimensiones = forwardRef(({ setSeccion }, ref) => {
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [hoveredTipo, setHoveredTipo] = useState(null);
   const [hoveredField, setHoveredField] = useState(null);
 
-  const [datos, setDatos] = useState({
-    cuerpos: [
-      { area: "", profMin: "", profMax: "" }
-    ],
+
+  const [datosPorSistema, setDatosPorSistema] = useState({});
+  const [datos, setDatos] = useState(null);
+
+  const crearDatosSistema = (cuerpos) => ({
+    cuerpos: Array.from({ length: cuerpos }, () => ({
+      area: "",
+      profMin: "",
+      profMax: ""
+    })),
     distCuarto: "",
     desborde: "",
     largoInfinity: "",
@@ -18,6 +24,19 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
     tasaRotacion: "",
     uso: ""
   });
+
+const actualizarDatos = (patch) => {
+  setDatos((prev) => {
+    const nuevos = { ...prev, ...patch };
+
+    setDatosPorSistema((mapa) => ({
+      ...mapa,
+      [tipoSeleccionado]: nuevos
+    }));
+
+    return nuevos;
+  });
+};
 
   const descripcionesCampos = {
     area: "Área superficial del cuerpo de agua",
@@ -81,7 +100,7 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
                   onChange={(e) => {
                     const cuerpos = [...datos.cuerpos];
                     cuerpos[i].area = e.target.value;
-                    setDatos({ ...datos, cuerpos });
+                    actualizarDatos({ cuerpos });
                   }}
 
                   onMouseEnter={() => setHoveredField("area")}
@@ -97,7 +116,7 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
                   onChange={(e) => {
                     const cuerpos = [...datos.cuerpos];
                     cuerpos[i].profMin = e.target.value;
-                    setDatos({ ...datos, cuerpos });
+                    actualizarDatos({ cuerpos });
                   }}
                   onMouseEnter={() => setHoveredField("profMin")}
                   onMouseLeave={() => setHoveredField(null)}
@@ -112,7 +131,7 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
                   onChange={(e) => {
                     const cuerpos = [...datos.cuerpos];
                     cuerpos[i].profMax = e.target.value;
-                    setDatos({ ...datos, cuerpos });
+                    actualizarDatos({ cuerpos });
                   }}
                   onMouseEnter={() => setHoveredField("profMax")}
                   onMouseLeave={() => setHoveredField(null)}
@@ -132,11 +151,10 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
                 value={datos.uso}
                 onChange={(e) => {
                   const uso = e.target.value;
-                  setDatos((prev) => ({
-                    ...prev,
+                  actualizarDatos({
                     uso,
-                    tasaRotacion: tasasPorUso[uso] ?? prev.tasaRotacion
-                  }));
+                    tasaRotacion: tasasPorUso[uso] ?? datos.tasaRotacion
+                  });
                 }}
                 onMouseEnter={() => setHoveredField("uso")}
                 onMouseLeave={() => setHoveredField(null)}
@@ -154,7 +172,9 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
               <label>Tasa de rotación (h)</label>
               <select
                 value={datos.tasaRotacion}
-                onChange={(e) => setDatos({ ...datos, tasaRotacion: e.target.value })}
+                onChange={(e) =>
+                  actualizarDatos({ tasaRotacion: e.target.value })
+                }
                 onMouseEnter={() => setHoveredField("tasaRotacion")}
                 onMouseLeave={() => setHoveredField(null)}
               >
@@ -169,7 +189,9 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
               <input
                 type="number"
                 value={datos.distCuarto}
-                onChange={(e) => setDatos({ ...datos, distCuarto: e.target.value })}
+                onChange={(e) =>
+                  actualizarDatos({ distCuarto: e.target.value })
+                }
                 onMouseEnter={() => setHoveredField("distCuarto")}
                 onMouseLeave={() => setHoveredField(null)}
               />
@@ -191,7 +213,7 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
                   <input
                     type="radio"
                     checked={datos.desborde === v}
-                    onChange={() => setDatos({ ...datos, desborde: v })}
+                    onChange={() => actualizarDatos({ desborde: v })}
                   />
                   {v}
                 </label>
@@ -205,7 +227,9 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
                   <input
                     type="number"
                     value={datos.largoInfinity}
-                    onChange={(e) => setDatos({ ...datos, largoInfinity: e.target.value })}
+                    onChange={(e) =>
+                      actualizarDatos({ largoInfinity: e.target.value })
+                    }
                     onMouseEnter={() => setHoveredField("largoInfinity")}
                     onMouseLeave={() => setHoveredField(null)}
                   />
@@ -216,7 +240,9 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
                   <input
                     type="number"
                     value={datos.profCortina}
-                    onChange={(e) => setDatos({ ...datos, profCortina: e.target.value })}
+                    onChange={(e) =>
+                      actualizarDatos({ profCortina: e.target.value })
+                    }
                     onMouseEnter={() => setHoveredField("profCortina")}
                     onMouseLeave={() => setHoveredField(null)}
                   />
@@ -230,7 +256,9 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
                 <input
                   type="number"
                   value={datos.largoCanal}
-                  onChange={(e) => setDatos({ ...datos, largoCanal: e.target.value })}
+                  onChange={(e) =>
+                    actualizarDatos({ largoCanal: e.target.value })
+                  }
                   onMouseEnter={() => setHoveredField("largoCanal")}
                   onMouseLeave={() => setHoveredField(null)}
                 />
@@ -266,7 +294,33 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
           )}
         </div>
 
-        {tipoSeleccionado && renderCamposSistema()}
+        {tipoSeleccionado && (
+          <div className="selector-acciones">
+            <button
+              className="btn-secundario"
+              onClick={() => {
+                setTipoSeleccionado(null);
+                setDatos(null);
+              }}
+            >
+              ← Volver a Dimensiones
+            </button>
+
+            <button
+              className="btn-primario"
+              disabled={!datos?.uso || !datos?.cuerpos?.[0]?.area}
+              onClick={() => setSeccion("calentamiento")}
+            >
+              Ir a Calentamiento →
+            </button>
+          </div>
+        )}
+
+        {tipoSeleccionado && (
+          <div className="selector-contenido">
+            {renderCamposSistema()}
+          </div>
+        )}
 
         <div className="lista-sistemas">
           {(tipoSeleccionado
@@ -278,15 +332,25 @@ const Dimensiones = forwardRef(({ setSeccion }, ref) => {
               className={`fila-sistema ${tipoSeleccionado === key ? "activo" : ""}`}
               onClick={() => {
                 setTipoSeleccionado(key);
-                setDatos((prev) => ({
-                  ...prev,
-                  cuerpos: Array.from({ length: s.cuerpos }, () => ({
-                    area: "",
-                    profMin: "",
-                    profMax: ""
-                  }))
-                }));
+
+                setDatosPorSistema((prev) => {
+                  // si ya existe, lo usamos
+                  if (prev[key]) {
+                    setDatos(prev[key]);
+                    return prev;
+                  }
+
+                  // si no existe, lo creamos
+                  const nuevo = crearDatosSistema(s.cuerpos);
+                  setDatos(nuevo);
+
+                  return {
+                    ...prev,
+                    [key]: nuevo
+                  };
+                });
               }}
+
               onMouseEnter={() => setHoveredTipo(key)}
               onMouseLeave={() => setHoveredTipo(null)}
             >

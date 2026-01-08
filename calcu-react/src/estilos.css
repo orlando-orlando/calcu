@@ -1068,12 +1068,23 @@ body.no-scroll{ overflow:hidden !important; }
   border-radius: 12px;
   padding: 1.25rem;
 
-  /* 🔑 CLAVE */
   display: flex;
   flex-direction: column;
-  height: 100%;
+
+  /* 🔑 CLAVE ABSOLUTA */
+  height: calc(100vh - 3rem);   /* ajusta si tu header global cambia */
+  max-height: calc(100vh - 3rem);
+
+  overflow: hidden;             /* ⛔ NUNCA crecer */
 }
 
+.selector-contenido{
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-right: 6px; /* espacio scrollbar */
+}
 
 /* HEADER */
 .selector-header{
@@ -1098,12 +1109,10 @@ body.no-scroll{ overflow:hidden !important; }
   flex-direction: column;
   gap: 12px;
 
-  flex: 1;
-  justify-content: space-between; /* 🔑 CLAVE */
-
-  padding-bottom: 0.75rem;
+  flex-shrink: 0;   /* 🔑 NO empuja */
   overflow: hidden;
 }
+
 
 
 /* FILA */
@@ -1235,6 +1244,16 @@ body.no-scroll{ overflow:hidden !important; }
   opacity: 0.85;
 }
 
+.selector-contenido{
+  animation: fadeInSoft 0.2s ease;
+}
+
+@keyframes fadeInSoft{
+  from{ opacity:0.85; }
+  to{ opacity:1; }
+}
+
+
 /* =========================
    FOOTER FIJO CON BLUR
    ========================= */
@@ -1242,7 +1261,7 @@ body.no-scroll{ overflow:hidden !important; }
 .selector-footer.fijo{
   position: sticky;
   bottom: 0;
-
+  flex-shrink: 0;
   margin-top: auto;
   padding: 0.6rem 0.75rem;
 
@@ -1538,4 +1557,60 @@ select option:checked {
 /* HOVER (algunos navegadores lo respetan) */
 select option:hover {
   background-color: #d1d5db;
+}
+
+.selector-acciones{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+
+  margin: 12px 0 16px 0;
+  padding-bottom: 12px;
+
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.btn-secundario{
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #e5e7eb;
+
+  padding: 8px 14px;
+  border-radius: 8px;
+
+  font-size: 0.85rem;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.btn-secundario:hover{
+  background: rgba(255,255,255,0.05);
+}
+
+.btn-primario{
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border: none;
+  color: white;
+
+  padding: 8px 16px;
+  border-radius: 8px;
+
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-primario:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37,99,235,0.35);
+}
+
+.btn-primario:disabled{
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
 }
