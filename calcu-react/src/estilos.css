@@ -1614,3 +1614,37 @@ select option:hover {
   cursor: not-allowed;
   box-shadow: none;
 }
+
+/* =========================
+   🎬 TRANSICIÓN REGRESO DIMENSIONES
+   ========================= */
+
+.selector-contenido.entrada{
+  animation: fadeInUpSoft 0.22s ease forwards;
+}
+
+.selector-contenido.salida{
+  animation: fadeOutDownSoft 0.22s ease forwards;
+}
+
+@keyframes fadeInUpSoft{
+  from{
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to{
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutDownSoft{
+  from{
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to{
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}

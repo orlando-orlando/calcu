@@ -5,6 +5,7 @@ import "../estilos.css";
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [hoveredTipo, setHoveredTipo] = useState(null);
   const [hoveredField, setHoveredField] = useState(null);
+  const [animandoSalida, setAnimandoSalida] = useState(false);
 
 
   const [datosPorSistema, setDatosPorSistema] = useState({});
@@ -299,8 +300,13 @@ const actualizarDatos = (patch) => {
             <button
               className="btn-secundario"
               onClick={() => {
-                setTipoSeleccionado(null);
-                setDatos(null);
+                setAnimandoSalida(true);
+
+                setTimeout(() => {
+                  setTipoSeleccionado(null);
+                  setDatos(null);
+                  setAnimandoSalida(false);
+                }, 220);
               }}
             >
               ← Volver a Dimensiones
@@ -316,11 +322,11 @@ const actualizarDatos = (patch) => {
           </div>
         )}
 
-        {tipoSeleccionado && (
-          <div className="selector-contenido">
-            {renderCamposSistema()}
-          </div>
-        )}
+          {tipoSeleccionado && (
+            <div className={`selector-contenido ${animandoSalida ? "salida" : "entrada"}`}>
+              {renderCamposSistema()}
+            </div>
+          )}
 
         <div className="lista-sistemas">
           {(tipoSeleccionado
