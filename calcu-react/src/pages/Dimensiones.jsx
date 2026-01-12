@@ -1,13 +1,11 @@
-import { useState, useImperativeHandle, forwardRef } from "react";
+import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import "../estilos.css";
 
-  const Dimensiones = forwardRef(({ setSeccion }, ref) => {
+  const Dimensiones = forwardRef(({ setSeccion, sistemaActivo, setSistemaActivo }, ref) => {
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [hoveredTipo, setHoveredTipo] = useState(null);
   const [hoveredField, setHoveredField] = useState(null);
   const [animandoSalida, setAnimandoSalida] = useState(false);
-
-
   const [datosPorSistema, setDatosPorSistema] = useState({});
   const [datos, setDatos] = useState(null);
 
@@ -55,6 +53,8 @@ const actualizarDatos = (patch) => {
   useImperativeHandle(ref, () => ({
     resetDimensiones() {
       setTipoSeleccionado(null);
+      setSistemaActivo(null);
+      setDatos(null);
     }
   }));
 
@@ -81,8 +81,29 @@ const actualizarDatos = (patch) => {
 
   const config = tipoSeleccionado ? sistemas[tipoSeleccionado] : null;
 
+          useEffect(() => {
+          if (sistemaActivo && sistemas[sistemaActivo]) {
+            setTipoSeleccionado(sistemaActivo);
+
+            setDatosPorSistema((prev) => {
+              if (prev[sistemaActivo]) {
+                setDatos(prev[sistemaActivo]);
+                return prev;
+              }
+
+              const nuevo = crearDatosSistema(sistemas[sistemaActivo].cuerpos);
+              setDatos(nuevo);
+
+              return {
+                ...prev,
+                [sistemaActivo]: nuevo
+              };
+            });
+          }
+        }, [sistemaActivo]);
+
   const renderCamposSistema = () => {
-    if (!config) return null;
+  if (!config || !datos) return null;
 
     return (
       <div className="selector-bloque-inputs">
@@ -270,7 +291,7 @@ const actualizarDatos = (patch) => {
       </div>
     );
   };
-
+        
   return (
     <div className="form-section hero-wrapper">
       <div className="selector-tecnico modo-experto">
@@ -304,6 +325,7 @@ const actualizarDatos = (patch) => {
 
                 setTimeout(() => {
                   setTipoSeleccionado(null);
+                  setSistemaActivo(null); 
                   setDatos(null);
                   setAnimandoSalida(false);
                 }, 220);
@@ -338,6 +360,7 @@ const actualizarDatos = (patch) => {
               className={`fila-sistema ${tipoSeleccionado === key ? "activo" : ""}`}
               onClick={() => {
                 setTipoSeleccionado(key);
+                setSistemaActivo(key); // 👈 CLAVE
 
                 setDatosPorSistema((prev) => {
                   // si ya existe, lo usamos

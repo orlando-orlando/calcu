@@ -11,14 +11,15 @@ export default function App() {
   const [seccion, setSeccion] = useState("dimensiones");
   const [panelColapsado, setPanelColapsado] = useState(false);
 
-  // 👉 REF PARA CONTROLAR DIMENSIONES
+  // ✅ sistema activo GLOBAL (skimmer, desborde, etc.)
+  const [sistemaActivo, setSistemaActivo] = useState(null);
+
+  // 👉 REF PARA CONTROLAR RESET DE DIMENSIONES (SOLO HOME)
   const dimensionesRef = useRef(null);
 
   const handleHome = () => {
-    // Siempre ir a Dimensiones
     setSeccion("dimensiones");
-
-    // Si Dimensiones ya está montado, resetea su estado interno
+    setSistemaActivo(null); // 🔥 reset total SOLO con Home
     dimensionesRef.current?.resetDimensiones();
   };
 
@@ -48,7 +49,11 @@ export default function App() {
             title={panelColapsado ? "Expandir panel" : "Contraer panel"}
             onClick={() => setPanelColapsado(!panelColapsado)}
           >
-            {panelColapsado ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+            {panelColapsado ? (
+              <ChevronRight size={20} />
+            ) : (
+              <ChevronLeft size={20} />
+            )}
           </button>
 
         </div>
@@ -85,7 +90,7 @@ export default function App() {
 
         </div>
 
-        {/* RESULTADOS GENERALES (NO SE TOCA) */}
+        {/* RESULTADOS GENERALES */}
         <div className="toggle-seccion unida">
           <div className="toggle-boton activo">
             <h3>📊 Resultados generales</h3>
@@ -137,23 +142,29 @@ export default function App() {
       ========================== */}
       <div className="panel-derecho">
         <div className="panel-derecho-contenido">
+
           {seccion === "dimensiones" && (
             <Dimensiones
               ref={dimensionesRef}
               setSeccion={setSeccion}
+              sistemaActivo={sistemaActivo}
+              setSistemaActivo={setSistemaActivo}
             />
           )}
 
           {seccion === "calentamiento" && (
-            <Calentamiento setSeccion={setSeccion} />
+            <Calentamiento
+              setSeccion={setSeccion}
+              sistemaActivo={sistemaActivo}
+            />
           )}
 
           {seccion === "equipamiento" && (
             <Equipamiento setSeccion={setSeccion} />
           )}
+
         </div>
       </div>
-
-    </div>
+   </div>
   );
 }
