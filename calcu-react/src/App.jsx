@@ -2,7 +2,6 @@ import "./estilos.css";
 import { useState, useRef } from "react";
 import { Home, ChevronLeft, ChevronRight } from "lucide-react";
 
-import Footer from "./components/Footer.jsx";
 import Dimensiones from "./pages/Dimensiones.jsx";
 import Calentamiento from "./pages/Calentamiento.jsx";
 import Equipamiento from "./pages/Equipamiento.jsx";
@@ -10,6 +9,7 @@ import Equipamiento from "./pages/Equipamiento.jsx";
 export default function App() {
   const [seccion, setSeccion] = useState("dimensiones");
   const [panelColapsado, setPanelColapsado] = useState(false);
+  const [datosPorSistema, setDatosPorSistema] = useState({});
 
   // ✅ sistema activo GLOBAL (skimmer, desborde, etc.)
   const [sistemaActivo, setSistemaActivo] = useState(null);
@@ -149,6 +149,8 @@ export default function App() {
               setSeccion={setSeccion}
               sistemaActivo={sistemaActivo}
               setSistemaActivo={setSistemaActivo}
+              datosPorSistema={datosPorSistema}
+              setDatosPorSistema={setDatosPorSistema}
             />
           )}
 

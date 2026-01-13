@@ -1678,3 +1678,59 @@ select option:hover {
     transform: translateY(10px);
   }
 }
+
+.input-error {
+  border: 1px solid #ef4444 !important;
+  box-shadow: 0 0 0 1px rgba(239,68,68,0.6);
+}
+
+.error-text {
+  font-size: 0.75rem;
+  color: #ef4444;
+  margin-top: 2px;
+}
+
+.aviso-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.aviso-validacion {
+  position: absolute;
+  bottom: 115%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  background: rgba(15, 23, 42, 0.95);
+  color: #f8fafc;
+  font-size: 0.8rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  white-space: nowrap;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  animation: avisoEntrada 0.25s ease-out;
+  z-index: 50;
+}
+
+.aviso-validacion::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: rgba(15, 23, 42, 0.95) transparent transparent transparent;
+}
+
+@keyframes avisoEntrada {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 6px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}

@@ -1,13 +1,13 @@
 import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import "../estilos.css";
 
-  const Dimensiones = forwardRef(({ setSeccion, sistemaActivo, setSistemaActivo }, ref) => {
+  const Dimensiones = forwardRef(({setSeccion, sistemaActivo, setSistemaActivo, datosPorSistema, setDatosPorSistema},ref) => {
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [hoveredTipo, setHoveredTipo] = useState(null);
   const [hoveredField, setHoveredField] = useState(null);
   const [animandoSalida, setAnimandoSalida] = useState(false);
-  const [datosPorSistema, setDatosPorSistema] = useState({});
   const [datos, setDatos] = useState(null);
+  const [mostrarAviso, setMostrarAviso] = useState(false);
 
   const crearDatosSistema = (cuerpos) => ({
     cuerpos: Array.from({ length: cuerpos }, () => ({
@@ -104,7 +104,7 @@ const actualizarDatos = (patch) => {
 
   const renderCamposSistema = () => {
   if (!config || !datos) return null;
-
+ 
     return (
       <div className="selector-bloque-inputs">
           {datos.cuerpos.map((cuerpo, i) => (
@@ -124,7 +124,9 @@ const actualizarDatos = (patch) => {
                     cuerpos[i].area = e.target.value;
                     actualizarDatos({ cuerpos });
                   }}
-
+                  className={
+                    mostrarErrores && errores[`area-${i}`] ? "input-error" : ""
+                  }
                   onMouseEnter={() => setHoveredField("area")}
                   onMouseLeave={() => setHoveredField(null)}
                 />
@@ -140,6 +142,9 @@ const actualizarDatos = (patch) => {
                     cuerpos[i].profMin = e.target.value;
                     actualizarDatos({ cuerpos });
                   }}
+                    className={
+                      mostrarErrores && errores[`profMin-${i}`] ? "input-error" : ""
+                    }
                   onMouseEnter={() => setHoveredField("profMin")}
                   onMouseLeave={() => setHoveredField(null)}
                 />
@@ -155,6 +160,9 @@ const actualizarDatos = (patch) => {
                     cuerpos[i].profMax = e.target.value;
                     actualizarDatos({ cuerpos });
                   }}
+                    className={
+                    mostrarErrores && errores[`profMax-${i}`] ? "input-error" : ""
+                  }
                   onMouseEnter={() => setHoveredField("profMax")}
                   onMouseLeave={() => setHoveredField(null)}
                 />
@@ -178,6 +186,9 @@ const actualizarDatos = (patch) => {
                     tasaRotacion: tasasPorUso[uso] ?? datos.tasaRotacion
                   });
                 }}
+                  className={
+                    mostrarErrores && errores.uso ? "input-error" : ""
+                  }
                 onMouseEnter={() => setHoveredField("uso")}
                 onMouseLeave={() => setHoveredField(null)}
               >
@@ -214,6 +225,9 @@ const actualizarDatos = (patch) => {
                 onChange={(e) =>
                   actualizarDatos({ distCuarto: e.target.value })
                 }
+                  className={
+                    mostrarErrores && errores.distCuarto ? "input-error" : ""
+                  }
                 onMouseEnter={() => setHoveredField("distCuarto")}
                 onMouseLeave={() => setHoveredField(null)}
               />
@@ -225,8 +239,14 @@ const actualizarDatos = (patch) => {
           <div className="selector-grupo">
             <div className="selector-subtitulo">Tipo de desborde</div>
 
-            <div className="selector-radios">
-              {["infinity", "canal", "ambos", "ninguno"].map((v) => (
+          <div
+            className={
+              `selector-radios ${
+                mostrarErrores && errores.desborde ? "input-error" : ""
+              }`
+            }
+          >              
+          {["infinity", "canal", "ambos", "ninguno"].map((v) => (
                 <label
                   key={v}
                   onMouseEnter={() => setHoveredField("desborde")}
@@ -252,6 +272,9 @@ const actualizarDatos = (patch) => {
                     onChange={(e) =>
                       actualizarDatos({ largoInfinity: e.target.value })
                     }
+                      className={
+                        mostrarErrores && errores.largoInfinity ? "input-error" : ""
+                      }
                     onMouseEnter={() => setHoveredField("largoInfinity")}
                     onMouseLeave={() => setHoveredField(null)}
                   />
@@ -265,6 +288,9 @@ const actualizarDatos = (patch) => {
                     onChange={(e) =>
                       actualizarDatos({ profCortina: e.target.value })
                     }
+                      className={
+                        mostrarErrores && errores.profCortina ? "input-error" : ""
+                      }
                     onMouseEnter={() => setHoveredField("profCortina")}
                     onMouseLeave={() => setHoveredField(null)}
                   />
@@ -281,6 +307,9 @@ const actualizarDatos = (patch) => {
                   onChange={(e) =>
                     actualizarDatos({ largoCanal: e.target.value })
                   }
+                    className={
+                      mostrarErrores && errores.largoCanal ? "input-error" : ""
+                    }
                   onMouseEnter={() => setHoveredField("largoCanal")}
                   onMouseLeave={() => setHoveredField(null)}
                 />
@@ -291,7 +320,84 @@ const actualizarDatos = (patch) => {
       </div>
     );
   };
-        
+      
+  
+   const sistemaCompleto = () => {
+      if (!datos) return false;
+
+      // 1️⃣ validar cuerpos
+      const cuerposOk = datos.cuerpos.every(
+        (c) =>
+          c.area !== "" &&
+          c.profMin !== "" &&
+          c.profMax !== ""
+      );
+
+      if (!cuerposOk) return false;
+
+      // 2️⃣ datos generales
+      if (
+        !datos.uso ||
+        !datos.tasaRotacion ||
+        datos.distCuarto === ""
+      ) {
+        return false;
+      }
+
+      // 3️⃣ desborde
+      if (!datos.desborde) return false;
+
+      if (datos.desborde === "infinity" || datos.desborde === "ambos") {
+        if (datos.largoInfinity === "" || datos.profCortina === "") {
+          return false;
+        }
+      }
+
+      if (datos.desborde === "canal" || datos.desborde === "ambos") {
+        if (datos.largoCanal === "") {
+          return false;
+        }
+      }
+
+      return true;
+    };
+
+      const obtenerErrores = () => {
+        if (!datos) return {};
+
+        const errores = {};
+
+        // 🔹 Cuerpos
+        datos.cuerpos.forEach((c, i) => {
+          if (!c.area) errores[`area-${i}`] = "Área requerida";
+          if (!c.profMin) errores[`profMin-${i}`] = "Profundidad mínima requerida";
+          if (!c.profMax) errores[`profMax-${i}`] = "Profundidad máxima requerida";
+        });
+
+        // 🔹 Generales
+        if (!datos.uso) errores.uso = "Selecciona el uso";
+        if (!datos.tasaRotacion) errores.tasaRotacion = "Selecciona tasa de rotación";
+        if (datos.distCuarto === "") errores.distCuarto = "Ingresa la distancia";
+
+        // 🔹 Desborde
+        if (!datos.desborde) errores.desborde = "Selecciona tipo de desborde";
+
+        if (datos.desborde === "infinity" || datos.desborde === "ambos") {
+          if (!datos.largoInfinity) errores.largoInfinity = "Largo infinity requerido";
+          if (!datos.profCortina) errores.profCortina = "Profundidad de cortina requerida";
+        }
+
+        if (datos.desborde === "canal" || datos.desborde === "ambos") {
+          if (!datos.largoCanal) errores.largoCanal = "Largo de canal requerido";
+        }
+
+        return errores;
+      };
+
+const errores = obtenerErrores();
+
+const [mostrarErrores, setMostrarErrores] = useState(false);
+
   return (
     <div className="form-section hero-wrapper">
       <div className="selector-tecnico modo-experto">
@@ -325,7 +431,6 @@ const actualizarDatos = (patch) => {
 
                 setTimeout(() => {
                   setTipoSeleccionado(null);
-                  setSistemaActivo(null); 
                   setDatos(null);
                   setAnimandoSalida(false);
                 }, 220);
@@ -334,13 +439,26 @@ const actualizarDatos = (patch) => {
               ← Volver a Dimensiones
             </button>
 
-            <button
-              className="btn-primario"
-              disabled={!datos?.uso || !datos?.cuerpos?.[0]?.area}
-              onClick={() => setSeccion("calentamiento")}
-            >
-              Ir a Calentamiento →
-            </button>
+          <button
+            className="btn-primario"
+            onClick={() => {
+              if (Object.keys(errores).length > 0) {
+                setMostrarErrores(true);
+                setMostrarAviso(true);
+
+                setTimeout(() => setMostrarAviso(false), 2500);
+                return;
+              }
+              setSeccion("calentamiento");
+            }}
+          >
+            Ir a Calentamiento →
+          </button>
+            {mostrarAviso && (
+              <div className="aviso-validacion">
+                Llena toda la información solicitada
+              </div>
+            )}
           </div>
         )}
 
