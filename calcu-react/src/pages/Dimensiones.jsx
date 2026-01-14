@@ -21,7 +21,8 @@ import "../estilos.css";
     profCortina: "",
     largoCanal: "",
     tasaRotacion: "",
-    uso: ""
+    uso: "",
+    usarBombaInfinity: null
   });
 
 const actualizarDatos = (patch) => {
@@ -47,7 +48,8 @@ const actualizarDatos = (patch) => {
     desborde: "Tipo de sistema de desborde del agua",
     largoInfinity: "Longitud total del borde infinity",
     profCortina: "Altura de la cortina hidráulica",
-    largoCanal: "Longitud del canal de desborde"
+    largoCanal: "Longitud del canal de desborde",
+    usarBombaInfinity: "Define si el borde infinity contará con una motobomba dedicada"
   };
 
   useImperativeHandle(ref, () => ({
@@ -127,7 +129,7 @@ const actualizarDatos = (patch) => {
                   className={
                     mostrarErrores && errores[`area-${i}`] ? "input-error" : ""
                   }
-                  onMouseEnter={() => setHoveredField("area")}
+                  onMouseEnter={() => setHoveredField(`area-${i}`)}
                   onMouseLeave={() => setHoveredField(null)}
                 />
               </div>
@@ -145,7 +147,7 @@ const actualizarDatos = (patch) => {
                     className={
                       mostrarErrores && errores[`profMin-${i}`] ? "input-error" : ""
                     }
-                  onMouseEnter={() => setHoveredField("profMin")}
+                  onMouseEnter={() => setHoveredField(`profMin-${i}`)}
                   onMouseLeave={() => setHoveredField(null)}
                 />
               </div>
@@ -163,7 +165,7 @@ const actualizarDatos = (patch) => {
                     className={
                     mostrarErrores && errores[`profMax-${i}`] ? "input-error" : ""
                   }
-                  onMouseEnter={() => setHoveredField("profMax")}
+                  onMouseEnter={() => setHoveredField(`profMax-${i}`)}
                   onMouseLeave={() => setHoveredField(null)}
                 />
               </div>
@@ -262,41 +264,80 @@ const actualizarDatos = (patch) => {
               ))}
             </div>
 
-            {(datos.desborde === "infinity" || datos.desborde === "ambos") && (
-              <div className="selector-grid">
-                <div className="campo">
-                  <label>Largo infinity (m)</label>
-                  <input
-                    type="number"
-                    value={datos.largoInfinity}
-                    onChange={(e) =>
-                      actualizarDatos({ largoInfinity: e.target.value })
-                    }
-                      className={
-                        mostrarErrores && errores.largoInfinity ? "input-error" : ""
-                      }
-                    onMouseEnter={() => setHoveredField("largoInfinity")}
-                    onMouseLeave={() => setHoveredField(null)}
-                  />
-                </div>
+              {(datos.desborde === "infinity" || datos.desborde === "ambos") && (
+                <>
+                  <div className="selector-grid">
+                    <div className="campo">
+                      <label>Largo infinity (m)</label>
+                      <input
+                        type="number"
+                        value={datos.largoInfinity}
+                        onChange={(e) =>
+                          actualizarDatos({ largoInfinity: e.target.value })
+                        }
+                        className={
+                          mostrarErrores && errores.largoInfinity ? "input-error" : ""
+                        }
+                        onMouseEnter={() => setHoveredField("largoInfinity")}
+                        onMouseLeave={() => setHoveredField(null)}
+                      />
+                    </div>
 
-                <div className="campo">
-                  <label>Prof. cortina (m)</label>
-                  <input
-                    type="number"
-                    value={datos.profCortina}
-                    onChange={(e) =>
-                      actualizarDatos({ profCortina: e.target.value })
-                    }
-                      className={
-                        mostrarErrores && errores.profCortina ? "input-error" : ""
-                      }
-                    onMouseEnter={() => setHoveredField("profCortina")}
-                    onMouseLeave={() => setHoveredField(null)}
-                  />
-                </div>
-              </div>
-            )}
+                    <div className="campo">
+                      <label>Prof. cortina (m)</label>
+                      <input
+                        type="number"
+                        value={datos.profCortina}
+                        onChange={(e) =>
+                          actualizarDatos({ profCortina: e.target.value })
+                        }
+                        className={
+                          mostrarErrores && errores.profCortina ? "input-error" : ""
+                        }
+                        onMouseEnter={() => setHoveredField("profCortina")}
+                        onMouseLeave={() => setHoveredField(null)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* 🔹 PREGUNTA DE BOMBA INDEPENDIENTE */}
+                  <div className="selector-grupo">
+                    <div className="selector-subtitulo">
+                      Motobomba para sistema infinity
+                    </div>
+
+                    <div
+                      className={`selector-radios ${
+                        mostrarErrores && errores.usarBombaInfinity ? "input-error" : ""
+                      }`}
+                      onMouseEnter={() => setHoveredField("usarBombaInfinity")}
+                      onMouseLeave={() => setHoveredField(null)}
+                    >
+                      <label>
+                        <input
+                          type="radio"
+                          checked={datos.usarBombaInfinity === "si"}
+                          onChange={() =>
+                            actualizarDatos({ usarBombaInfinity: "si" })
+                          }
+                        />
+                        Sí, bomba independiente
+                      </label>
+
+                      <label>
+                        <input
+                          type="radio"
+                          checked={datos.usarBombaInfinity === "no"}
+                          onChange={() =>
+                            actualizarDatos({ usarBombaInfinity: "no" })
+                          }
+                        />
+                        No, comparte bomba
+                      </label>
+                    </div>
+                  </div>
+                </>
+              )}
 
             {(datos.desborde === "canal" || datos.desborde === "ambos") && (
               <div className="campo">
@@ -348,7 +389,11 @@ const actualizarDatos = (patch) => {
       if (!datos.desborde) return false;
 
       if (datos.desborde === "infinity" || datos.desborde === "ambos") {
-        if (datos.largoInfinity === "" || datos.profCortina === "") {
+        if (
+          datos.largoInfinity === "" ||
+          datos.profCortina === "" ||
+          !datos.usarBombaInfinity
+        ) {
           return false;
         }
       }
@@ -379,12 +424,26 @@ const actualizarDatos = (patch) => {
         if (!datos.tasaRotacion) errores.tasaRotacion = "Selecciona tasa de rotación";
         if (datos.distCuarto === "") errores.distCuarto = "Ingresa la distancia";
 
-        // 🔹 Desborde
-        if (!datos.desborde) errores.desborde = "Selecciona tipo de desborde";
+        // 🔹 Desborde (NO seleccionado)
+        if (!datos.desborde) {
+          errores.desborde = "Selecciona un tipo de desborde";
+        }
 
+        // 🔹 Desborde
         if (datos.desborde === "infinity" || datos.desborde === "ambos") {
-          if (!datos.largoInfinity) errores.largoInfinity = "Largo infinity requerido";
-          if (!datos.profCortina) errores.profCortina = "Profundidad de cortina requerida";
+
+          if (!datos.largoInfinity) {
+            errores.largoInfinity = "Largo infinity requerido";
+          }
+
+          if (!datos.profCortina) {
+            errores.profCortina = "Profundidad de cortina requerida";
+          }
+
+          if (!datos.usarBombaInfinity) {
+            errores.usarBombaInfinity =
+              "Selecciona si el infinity usa bomba independiente";
+          }
         }
 
         if (datos.desborde === "canal" || datos.desborde === "ambos") {
@@ -439,26 +498,29 @@ const [mostrarErrores, setMostrarErrores] = useState(false);
               ← Volver a Dimensiones
             </button>
 
-          <button
-            className="btn-primario"
-            onClick={() => {
-              if (Object.keys(errores).length > 0) {
-                setMostrarErrores(true);
-                setMostrarAviso(true);
+            <div className="aviso-wrapper">
+              <button
+                className={`btn-primario ${mostrarAviso ? "error" : ""}`}
+                onClick={() => {
+                  if (Object.keys(errores).length > 0) {
+                    setMostrarErrores(true);
+                    setMostrarAviso(true);
 
-                setTimeout(() => setMostrarAviso(false), 2500);
-                return;
-              }
-              setSeccion("calentamiento");
-            }}
-          >
-            Ir a Calentamiento →
-          </button>
-            {mostrarAviso && (
-              <div className="aviso-validacion">
-                Llena toda la información solicitada
-              </div>
-            )}
+                    setTimeout(() => setMostrarAviso(false), 2500);
+                    return;
+                  }
+                  setSeccion("calentamiento");
+                }}
+              >
+                Ir a Calentamiento →
+              </button>
+
+              {mostrarAviso && (
+                <div className="aviso-validacion">
+                  Llena toda la información solicitada
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -527,13 +589,27 @@ const [mostrarErrores, setMostrarErrores] = useState(false);
               : `${Object.keys(sistemas).length} sistemas`}
           </span>
 
-          <span className="footer-highlight">
-            {hoveredField
-              ? descripcionesCampos[hoveredField]
+            <span className="footer-highlight">
+              {hoveredField ? (() => {
+
+                // detectar campos de cuerpos: area-0, profMin-1, etc
+                const match = hoveredField.match(/(area|profMin|profMax)-(\d+)/);
+
+                if (match) {
+                  const campo = match[1];
+                  const cuerpo = Number(match[2]) + 1;
+
+                  return `${descripcionesCampos[campo]} (Cuerpo ${cuerpo})`;
+                }
+
+                // campos normales
+                return descripcionesCampos[hoveredField];
+
+              })()
               : hoveredTipo
                 ? sistemas[hoveredTipo].nombre
                 : "Modo ingeniería"}
-          </span>
+            </span>
         </div>
       </div>
     </div>

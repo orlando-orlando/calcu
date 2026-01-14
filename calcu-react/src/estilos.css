@@ -1697,9 +1697,8 @@ select option:hover {
 
 .aviso-validacion {
   position: absolute;
-  bottom: 115%;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 105%;
+  right: 0;
 
   background: rgba(15, 23, 42, 0.95);
   color: #f8fafc;
@@ -1717,8 +1716,8 @@ select option:hover {
   content: "";
   position: absolute;
   top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 16px;
+
   border-width: 6px;
   border-style: solid;
   border-color: rgba(15, 23, 42, 0.95) transparent transparent transparent;
@@ -1727,10 +1726,23 @@ select option:hover {
 @keyframes avisoEntrada {
   from {
     opacity: 0;
-    transform: translate(-50%, 6px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translateY(0);
   }
+}
+
+
+.btn-primario.error {
+  animation: shake 0.3s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+  75% { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
 }
