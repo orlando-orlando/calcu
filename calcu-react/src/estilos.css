@@ -1746,3 +1746,39 @@ select option:hover {
   75% { transform: translateX(-3px); }
   100% { transform: translateX(0); }
 }
+
+/* === Layout gráfica + tabla === */
+.layout-clima-grafica {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* === Gráfica compacta === */
+.grafica-mini {
+  background: rgba(15, 23, 42, 0.6);
+  padding: 1rem;
+  border-radius: 14px;
+  height: min(360px, 45vh); /* 👈 nunca excede ventana */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ajusta el canvas */
+.grafica-mini canvas {
+  max-width: 300px !important;
+  max-height: 300px !important;
+}
+
+/* === Tabla clima === */
+.tabla-clima-wrapper {
+  overflow-x: auto;
+}
+
+.acciones-calentamiento {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
