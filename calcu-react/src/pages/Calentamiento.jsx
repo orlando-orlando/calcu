@@ -14,18 +14,18 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 export default function Calentamiento({ setSeccion, tipoSistema }) {
 
   /* =========================
-     ESTADOS BASE
+     ESTADOS
   ========================== */
   const [ciudad, setCiudad] = useState("");
   const [tempDeseada, setTempDeseada] = useState(30);
   const [cubierta, setCubierta] = useState(false);
   const [techada, setTechada] = useState(false);
-  const [hoveredField, setHoveredField] = useState(null);
   const [mesesCalentar, setMesesCalentar] = useState({});
+  const [hoveredField, setHoveredField] = useState(null);
+  const [animandoSalida, setAnimandoSalida] = useState(false);
 
   /* =========================
-     DATA MOCK (CASCARÓN)
-     luego conectas funciones reales
+     DATA MOCK
   ========================== */
   const ciudadesMexico = [
     "Ciudad de México",
@@ -36,16 +36,6 @@ export default function Calentamiento({ setSeccion, tipoSistema }) {
     "Tijuana"
   ];
 
-const descripcionesCampos = {
-  ciudad: "Ubicación geográfica del proyecto para obtener datos climáticos",
-  tempDeseada: "Temperatura objetivo del agua en operación",
-  cubierta: "Indica si el cuerpo cuenta con cubierta térmica para reducir pérdidas",
-  techada: "Indica si el cuerpo de agua se encuentra bajo techo",
-  meses: "Meses del año en los que se requiere calentamiento",
-  grafica: "Distribución porcentual de pérdidas energéticas del sistema"
-};
-
-
   const clima = [
     { mes: "Enero", tMin: 10, tProm: 16, tMax: 22, humedad: 55, viento: 18 },
     { mes: "Febrero", tMin: 11, tProm: 17, tMax: 23, humedad: 52, viento: 20 },
@@ -55,7 +45,20 @@ const descripcionesCampos = {
   ];
 
   /* =========================
-     DATA GRÁFICA (PLACEHOLDER)
+     DESCRIPCIONES FOOTER
+  ========================== */
+  const descripcionesCampos = {
+    ciudad: "Ubicación geográfica del proyecto para obtener datos climáticos",
+    tempDeseada: "Temperatura objetivo del agua durante la operación",
+    cubierta: "La cubierta térmica reduce significativamente pérdidas por evaporación",
+    techada: "Un cuerpo de agua techado reduce convección y radiación",
+    meses: "Meses del año en los que el sistema deberá aportar energía térmica",
+    grafica: "Distribución porcentual de las pérdidas energéticas del sistema",
+    default: "Configuración térmica del sistema"
+  };
+
+  /* =========================
+     DATA GRÁFICA
   ========================== */
   const pieData = useMemo(() => ({
     labels: [
@@ -70,10 +73,29 @@ const descripcionesCampos = {
     datasets: [
       {
         data: [30, 20, 15, 10, 10, 8, 7],
-        borderWidth: 1
+        backgroundColor: [
+          "rgba(96,165,250,0.85)",  // azul técnico
+          "rgba(56,189,248,0.85)",  // cyan
+          "rgba(167,139,250,0.85)", // violeta
+          "rgba(251,191,36,0.85)",  // ámbar
+          "rgba(34,197,94,0.85)",   // verde eficiencia
+          "rgba(244,114,182,0.85)", // rosa canal
+          "rgba(148,163,184,0.85)"  // gris técnico
+        ],
+        borderColor: "rgba(15,23,42,0.8)",
+        borderWidth: 2,
+        hoverOffset: 10
       }
     ]
   }), []);
+
+    const volverConAnimacion = () => {
+      setAnimandoSalida(true);
+
+      setTimeout(() => {
+        setSeccion("dimensiones");
+      }, 220); // MISMO tiempo que tu CSS
+    };
 
   /* =========================
      JSX
@@ -94,7 +116,7 @@ const descripcionesCampos = {
         <div className="selector-acciones">
           <button
             className="btn-secundario"
-            onClick={() => setSeccion("dimensiones")}
+            onClick={volverConAnimacion}
           >
             ← Volver a {tipoSistema || "Dimensiones"}
           </button>
@@ -107,14 +129,22 @@ const descripcionesCampos = {
           </button>
         </div>
 
-        <div className="selector-contenido entrada">
+          <div
+            className={`selector-contenido ${
+              animandoSalida ? "salida" : "entrada"
+            }`}
+          >
 
           {/* ================= DATOS GENERALES ================= */}
           <div className="selector-grupo">
             <div className="selector-subtitulo">Datos generales del proyecto</div>
 
             <div className="selector-grid">
-              <div className="campo">
+              <div
+                className="campo"
+                onMouseEnter={() => setHoveredField("ciudad")}
+                onMouseLeave={() => setHoveredField(null)}
+              >
                 <label>Ubicación del proyecto</label>
                 <select
                   className="input-azul"
@@ -128,7 +158,11 @@ const descripcionesCampos = {
                 </select>
               </div>
 
-              <div className="campo">
+              <div
+                className="campo"
+                onMouseEnter={() => setHoveredField("tempDeseada")}
+                onMouseLeave={() => setHoveredField(null)}
+              >
                 <label>Temperatura deseada (°C)</label>
                 <input
                   type="number"
@@ -140,7 +174,11 @@ const descripcionesCampos = {
             </div>
 
             <div className="selector-radios">
-              <div className="grupo-radio">
+              <div
+                className="grupo-radio"
+                onMouseEnter={() => setHoveredField("cubierta")}
+                onMouseLeave={() => setHoveredField(null)}
+              >
                 <span>¿Cuenta con cubierta térmica?</span>
                 <label>
                   <input
@@ -160,7 +198,11 @@ const descripcionesCampos = {
                 </label>
               </div>
 
-              <div className="grupo-radio">
+              <div
+                className="grupo-radio"
+                onMouseEnter={() => setHoveredField("techada")}
+                onMouseLeave={() => setHoveredField(null)}
+              >
                 <span>¿El cuerpo de agua está techado?</span>
                 <label>
                   <input
@@ -182,7 +224,7 @@ const descripcionesCampos = {
             </div>
           </div>
 
-          {/* ================= TABLA CLIMÁTICA ================= */}
+          {/* ================= CLIMA + GRÁFICA ================= */}
           <div className="selector-grupo">
             <div className="selector-subtitulo">
               Análisis climático y pérdidas energéticas
@@ -190,13 +232,45 @@ const descripcionesCampos = {
 
             <div className="layout-clima-grafica">
 
-              {/* GRÁFICA */}
-              <div className="grafica-mini">
-                <Pie data={pieData} />
+              <div
+                className="grafica-mini"
+                onMouseEnter={() => setHoveredField("grafica")}
+                onMouseLeave={() => setHoveredField(null)}
+              >
+              <Pie
+                data={pieData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: "bottom",
+                      labels: {
+                        color: "#e5e7eb",
+                        padding: 14,
+                        boxWidth: 12,
+                        font: {
+                          size: 11,
+                          weight: "500"
+                        }
+                      }
+                    },
+                    tooltip: {
+                      backgroundColor: "rgba(15,23,42,0.95)",
+                      titleColor: "#f8fafc",
+                      bodyColor: "#e5e7eb",
+                      borderColor: "rgba(96,165,250,0.4)",
+                      borderWidth: 1
+                    }
+                  }
+                }}
+              />
               </div>
-
-              {/* TABLA */}
-              <div className="tabla-clima-wrapper">
+              <div
+                className="tabla-clima-wrapper"
+                onMouseEnter={() => setHoveredField("meses")}
+                onMouseLeave={() => setHoveredField(null)}
+              >
                 <table className="tabla-resultados">
                   <thead>
                     <tr>
@@ -238,16 +312,27 @@ const descripcionesCampos = {
             </div>
           </div>
 
-            <div className="acciones-calentamiento">
-              <button
-                className="btn-secundario"
-                onClick={() => setSeccion("equipamiento")}
-              >
-                Omitir en caso de no requerir calentamiento →
-              </button>
-            </div>
+          <div className="acciones-calentamiento">
+            <button
+              className="btn-secundario"
+              onClick={() => setSeccion("equipamiento")}
+            >
+              Omitir calentamiento y continuar →
+            </button>
+          </div>
 
         </div>
+
+        {/* ================= FOOTER DINÁMICO ================= */}
+        <div className="selector-footer fijo calentamiento">
+          <span>Modo ingeniería · Calentamiento</span>
+          <span className="footer-highlight">
+            {hoveredField
+              ? descripcionesCampos[hoveredField]
+              : descripcionesCampos.default}
+          </span>
+        </div>
+
       </div>
     </div>
   );

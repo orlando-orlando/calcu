@@ -9,6 +9,15 @@ import "../estilos.css";
   const [datos, setDatos] = useState(null);
   const [mostrarAviso, setMostrarAviso] = useState(false);
 
+  const cambiarSeccionConAnimacion = (nuevaSeccion) => {
+    setAnimandoSalida(true);
+
+    setTimeout(() => {
+      setAnimandoSalida(false);
+      setSeccion(nuevaSeccion);
+    }, 220); // MISMO tiempo que tu CSS
+  };
+
   const crearDatosSistema = (cuerpos) => ({
     cuerpos: Array.from({ length: cuerpos }, () => ({
       area: "",
@@ -509,7 +518,7 @@ const [mostrarErrores, setMostrarErrores] = useState(false);
                     setTimeout(() => setMostrarAviso(false), 2500);
                     return;
                   }
-                  setSeccion("calentamiento");
+                  cambiarSeccionConAnimacion("calentamiento");
                 }}
               >
                 Ir a Calentamiento →
