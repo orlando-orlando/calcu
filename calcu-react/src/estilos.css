@@ -1853,3 +1853,223 @@ select option:hover {
   border-left: 3px solid rgba(96,165,250,0.8);
 }
 
+/* ================================
+   TARJETA DE EQUIPO — DARK GLASS MINIMAL
+================================ */
+
+.equipo-card {
+  margin-top: 1rem;
+  padding: 1rem 1.1rem 1.15rem;
+  border-radius: 14px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.55),
+    rgba(15, 23, 42, 0.35)
+  );
+
+  backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(148, 163, 184, 0.12);
+
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.35);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border 0.18s ease;
+}
+
+.equipo-card:hover {
+  transform: translateY(-1px);
+
+  border-color: rgba(96, 165, 250, 0.25);
+
+  box-shadow:
+    0 10px 26px rgba(0, 0, 0, 0.45);
+}
+
+/* ================================
+   TÍTULO DEL EQUIPO
+================================ */
+
+.equipo-card h5 {
+  margin-bottom: 0.65rem;
+
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+
+  color: #cbd5f5;
+}
+
+/* ================================
+   GRID DE CAMPOS
+================================ */
+
+.equipo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.65rem;
+}
+
+/* ================================
+   CADA CAMPO
+================================ */
+
+.equipo-grid .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.equipo-grid label {
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+
+  color: #94a3b8;
+}
+
+/* ================================
+   SELECTS OSCUROS MINIMALISTAS
+================================ */
+
+.equipo-grid select.input-azul {
+  appearance: none;
+
+  border-radius: 8px;
+  padding: 0.45rem 0.5rem;
+
+  font-size: 0.7rem;
+  color: #0f172a;
+
+  background: rgba(241, 245, 249, 0.85);
+
+  border: 1px solid rgba(148, 163, 184, 0.4);
+
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.6),
+    0 1px 3px rgba(0, 0, 0, 0.15);
+
+  transition:
+    border 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.equipo-grid select.input-azul:hover {
+  background: rgba(248, 250, 252, 0.95);
+  border-color: rgba(96, 165, 250, 0.5);
+}
+
+.equipo-grid select.input-azul:focus {
+  outline: none;
+
+  background: #ffffff;
+
+  border-color: #60a5fa;
+
+  box-shadow:
+    0 0 0 1px rgba(96, 165, 250, 0.25);
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 1100px) {
+  .equipo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* =========================
+   TARJETAS DESPLEGABLES EQUIPAMIENTO
+========================= */
+
+.sistema-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Header del sistema */
+.sistema-header-interno {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 14px 16px;
+  margin: -14px -14px 10px -14px;
+
+  cursor: pointer;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.02)
+  );
+
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+
+  transition: all 0.25s ease;
+}
+
+/* Hover elegante */
+.sistema-header-interno:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(120,180,255,0.10),
+    rgba(120,180,255,0.04)
+  );
+}
+
+/* Estado abierto */
+.sistema-header-interno.abierto {
+  background: linear-gradient(
+    135deg,
+    rgba(120,180,255,0.18),
+    rgba(120,180,255,0.08)
+  );
+}
+
+/* Título del sistema */
+.sistema-titulo {
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: #e6f0ff;
+}
+
+/* Botón configurar */
+.sistema-boton {
+  padding: 5px 12px;
+
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+
+  color: #9ec3ff;
+
+  border-radius: 999px;
+
+  background: rgba(80,120,200,0.12);
+  border: 1px solid rgba(120,160,255,0.25);
+
+  backdrop-filter: blur(6px);
+
+  transition: all 0.25s ease;
+}
+
+.sistema-header-interno:hover .sistema-boton {
+  background: rgba(120,160,255,0.22);
+  color: #ffffff;
+}
+
+/* Contenido interno */
+.sistema-contenido-interno {
+  margin-top: 10px;
+  display: grid;
+  gap: 12px;
+}

@@ -1,36 +1,32 @@
 import { useState } from "react";
 import "../estilos.css";
+import EquipoSelect from "../components/EquipoSelect";
 
-export default function Equipamiento({ setSeccion }) {
+export default function Equipamiento({ setSeccion, sistemaActivo }) {
 
-  /* =========================
-     ESTADO UI
-  ========================== */
   const [hoveredField, setHoveredField] = useState(null);
+  const [sistemaAbierto, setSistemaAbierto] = useState(null);
 
-  /* =========================
-     MOCK CONFIG (luego vendrá del sistema)
-  ========================== */
-  const hayDosCuerpos = true;
-  const segundoCuerpoEsJacuzzi = true;
+  const hayDosCuerpos = sistemaActivo === "dos-cuerpos" || sistemaActivo === "jacuzzi";
+  const segundoCuerpoEsJacuzzi = sistemaActivo === "jacuzzi";
 
-  /* =========================
-     FOOTER DESCRIPTIVO
-  ========================== */
   const descripcionesCampos = {
-    generales: "Equipos principales que conforman el sistema hidráulico y térmico",
-    filtracion: "Sistema encargado de la limpieza y circulación del agua",
-    calentamiento: "Equipos destinados al aporte de energía térmica",
-    sanitizacion: "Sistemas de desinfección y control microbiológico",
-    cuerpo1: "Empotrables y equipos específicos del cuerpo de agua principal",
-    cuerpo2: "Equipos exclusivos del segundo cuerpo de agua",
-    jacuzzi: "Equipos especiales para hidromasaje y aireación",
-    default: "Configuración técnica del equipamiento del sistema"
+    filtrado: "Sistema de protección, recirculación y limpieza hidráulica",
+    calentamiento: "Sistema encargado del aporte energético térmico",
+    sanitizacion: "Sistema de desinfección y control microbiológico",
+    iluminacion: "Sistema de iluminación subacuática",
+    empotrables: "Elementos hidráulicos integrados al vaso",
+    jacuzzi: "Sistema especializado de hidromasaje",
+    recubrimiento: "Acabados interiores del cuerpo de agua",
+    default: "Configuración integral del equipamiento del sistema"
+  };
+
+  const toggleSistema = (id) => {
+    setSistemaAbierto(sistemaAbierto === id ? null : id);
   };
 
   return (
     <div className="form-section hero-wrapper equipamiento">
-
       <div className="selector-tecnico modo-experto">
 
         {/* ================= HEADER ================= */}
@@ -53,166 +49,130 @@ export default function Equipamiento({ setSeccion }) {
         <div className="selector-contenido entrada">
 
           {/* =====================================================
-              EQUIPOS GENERALES
+              SISTEMAS GENERALES
           ====================================================== */}
           <div
             className="selector-grupo"
-            onMouseEnter={() => setHoveredField("generales")}
+            onMouseEnter={() => setHoveredField("filtrado")}
             onMouseLeave={() => setHoveredField(null)}
           >
-            <div className="selector-subtitulo">Equipos principales</div>
+            <div className="selector-subtitulo">Sistemas del proyecto</div>
 
             <div className="tarjetas-grid">
 
-              {/* FILTRACIÓN */}
-              <div
-                className="tarjeta-tecnica"
-                onMouseEnter={() => setHoveredField("filtracion")}
-                onMouseLeave={() => setHoveredField(null)}
-              >
-                <h4>💧 Filtración & Bombeo</h4>
-                <ul>
-                  <li>Prefiltración</li>
-                  <li>Filtro</li>
-                  <li>Motobomba principal</li>
-                  <li>Motobomba hidrojets</li>
-                </ul>
-              </div>
+              {renderSistemaCard({
+                id: "filtrado",
+                titulo: "💧 Filtrado",
+                abierto: sistemaAbierto === "filtrado",
+                toggleSistema,
+                contenido: (
+                  <>
+                    <EquipoSelect titulo="Prefiltro" />
+                    <EquipoSelect titulo="Filtro de arena" />
+                    <EquipoSelect titulo="Filtro de cartucho" />
+                  </>
+                )
+              })}
 
-              {/* CALENTAMIENTO */}
-              <div
-                className="tarjeta-tecnica"
-                onMouseEnter={() => setHoveredField("calentamiento")}
-                onMouseLeave={() => setHoveredField(null)}
-              >
-                <h4>🔥 Calentamiento</h4>
-                <ul>
-                  <li>Panel solar</li>
-                  <li>Bomba de calor</li>
-                  <li>Caldera</li>
-                </ul>
-              </div>
+              {renderSistemaCard({
+                id: "calentamiento",
+                titulo: "🔥 Calentamiento",
+                abierto: sistemaAbierto === "calentamiento",
+                toggleSistema,
+                contenido: (
+                  <>
+                    <EquipoSelect titulo="Panel solar" />
+                    <EquipoSelect titulo="Bomba de calor" />
+                    <EquipoSelect titulo="Caldera" />
+                  </>
+                )
+              })}
 
-              {/* SANITIZACIÓN */}
-              <div
-                className="tarjeta-tecnica"
-                onMouseEnter={() => setHoveredField("sanitizacion")}
-                onMouseLeave={() => setHoveredField(null)}
-              >
-                <h4>🧪 Sanitización</h4>
-                <ul>
-                  <li>Generador de cloro</li>
-                  <li>Clorador automático fuera de línea</li>
-                  <li>Clorador automático en línea</li>
-                  <li>Sanitizador UV</li>
-                  <li>Sanitizador ozono</li>
-                </ul>
-              </div>
+              {renderSistemaCard({
+                id: "sanitizacion",
+                titulo: "🧪 Sanitización",
+                abierto: sistemaAbierto === "sanitizacion",
+                toggleSistema,
+                contenido: (
+                  <>
+                    <EquipoSelect titulo="Generador de cloro" />
+                    <EquipoSelect titulo="Clorador automático fuera de línea" />
+                    <EquipoSelect titulo="Clorador automático en línea" />
+                    <EquipoSelect titulo="Generador UV" />
+                    <EquipoSelect titulo="Generador de ozono" />
+                  </>
+                )
+              })}
+
+              {renderSistemaCard({
+                id: "iluminacion",
+                titulo: "💡 Iluminación",
+                abierto: sistemaAbierto === "iluminacion",
+                toggleSistema,
+                contenido: (
+                  <>
+                    <EquipoSelect titulo="Reflectores" />
+                    <EquipoSelect titulo="Transformador" />
+                  </>
+                )
+              })}
+
+              {renderSistemaCard({
+                id: "empotrables",
+                titulo: "🔹 Empotrables",
+                abierto: sistemaAbierto === "empotrables",
+                toggleSistema,
+                contenido: (
+                  <>
+                    <EquipoSelect titulo="Boquilla de retorno" />
+                    <EquipoSelect titulo="Desnatador" />
+                    <EquipoSelect titulo="Dren de fondo" />
+                    <EquipoSelect titulo="Dren de canal" />
+                    <EquipoSelect titulo="Boquilla de barredora" />
+                    <EquipoSelect titulo="Rejilla perimetral" />
+                  </>
+                )
+              })}
+
+              {segundoCuerpoEsJacuzzi &&
+                renderSistemaCard({
+                  id: "jacuzzi",
+                  titulo: "💨 Jacuzzi",
+                  abierto: sistemaAbierto === "jacuzzi",
+                  toggleSistema,
+                  contenido: (
+                    <>
+                      <EquipoSelect titulo="Motobomba hidrojets" />
+                      <EquipoSelect titulo="Empotrables hidrojets" />
+                      <EquipoSelect titulo="Empotrables salero" />
+                      <EquipoSelect titulo="Soplador" />
+                      <EquipoSelect titulo="Dren de fondo jacuzzi" />
+                      <EquipoSelect titulo="Retorno jacuzzi" />
+                      <EquipoSelect titulo="Desnatador jacuzzi" />
+                      <EquipoSelect titulo="Barredora jacuzzi" />
+                      <EquipoSelect titulo="Reflector jacuzzi" />
+                    </>
+                  )
+                })}
+
+              {renderSistemaCard({
+                id: "recubrimiento",
+                titulo: "🎨 Recubrimiento",
+                abierto: sistemaAbierto === "recubrimiento",
+                toggleSistema,
+                contenido: (
+                  <>
+                    <EquipoSelect titulo="Recubrimiento m²" />
+                    <EquipoSelect titulo="Adhesivo" />
+                  </>
+                )
+              })}
 
             </div>
           </div>
-
-          {/* =====================================================
-              CUERPO DE AGUA 1
-          ====================================================== */}
-          <div
-            className="selector-grupo"
-            onMouseEnter={() => setHoveredField("cuerpo1")}
-            onMouseLeave={() => setHoveredField(null)}
-          >
-            <div className="selector-subtitulo">
-              Cuerpo de agua 1 · Alberca principal
-            </div>
-
-            <div className="tarjetas-grid">
-
-              <div className="tarjeta-tecnica">
-                <h4>🔹 Empotrables hidráulicos</h4>
-                <ul>
-                  <li>Retorno</li>
-                  <li>Desnatador</li>
-                  <li>Dren de fondo</li>
-                  <li>Dren canal</li>
-                  <li>Barredora</li>
-                  <li>Rejilla perimetral</li>
-                  <li>Hidrojet</li>
-                  <li>Salero</li>
-                </ul>
-              </div>
-
-              <div className="tarjeta-tecnica">
-                <h4>💡 Iluminación</h4>
-                <ul>
-                  <li>Reflectores</li>
-                </ul>
-              </div>
-
-              <div className="tarjeta-tecnica">
-                <h4>🎨 Acabados</h4>
-                <ul>
-                  <li>Recubrimiento</li>
-                </ul>
-              </div>
-
-            </div>
-          </div>
-
-          {/* =====================================================
-              CUERPO DE AGUA 2
-          ====================================================== */}
-          {hayDosCuerpos && (
-            <div
-              className="selector-grupo"
-              onMouseEnter={() =>
-                setHoveredField(segundoCuerpoEsJacuzzi ? "jacuzzi" : "cuerpo2")
-              }
-              onMouseLeave={() => setHoveredField(null)}
-            >
-              <div className="selector-subtitulo">
-                {segundoCuerpoEsJacuzzi
-                  ? "Cuerpo de agua 2 · Jacuzzi"
-                  : "Cuerpo de agua 2 · Alberca secundaria"}
-              </div>
-
-              <div className="tarjetas-grid">
-
-                {segundoCuerpoEsJacuzzi && (
-                  <div className="tarjeta-tecnica">
-                    <h4>💨 Hidromasaje & Aire</h4>
-                    <ul>
-                      <li>Soplador</li>
-                      <li>Motobomba hidrojets</li>
-                      <li>Empotrable hidrojet</li>
-                    </ul>
-                  </div>
-                )}
-
-                <div className="tarjeta-tecnica">
-                  <h4>🔹 Empotrables</h4>
-                  <ul>
-                    <li>Retorno</li>
-                    <li>Dren</li>
-                    <li>Salero</li>
-                    <li>Reflectores</li>
-                  </ul>
-                </div>
-
-                <div className="tarjeta-tecnica">
-                  <h4>🔥 Calentamiento</h4>
-                  <ul>
-                    <li>Panel solar</li>
-                    <li>Bomba de calor</li>
-                    <li>Caldera</li>
-                  </ul>
-                </div>
-
-              </div>
-            </div>
-          )}
-
         </div>
 
-        {/* ================= FOOTER DINÁMICO ================= */}
+        {/* ================= FOOTER ================= */}
         <div className="selector-footer fijo equipamiento">
           <span>Modo ingeniería · Equipamiento</span>
           <span className="footer-highlight">
@@ -221,8 +181,40 @@ export default function Equipamiento({ setSeccion }) {
               : descripcionesCampos.default}
           </span>
         </div>
-
       </div>
     </div>
   );
 }
+
+/* =========================
+   TARJETA SISTEMA (MISMO CSS)
+========================= */
+function renderSistemaCard({ id, titulo, abierto, toggleSistema, contenido }) {
+  return (
+    <div className="tarjeta-tecnica sistema-card">
+
+        <div
+          className={`sistema-header-interno ${abierto ? "abierto" : ""}`}
+          onClick={() => toggleSistema(id)}
+        >
+          <div className="sistema-titulo">
+            {titulo}
+          </div>
+
+          <div className="sistema-boton">
+            {abierto ? "Cerrar" : "Configurar"}
+          </div>
+        </div>
+
+
+      {abierto && (
+        <div className="sistema-contenido-interno">
+          {contenido}
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+

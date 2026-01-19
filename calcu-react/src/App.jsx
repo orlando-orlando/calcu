@@ -162,7 +162,11 @@ export default function App() {
           )}
 
           {seccion === "equipamiento" && (
-            <Equipamiento setSeccion={setSeccion} />
+            <Equipamiento
+              setSeccion={setSeccion}
+              sistemaActivo={sistemaActivo}
+              datosPorSistema={datosPorSistema}
+            />
           )}
 
         </div>
