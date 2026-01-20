@@ -12,6 +12,18 @@ export default function Equipamiento({ setSeccion, sistemaActivo }) {
   const [usaPrefiltro, setUsaPrefiltro] = useState(false);
   const [tipoFiltro, setTipoFiltro] = useState(""); // arena | cartucho
 
+  // Calentamiento
+  const [usaPanelSolar, setUsaPanelSolar] = useState(false);
+  const [usaBombaCalor, setUsaBombaCalor] = useState(false);
+  const [usaCaldera, setUsaCaldera] = useState(false);
+
+    // Sanitización
+  const [tipoCloro, setTipoCloro] = useState(""); 
+  // "cloro" | "fuera-linea" | "en-linea"
+
+  const [usaUV, setUsaUV] = useState(false);
+  const [usaOzono, setUsaOzono] = useState(false);
+
   const segundoCuerpoEsJacuzzi = sistemaActivo === "jacuzzi";
 
   /* ================= DESCRIPCIONES ================= */
@@ -129,12 +141,46 @@ export default function Equipamiento({ setSeccion, sistemaActivo }) {
                 abierto: sistemaAbierto === "calentamiento",
                 contenido: (
                   <>
-                    <EquipoSelect titulo="Panel solar" />
-                    <EquipoSelect titulo="Bomba de calor" />
-                    <EquipoSelect titulo="Caldera" />
+                    <div className="decision-card">
+
+                      <div
+                        className={`decision-toggle ${usaPanelSolar ? "activo" : ""}`}
+                        onClick={() => setUsaPanelSolar(!usaPanelSolar)}
+                      >
+                        <span>Panel solar</span>
+                        <span className="decision-estado">
+                          {usaPanelSolar ? "Incluido" : "No incluido"}
+                        </span>
+                      </div>
+
+                      <div
+                        className={`decision-toggle ${usaBombaCalor ? "activo" : ""}`}
+                        onClick={() => setUsaBombaCalor(!usaBombaCalor)}
+                      >
+                        <span>Bomba de calor</span>
+                        <span className="decision-estado">
+                          {usaBombaCalor ? "Incluida" : "No incluida"}
+                        </span>
+                      </div>
+
+                      <div
+                        className={`decision-toggle ${usaCaldera ? "activo" : ""}`}
+                        onClick={() => setUsaCaldera(!usaCaldera)}
+                      >
+                        <span>Caldera</span>
+                        <span className="decision-estado">
+                          {usaCaldera ? "Incluida" : "No incluida"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {usaPanelSolar && <EquipoSelect titulo="Panel solar" />}
+                    {usaBombaCalor && <EquipoSelect titulo="Bomba de calor" />}
+                    {usaCaldera && <EquipoSelect titulo="Caldera" />}
                   </>
                 )
               })}
+
 
               {/* ================= SANITIZACIÓN ================= */}
               {renderSistemaCard({
@@ -143,11 +189,71 @@ export default function Equipamiento({ setSeccion, sistemaActivo }) {
                 abierto: sistemaAbierto === "sanitizacion",
                 contenido: (
                   <>
-                    <EquipoSelect titulo="Generador de cloro" />
-                    <EquipoSelect titulo="Clorador automático fuera de línea" />
-                    <EquipoSelect titulo="Clorador automático en línea" />
-                    <EquipoSelect titulo="Generador UV" />
-                    <EquipoSelect titulo="Generador de ozono" />
+                    {/* ====== DECISIÓN CLORO ====== */}
+                    <div className="decision-card">
+
+                      <div className="decision-grupo">
+                        <label className="decision-label">
+                          Sistema principal de cloro
+                        </label>
+                        <select
+                          className="input-azul"
+                          value={tipoCloro}
+                          onChange={(e) => setTipoCloro(e.target.value)}
+                        >
+                          <option value="">Seleccionar...</option>
+                          <option value="cloro">Generador de cloro</option>
+                          <option value="fuera-linea">
+                            Clorador automático fuera de línea
+                          </option>
+                          <option value="en-linea">
+                            Clorador automático en línea
+                          </option>
+                        </select>
+                      </div>
+
+                    </div>
+
+                    {/* ====== COMPLEMENTARIOS ====== */}
+                    <div className="decision-card">
+
+                      <div
+                        className={`decision-toggle ${usaUV ? "activo" : ""}`}
+                        onClick={() => setUsaUV(!usaUV)}
+                      >
+                        <span>Generador UV</span>
+                        <span className="decision-estado">
+                          {usaUV ? "Incluido" : "No incluido"}
+                        </span>
+                      </div>
+
+                      <div
+                        className={`decision-toggle ${usaOzono ? "activo" : ""}`}
+                        onClick={() => setUsaOzono(!usaOzono)}
+                      >
+                        <span>Generador de ozono</span>
+                        <span className="decision-estado">
+                          {usaOzono ? "Incluido" : "No incluido"}
+                        </span>
+                      </div>
+
+                    </div>
+
+                    {/* ====== EQUIPOS ====== */}
+                    {tipoCloro === "cloro" && (
+                      <EquipoSelect titulo="Generador de cloro" />
+                    )}
+
+                    {tipoCloro === "fuera-linea" && (
+                      <EquipoSelect titulo="Clorador automático fuera de línea" />
+                    )}
+
+                    {tipoCloro === "en-linea" && (
+                      <EquipoSelect titulo="Clorador automático en línea" />
+                    )}
+
+                    {usaUV && <EquipoSelect titulo="Generador UV" />}
+                    {usaOzono && <EquipoSelect titulo="Generador de ozono" />}
                   </>
                 )
               })}

@@ -2126,3 +2126,43 @@ select option:hover {
   color: rgba(226,232,240,0.8);
   margin-bottom: 0.25rem;
 }
+
+.decision-grupo.checkbox .decision-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+.decision-grupo.checkbox input {
+  transform: scale(1.05);
+}
+
+.decision-toggle {
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 6px;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.8rem;
+  color: #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.decision-toggle:hover {
+  border-color: rgba(56, 189, 248, 0.6);
+}
+
+.decision-toggle.activo {
+  border-color: #38bdf8;
+  background: rgba(56, 189, 248, 0.08);
+}
+
+.decision-estado {
+  font-size: 0.7rem;
+  color: rgba(226,232,240,0.7);
+}
