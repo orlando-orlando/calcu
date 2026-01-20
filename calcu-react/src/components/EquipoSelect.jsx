@@ -4,8 +4,8 @@ export default function EquipoSelect({ titulo, onHover }) {
   return (
     <div
       className="equipo-card"
-      onMouseEnter={onHover}
-      onMouseLeave={() => onHover(null)}
+      onMouseEnter={() => onHover && onHover(titulo)}
+      onMouseLeave={() => onHover && onHover(null)}
     >
       <div className="equipo-header">
         <span className="equipo-dot" />
@@ -13,7 +13,6 @@ export default function EquipoSelect({ titulo, onHover }) {
       </div>
 
       <div className="equipo-grid">
-
         <div className="campo">
           <label>N° equipos</label>
           <select className="input-azul">
@@ -44,7 +43,6 @@ export default function EquipoSelect({ titulo, onHover }) {
             <option value="">Seleccionar...</option>
           </select>
         </div>
-
       </div>
     </div>
   );

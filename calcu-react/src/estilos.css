@@ -1994,82 +1994,135 @@ select option:hover {
   overflow: hidden;
 }
 
-/* Header del sistema */
+/* =========================
+   HEADER DE SISTEMA (PRO)
+========================= */
+
 .sistema-header-interno {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
   align-items: center;
 
-  padding: 14px 16px;
-  margin: -14px -14px 10px -14px;
+  min-height: 54px;
+  padding: 0 18px;
+  gap: 14px;
 
   cursor: pointer;
 
-  background: linear-gradient(
-    135deg,
-    rgba(255,255,255,0.06),
-    rgba(255,255,255,0.02)
-  );
-
+  background: rgba(255,255,255,0.035);
   border-bottom: 1px solid rgba(255,255,255,0.06);
 
-  transition: all 0.25s ease;
+  transition: background 0.25s ease;
 }
 
-/* Hover elegante */
 .sistema-header-interno:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(120,180,255,0.10),
-    rgba(120,180,255,0.04)
-  );
+  background: rgba(255,255,255,0.06);
 }
 
-/* Estado abierto */
 .sistema-header-interno.abierto {
-  background: linear-gradient(
-    135deg,
-    rgba(120,180,255,0.18),
-    rgba(120,180,255,0.08)
-  );
+  background: rgba(120,160,255,0.12);
 }
 
 /* Título del sistema */
 .sistema-titulo {
   font-size: 14.5px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-  color: #e6f0ff;
+  font-weight: 500;
+  color: #e6ecf5;
 }
 
 /* Botón configurar */
 .sistema-boton {
-  padding: 5px 12px;
+  height: 28px;
+  padding: 0 14px;
 
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  color: #9ec3ff;
+  font-size: 11.5px;
+  font-weight: 500;
 
+  color: #dbeafe;
+
+  background: rgba(120,160,255,0.18);
+  border: 1px solid rgba(120,160,255,0.28);
   border-radius: 999px;
-
-  background: rgba(80,120,200,0.12);
-  border: 1px solid rgba(120,160,255,0.25);
-
-  backdrop-filter: blur(6px);
 
   transition: all 0.25s ease;
 }
 
 .sistema-header-interno:hover .sistema-boton {
-  background: rgba(120,160,255,0.22);
-  color: #ffffff;
+  background: rgba(120,160,255,0.32);
 }
 
 /* Contenido interno */
 .sistema-contenido-interno {
-  margin-top: 10px;
+  max-height: 0;
+  overflow: hidden;
+
+  opacity: 0;
+  transform: translateY(-6px);
+
+  transition:
+    max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.sistema-contenido-interno.expandido {
+  max-height: 2000px; /* suficiente */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.sistema-estado {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.estado-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.estado-dot.vacio {
+  background: #ef4444;
+}
+
+.estado-dot.parcial {
+  background: #facc15;
+}
+
+.estado-dot.completo {
+  background: #22c55e;
+}
+
+.sistema-card.estado-vacio {
+  box-shadow: inset 0 0 0 1px rgba(239,68,68,0.25);
+}
+
+.sistema-card.estado-parcial {
+  box-shadow: inset 0 0 0 1px rgba(250,204,21,0.25);
+}
+
+.sistema-card.estado-completo {
+  box-shadow: inset 0 0 0 1px rgba(34,197,94,0.25);
+}
+
+.decision-card {
   display: grid;
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.decision-label {
+  font-size: 0.75rem;
+  color: rgba(226,232,240,0.8);
+  margin-bottom: 0.25rem;
 }

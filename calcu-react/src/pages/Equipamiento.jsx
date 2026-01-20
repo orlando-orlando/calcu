@@ -4,12 +4,17 @@ import EquipoSelect from "../components/EquipoSelect";
 
 export default function Equipamiento({ setSeccion, sistemaActivo }) {
 
+  /* ================= ESTADOS ================= */
   const [hoveredField, setHoveredField] = useState(null);
   const [sistemaAbierto, setSistemaAbierto] = useState(null);
 
-  const hayDosCuerpos = sistemaActivo === "dos-cuerpos" || sistemaActivo === "jacuzzi";
+  // Filtrado
+  const [usaPrefiltro, setUsaPrefiltro] = useState(false);
+  const [tipoFiltro, setTipoFiltro] = useState(""); // arena | cartucho
+
   const segundoCuerpoEsJacuzzi = sistemaActivo === "jacuzzi";
 
+  /* ================= DESCRIPCIONES ================= */
   const descripcionesCampos = {
     filtrado: "Sistema de protección, recirculación y limpieza hidráulica",
     calentamiento: "Sistema encargado del aporte energético térmico",
@@ -22,14 +27,36 @@ export default function Equipamiento({ setSeccion, sistemaActivo }) {
   };
 
   const toggleSistema = (id) => {
-    setSistemaAbierto(sistemaAbierto === id ? null : id);
+    setSistemaAbierto(prev => (prev === id ? null : id));
   };
 
+  /* ================= TARJETA SISTEMA ================= */
+  function renderSistemaCard({ id, titulo, abierto, contenido }) {
+    return (
+      <div className="tarjeta-tecnica sistema-card">
+        <div
+          className={`sistema-header-interno ${abierto ? "abierto" : ""}`}
+          onClick={() => toggleSistema(id)}
+        >
+          <div className="sistema-titulo">{titulo}</div>
+          <div className="sistema-boton">
+            {abierto ? "Cerrar" : "Configurar"}
+          </div>
+        </div>
+
+        <div className={`sistema-contenido-interno ${abierto ? "expandido" : ""}`}>
+          {contenido}
+        </div>
+      </div>
+    );
+  }
+
+  /* ================= RENDER ================= */
   return (
     <div className="form-section hero-wrapper equipamiento">
       <div className="selector-tecnico modo-experto">
 
-        {/* ================= HEADER ================= */}
+        {/* HEADER */}
         <div className="selector-header">
           <div className="selector-titulo">Equipamiento del sistema</div>
           <div className="selector-subtitulo-tecnico">
@@ -47,38 +74,59 @@ export default function Equipamiento({ setSeccion, sistemaActivo }) {
         </div>
 
         <div className="selector-contenido entrada">
-
-          {/* =====================================================
-              SISTEMAS GENERALES
-          ====================================================== */}
-          <div
-            className="selector-grupo"
-            onMouseEnter={() => setHoveredField("filtrado")}
-            onMouseLeave={() => setHoveredField(null)}
-          >
+          <div className="selector-grupo">
             <div className="selector-subtitulo">Sistemas del proyecto</div>
 
             <div className="tarjetas-grid">
 
+              {/* ================= FILTRADO ================= */}
               {renderSistemaCard({
                 id: "filtrado",
                 titulo: "💧 Filtrado",
                 abierto: sistemaAbierto === "filtrado",
-                toggleSistema,
                 contenido: (
                   <>
-                    <EquipoSelect titulo="Prefiltro" />
-                    <EquipoSelect titulo="Filtro de arena" />
-                    <EquipoSelect titulo="Filtro de cartucho" />
+                    <div className="decision-card">
+                      <div className="decision-grupo">
+                        <label className="decision-label">¿Incluir prefiltro?</label>
+                        <select
+                          className="input-azul"
+                          value={usaPrefiltro ? "si" : "no"}
+                          onChange={(e) =>
+                            setUsaPrefiltro(e.target.value === "si")
+                          }
+                        >
+                          <option value="no">No</option>
+                          <option value="si">Sí</option>
+                        </select>
+                      </div>
+
+                      <div className="decision-grupo">
+                        <label className="decision-label">Tipo de filtro</label>
+                        <select
+                          className="input-azul"
+                          value={tipoFiltro}
+                          onChange={(e) => setTipoFiltro(e.target.value)}
+                        >
+                          <option value="">Seleccionar...</option>
+                          <option value="arena">Filtro de arena</option>
+                          <option value="cartucho">Filtro de cartucho</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {usaPrefiltro && <EquipoSelect titulo="Prefiltro" />}
+                    {tipoFiltro === "arena" && <EquipoSelect titulo="Filtro de arena" />}
+                    {tipoFiltro === "cartucho" && <EquipoSelect titulo="Filtro de cartucho" />}
                   </>
                 )
               })}
 
+              {/* ================= CALENTAMIENTO ================= */}
               {renderSistemaCard({
                 id: "calentamiento",
                 titulo: "🔥 Calentamiento",
                 abierto: sistemaAbierto === "calentamiento",
-                toggleSistema,
                 contenido: (
                   <>
                     <EquipoSelect titulo="Panel solar" />
@@ -88,11 +136,11 @@ export default function Equipamiento({ setSeccion, sistemaActivo }) {
                 )
               })}
 
+              {/* ================= SANITIZACIÓN ================= */}
               {renderSistemaCard({
                 id: "sanitizacion",
                 titulo: "🧪 Sanitización",
                 abierto: sistemaAbierto === "sanitizacion",
-                toggleSistema,
                 contenido: (
                   <>
                     <EquipoSelect titulo="Generador de cloro" />
@@ -104,11 +152,11 @@ export default function Equipamiento({ setSeccion, sistemaActivo }) {
                 )
               })}
 
+              {/* ================= ILUMINACIÓN ================= */}
               {renderSistemaCard({
                 id: "iluminacion",
                 titulo: "💡 Iluminación",
                 abierto: sistemaAbierto === "iluminacion",
-                toggleSistema,
                 contenido: (
                   <>
                     <EquipoSelect titulo="Reflectores" />
@@ -117,11 +165,11 @@ export default function Equipamiento({ setSeccion, sistemaActivo }) {
                 )
               })}
 
+              {/* ================= EMPOTRABLES ================= */}
               {renderSistemaCard({
                 id: "empotrables",
                 titulo: "🔹 Empotrables",
                 abierto: sistemaAbierto === "empotrables",
-                toggleSistema,
                 contenido: (
                   <>
                     <EquipoSelect titulo="Boquilla de retorno" />
@@ -134,12 +182,12 @@ export default function Equipamiento({ setSeccion, sistemaActivo }) {
                 )
               })}
 
+              {/* ================= JACUZZI ================= */}
               {segundoCuerpoEsJacuzzi &&
                 renderSistemaCard({
                   id: "jacuzzi",
                   titulo: "💨 Jacuzzi",
                   abierto: sistemaAbierto === "jacuzzi",
-                  toggleSistema,
                   contenido: (
                     <>
                       <EquipoSelect titulo="Motobomba hidrojets" />
@@ -155,11 +203,11 @@ export default function Equipamiento({ setSeccion, sistemaActivo }) {
                   )
                 })}
 
+              {/* ================= RECUBRIMIENTO ================= */}
               {renderSistemaCard({
                 id: "recubrimiento",
                 titulo: "🎨 Recubrimiento",
                 abierto: sistemaAbierto === "recubrimiento",
-                toggleSistema,
                 contenido: (
                   <>
                     <EquipoSelect titulo="Recubrimiento m²" />
@@ -172,7 +220,7 @@ export default function Equipamiento({ setSeccion, sistemaActivo }) {
           </div>
         </div>
 
-        {/* ================= FOOTER ================= */}
+        {/* FOOTER */}
         <div className="selector-footer fijo equipamiento">
           <span>Modo ingeniería · Equipamiento</span>
           <span className="footer-highlight">
@@ -181,40 +229,8 @@ export default function Equipamiento({ setSeccion, sistemaActivo }) {
               : descripcionesCampos.default}
           </span>
         </div>
+
       </div>
     </div>
   );
 }
-
-/* =========================
-   TARJETA SISTEMA (MISMO CSS)
-========================= */
-function renderSistemaCard({ id, titulo, abierto, toggleSistema, contenido }) {
-  return (
-    <div className="tarjeta-tecnica sistema-card">
-
-        <div
-          className={`sistema-header-interno ${abierto ? "abierto" : ""}`}
-          onClick={() => toggleSistema(id)}
-        >
-          <div className="sistema-titulo">
-            {titulo}
-          </div>
-
-          <div className="sistema-boton">
-            {abierto ? "Cerrar" : "Configurar"}
-          </div>
-        </div>
-
-
-      {abierto && (
-        <div className="sistema-contenido-interno">
-          {contenido}
-        </div>
-      )}
-
-    </div>
-  );
-}
-
-
