@@ -20,9 +20,16 @@ export default function Equipamiento({ setSeccion, sistemaActivo }) {
     // Sanitización
   const [tipoCloro, setTipoCloro] = useState(""); 
   // "cloro" | "fuera-linea" | "en-linea"
-
   const [usaUV, setUsaUV] = useState(false);
   const [usaOzono, setUsaOzono] = useState(false);
+
+// Iluminación
+const [usaExtraplanoLED, setUsaExtraplanoLED] = useState(false);
+const [usaIncandescente, setUsaIncandescente] = useState(false);
+const [usaSinNichoLED, setUsaSinNichoLED] = useState(false);
+// Iluminación
+const [tipoReflector, setTipoReflector] = useState(""); 
+// "extraplano-led" | "incandescente" | "sin-nicho-led"
 
   const segundoCuerpoEsJacuzzi = sistemaActivo === "jacuzzi";
 
@@ -265,9 +272,45 @@ export default function Equipamiento({ setSeccion, sistemaActivo }) {
                 abierto: sistemaAbierto === "iluminacion",
                 contenido: (
                   <>
-                    <EquipoSelect titulo="Reflectores" />
+                  {/* ====== SELECCIÓN DE REFLECTOR ====== */}
+                  <div className="decision-card">
+                    <div className="decision-grupo">
+                      <label className="decision-label">
+                        Tipo de reflector
+                      </label>
+                      <select
+                        className="input-azul"
+                        value={tipoReflector}
+                        onChange={(e) => setTipoReflector(e.target.value)}
+                      >
+                        <option value="">Seleccionar...</option>
+                        <option value="extraplano-led">Reflector extraplano LED</option>
+                        <option value="incandescente">
+                          Reflector tradicional incandescente
+                        </option>
+                        <option value="sin-nicho-led">Reflector sin nicho LED</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* ====== EQUIPOS ====== */}
+                  {tipoReflector === "extraplano-led" && (
+                    <EquipoSelect titulo="Reflector extraplano LED" />
+                  )}
+
+                  {tipoReflector === "incandescente" && (
+                    <EquipoSelect titulo="Reflector tradicional incandescente" />
+                  )}
+
+                  {tipoReflector === "sin-nicho-led" && (
+                    <EquipoSelect titulo="Reflector sin nicho LED" />
+                  )}
+
+                  {/* Transformador obligatorio si hay reflector */}
+                  {tipoReflector && (
                     <EquipoSelect titulo="Transformador" />
-                  </>
+                  )}
+                </>
                 )
               })}
 
