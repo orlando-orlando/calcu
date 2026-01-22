@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import "../estilos.css";
 
 import { Pie } from "react-chartjs-2";
@@ -11,11 +11,12 @@ import {
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function Calentamiento({ setSeccion, tipoSistema }) {
+export default function Calentamiento({setSeccion, tipoSistema, setConfigBombas}) {
 
   /* =========================
      ESTADOS
   ========================== */
+  const [usarBombaCalentamiento, setUsarBombaCalentamiento] = useState("no");
   const [ciudad, setCiudad] = useState("");
   const [tempDeseada, setTempDeseada] = useState(30);
   const [cubierta, setCubierta] = useState(false);
@@ -23,6 +24,13 @@ export default function Calentamiento({ setSeccion, tipoSistema }) {
   const [mesesCalentar, setMesesCalentar] = useState({});
   const [hoveredField, setHoveredField] = useState(null);
   const [animandoSalida, setAnimandoSalida] = useState(false);
+
+useEffect(() => {
+  setConfigBombas(prev => ({
+    ...prev,
+    calentamiento: usarBombaCalentamiento === "si"
+  }));
+}, [usarBombaCalentamiento, setConfigBombas]);
 
   /* =========================
      DATA MOCK
@@ -54,7 +62,8 @@ export default function Calentamiento({ setSeccion, tipoSistema }) {
     techada: "Un cuerpo de agua techado reduce convección y radiación",
     meses: "Meses del año en los que el sistema deberá aportar energía térmica",
     grafica: "Distribución porcentual de las pérdidas energéticas del sistema",
-    default: "Configuración térmica del sistema"
+    default: "Configuración térmica del sistema",
+    usarBombaCalentamiento: "Define si el sistema de calentamiento contará con una motobomba independiente"
   };
 
   /* =========================
@@ -309,6 +318,37 @@ export default function Calentamiento({ setSeccion, tipoSistema }) {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+
+          {/* ================= MOTOBOMBA CALENTAMIENTO ================= */}
+          <div className="selector-grupo">
+            <div className="selector-subtitulo">
+              Motobomba para sistema de calentamiento
+            </div>
+
+            <div
+              className="selector-radios"
+              onMouseEnter={() => setHoveredField("usarBombaCalentamiento")}
+              onMouseLeave={() => setHoveredField(null)}
+            >
+              <label>
+                <input
+                  type="radio"
+                  checked={usarBombaCalentamiento === "si"}
+                  onChange={() => setUsarBombaCalentamiento("si")}
+                />
+                Sí, motobomba independiente
+              </label>
+
+              <label>
+                <input
+                  type="radio"
+                  checked={usarBombaCalentamiento === "no"}
+                  onChange={() => setUsarBombaCalentamiento("no")}
+                />
+                No, comparte motobomba de filtrado
+              </label>
             </div>
           </div>
 

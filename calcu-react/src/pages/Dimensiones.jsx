@@ -8,9 +8,7 @@ import "../estilos.css";
   const [animandoSalida, setAnimandoSalida] = useState(false);
   const [datos, setDatos] = useState(null);
   const [mostrarAviso, setMostrarAviso] = useState(false);
-
-  const cambiarSeccionConAnimacion = (nuevaSeccion) => {
-    setAnimandoSalida(true);
+  const cambiarSeccionConAnimacion = (nuevaSeccion) => {setAnimandoSalida(true);
 
     setTimeout(() => {
       setAnimandoSalida(false);
@@ -38,6 +36,7 @@ const actualizarDatos = (patch) => {
   setDatos((prev) => {
     const nuevos = { ...prev, ...patch };
 
+    // 👇 sincronizamos FUERA del setDatos
     setDatosPorSistema((mapa) => ({
       ...mapa,
       [tipoSeleccionado]: nuevos

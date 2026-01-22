@@ -2,7 +2,7 @@ import { useState } from "react";
 import "../estilos.css";
 import EquipoSelect from "../components/EquipoSelect";
 
-export default function Equipamiento({ setSeccion, sistemaActivo }) {
+export default function Equipamiento({setSeccion, sistemaActivo, configBombas}) {
 
   /* ================= ESTADOS ================= */
   const [hoveredField, setHoveredField] = useState(null);
@@ -327,6 +327,29 @@ const [tipoReflector, setTipoReflector] = useState("");
                     <EquipoSelect titulo="Dren de canal" />
                     <EquipoSelect titulo="Boquilla de barredora" />
                     <EquipoSelect titulo="Rejilla perimetral" />
+                  </>
+                )
+              })}
+
+              {/* ================= MOTOBOMBA ================= */}
+              {renderSistemaCard({
+                id: "motobombas",
+                titulo: "🌀 Motobombas",
+                abierto: sistemaAbierto === "motobombas",
+                contenido: (
+                  <>
+                  {/* ====== MOTOBOMBA FILTRADO (SIEMPRE) ====== */}
+                  <EquipoSelect titulo="Motobomba de filtrado" />
+
+                  {/* ====== MOTOBOMBA CALENTAMIENTO (CONDICIONAL) ====== */}
+                  {configBombas?.calentamiento && (
+                    <EquipoSelect titulo="Motobomba de calentamiento" />
+                  )}
+
+                  {/* ====== MOTOBOMBA INFINITY (CONDICIONAL) ====== */}
+                  {configBombas?.infinity && (
+                    <EquipoSelect titulo="Motobomba de infinity" />
+                  )}
                   </>
                 )
               })}

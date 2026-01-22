@@ -23,6 +23,12 @@ export default function App() {
     dimensionesRef.current?.resetDimensiones();
   };
 
+const [configBombas, setConfigBombas] = useState({
+  filtrado: true,
+  calentamiento: false,
+  infinity: false
+});
+
   return (
     <div className="app-contenedor">
 
@@ -157,16 +163,18 @@ export default function App() {
           {seccion === "calentamiento" && (
             <Calentamiento
               setSeccion={setSeccion}
-              sistemaActivo={sistemaActivo}
+              tipoSistema={sistemaActivo}
+              setConfigBombas={setConfigBombas}
             />
           )}
 
           {seccion === "equipamiento" && (
-            <Equipamiento
-              setSeccion={setSeccion}
-              sistemaActivo={sistemaActivo}
-              datosPorSistema={datosPorSistema}
-            />
+          <Equipamiento
+            setSeccion={setSeccion}
+            sistemaActivo={sistemaActivo}
+            datosPorSistema={datosPorSistema}
+            configBombas={configBombas}
+          />
           )}
 
         </div>
