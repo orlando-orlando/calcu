@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "../estilos.css";
 import EquipoSelect from "../components/EquipoSelect";
+import EquipamientoCuerpo from "../components/EquipamientoCuerpo";
 
 export default function Equipamiento({setSeccion, sistemaActivo, configBombas}) {
 
