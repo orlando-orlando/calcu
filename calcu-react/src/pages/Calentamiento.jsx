@@ -11,26 +11,56 @@ import {
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function Calentamiento({setSeccion, tipoSistema, setConfigBombas}) {
+export default function Calentamiento({
+  setSeccion,
+  tipoSistema,
+  datosPorSistema,
+  setDatosPorSistema
+}) {
 
   /* =========================
-     ESTADOS
+     ESTADOS (con persistencia)
   ========================== */
-  const [usarBombaCalentamiento, setUsarBombaCalentamiento] = useState("no");
-  const [ciudad, setCiudad] = useState("");
-  const [tempDeseada, setTempDeseada] = useState(30);
-  const [cubierta, setCubierta] = useState(false);
-  const [techada, setTechada] = useState(false);
-  const [mesesCalentar, setMesesCalentar] = useState({});
+  const datosPrevios = datosPorSistema?.calentamiento || {};
+
+  const [usarBombaCalentamiento, setUsarBombaCalentamiento] = useState(
+    datosPrevios.usarBombaCalentamiento || "no"
+  );
+  const [ciudad, setCiudad] = useState(datosPrevios.ciudad || "");
+  const [tempDeseada, setTempDeseada] = useState(datosPrevios.tempDeseada ?? 30);
+  const [cubierta, setCubierta] = useState(datosPrevios.cubierta ?? false);
+  const [techada, setTechada] = useState(datosPrevios.techada ?? false);
+  const [mesesCalentar, setMesesCalentar] = useState(
+    datosPrevios.mesesCalentar || {}
+  );
+
   const [hoveredField, setHoveredField] = useState(null);
   const [animandoSalida, setAnimandoSalida] = useState(false);
 
-useEffect(() => {
-  setConfigBombas(prev => ({
-    ...prev,
-    calentamiento: usarBombaCalentamiento === "si"
-  }));
-}, [usarBombaCalentamiento, setConfigBombas]);
+  /* =========================
+     GUARDAR EN APP
+  ========================== */
+  useEffect(() => {
+    setDatosPorSistema(prev => ({
+      ...prev,
+      calentamiento: {
+        usarBombaCalentamiento,
+        ciudad,
+        tempDeseada,
+        cubierta,
+        techada,
+        mesesCalentar
+      }
+    }));
+  }, [
+    usarBombaCalentamiento,
+    ciudad,
+    tempDeseada,
+    cubierta,
+    techada,
+    mesesCalentar,
+    setDatosPorSistema
+  ]);
 
   /* =========================
      DATA MOCK
@@ -62,8 +92,9 @@ useEffect(() => {
     techada: "Un cuerpo de agua techado reduce convección y radiación",
     meses: "Meses del año en los que el sistema deberá aportar energía térmica",
     grafica: "Distribución porcentual de las pérdidas energéticas del sistema",
-    default: "Configuración térmica del sistema",
-    usarBombaCalentamiento: "Define si el sistema de calentamiento contará con una motobomba independiente"
+    usarBombaCalentamiento:
+      "Define si el sistema de calentamiento contará con una motobomba independiente",
+    default: "Configuración térmica del sistema"
   };
 
   /* =========================
@@ -83,13 +114,13 @@ useEffect(() => {
       {
         data: [30, 20, 15, 10, 10, 8, 7],
         backgroundColor: [
-          "rgba(96,165,250,0.85)",  // azul técnico
-          "rgba(56,189,248,0.85)",  // cyan
-          "rgba(167,139,250,0.85)", // violeta
-          "rgba(251,191,36,0.85)",  // ámbar
-          "rgba(34,197,94,0.85)",   // verde eficiencia
-          "rgba(244,114,182,0.85)", // rosa canal
-          "rgba(148,163,184,0.85)"  // gris técnico
+          "rgba(96,165,250,0.85)",
+          "rgba(56,189,248,0.85)",
+          "rgba(167,139,250,0.85)",
+          "rgba(251,191,36,0.85)",
+          "rgba(34,197,94,0.85)",
+          "rgba(244,114,182,0.85)",
+          "rgba(148,163,184,0.85)"
         ],
         borderColor: "rgba(15,23,42,0.8)",
         borderWidth: 2,
@@ -98,23 +129,19 @@ useEffect(() => {
     ]
   }), []);
 
-    const volverConAnimacion = () => {
-      setAnimandoSalida(true);
-
-      setTimeout(() => {
-        setSeccion("dimensiones");
-      }, 220); // MISMO tiempo que tu CSS
-    };
+  const volverConAnimacion = () => {
+    setAnimandoSalida(true);
+    setTimeout(() => setSeccion("dimensiones"), 220);
+  };
 
   /* =========================
      JSX
   ========================== */
   return (
     <div className="form-section hero-wrapper calentamiento">
-
       <div className="selector-tecnico modo-experto">
 
-        {/* ================= HEADER ================= */}
+        {/* HEADER */}
         <div className="selector-header">
           <div className="selector-titulo">Calentamiento del sistema</div>
           <div className="selector-subtitulo-tecnico">
@@ -123,13 +150,9 @@ useEffect(() => {
         </div>
 
         <div className="selector-acciones">
-          <button
-            className="btn-secundario"
-            onClick={volverConAnimacion}
-          >
+          <button className="btn-secundario" onClick={volverConAnimacion}>
             ← Volver a {tipoSistema || "Dimensiones"}
           </button>
-
           <button
             className="btn-primario"
             onClick={() => setSeccion("equipamiento")}
@@ -138,13 +161,9 @@ useEffect(() => {
           </button>
         </div>
 
-          <div
-            className={`selector-contenido ${
-              animandoSalida ? "salida" : "entrada"
-            }`}
-          >
+        <div className={`selector-contenido ${animandoSalida ? "salida" : "entrada"}`}>
 
-          {/* ================= DATOS GENERALES ================= */}
+          {/* DATOS GENERALES */}
           <div className="selector-grupo">
             <div className="selector-subtitulo">Datos generales del proyecto</div>
 
@@ -177,7 +196,7 @@ useEffect(() => {
                   type="number"
                   className="input-azul"
                   value={tempDeseada}
-                  onChange={e => setTempDeseada(e.target.value)}
+                  onChange={e => setTempDeseada(+e.target.value)}
                 />
               </div>
             </div>
@@ -194,16 +213,14 @@ useEffect(() => {
                     type="radio"
                     checked={cubierta === true}
                     onChange={() => setCubierta(true)}
-                  />
-                  Sí
+                  /> Sí
                 </label>
                 <label>
                   <input
                     type="radio"
                     checked={cubierta === false}
                     onChange={() => setCubierta(false)}
-                  />
-                  No
+                  /> No
                 </label>
               </div>
 
@@ -218,63 +235,34 @@ useEffect(() => {
                     type="radio"
                     checked={techada === true}
                     onChange={() => setTechada(true)}
-                  />
-                  Sí
+                  /> Sí
                 </label>
                 <label>
                   <input
                     type="radio"
                     checked={techada === false}
                     onChange={() => setTechada(false)}
-                  />
-                  No
+                  /> No
                 </label>
               </div>
             </div>
           </div>
 
-          {/* ================= CLIMA + GRÁFICA ================= */}
+          {/* CLIMA + GRÁFICA */}
           <div className="selector-grupo">
             <div className="selector-subtitulo">
               Análisis climático y pérdidas energéticas
             </div>
 
             <div className="layout-clima-grafica">
-
               <div
                 className="grafica-mini"
                 onMouseEnter={() => setHoveredField("grafica")}
                 onMouseLeave={() => setHoveredField(null)}
               >
-              <Pie
-                data={pieData}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  plugins: {
-                    legend: {
-                      position: "bottom",
-                      labels: {
-                        color: "#e5e7eb",
-                        padding: 14,
-                        boxWidth: 12,
-                        font: {
-                          size: 11,
-                          weight: "500"
-                        }
-                      }
-                    },
-                    tooltip: {
-                      backgroundColor: "rgba(15,23,42,0.95)",
-                      titleColor: "#f8fafc",
-                      bodyColor: "#e5e7eb",
-                      borderColor: "rgba(96,165,250,0.4)",
-                      borderWidth: 1
-                    }
-                  }
-                }}
-              />
+                <Pie data={pieData} />
               </div>
+
               <div
                 className="tabla-clima-wrapper"
                 onMouseEnter={() => setHoveredField("meses")}
@@ -287,8 +275,8 @@ useEffect(() => {
                       <th>Temp Min</th>
                       <th>Temp Prom</th>
                       <th>Temp Max</th>
-                      <th>Humedad %</th>
-                      <th>Viento máx</th>
+                      <th>Humedad</th>
+                      <th>Viento</th>
                       <th>Calentar</th>
                     </tr>
                   </thead>
@@ -296,11 +284,11 @@ useEffect(() => {
                     {clima.map(m => (
                       <tr key={m.mes}>
                         <td>{m.mes}</td>
-                        <td>{m.tMin} °C</td>
-                        <td>{m.tProm} °C</td>
-                        <td>{m.tMax} °C</td>
-                        <td>{m.humedad} %</td>
-                        <td>{m.viento} km/h</td>
+                        <td>{m.tMin}°C</td>
+                        <td>{m.tProm}°C</td>
+                        <td>{m.tMax}°C</td>
+                        <td>{m.humedad}%</td>
+                        <td>{m.viento}</td>
                         <td>
                           <input
                             type="checkbox"
@@ -321,7 +309,7 @@ useEffect(() => {
             </div>
           </div>
 
-          {/* ================= MOTOBOMBA CALENTAMIENTO ================= */}
+          {/* MOTOBOMBA */}
           <div className="selector-grupo">
             <div className="selector-subtitulo">
               Motobomba para sistema de calentamiento
@@ -360,10 +348,9 @@ useEffect(() => {
               Omitir calentamiento y continuar →
             </button>
           </div>
-
         </div>
 
-        {/* ================= FOOTER DINÁMICO ================= */}
+        {/* FOOTER */}
         <div className="selector-footer fijo calentamiento">
           <span>Modo ingeniería · Calentamiento</span>
           <span className="footer-highlight">

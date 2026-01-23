@@ -1,5 +1,5 @@
 import "./estilos.css";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Home, ChevronLeft, ChevronRight } from "lucide-react";
 
 import Dimensiones from "./pages/Dimensiones.jsx";
@@ -9,25 +9,35 @@ import Equipamiento from "./pages/Equipamiento.jsx";
 export default function App() {
   const [seccion, setSeccion] = useState("dimensiones");
   const [panelColapsado, setPanelColapsado] = useState(false);
+
+  // 🔹 Datos globales por sistema
   const [datosPorSistema, setDatosPorSistema] = useState({});
 
-  // ✅ sistema activo GLOBAL (skimmer, desborde, etc.)
+  // 🔹 Sistema activo (skimmer, desborde, jacuzzi, etc.)
   const [sistemaActivo, setSistemaActivo] = useState(null);
 
-  // 👉 REF PARA CONTROLAR RESET DE DIMENSIONES (SOLO HOME)
+  // 🔹 Configuración final de motobombas
+const datosDim = datosPorSistema?.[sistemaActivo];
+
+const configBombas = {
+  filtrado: true,
+
+  calentamiento:
+    datosPorSistema?.calentamiento?.usarBombaCalentamiento === "si",
+
+  infinity:
+    datosDim?.usarBombaInfinity === "si" &&
+    (datosDim?.desborde === "infinity" || datosDim?.desborde === "ambos")
+};
+
+  // 🔹 Ref para resetear Dimensiones desde Home
   const dimensionesRef = useRef(null);
 
   const handleHome = () => {
     setSeccion("dimensiones");
-    setSistemaActivo(null); // 🔥 reset total SOLO con Home
+    setSistemaActivo(null);
     dimensionesRef.current?.resetDimensiones();
   };
-
-const [configBombas, setConfigBombas] = useState({
-  filtrado: true,
-  calentamiento: false,
-  infinity: false
-});
 
   return (
     <div className="app-contenedor">
@@ -37,15 +47,10 @@ const [configBombas, setConfigBombas] = useState({
       ========================== */}
       <div className={`panel-izquierdo ${panelColapsado ? "colapsado" : ""}`}>
 
-        {/* HEADER ICONOS */}
+        {/* HEADER */}
         <div className={`panel-header ${panelColapsado ? "solo-colapsar" : ""}`}>
-
           {!panelColapsado && (
-            <button
-              className="icon-btn"
-              title="Inicio"
-              onClick={handleHome}
-            >
+            <button className="icon-btn" title="Inicio" onClick={handleHome}>
               <Home size={20} />
             </button>
           )}
@@ -55,22 +60,15 @@ const [configBombas, setConfigBombas] = useState({
             title={panelColapsado ? "Expandir panel" : "Contraer panel"}
             onClick={() => setPanelColapsado(!panelColapsado)}
           >
-            {panelColapsado ? (
-              <ChevronRight size={20} />
-            ) : (
-              <ChevronLeft size={20} />
-            )}
+            {panelColapsado ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </button>
-
         </div>
 
         {/* NAVEGACIÓN */}
         <div className="nav-vertical">
-
           <button
             className={`nav-item ${seccion === "dimensiones" ? "activo" : ""}`}
             onClick={handleHome}
-            title="Dimensiones"
           >
             <span className="nav-icon">📐</span>
             {!panelColapsado && <span className="nav-text">Dimensiones</span>}
@@ -79,7 +77,6 @@ const [configBombas, setConfigBombas] = useState({
           <button
             className={`nav-item ${seccion === "calentamiento" ? "activo" : ""}`}
             onClick={() => setSeccion("calentamiento")}
-            title="Calentamiento"
           >
             <span className="nav-icon">🔥</span>
             {!panelColapsado && <span className="nav-text">Calentamiento</span>}
@@ -88,15 +85,13 @@ const [configBombas, setConfigBombas] = useState({
           <button
             className={`nav-item ${seccion === "equipamiento" ? "activo" : ""}`}
             onClick={() => setSeccion("equipamiento")}
-            title="Equipamiento"
           >
             <span className="nav-icon">⚙️</span>
             {!panelColapsado && <span className="nav-text">Equipamiento</span>}
           </button>
-
         </div>
 
-        {/* RESULTADOS GENERALES */}
+        {/* RESULTADOS */}
         <div className="toggle-seccion unida">
           <div className="toggle-boton activo">
             <h3>📊 Resultados generales</h3>
@@ -140,7 +135,6 @@ const [configBombas, setConfigBombas] = useState({
             </table>
           </div>
         </div>
-
       </div>
 
       {/* =========================
@@ -164,21 +158,22 @@ const [configBombas, setConfigBombas] = useState({
             <Calentamiento
               setSeccion={setSeccion}
               tipoSistema={sistemaActivo}
-              setConfigBombas={setConfigBombas}
+              datosPorSistema={datosPorSistema}
+              setDatosPorSistema={setDatosPorSistema}
             />
           )}
 
           {seccion === "equipamiento" && (
-          <Equipamiento
-            setSeccion={setSeccion}
-            sistemaActivo={sistemaActivo}
-            datosPorSistema={datosPorSistema}
-            configBombas={configBombas}
-          />
+            <Equipamiento
+              setSeccion={setSeccion}
+              sistemaActivo={sistemaActivo}
+              datosPorSistema={datosPorSistema}
+              configBombas={configBombas}
+            />
           )}
 
         </div>
       </div>
-   </div>
+    </div>
   );
 }

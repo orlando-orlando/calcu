@@ -32,19 +32,16 @@ import "../estilos.css";
     usarBombaInfinity: null
   });
 
-const actualizarDatos = (patch) => {
-  setDatos((prev) => {
-    const nuevos = { ...prev, ...patch };
+  const actualizarDatos = (patch) => {
+    const nuevos = { ...datos, ...patch };
 
-    // 👇 sincronizamos FUERA del setDatos
+    setDatos(nuevos);
+
     setDatosPorSistema((mapa) => ({
       ...mapa,
       [tipoSeleccionado]: nuevos
     }));
-
-    return nuevos;
-  });
-};
+  };
 
   const descripcionesCampos = {
     area: "Área superficial del cuerpo de agua",
@@ -92,25 +89,24 @@ const actualizarDatos = (patch) => {
   const config = tipoSeleccionado ? sistemas[tipoSeleccionado] : null;
 
           useEffect(() => {
-          if (sistemaActivo && sistemas[sistemaActivo]) {
+            if (!sistemaActivo || !sistemas[sistemaActivo]) return;
+
             setTipoSeleccionado(sistemaActivo);
 
-            setDatosPorSistema((prev) => {
-              if (prev[sistemaActivo]) {
-                setDatos(prev[sistemaActivo]);
-                return prev;
-              }
+            const existente = datosPorSistema[sistemaActivo];
 
+            if (existente) {
+              setDatos(existente);
+            } else {
               const nuevo = crearDatosSistema(sistemas[sistemaActivo].cuerpos);
               setDatos(nuevo);
 
-              return {
+              setDatosPorSistema((prev) => ({
                 ...prev,
                 [sistemaActivo]: nuevo
-              };
-            });
-          }
-        }, [sistemaActivo]);
+              }));
+            }
+          }, [sistemaActivo]);
 
   const renderCamposSistema = () => {
   if (!config || !datos) return null;
