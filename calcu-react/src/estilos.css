@@ -2166,3 +2166,53 @@ select option:hover {
   font-size: 0.7rem;
   color: rgba(226,232,240,0.7);
 }
+
+.grupo-sistema {
+  border: 2px solid rgba(0, 90, 180, 0.35);
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 32px;
+  background: rgba(0, 80, 160, 0.03);
+}
+
+.grupo-sistema-header {
+  margin-bottom: 14px;
+}
+
+.grupo-sistema-titulo {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0b5ed7;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.grupo-sistema-subtitulo {
+  font-size: 12px;
+  color: #5c6f91;
+  margin-top: 2px;
+}
+
+.grupo-sistema-contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* === ANIMACIÓN SISTEMAS (FIX DEFINITIVO) === */
+.sistema-contenido-animado {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.sistema-contenido-animado.expandido {
+  max-height: 4000px; /* alto seguro */
+  opacity: 1;
+  transform: translateY(0);
+}
