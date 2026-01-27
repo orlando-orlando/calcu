@@ -544,22 +544,14 @@ const [mostrarErrores, setMostrarErrores] = useState(false);
               className={`fila-sistema ${tipoSeleccionado === key ? "activo" : ""}`}
               onClick={() => {
                 setTipoSeleccionado(key);
-                setSistemaActivo(key); // 👈 CLAVE
+                setSistemaActivo(key);
 
                 setDatosPorSistema((prev) => {
-                  // si ya existe, lo usamos
-                  if (prev[key]) {
-                    setDatos(prev[key]);
-                    return prev;
-                  }
-
-                  // si no existe, lo creamos
-                  const nuevo = crearDatosSistema(s.cuerpos);
-                  setDatos(nuevo);
+                  if (prev[key]) return prev;
 
                   return {
                     ...prev,
-                    [key]: nuevo
+                    [key]: crearDatosSistema(s.cuerpos)
                   };
                 });
               }}

@@ -176,14 +176,14 @@ const bloquesSistema = (() => {
       return [
         {
           id: "cuerpo-1",
-          titulo: "Cuerpo 1",
-          subtitulo: "Alberca · Tipo de sistema seleccionado",
+          titulo: "Alberca · Cuerpo 1 independiente",
+          subtitulo: "Tipo de sistema seleccionado",
           tieneJacuzzi: false
         },
         {
           id: "cuerpo-2",
-          titulo: "Cuerpo 2",
-          subtitulo: "Jacuzzi · Tipo de sistema seleccionado",
+          titulo: "Jacuzzi · Cuerpo 2 independiente",
+          subtitulo: "Tipo de sistema seleccionado",
           tieneJacuzzi: true
         }
       ];
@@ -192,14 +192,14 @@ const bloquesSistema = (() => {
       return [
         {
           id: "cuerpo-1",
-          titulo: "Cuerpo 1",
-          subtitulo: "Alberca · Tipo de sistema seleccionado",
+          titulo: "Alberca · Cuerpo 1 independiente",
+          subtitulo: "Tipo de sistema seleccionado",
           tieneJacuzzi: false
         },
         {
           id: "cuerpo-2",
-          titulo: "Cuerpo 2",
-          subtitulo: "Chapoteadero · Tipo de sistema seleccionado",
+          titulo: "Chapoteadero · Cuerpo 2 independiente",
+          subtitulo: "Tipo de sistema seleccionado",
           tieneJacuzzi: false
         }
       ];
@@ -208,14 +208,14 @@ const bloquesSistema = (() => {
       return [
         {
           id: "cuerpo-1",
-          titulo: "Cuerpo 1",
-          subtitulo: "Jacuzzi · Tipo de sistema seleccionado",
+          titulo: "Jacuzzi · Cuerpo 1 independiente",
+          subtitulo: "Tipo de sistema seleccionado",
           tieneJacuzzi: true
         },
         {
           id: "cuerpo-2",
-          titulo: "Cuerpo 2",
-          subtitulo: "Chapoteadero · Tipo de sistema seleccionado",
+          titulo: "Chapoteadero · Cuerpo 2 independiente",
+          subtitulo: "Tipo de sistema seleccionado",
           tieneJacuzzi: false
         }
       ];
@@ -525,8 +525,7 @@ const bloquesSistema = (() => {
           </GrupoSistema>
         ))}
             </div>
-          </div>
-        </div>
+
 
         {/* FOOTER */}
         <div className="selector-footer fijo equipamiento">
@@ -537,7 +536,8 @@ const bloquesSistema = (() => {
               : descripcionesCampos.default}
           </span>
         </div>
-
+          </div>
+        </div>
       </div>
 
   );
