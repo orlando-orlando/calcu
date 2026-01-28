@@ -8,8 +8,21 @@ import "../estilos.css";
   const [animandoSalida, setAnimandoSalida] = useState(false);
   const [datos, setDatos] = useState(null);
   const [mostrarAviso, setMostrarAviso] = useState(false);
-  const cambiarSeccionConAnimacion = (nuevaSeccion) => {setAnimandoSalida(true);
+  const [mostrarErrores, setMostrarErrores] = useState(false);
+  
+  const [imagenZoom, setImagenZoom] = useState(null);
+    /* 🔹 Cerrar visor con ESC */
+  useEffect(() => {
+    const cerrarConEsc = (e) => {
+      if (e.key === "Escape") {
+        setImagenZoom(null);
+      }
+    };
+    window.addEventListener("keydown", cerrarConEsc);
+    return () => window.removeEventListener("keydown", cerrarConEsc);
+  }, []);
 
+  const cambiarSeccionConAnimacion = (nuevaSeccion) => {setAnimandoSalida(true);
     setTimeout(() => {
       setAnimandoSalida(false);
       setSeccion(nuevaSeccion);
@@ -57,6 +70,17 @@ import "../estilos.css";
     usarBombaInfinity: "Define si el borde infinity contará con una motobomba dedicada"
   };
 
+  const descripcionesDesborde = {
+  "desborde-infinity":
+    "Sistema de rebose continuo por borde infinito, requiere control preciso de nivel y retorno dedicado",
+  "desborde-canal":
+    "Sistema de desborde perimetral mediante canal recolector con retorno balanceado",
+  "desborde-ambos":
+    "Combinación de borde infinity y canal de desborde en un mismo sistema hidráulico",
+  "desborde-ninguno":
+    "Sistema sin desborde, el nivel se controla únicamente por skimmers o tomas directas"
+};
+
   useImperativeHandle(ref, () => ({
     resetDimensiones() {
       setTipoSeleccionado(null);
@@ -78,12 +102,35 @@ import "../estilos.css";
     jacuzzi: { img: "./img/jacuzzi.jpg", cuerpos: 1, desborde: true, nombre: "Jacuzzi" },
     chapoteadero: { img: "./img/chapoteadero.jpg", cuerpos: 1, desborde: true, nombre: "Chapoteadero" },
     espejoAgua: { img: "./img/espejo.jpg", cuerpos: 1, desborde: true, nombre: "Espejo de agua" },
-    albercaJacuzzi1: { img: "./img/alberca+jacuzzi1C.jpg", cuerpos: 1, desborde: true, nombre: "Alberca + Jacuzzi (1 cuerpo)" },
-    albercaChapo1: { img: "./img/alberca+chapoteadero1C.jpg", cuerpos: 1, desborde: true, nombre: "Alberca + Chapoteadero (1 cuerpo)" },
-    jacuzziChapo1: { img: "./img/jacuzzi+chapoteadero1C.jpg", cuerpos: 1, desborde: true, nombre: "Jacuzzi + Chapoteadero (1 cuerpo)" },
+    albercaJacuzzi1: { img: "./img/alberca+jacuzzi1C.jpg", cuerpos: 2, desborde: true, nombre: "Alberca + Jacuzzi (1 cuerpo)" },
+    albercaChapo1: { img: "./img/alberca+chapoteadero1C.jpg", cuerpos: 2, desborde: true, nombre: "Alberca + Chapoteadero (1 cuerpo)" },
+    jacuzziChapo1: { img: "./img/jacuzzi+chapoteadero1C.jpg", cuerpos: 2, desborde: true, nombre: "Jacuzzi + Chapoteadero (1 cuerpo)" },
     albercaJacuzzi2: { img: "./img/alberca+jacuzzi2C.jpg", cuerpos: 2, desborde: true, nombre: "Alberca + Jacuzzi (2 cuerpos)" },
     albercaChapo2: { img: "./img/alberca+chapoteadero2C.jpg", cuerpos: 2, desborde: true, nombre: "Alberca + Chapoteadero (2 cuerpos)" },
     jacuzziChapo2: { img: "./img/jacuzzi+chapoteadero2C.jpg", cuerpos: 2, desborde: true, nombre: "Jacuzzi + Chapoteadero (2 cuerpos)" }
+  };
+
+  const descripcionesSistemas = {
+    alberca:
+      "Sistema hidráulico principal para nado y recreación, diseñado para operación continua y filtración estándar",
+    jacuzzi:
+      "Sistema de hidromasaje con alta recirculación, mayor temperatura y requerimientos específicos de bombeo",
+    chapoteadero:
+      "Sistema de baja profundidad destinado a usuarios infantiles, con tasas de rotación más estrictas",
+    espejoAgua:
+      "Sistema ornamental de baja turbulencia enfocado en efecto visual y control de nivel",
+    albercaJacuzzi1:
+      "Sistema combinado de alberca y jacuzzi en un solo cuerpo hidráulico con control compartido",
+    albercaChapo1:
+      "Sistema combinado de alberca y chapoteadero en un solo cuerpo hidráulico",
+    jacuzziChapo1:
+      "Sistema combinado de jacuzzi y chapoteadero en un solo cuerpo hidráulico",
+    albercaJacuzzi2:
+      "Sistema combinado de alberca y jacuzzi en cuerpos hidráulicos independientes",
+    albercaChapo2:
+      "Sistema combinado de alberca y chapoteadero en cuerpos hidráulicos independientes",
+    jacuzziChapo2:
+      "Sistema combinado de jacuzzi y chapoteadero en cuerpos hidráulicos independientes"
   };
 
   const config = tipoSeleccionado ? sistemas[tipoSeleccionado] : null;
@@ -255,7 +302,7 @@ import "../estilos.css";
           {["infinity", "canal", "ambos", "ninguno"].map((v) => (
                 <label
                   key={v}
-                  onMouseEnter={() => setHoveredField("desborde")}
+                  onMouseEnter={() => setHoveredField(`desborde-${v}`)}
                   onMouseLeave={() => setHoveredField(null)}
                 >
                   <input
@@ -459,8 +506,6 @@ import "../estilos.css";
 
 const errores = obtenerErrores();
 
-const [mostrarErrores, setMostrarErrores] = useState(false);
-
   return (
     <div className="form-section hero-wrapper">
       <div className="selector-tecnico modo-experto">
@@ -494,6 +539,7 @@ const [mostrarErrores, setMostrarErrores] = useState(false);
 
                 setTimeout(() => {
                   setTipoSeleccionado(null);
+                  setSistemaActivo(null); // 🔑 CLAVE
                   setDatos(null);
                   setAnimandoSalida(false);
                 }, 220);
@@ -543,10 +589,9 @@ const [mostrarErrores, setMostrarErrores] = useState(false);
               key={key}
               className={`fila-sistema ${tipoSeleccionado === key ? "activo" : ""}`}
               onClick={() => {
-                setTipoSeleccionado(key);
                 setSistemaActivo(key);
+                  setDatosPorSistema((prev) => {
 
-                setDatosPorSistema((prev) => {
                   if (prev[key]) return prev;
 
                   return {
@@ -572,7 +617,18 @@ const [mostrarErrores, setMostrarErrores] = useState(false);
               </div>
 
               <div className="sistema-imagen">
-                <img src={s.img} alt={s.nombre} />
+                <img
+                  src={s.img}
+                  alt={s.nombre}
+                  className="img-zoomable"
+                  onClick={(e) => {
+                    e.stopPropagation(); // 🔑 evita seleccionar sistema
+                    setImagenZoom({
+                      src: s.img,
+                      titulo: s.nombre
+                    });
+                  }}
+                />
               </div>
             </div>
           ))}
@@ -581,8 +637,8 @@ const [mostrarErrores, setMostrarErrores] = useState(false);
         <div className="selector-footer fijo">
           <span>
             {hoveredTipo
-              ? `Sistema ${Object.keys(sistemas).indexOf(hoveredTipo) + 1} / ${Object.keys(sistemas).length}`
-              : `${Object.keys(sistemas).length} sistemas`}
+            ? `Configuración seleccionable`
+            : `${Object.keys(sistemas).length} configuraciones disponibles`}
           </span>
 
             <span className="footer-highlight">
@@ -598,16 +654,43 @@ const [mostrarErrores, setMostrarErrores] = useState(false);
                   return `${descripcionesCampos[campo]} (Cuerpo ${cuerpo})`;
                 }
 
+                // descripciones específicas de desborde
+                if (descripcionesDesborde[hoveredField]) {
+                  return descripcionesDesborde[hoveredField];
+                }
+
                 // campos normales
                 return descripcionesCampos[hoveredField];
 
               })()
               : hoveredTipo
-                ? sistemas[hoveredTipo].nombre
+                ? descripcionesSistemas[hoveredTipo] ?? sistemas[hoveredTipo].nombre
                 : "Modo ingeniería"}
             </span>
         </div>
       </div>
+
+        {imagenZoom && (
+          <div
+            className="visor-imagen"
+            onClick={() => setImagenZoom(null)}
+          >
+            <div
+              className="visor-contenido"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img src={imagenZoom.src} alt={imagenZoom.titulo} />
+              <div className="visor-titulo">{imagenZoom.titulo}</div>
+
+              <button
+                className="visor-cerrar"
+                onClick={() => setImagenZoom(null)}
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
     </div>
   );
 });

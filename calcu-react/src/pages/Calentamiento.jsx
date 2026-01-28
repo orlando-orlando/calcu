@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import "../estilos.css";
-
+import { getClimaMensual } from "../data/clima";
 import { Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -17,6 +17,25 @@ export default function Calentamiento({
   datosPorSistema,
   setDatosPorSistema
 }) {
+
+  const SISTEMAS_LABELS = {
+    alberca: "Alberca",
+    jacuzzi: "Jacuzzi",
+    chapoteadero: "Chapoteadero",
+    espejoAgua: "Espejo de agua",
+
+    albercaJacuzzi1: "Alberca + Jacuzzi (1 cuerpo)",
+    albercaChapo1: "Alberca + Chapoteadero (1 cuerpo)",
+    jacuzziChapo1: "Jacuzzi + Chapoteadero (1 cuerpo)",
+
+    albercaJacuzzi2: "Alberca + Jacuzzi (2 cuerpos)",
+    albercaChapo2: "Alberca + Chapoteadero (2 cuerpos)",
+    jacuzziChapo2: "Jacuzzi + Chapoteadero (2 cuerpos)"
+  };
+
+  const nombreSistema =
+  SISTEMAS_LABELS[tipoSistema] || "Dimensiones";
+
 
   /* =========================
      ESTADOS (con persistencia)
@@ -62,25 +81,49 @@ export default function Calentamiento({
     setDatosPorSistema
   ]);
 
-  /* =========================
-     DATA MOCK
-  ========================== */
-  const ciudadesMexico = [
-    "Ciudad de México",
-    "Guadalajara",
-    "Monterrey",
-    "Querétaro",
-    "Cancún",
-    "Tijuana"
-  ];
+const ciudadesMexico = [
+  { key: "guadalajara", label: "Guadalajara" },
+  { key: "mexicali", label: "Mexicali" },
+  { key: "losCabos", label: "Los Cabos" },
+  { key: "hermosillo", label: "Hermosillo" },
+  { key: "chihuahua", label: "Chihuahua" },
+  { key: "torreon", label: "Torreón" },
+  { key: "monterrey", label: "Monterrey" },
+  { key: "tampico", label: "Tampico" },
+  { key: "veracruz", label: "Veracruz" },
+  { key: "sanLuisPotosi", label: "San Luis Potosí" },
+  { key: "durango", label: "Durango" },
+  { key: "culiacan", label: "Culiacán" },
+  { key: "tepic", label: "Tepic" },
+  { key: "colima", label: "Colima" },
+  { key: "aguascalientes", label: "Aguascalientes" },
+  { key: "zacatecas", label: "Zacatecas" },
+  { key: "morelia", label: "Morelia" },
+  { key: "leon", label: "León" },
+  { key: "queretaro", label: "Querétaro" },
+  { key: "pachuca", label: "Pachuca" },
+  { key: "ciudadDeMexico", label: "Ciudad de México" },
+  { key: "acapulco", label: "Acapulco" },
+  { key: "cuernavaca", label: "Cuernavaca" },
+  { key: "puebla", label: "Puebla" },
+  { key: "tlaxcala", label: "Tlaxcala" },
+  { key: "oaxaca", label: "Oaxaca" },
+  { key: "villahermosa", label: "Villahermosa" },
+  { key: "tuxtlaGutierrez", label: "Tuxtla Gutierrez" },
+  { key: "campeche", label: "Campeche" },
+  { key: "merida", label: "Mérida" },
+  { key: "cancun", label: "Cancún" },
+  { key: "manzanillo", label: "Manzanillo" },
+  { key: "puertoVallarta", label: "Puerto Vallarta" },
+];
 
-  const clima = [
-    { mes: "Enero", tMin: 10, tProm: 16, tMax: 22, humedad: 55, viento: 18 },
-    { mes: "Febrero", tMin: 11, tProm: 17, tMax: 23, humedad: 52, viento: 20 },
-    { mes: "Marzo", tMin: 13, tProm: 19, tMax: 26, humedad: 48, viento: 22 },
-    { mes: "Abril", tMin: 15, tProm: 21, tMax: 29, humedad: 45, viento: 24 },
-    { mes: "Mayo", tMin: 17, tProm: 24, tMax: 32, humedad: 50, viento: 22 }
-  ];
+  /* =========================
+    CLIMA REAL (desde clima.js)
+  ========================== */
+  const clima = useMemo(() => {
+    if (!ciudad) return [];
+    return getClimaMensual(ciudad);
+  }, [ciudad]);
 
   /* =========================
      DESCRIPCIONES FOOTER
@@ -129,6 +172,32 @@ export default function Calentamiento({
     ]
   }), []);
 
+  const pieOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "right", // 👈 mover a la derecha
+        labels: {
+          color: "#e5e7eb", // gris claro (Tailwind gray-200)
+          font: {
+            size: 13,
+            weight: "500"
+          },
+          padding: 14,
+          boxWidth: 14
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            return `${context.label}: ${context.parsed}%`;
+          }
+        }
+      }
+    }
+  };
+
   const volverConAnimacion = () => {
     setAnimandoSalida(true);
     setTimeout(() => setSeccion("dimensiones"), 220);
@@ -151,7 +220,7 @@ export default function Calentamiento({
 
         <div className="selector-acciones">
           <button className="btn-secundario" onClick={volverConAnimacion}>
-            ← Volver a {tipoSistema || "Dimensiones"}
+            ← Volver a {nombreSistema}
           </button>
           <button
             className="btn-primario"
@@ -180,9 +249,11 @@ export default function Calentamiento({
                   onChange={e => setCiudad(e.target.value)}
                 >
                   <option value="">Selecciona ciudad</option>
-                  {ciudadesMexico.map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
+                    {ciudadesMexico.map(c => (
+                      <option key={c.key} value={c.key}>
+                        {c.label}
+                      </option>
+                    ))}
                 </select>
               </div>
 
@@ -260,7 +331,7 @@ export default function Calentamiento({
                 onMouseEnter={() => setHoveredField("grafica")}
                 onMouseLeave={() => setHoveredField(null)}
               >
-                <Pie data={pieData} />
+                <Pie data={pieData} options={pieOptions} />
               </div>
 
               <div
