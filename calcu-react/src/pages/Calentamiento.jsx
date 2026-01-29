@@ -367,24 +367,6 @@ const ciudadesMexico = [
                   onMouseLeave={() => setHoveredField(null)}
                 >
 
-              <label className="checkbox-raiz">
-                <input
-                  type="checkbox"
-                  checked={
-                    clima.length &&
-                    clima.every(m => mesesCalentar[m.mes])
-                  }
-                  onChange={e => {
-                    const nuevo = {};
-                    clima.forEach(m => {
-                      nuevo[m.mes] = e.target.checked;
-                    });
-                    setMesesCalentar(nuevo);
-                  }}
-                />
-                Calentar todo el año
-              </label>
-
                 <table className="tabla-clima-pro">
                   <thead>
                     <tr>
@@ -394,7 +376,30 @@ const ciudadesMexico = [
                       <th>Temp Max (°C)</th>
                       <th>Humedad (%)</th>
                       <th>Viento</th>
-                      <th>Calentar</th>
+                      <th className="th-calentar">
+                        <label className="checkbox-columna">
+                          <input
+                            type="checkbox"
+                            checked={
+                              clima.length &&
+                              clima.every(m => mesesCalentar[m.mes])
+                            }
+                            onChange={e => {
+                              const nuevo = {};
+                              clima.forEach(m => {
+                                nuevo[m.mes] = e.target.checked;
+                              });
+                              setMesesCalentar(nuevo);
+                            }}
+                          />
+                          <span>Seleccionar todo</span>
+                        </label>
+
+                        <div className="titulo-columna">
+                          Calentar
+                        </div>
+                      </th>
+
                     </tr>
                   </thead>
                   <tbody>
