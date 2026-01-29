@@ -125,6 +125,25 @@ const ciudadesMexico = [
     return getClimaMensual(ciudad);
   }, [ciudad]);
 
+  const mesMasFrio = useMemo(() => {
+    const seleccionados = clima.filter(m => mesesCalentar[m.mes]);
+    if (!seleccionados.length) return null;
+
+    return seleccionados.reduce((frio, actual) =>
+      actual.tMin < frio.tMin ? actual : frio
+    );
+  }, [clima, mesesCalentar]);
+
+  useEffect(() => {
+    if (clima.length && Object.keys(mesesCalentar).length === 0) {
+      const todos = {};
+      clima.forEach(m => {
+        todos[m.mes] = true;
+      });
+      setMesesCalentar(todos);
+    }
+  }, [clima]);
+
   /* =========================
      DESCRIPCIONES FOOTER
   ========================== */
@@ -175,19 +194,27 @@ const ciudadesMexico = [
   const pieOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "right", // 👈 mover a la derecha
-        labels: {
-          color: "#e5e7eb", // gris claro (Tailwind gray-200)
-          font: {
-            size: 13,
-            weight: "500"
-          },
-          padding: 14,
-          boxWidth: 14
+      layout: {
+        padding: {
+          top: 18,
+          bottom: 18,
+          left: 18,
+          right: 18
         }
       },
+      plugins: {
+        legend: {
+          position: "right", // 👈 mover a la derecha
+          labels: {
+            color: "#e5e7eb", // gris claro (Tailwind gray-200)
+            font: {
+              size: 13,
+              weight: "500"
+            },
+            padding: 14,
+            boxWidth: 14
+          }
+        },
       tooltip: {
         callbacks: {
           label: function (context) {
@@ -321,8 +348,8 @@ const ciudadesMexico = [
 
           {/* CLIMA + GRÁFICA */}
           <div className="selector-grupo">
-            <div className="selector-subtitulo">
-              Análisis climático y pérdidas energéticas
+            <div className="selector-subtitulo fila-header-clima">
+              <span>Análisis climático y pérdidas energéticas</span>
             </div>
 
             <div className="layout-clima-grafica">
@@ -334,19 +361,38 @@ const ciudadesMexico = [
                 <Pie data={pieData} options={pieOptions} />
               </div>
 
-              <div
-                className="tabla-clima-wrapper"
-                onMouseEnter={() => setHoveredField("meses")}
-                onMouseLeave={() => setHoveredField(null)}
-              >
-                <table className="tabla-resultados">
+                <div
+                  className="tabla-clima-card"
+                  onMouseEnter={() => setHoveredField("meses")}
+                  onMouseLeave={() => setHoveredField(null)}
+                >
+
+              <label className="checkbox-raiz">
+                <input
+                  type="checkbox"
+                  checked={
+                    clima.length &&
+                    clima.every(m => mesesCalentar[m.mes])
+                  }
+                  onChange={e => {
+                    const nuevo = {};
+                    clima.forEach(m => {
+                      nuevo[m.mes] = e.target.checked;
+                    });
+                    setMesesCalentar(nuevo);
+                  }}
+                />
+                Calentar todo el año
+              </label>
+
+                <table className="tabla-clima-pro">
                   <thead>
                     <tr>
                       <th>Mes</th>
-                      <th>Temp Min</th>
-                      <th>Temp Prom</th>
-                      <th>Temp Max</th>
-                      <th>Humedad</th>
+                      <th>Temp Min (°C)</th>
+                      <th>Temp Prom (°C)</th>
+                      <th>Temp Max (°C)</th>
+                      <th>Humedad (%)</th>
                       <th>Viento</th>
                       <th>Calentar</th>
                     </tr>
@@ -355,10 +401,10 @@ const ciudadesMexico = [
                     {clima.map(m => (
                       <tr key={m.mes}>
                         <td>{m.mes}</td>
-                        <td>{m.tMin}°C</td>
-                        <td>{m.tProm}°C</td>
-                        <td>{m.tMax}°C</td>
-                        <td>{m.humedad}%</td>
+                        <td>{m.tMin}</td>
+                        <td>{m.tProm}</td>
+                        <td>{m.tMax}</td>
+                        <td>{m.humedad}</td>
                         <td>{m.viento}</td>
                         <td>
                           <input
@@ -376,6 +422,35 @@ const ciudadesMexico = [
                     ))}
                   </tbody>
                 </table>
+
+                {mesMasFrio && (
+                  <div className="tabla-resumen-frio">
+                    <div className="resumen-titulo">
+                      Mes más frío seleccionado
+                    </div>
+
+                    <table className="tabla-clima-pro resumen">
+                      <thead>
+                        <tr>
+                          <th>Mes</th>
+                          <th>Temp Min (°C)</th>
+                          <th>Temp Prom (°C)</th>
+                          <th>Viento Máx</th>
+                          <th>Humedad (%)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>{mesMasFrio.mes}</td>
+                          <td>{mesMasFrio.tMin}</td>
+                          <td>{mesMasFrio.tProm}</td>
+                          <td>{mesMasFrio.viento}</td>
+                          <td>{mesMasFrio.humedad}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -430,8 +505,9 @@ const ciudadesMexico = [
               : descripcionesCampos.default}
           </span>
         </div>
+      </div>
 
       </div>
-    </div>
+
   );
 }
