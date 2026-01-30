@@ -271,35 +271,45 @@ const ciudadesMexico = [
 
         {/* HEADER */}
         <div className="selector-header">
-          <div className="selector-titulo">Calentamiento del sistema</div>
+          <div className="selector-titulo">
+            Calentamiento del sistema
+          </div>
+
           <div className="selector-subtitulo-tecnico">
             Análisis térmico y condiciones climáticas
           </div>
         </div>
+          <div className="selector-acciones">
+            <button
+              className="btn-secundario"
+              onClick={volverConAnimacion}
+            >
+              ← Volver a {nombreSistema}
+            </button>
 
-        <div className="aviso-wrapper">
-          <button
-            className={`btn-primario ${mostrarAviso ? "error" : ""}`}
-            onClick={() => {
-              if (!calentamientoCompleto()) {
-                setMostrarErrores(true);
-                setMostrarAviso(true);
-                setTimeout(() => setMostrarAviso(false), 2500);
-                return;
-              }
+            <div className="aviso-wrapper">
+              <button
+                className={`btn-primario ${mostrarAviso ? "error" : ""}`}
+                onClick={() => {
+                  if (!calentamientoCompleto()) {
+                    setMostrarErrores(true);
+                    setMostrarAviso(true);
+                    setTimeout(() => setMostrarAviso(false), 2500);
+                    return;
+                  }
+                  setSeccion("equipamiento");
+                }}
+              >
+                Ir a Equipamiento →
+              </button>
 
-              setSeccion("equipamiento");
-            }}
-          >
-            Ir a Equipamiento →
-          </button>
-
-          {mostrarAviso && (
-            <div className="aviso-validacion">
-              Llena toda la información solicitada
+              {mostrarAviso && (
+                <div className="aviso-validacion">
+                  Llena toda la información solicitada
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
 
         {mostrarOmitirHint && !yaConfiguroCalentamiento && (
           <div className="callout-omitir-calentamiento">

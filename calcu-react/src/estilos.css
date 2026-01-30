@@ -1559,16 +1559,12 @@ select option:hover {
   background-color: #d1d5db;
 }
 
-.selector-acciones{
+.selector-acciones {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 12px;
-
-  margin: 10px 0 18px 0;
-  padding: 10px 4px 14px 4px;
-
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .btn-secundario{
@@ -1691,10 +1687,11 @@ select option:hover {
 }
 
 .aviso-wrapper {
-  position: relative; /* 🔑 CLAVE */
+  position: relative;   /* 🔑 ANCLA el aviso */
   display: flex;
-  justify-content: flex-end;
-  margin-bottom: 2.5rem; /* espacio para el aviso */
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
 }
 
 .aviso-validacion {
@@ -2452,3 +2449,4 @@ select option:hover {
   border-radius: 10px;
   padding: 0.75rem 1rem;
 }
+
