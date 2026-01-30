@@ -2,21 +2,11 @@ import { useState, useMemo, useEffect } from "react";
 import "../estilos.css";
 import { getClimaMensual } from "../data/clima";
 import { Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend
-} from "chart.js";
+import {Chart as ChartJS, ArcElement, Tooltip, Legend} from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function Calentamiento({
-  setSeccion,
-  tipoSistema,
-  datosPorSistema,
-  setDatosPorSistema
-}) {
+export default function Calentamiento({setSeccion, tipoSistema, datosPorSistema, setDatosPorSistema}) {
 
   const SISTEMAS_LABELS = {
     alberca: "Alberca",
@@ -33,28 +23,71 @@ export default function Calentamiento({
     jacuzziChapo2: "Jacuzzi + Chapoteadero (2 cuerpos)"
   };
 
-  const nombreSistema =
-  SISTEMAS_LABELS[tipoSistema] || "Dimensiones";
-
+  const nombreSistema = SISTEMAS_LABELS[tipoSistema] || "Dimensiones";
 
   /* =========================
      ESTADOS (con persistencia)
   ========================== */
   const datosPrevios = datosPorSistema?.calentamiento || {};
-
-  const [usarBombaCalentamiento, setUsarBombaCalentamiento] = useState(
-    datosPrevios.usarBombaCalentamiento || "no"
-  );
+  const [usarBombaCalentamiento, setUsarBombaCalentamiento] = useState(datosPrevios.usarBombaCalentamiento ?? null);
   const [ciudad, setCiudad] = useState(datosPrevios.ciudad || "");
-  const [tempDeseada, setTempDeseada] = useState(datosPrevios.tempDeseada ?? 30);
-  const [cubierta, setCubierta] = useState(datosPrevios.cubierta ?? false);
-  const [techada, setTechada] = useState(datosPrevios.techada ?? false);
-  const [mesesCalentar, setMesesCalentar] = useState(
-    datosPrevios.mesesCalentar || {}
-  );
-
+  const [tempDeseada, setTempDeseada] = useState(datosPrevios.tempDeseada ?? null);
+  const [tempDeseadaInput, setTempDeseadaInput] = useState(datosPrevios.tempDeseada != null ? String(datosPrevios.tempDeseada): "");
+  const [cubierta, setCubierta] = useState(datosPrevios.cubierta ?? null);
+  const [techada, setTechada] = useState(datosPrevios.techada ?? null);
+  const [mesesCalentar, setMesesCalentar] = useState(datosPrevios.mesesCalentar || {});
   const [hoveredField, setHoveredField] = useState(null);
   const [animandoSalida, setAnimandoSalida] = useState(false);
+  const [mostrarOmitirHint, setMostrarOmitirHint] = useState(true);
+  const [mostrarErrores, setMostrarErrores] = useState(false);
+  const [mostrarAviso, setMostrarAviso] = useState(false);
+
+  const calentamientoCompleto = () => {
+    // Ciudad obligatoria
+    if (!ciudad) return false;
+
+    // Temperatura válida
+    if (tempDeseada === null || tempDeseada <= 0) return false;
+
+    // Meses seleccionados
+    const mesesSeleccionados = Object.values(mesesCalentar).some(v => v);
+    if (!mesesSeleccionados) return false;
+
+    // Radios obligatorios
+    if (cubierta === null) return false;
+    if (techada === null) return false;
+    if (!usarBombaCalentamiento) return false;
+
+    return true;
+  };
+
+    const obtenerErroresCalentamiento = () => {
+      const errores = {};
+
+      if (!ciudad) errores.ciudad = true;
+      if (tempDeseada === null || tempDeseada <= 0) errores.tempDeseada = true;
+
+      const mesesSeleccionados = Object.values(mesesCalentar).some(v => v);
+      if (!mesesSeleccionados) errores.meses = true;
+
+      if (cubierta === null) errores.cubierta = true;
+      if (techada === null) errores.techada = true;
+      if (!usarBombaCalentamiento) errores.usarBombaCalentamiento = true;
+
+      return errores;
+    };
+
+  const errores = obtenerErroresCalentamiento();
+
+  const yaConfiguroCalentamiento = useMemo(() => {
+    return (
+      ciudad ||
+      tempDeseada !== null ||
+      Object.keys(mesesCalentar).length > 0 ||
+      cubierta !== null ||
+      techada !== null
+    );
+  }, [ciudad, tempDeseada, mesesCalentar, cubierta, techada]);
 
   /* =========================
      GUARDAR EN APP
@@ -154,8 +187,7 @@ const ciudadesMexico = [
     techada: "Un cuerpo de agua techado reduce convección y radiación",
     meses: "Meses del año en los que el sistema deberá aportar energía térmica",
     grafica: "Distribución porcentual de las pérdidas energéticas del sistema",
-    usarBombaCalentamiento:
-      "Define si el sistema de calentamiento contará con una motobomba independiente",
+    usarBombaCalentamiento: "Define si el sistema de calentamiento contará con una motobomba independiente",
     default: "Configuración térmica del sistema"
   };
 
@@ -245,17 +277,56 @@ const ciudadesMexico = [
           </div>
         </div>
 
-        <div className="selector-acciones">
-          <button className="btn-secundario" onClick={volverConAnimacion}>
-            ← Volver a {nombreSistema}
-          </button>
+        <div className="aviso-wrapper">
           <button
-            className="btn-primario"
-            onClick={() => setSeccion("equipamiento")}
+            className={`btn-primario ${mostrarAviso ? "error" : ""}`}
+            onClick={() => {
+              if (!calentamientoCompleto()) {
+                setMostrarErrores(true);
+                setMostrarAviso(true);
+                setTimeout(() => setMostrarAviso(false), 2500);
+                return;
+              }
+
+              setSeccion("equipamiento");
+            }}
           >
             Ir a Equipamiento →
           </button>
+
+          {mostrarAviso && (
+            <div className="aviso-validacion">
+              Llena toda la información solicitada
+            </div>
+          )}
         </div>
+
+        {mostrarOmitirHint && !yaConfiguroCalentamiento && (
+          <div className="callout-omitir-calentamiento">
+            <div className="callout-texto">
+              <strong>¿No deseas calentamiento?</strong>
+              <span>
+                Puedes omitir esta sección y continuar directamente a equipamiento.
+              </span>
+            </div>
+
+            <div className="callout-acciones">
+              <button
+                className="btn-secundario"
+                onClick={() => setSeccion("equipamiento")}
+              >
+                Omitir calentamiento →
+              </button>
+
+              <button
+                className="btn-link"
+                onClick={() => setMostrarOmitirHint(false)}
+              >
+                Configurar calentamiento
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className={`selector-contenido ${animandoSalida ? "salida" : "entrada"}`}>
 
@@ -270,11 +341,13 @@ const ciudadesMexico = [
                 onMouseLeave={() => setHoveredField(null)}
               >
                 <label>Ubicación del proyecto</label>
-                <select
-                  className="input-azul"
-                  value={ciudad}
-                  onChange={e => setCiudad(e.target.value)}
-                >
+                  <select
+                    className={`input-azul ${
+                      mostrarErrores && errores.ciudad ? "input-error" : ""
+                    }`}
+                    value={ciudad}
+                    onChange={e => setCiudad(e.target.value)}
+                  >
                   <option value="">Selecciona ciudad</option>
                     {ciudadesMexico.map(c => (
                       <option key={c.key} value={c.key}>
@@ -290,20 +363,32 @@ const ciudadesMexico = [
                 onMouseLeave={() => setHoveredField(null)}
               >
                 <label>Temperatura deseada (°C)</label>
-                <input
-                  type="number"
-                  className="input-azul"
-                  value={tempDeseada}
-                  onChange={e => setTempDeseada(+e.target.value)}
-                />
+                  <input
+                    type="number"
+                    className={`input-azul ${
+                      mostrarErrores && errores.tempDeseada ? "input-error" : ""
+                    }`}
+                    value={tempDeseadaInput}
+                    onChange={e => {
+                      const val = e.target.value;
+
+                      setTempDeseadaInput(val);
+
+                      if (val === "") {
+                        setTempDeseada(null);
+                      } else {
+                        setTempDeseada(Number(val));
+                      }
+                    }}
+                  />
               </div>
             </div>
 
             <div className="selector-radios">
               <div
-                className="grupo-radio"
-                onMouseEnter={() => setHoveredField("cubierta")}
-                onMouseLeave={() => setHoveredField(null)}
+                className={`grupo-radio ${
+                  mostrarErrores && errores.cubierta ? "grupo-radio-error" : ""
+                }`}
               >
                 <span>¿Cuenta con cubierta térmica?</span>
                 <label>
@@ -323,9 +408,9 @@ const ciudadesMexico = [
               </div>
 
               <div
-                className="grupo-radio"
-                onMouseEnter={() => setHoveredField("techada")}
-                onMouseLeave={() => setHoveredField(null)}
+                className={`grupo-radio ${
+                  mostrarErrores && errores.techada ? "grupo-radio-error" : ""
+                }`}
               >
                 <span>¿El cuerpo de agua está techado?</span>
                 <label>
@@ -428,8 +513,11 @@ const ciudadesMexico = [
                   </tbody>
                 </table>
 
-                {mesMasFrio && (
-                  <div className="tabla-resumen-frio">
+                  <div
+                    className={`tabla-resumen-frio ${
+                      mesMasFrio ? "visible" : "oculto"
+                    }`}
+                  >
                     <div className="resumen-titulo">
                       Mes más frío seleccionado
                     </div>
@@ -445,6 +533,7 @@ const ciudadesMexico = [
                         </tr>
                       </thead>
                       <tbody>
+                      {mesMasFrio ? (
                         <tr>
                           <td>{mesMasFrio.mes}</td>
                           <td>{mesMasFrio.tMin}</td>
@@ -452,10 +541,16 @@ const ciudadesMexico = [
                           <td>{mesMasFrio.viento}</td>
                           <td>{mesMasFrio.humedad}</td>
                         </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+                      ) : (
+                        <tr>
+                          <td colSpan={5} className="resumen-placeholder">
+                            Selecciona meses para ver el resumen
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -465,12 +560,11 @@ const ciudadesMexico = [
             <div className="selector-subtitulo">
               Motobomba para sistema de calentamiento
             </div>
-
-            <div
-              className="selector-radios"
-              onMouseEnter={() => setHoveredField("usarBombaCalentamiento")}
-              onMouseLeave={() => setHoveredField(null)}
-            >
+                <div
+                  className={`selector-radios ${
+                    mostrarErrores && errores.usarBombaCalentamiento ? "grupo-radio-error" : ""
+                  }`}
+                >
               <label>
                 <input
                   type="radio"
@@ -489,15 +583,6 @@ const ciudadesMexico = [
                 No, comparte motobomba de filtrado
               </label>
             </div>
-          </div>
-
-          <div className="acciones-calentamiento">
-            <button
-              className="btn-secundario"
-              onClick={() => setSeccion("equipamiento")}
-            >
-              Omitir calentamiento y continuar →
-            </button>
           </div>
         </div>
 

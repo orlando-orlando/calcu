@@ -1691,25 +1691,24 @@ select option:hover {
 }
 
 .aviso-wrapper {
-  position: relative;
-  display: inline-block;
+  position: relative; /* 🔑 CLAVE */
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 2.5rem; /* espacio para el aviso */
 }
 
 .aviso-validacion {
   position: absolute;
-  bottom: 105%;
-  right: 0;
+  bottom: 100%;        /* debajo del botón */
+  right: 0;         /* alineado con el botón */
+  margin-top: 0.5rem;
 
-  background: rgba(15, 23, 42, 0.95);
-  color: #f8fafc;
-  font-size: 0.8rem;
+  background: #000000;
+  color: #ffffff;
   padding: 0.5rem 0.75rem;
-  border-radius: 8px;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
   white-space: nowrap;
-
-  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-  animation: avisoEntrada 0.25s ease-out;
-  z-index: 50;
 }
 
 .aviso-validacion::after {
@@ -1751,45 +1750,36 @@ select option:hover {
 }
 
 /* ===============================
-   📊 LAYOUT GRÁFICA + TABLA
-   =============================== */
-
-.layout-clima-grafica {
-  display: grid;
-  grid-template-columns: minmax(420px, 45%) 1fr;
-  gap: 1.75rem;
-  align-items: stretch;
-}
-
-/* ===============================
    🥧 GRÁFICA PRINCIPAL
    =============================== */
 
 .grafica-mini {
   background:
     radial-gradient(
-      circle at center,
-      rgba(96,165,250,0.08),
-      rgba(15,23,42,0.35),
-      rgba(15,23,42,0.15)
+      60% 60% at center,
+      rgba(96,165,250,0.10) 0%,
+      rgba(15,23,42,0.45) 55%,
+      rgba(15,23,42,0.65) 100%
     );
-  padding: 1.5rem;
+  padding: 1.75rem;
   border-radius: 18px;
-  min-height: 420px;
-  height: 100%;
+  height: 540px;
+  min-height: 540px;
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow:
-    inset 0 0 0 1px rgba(96,165,250,0.18),
-    0 12px 30px rgba(0,0,0,0.35);
+    inset 0 0 0 1px rgba(96,165,250,0.14),
+    0 14px 28px rgba(0,0,0,0.35);
 }
 
 /* Canvas Chart.js */
 .grafica-mini canvas {
   filter: drop-shadow(0 6px 14px rgba(0,0,0,0.45));
+  width: 100% !important;
+  height: 100% !important;
 }
 
 
@@ -2321,9 +2311,11 @@ select option:hover {
   border-radius: 14px;
   padding: 1rem;
   box-shadow: 0 10px 28px rgba(0,0,0,0.35);
-    height: 100%;
+  height: 540px;       /* 🔒 MISMA ALTURA QUE LA GRÁFICA */
+  max-height: 540px;
   display: flex;
   flex-direction: column;
+  max-width: 100%;
 }
 
 /* Toolbar */
@@ -2345,7 +2337,7 @@ select option:hover {
 .tabla-clima-pro {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   text-align: center;
 }
 
@@ -2375,9 +2367,9 @@ select option:hover {
 
 .layout-clima-grafica {
   display: grid;
-  grid-template-columns: 420px 1fr;
-  gap: 1.2rem;
-  align-items: stretch; /* 👈 clave */
+  grid-template-columns: 1.35fr 1fr; /* 👈 gráfica más ancha */
+  gap: 1.6rem;
+  align-items: stretch;
 }
 
 .columna-clima-tabla {
@@ -2412,4 +2404,51 @@ select option:hover {
   font-weight: 600;
   font-size: 12px;
   color: #e5e7eb;
+}
+
+.callout-omitir-calentamiento {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 14px;
+  background: linear-gradient(
+    90deg,
+    rgba(96,165,250,0.12),
+    rgba(15,23,42,0.6)
+  );
+  border: 1px solid rgba(96,165,250,0.25);
+}
+
+.callout-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: #e5e7eb;
+}
+
+.callout-texto span {
+  font-size: 0.9rem;
+  color: #cbd5f5;
+}
+
+.callout-acciones {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #93c5fd;
+  cursor: pointer;
+}
+
+.grupo-radio-error {
+  border: 1px solid #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
 }
