@@ -1,5 +1,6 @@
 import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import "../estilos.css";
+import CalculadorAreaModal from "../components/CalculadorAreaModal";
 
   const Dimensiones = forwardRef(({setSeccion, sistemaActivo, setSistemaActivo, datosPorSistema, setDatosPorSistema},ref) => {
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
@@ -9,6 +10,7 @@ import "../estilos.css";
   const [datos, setDatos] = useState(null);
   const [mostrarAviso, setMostrarAviso] = useState(false);
   const [mostrarErrores, setMostrarErrores] = useState(false);
+  const [calculadorArea, setCalculadorArea] = useState(null);
   
   const [imagenZoom, setImagenZoom] = useState(null);
     /* 🔹 Cerrar visor con ESC */
@@ -183,6 +185,19 @@ import "../estilos.css";
                   onMouseEnter={() => setHoveredField(`area-${i}`)}
                   onMouseLeave={() => setHoveredField(null)}
                 />
+                  <button
+                  type="button"
+                  className="btn-link"
+                  onClick={() => setCalculadorArea({ cuerpoIndex: i })}
+                >
+                  Presiona aquí si necesitas ayuda para calcular el área
+                </button>
+
+                {cuerpo.areaCalculada && (
+                  <span className="badge-ok">
+                    Calculada por plataforma
+                  </span>
+                )}
               </div>
 
               <div className="campo">
@@ -669,6 +684,22 @@ const errores = obtenerErrores();
             </span>
         </div>
       </div>
+
+      {calculadorArea && (
+        <CalculadorAreaModal
+          open={true}
+          onClose={() => setCalculadorArea(null)}
+          onConfirm={(area) => {
+            const cuerpos = [...datos.cuerpos];
+            cuerpos[calculadorArea.cuerpoIndex] = {
+              ...cuerpos[calculadorArea.cuerpoIndex],
+              area,
+              areaCalculada: true
+            };
+            actualizarDatos({ cuerpos });
+          }}
+        />
+      )}
 
         {imagenZoom && (
           <div
