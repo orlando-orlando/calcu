@@ -2363,9 +2363,6 @@ select option:hover {
   padding: 0.75rem 1rem;
 }
 
-
-
-
 /* =========================================================
    🎨 CALCULADOR DE ÁREA - UNIFICADO CON SISTEMA DARK TÉCNICO
    ========================================================== */
@@ -2573,26 +2570,28 @@ select option:hover {
 
 /* Área preview */
 .area-preview-dark {
-  background: rgba(34, 197, 94, 0.12);
-  border: 1px solid rgba(34, 197, 94, 0.35);
-  border-radius: 7px;
-  padding: 0.6rem 0.9rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 9px;
+  padding: 0.55rem 0.9rem;
   margin-bottom: 0.75rem;
-
   display: flex;
+  align-items: center;
   justify-content: center;
   gap: 0.5rem;
 }
 
 .preview-label {
-  font-size: 0.75rem;
-  color: #cbd5e1;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #94a3b8;
 }
 
 .preview-valor {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #6ee7b7;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #e5e7eb;
+  letter-spacing: 0.02em;
 }
 
 /* Instrucciones */
@@ -2624,34 +2623,200 @@ select option:hover {
   margin-bottom: 0.75rem;
 }
 
+/* === TOOL BUTTON BASE (UNIFICADO) === */
+.btn-tool-secondary,
+.btn-tool-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+
+  height: 36px;
+  padding: 0 0.9rem;
+
+  font-family: inherit;
+  font-size: 0.72rem;
+  line-height: 1;
+  font-weight: 500;
+
+  border-radius: 7px;
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.12s ease;
+}
+
+.btn-tool-secondary:active,
+.btn-tool-primary:active {
+  transform: translateY(1px);
+}
+
 .btn-tool-secondary {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(148,163,184,0.3);
   color: #cbd5e1;
-  padding: 0.5rem 0.9rem;
-  border-radius: 7px;
-  font-size: 0.72rem;
 }
 
-.btn-tool-secondary:hover {
+.btn-tool-secondary:hover:not(:disabled) {
   background: rgba(255,255,255,0.1);
+}
+
+.btn-tool-secondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .btn-tool-primary {
   background: linear-gradient(180deg, #334155, #1e293b);
-  border: 1px solid rgba(148,163,184,0.4);
+  border: 1px solid rgba(148,163,184,0.45);
   color: #f8fafc;
   font-weight: 600;
+}
+
+.btn-tool-primary:hover {
+  background: linear-gradient(180deg, #475569, #334155);
 }
 
 /* Confirmar área */
 .btn-confirmar-area-dark {
   width: 100%;
-  padding: 0.85rem;
-  background: linear-gradient(135deg, #16a34a, #15803d);
-  border: 1px solid rgba(34,197,94,0.45);
+  height: 40px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.06),
+    rgba(255,255,255,0.02)
+  );
+
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 9px;
+
+  color: #e5e7eb;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.12s ease;
+}
+
+.btn-confirmar-area-dark:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.1),
+    rgba(255,255,255,0.04)
+  );
+  border-color: rgba(148, 163, 184, 0.55);
+}
+
+.btn-confirmar-area-dark:active {
+  transform: translateY(1px);
+}
+
+.escala-box-dark {
+  margin-top: 14px;
+  padding: 12px 14px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: rgba(20, 22, 27, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 10px;
+
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+}
+
+.escala-label {
+  color: #cbd5e1;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.input-escala {
+  width: 90px;
+  height: 34px;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.35);
   border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #ecfdf5;
+
+  color: #f8fafc;
+  font-size: 0.75rem;
+  padding: 0 10px;
+
+  outline: none;
+}
+
+.input-escala::placeholder {
+  color: rgba(203, 213, 225, 0.4);
+}
+
+.input-escala:focus {
+  border-color: rgba(148, 163, 184, 0.55);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+.btn-confirmar-escala {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  height: 34px;
+  padding: 0 14px;
+
+  background: linear-gradient(180deg, #334155, #1e293b);
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 8px;
+
+  color: #f8fafc;
+  font-size: 0.72rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.12s ease;
+}
+
+.btn-confirmar-escala:hover {
+  background: linear-gradient(180deg, #475569, #334155);
+}
+
+.btn-confirmar-escala:active {
+  transform: translateY(1px);
+}
+
+.instrucciones-navegacion {
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.75rem;
+
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed rgba(148, 163, 184, 0.25);
+  border-radius: 8px;
+
+  font-size: 0.7rem;
+  color: #cbd5e1;
+}
+
+.instrucciones-navegacion strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #e5e7eb;
+  font-weight: 600;
+}
+
+.instrucciones-navegacion ul {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.instrucciones-navegacion li {
+  margin: 0.25rem 0;
 }

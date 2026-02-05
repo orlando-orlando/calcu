@@ -40,7 +40,6 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
   const mouseDownRef = useRef(false);
   const spaceDownRef = useRef(false);
   
-  // 🔥 NUEVO: Flag para prevenir click después de zoom
   const justZoomedRef = useRef(false);
 
   /* =====================
@@ -192,44 +191,52 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
   };
 
   /* =====================
-     DIBUJO
+     🔥 NUEVA FUNCIÓN: Convertir punto mundo a pantalla
+     ===================== */
+  const worldToScreen = (worldX, worldY) => {
+    return {
+      x: worldX * zoom + pan.x,
+      y: worldY * zoom + pan.y
+    };
+  };
+
+  /* =====================
+     🔥 DIBUJO MEJORADO
      ===================== */
   const dibujar = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
-    // 🔥 RESET TOTAL
+    // RESET TOTAL
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // 🔥 APLICAR TRANSFORM UNICO
-    ctx.setTransform(
-      zoom,
-      0,
-      0,
-      zoom,
-      pan.x,
-      pan.y
-    );
-
+    // APLICAR TRANSFORM para la imagen
+    ctx.setTransform(zoom, 0, 0, zoom, pan.x, pan.y);
     ctx.drawImage(imgRef.current, 0, 0);
+
+    // 🔥 RESETEAR TRANSFORM para dibujar en coordenadas de pantalla
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
 
     /* ===== POLÍGONO ===== */
     if (puntos.length > 0) {
       ctx.beginPath();
       puntos.forEach((p, i) => {
-        if (i === 0) ctx.moveTo(p.x, p.y);
-        else ctx.lineTo(p.x, p.y);
+        const screen = worldToScreen(p.x, p.y);
+        if (i === 0) ctx.moveTo(screen.x, screen.y);
+        else ctx.lineTo(screen.x, screen.y);
       });
       if (puntos.length > 2) ctx.closePath();
 
       ctx.strokeStyle = "#00bcd4";
-      ctx.lineWidth = 2 / zoom;
+      ctx.lineWidth = 2; // 🔥 CONSTANTE en píxeles de pantalla
       ctx.stroke();
 
+      // Puntos del polígono
       puntos.forEach((p) => {
+        const screen = worldToScreen(p.x, p.y);
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 5 / zoom, 0, Math.PI * 2);
+        ctx.arc(screen.x, screen.y, 5, 0, Math.PI * 2); // 🔥 CONSTANTE
         ctx.fillStyle = "#00bcd4";
         ctx.fill();
       });
@@ -241,20 +248,24 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
 
       ctx.strokeStyle = "#ff9800";
       ctx.fillStyle = "#ff9800";
-      ctx.lineWidth = 2 / zoom;
+      ctx.lineWidth = 2; // 🔥 CONSTANTE
 
       // Línea si hay 2 puntos
       if (puntosEscala.length === 2) {
+        const s0 = worldToScreen(puntosEscala[0].x, puntosEscala[0].y);
+        const s1 = worldToScreen(puntosEscala[1].x, puntosEscala[1].y);
+        
         ctx.beginPath();
-        ctx.moveTo(puntosEscala[0].x, puntosEscala[0].y);
-        ctx.lineTo(puntosEscala[1].x, puntosEscala[1].y);
+        ctx.moveTo(s0.x, s0.y);
+        ctx.lineTo(s1.x, s1.y);
         ctx.stroke();
       }
 
-      // Puntos
+      // Puntos de escala
       puntosEscala.forEach((p) => {
+        const screen = worldToScreen(p.x, p.y);
         ctx.beginPath();
-        ctx.arc(p.x, p.y, 6 / zoom, 0, Math.PI * 2);
+        ctx.arc(screen.x, screen.y, 6, 0, Math.PI * 2); // 🔥 CONSTANTE
         ctx.fill();
       });
 
@@ -263,16 +274,19 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
 
     /* ===== RECTÁNGULO ZOOM ===== */
     if (modoZoom && zoomInicio && zoomRect) {
+      const s0 = worldToScreen(zoomInicio.x, zoomInicio.y);
+      const s1 = worldToScreen(zoomRect.x, zoomRect.y);
+
       ctx.save();
       ctx.strokeStyle = "rgba(0,188,212,.9)";
       ctx.setLineDash([6, 4]);
-      ctx.lineWidth = 1 / zoom;
+      ctx.lineWidth = 1; // 🔥 CONSTANTE
 
       ctx.strokeRect(
-        zoomInicio.x,
-        zoomInicio.y,
-        zoomRect.x - zoomInicio.x,
-        zoomRect.y - zoomInicio.y
+        s0.x,
+        s0.y,
+        s1.x - s0.x,
+        s1.y - s0.y
       );
       ctx.restore();
     }
@@ -318,8 +332,18 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
     }
 
     const { x, y } = getWorldPos(e);
+    
+    // 🔥 DETECCIÓN DE PUNTOS mejorada - usa distancia en pantalla
     for (let i = 0; i < puntos.length; i++) {
-      if (Math.hypot(x - puntos[i].x, y - puntos[i].y) < 8 / zoom) {
+      const screen = worldToScreen(puntos[i].x, puntos[i].y);
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const sx = (e.clientX - rect.left) * scaleX;
+      const sy = (e.clientY - rect.top) * scaleY;
+      
+      if (Math.hypot(sx - screen.x, sy - screen.y) < 10) { // 🔥 10px en pantalla
         setDragIndex(i);
         break;
       }
@@ -354,7 +378,6 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
     mouseDownRef.current = false;
     setDragIndex(null);
 
-    // 🔥 NUEVO: Si estamos en modo zoom y completamos el rectángulo
     if (modoZoom && zoomInicio && zoomRect) {
       const w = Math.abs(zoomRect.x - zoomInicio.x);
       const h = Math.abs(zoomRect.y - zoomInicio.y);
@@ -374,10 +397,8 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
         setZoom(nuevoZoom);
       }
 
-      // 🔥 CLAVE: Marcar que acabamos de hacer zoom para prevenir el click
       justZoomedRef.current = true;
       
-      // Resetear el flag después de un pequeño delay
       setTimeout(() => {
         justZoomedRef.current = false;
       }, 50);
@@ -389,7 +410,6 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
   };
 
   const handleClick = (e) => {
-    // 🔥 NUEVO: Prevenir click si acabamos de hacer zoom
     if (justZoomedRef.current) {
       return;
     }
@@ -408,7 +428,16 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
 
     if (puntos.length > 2) {
       const p0 = puntos[0];
-      if (Math.hypot(x - p0.x, y - p0.y) < SNAP_DISTANCE / zoom) {
+      // 🔥 SNAP mejorado - usa distancia en pantalla
+      const screen0 = worldToScreen(p0.x, p0.y);
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const sx = (e.clientX - rect.left) * scaleX;
+      const sy = (e.clientY - rect.top) * scaleY;
+      
+      if (Math.hypot(sx - screen0.x, sy - screen0.y) < SNAP_DISTANCE) {
         setPoligonoCerrado(true);
         return;
       }
@@ -426,14 +455,12 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
     let area = 0;
     const n = pts.length;
     
-    // Fórmula de Shoelace (más precisa)
     for (let i = 0; i < n; i++) {
       const j = (i + 1) % n;
       area += pts[i].x * pts[j].y;
       area -= pts[j].x * pts[i].y;
     }
     
-    // Valor absoluto y dividir entre 2
     return Math.abs(area) / 2;
   };
 
@@ -444,7 +471,6 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
     const dy = puntosEscala[1].y - puntosEscala[0].y;
     const pix = Math.sqrt(dx * dx + dy * dy);
 
-    // Escala: metros por píxel
     const escalaCalculada = parseFloat(distanciaReal) / pix;
     
     setEscala(escalaCalculada);
@@ -457,7 +483,6 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
     const areaPix = areaPoligono(puntos);
     const areaReal = areaPix * escala * escala;
     
-    // Redondear a 2 decimales de forma más precisa
     const areaRedondeada = Math.round(areaReal * 100) / 100;
     
     onConfirm(areaRedondeada);
@@ -507,7 +532,7 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
                     const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
                     const page = await pdf.getPage(1);
 
-                    const containerWidth = 1400; // o el ancho real de tu modal
+                    const containerWidth = 1400;
                     const unscaledViewport = page.getViewport({ scale: 1 });
 
                     const scale = containerWidth / unscaledViewport.width;
@@ -527,7 +552,7 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
               <label htmlFor="file-upload" className="upload-label">
                 <div className="upload-icon">📄</div>
                 <div className="upload-text">
-                  <span className="upload-titulo">Arrastra tu archivo aquí</span>
+                  <span className="upload-titulo">Arrastra tu archivo aquí </span>
                   <span className="upload-desc">o haz clic para seleccionar</span>
                 </div>
                 <div className="upload-formatos">PDF, PNG, JPG (máx. 10MB)</div>
@@ -557,16 +582,42 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
                 </div>
               )}
 
-              {/* Instrucciones */}
               <div className="instrucciones-area">
-                <h4>📋 Cómo usar:</h4>
+              <h4>Instrucciones de uso</h4>
+
+              <ol>
+                <li>
+                  Carga el plano en formato PDF o imagen y ajusta la vista inicial según sea necesario.
+                </li>
+
+                <li>
+                  Define la <strong>escala real</strong> marcando dos puntos sobre una distancia conocida
+                  e ingresando el valor correspondiente en metros.
+                </li>
+
+                <li>
+                  Una vez definida la escala, comienza a trazar el contorno de la superficie dando clic
+                  sobre cada vértice del polígono.
+                  El <strong>área se calculará y mostrará automáticamente</strong> conforme se vaya
+                  creando el contorno.
+                </li>
+
+                <li>
+                  Al finalizar el trazado, presiona el botón <strong>“Usar área”</strong> para confirmar
+                  y aplicar el resultado.
+                </li>
+              </ol>
+
+              <div class="instrucciones-navegacion">
+                <strong>Navegación del plano</strong>
                 <ul>
-                  <li><strong>Definir escala:</strong> Marca 2 puntos sobre una distancia conocida e ingresa la medida real</li>
-                  <li><strong>Dibujar contorno:</strong> Haz clic en cada vértice. Cierra en el primer punto</li>
-                  <li><strong>Zoom (Z):</strong> Presiona Z y arrastra un rectángulo</li>
-                  <li><strong>Resetear vista (Z+A):</strong> Vuelve a la vista original</li>
-                  <li><strong>Mover plano:</strong> Mantén Espacio + arrastra</li>
+                  <li><strong>Scroll del mouse</strong>: acercar y alejar (zoom).</li>
+                  <li><strong>Tecla Z</strong>: activar modo zoom por selección.</li>
+                  <li><strong>Teclas Z + A</strong>: regresar a la vista original.</li>
+                  <li><strong>Tecla Space + clic</strong>: desplazar el plano (pan).</li>
                 </ul>
+              </div>
+
               </div>
 
               <div className="tools-area">
