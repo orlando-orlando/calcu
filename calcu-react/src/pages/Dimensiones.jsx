@@ -187,7 +187,7 @@ import CalculadorAreaModal from "../components/CalculadorAreaModal";
                 />
                   <button
                   type="button"
-                  className="btn-link"
+                  className="btn-calculador-area"
                   onClick={() => setCalculadorArea({ cuerpoIndex: i })}
                 >
                   Presiona aquí si necesitas ayuda para calcular el área

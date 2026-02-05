@@ -426,30 +426,41 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
     let area = 0;
     const n = pts.length;
     
+    // Fórmula de Shoelace (más precisa)
     for (let i = 0; i < n; i++) {
       const j = (i + 1) % n;
       area += pts[i].x * pts[j].y;
       area -= pts[j].x * pts[i].y;
     }
     
+    // Valor absoluto y dividir entre 2
     return Math.abs(area) / 2;
   };
 
   const calcularEscala = () => {
     if (puntosEscala.length !== 2 || !distanciaReal) return;
 
-    const dx = puntosEscala[0].x - puntosEscala[1].x;
-    const dy = puntosEscala[0].y - puntosEscala[1].y;
+    const dx = puntosEscala[1].x - puntosEscala[0].x;
+    const dy = puntosEscala[1].y - puntosEscala[0].y;
     const pix = Math.sqrt(dx * dx + dy * dy);
 
-    setEscala(distanciaReal / pix);
+    // Escala: metros por píxel
+    const escalaCalculada = parseFloat(distanciaReal) / pix;
+    
+    setEscala(escalaCalculada);
     setModoEscala(false);
   };
 
   const confirmarArea = () => {
+    if (!escala || puntos.length < 3) return;
+    
     const areaPix = areaPoligono(puntos);
     const areaReal = areaPix * escala * escala;
-    onConfirm(Number(areaReal.toFixed(2)));
+    
+    // Redondear a 2 decimales de forma más precisa
+    const areaRedondeada = Math.round(areaReal * 100) / 100;
+    
+    onConfirm(areaRedondeada);
     onClose();
   };
 
@@ -496,7 +507,12 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
                     const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
                     const page = await pdf.getPage(1);
 
-                    const viewport = page.getViewport({ scale: 1.5 });
+                    const containerWidth = 1400; // o el ancho real de tu modal
+                    const unscaledViewport = page.getViewport({ scale: 1 });
+
+                    const scale = containerWidth / unscaledViewport.width;
+
+                    const viewport = page.getViewport({ scale });
                     const c = document.createElement("canvas");
                     const ctx = c.getContext("2d");
 
