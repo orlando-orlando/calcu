@@ -13,6 +13,8 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
   const [visible, setVisible] = useState(open);
   const [imagen, setImagen] = useState(null);
 
+  const [cerrando, setCerrando] = useState(false);
+
   const [puntos, setPuntos] = useState([]);
   const [poligonoCerrado, setPoligonoCerrado] = useState(false);
 
@@ -42,19 +44,17 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
   
   const justZoomedRef = useRef(false);
 
+  const [dragActivo, setDragActivo] = useState(false);
+
   /* =====================
      Animación entrada/salida
      ===================== */
   useEffect(() => {
     if (open) {
       setVisible(true);
-    } else {
-      const t = setTimeout(() => setVisible(false), 200);
-      return () => clearTimeout(t);
+      setCerrando(false);
     }
   }, [open]);
-
-  if (!visible) return null;
 
   /* =====================
      ESC para cerrar
@@ -63,7 +63,7 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
     if (!open) return;
 
     const handleKey = (e) => {
-      if (e.key === "Escape") onClose();
+    if (e.key === "Escape") cerrarModal();
     };
 
     window.addEventListener("keydown", handleKey);
@@ -77,6 +77,8 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
     setZoomInicio(null);
     setZoomRect(null);
   };
+
+  if (!visible) return null;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -489,16 +491,61 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
     onClose();
   };
 
+    const procesarArchivo = async (file) => {
+      if (!file) return;
+
+      if (file.size > 10 * 1024 * 1024) {
+        alert("El archivo supera el tamaño máximo de 10MB");
+        return;
+      }
+
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = () => setImagen(reader.result);
+        reader.readAsDataURL(file);
+      }
+
+      if (file.type === "application/pdf") {
+        const buffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+        const page = await pdf.getPage(1);
+
+        const containerWidth = 1400;
+        const unscaledViewport = page.getViewport({ scale: 1 });
+
+        const scale = containerWidth / unscaledViewport.width;
+
+        const viewport = page.getViewport({ scale });
+        const c = document.createElement("canvas");
+        const ctx = c.getContext("2d");
+
+        c.width = viewport.width;
+        c.height = viewport.height;
+
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        setImagen(c.toDataURL());
+      }
+    };
+
+    const cerrarModal = () => {
+      setCerrando(true);
+
+      setTimeout(() => {
+        setVisible(false);
+        onClose();
+      }, 300); // debe coincidir con CSS
+    };
+
   /* =====================
      JSX
      ===================== */
   return (
     <div
-      className={`modal-overlay-area ${open ? "show" : "hide"}`}
-      onClick={onClose}
+    className={`modal-overlay-area ${open && !cerrando ? "show" : "hide"}`}
+    onClick={cerrarModal}
     >
       <div
-        className={`modal-area-calc ${open ? "show" : "hide"}`}
+        className={`modal-area-calc ${open && !cerrando ? "show" : ""}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-header-area">
@@ -506,48 +553,30 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
             <h3>📐 Calculador de área</h3>
             <p className="modal-subtitulo">Sube tu plano en PDF o imagen</p>
           </div>
-          <button className="btn-close-area" onClick={onClose}>✕</button>
+          <button className="btn-close-area" onClick={cerrarModal}>✕</button>
         </div>
 
         <div className="modal-content-area">
           {!imagen && (
-            <div className="upload-zone">
+                <div
+                  className={`upload-zone ${dragActivo ? "drag-activo" : ""}`}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDragActivo(true);
+                  }}
+                  onDragLeave={() => setDragActivo(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setDragActivo(false);
+                    procesarArchivo(e.dataTransfer.files[0]);
+                  }}
+                >
               <input
                 id="file-upload"
                 type="file"
                 accept="image/*,application/pdf"
                 style={{ display: 'none' }}
-                onChange={async (e) => {
-                  const file = e.target.files[0];
-                  if (!file) return;
-
-                  if (file.type.startsWith("image/")) {
-                    const reader = new FileReader();
-                    reader.onload = () => setImagen(reader.result);
-                    reader.readAsDataURL(file);
-                  }
-
-                  if (file.type === "application/pdf") {
-                    const buffer = await file.arrayBuffer();
-                    const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
-                    const page = await pdf.getPage(1);
-
-                    const containerWidth = 1400;
-                    const unscaledViewport = page.getViewport({ scale: 1 });
-
-                    const scale = containerWidth / unscaledViewport.width;
-
-                    const viewport = page.getViewport({ scale });
-                    const c = document.createElement("canvas");
-                    const ctx = c.getContext("2d");
-
-                    c.width = viewport.width;
-                    c.height = viewport.height;
-
-                    await page.render({ canvasContext: ctx, viewport }).promise;
-                    setImagen(c.toDataURL());
-                  }
-                }}
+                onChange={(e) => procesarArchivo(e.target.files[0])}
               />
               <label htmlFor="file-upload" className="upload-label">
                 <div className="upload-icon">📄</div>
@@ -583,97 +612,113 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
               )}
 
               <div className="instrucciones-area">
-              <h4>Instrucciones de uso</h4>
+                <h4>Instrucciones de uso</h4>
 
-              <ol>
-                <li>
-                  Carga el plano en formato PDF o imagen y ajusta la vista inicial según sea necesario.
-                </li>
+                <ol>
 
-                <li>
-                  Define la <strong>escala real</strong> marcando dos puntos sobre una distancia conocida
-                  e ingresando el valor correspondiente en metros.
-                </li>
+                  {/* ===== PASO ESCALA ===== */}
+                  <li>
+                    Define la <strong>escala real</strong> marcando dos puntos sobre una distancia conocida
+                    e ingresando el valor correspondiente en metros.
 
-                <li>
-                  Una vez definida la escala, comienza a trazar el contorno de la superficie dando clic
-                  sobre cada vértice del polígono.
-                  El <strong>área se calculará y mostrará automáticamente</strong> conforme se vaya
-                  creando el contorno.
-                </li>
+                    <div className="acciones-instruccion">
 
-                <li>
-                  Al finalizar el trazado, presiona el botón <strong>“Usar área”</strong> para confirmar
-                  y aplicar el resultado.
-                </li>
-              </ol>
+                      <button
+                        className="btn-tool-primary"
+                        onClick={() => {
+                          setModoEscala(true);
+                          setPuntosEscala([]);
+                          resetVista();
+                        }}
+                      >
+                        📏 Definir escala
+                      </button>
 
-              <div class="instrucciones-navegacion">
-                <strong>Navegación del plano</strong>
-                <ul>
-                  <li><strong>Scroll del mouse</strong>: acercar y alejar (zoom).</li>
-                  <li><strong>Tecla Z</strong>: activar modo zoom por selección.</li>
-                  <li><strong>Teclas Z + A</strong>: regresar a la vista original.</li>
-                  <li><strong>Tecla Space + clic</strong>: desplazar el plano (pan).</li>
-                </ul>
-              </div>
+                      {modoEscala && (
+                        <div className="escala-inline">
+                          <input
+                            type="number"
+                            placeholder="Distancia (m)"
+                            value={distanciaReal}
+                            onChange={(e) => setDistanciaReal(e.target.value)}
+                            className="input-escala"
+                          />
 
-              </div>
+                          <button
+                            className="btn-confirmar-escala"
+                            onClick={calcularEscala}
+                          >
+                            ✓ Confirmar
+                          </button>
+                        </div>
+                      )}
 
-              <div className="tools-area">
-                <button className="btn-tool-secondary" onClick={() => setPuntos([])}>
-                  🗑️ Limpiar contorno
-                </button>
-                <button 
-                  className="btn-tool-secondary"
-                  onClick={() => {
-                    if (puntos.length > 0) {
-                      setPuntos(puntos.slice(0, -1));
-                      setPoligonoCerrado(false);
-                    }
-                  }}
-                  disabled={puntos.length === 0}
-                >
-                  ↶ Deshacer punto
-                </button>
-                <button 
-                  className="btn-tool-primary"
-                  onClick={() => {
-                    setModoEscala(true);
-                    setPuntosEscala([]);
-                    resetVista();
-                  }}
-                >
-                  📏 Definir escala
-                </button>
-              </div>
+                    </div>
+                  </li>
 
-              {modoEscala && (
-                <div className="escala-box-dark">
-                  <span className="escala-label">Distancia real en metros:</span>
-                  <input
-                    type="number"
-                    placeholder="Ej: 10"
-                    value={distanciaReal}
-                    onChange={(e) => setDistanciaReal(e.target.value)}
-                    className="input-escala"
-                  />
-                  <button className="btn-confirmar-escala" onClick={calcularEscala}>
-                    ✓ Confirmar
-                  </button>
+                  {/* ===== PASO TRAZADO ===== */}
+                  <li>
+                    Una vez definida la escala, comienza a trazar el contorno de la superficie
+                    dando clic sobre cada vértice del polígono.
+                    El <strong>área se calculará automáticamente</strong>.
+
+                    <div className="acciones-instruccion">
+                      <button
+                        className="btn-tool-secondary"
+                        onClick={() => setPuntos([])}
+                      >
+                        🗑️ Limpiar contorno
+                      </button>
+
+                      <button
+                        className="btn-tool-secondary"
+                        onClick={() => {
+                          if (puntos.length > 0) {
+                            setPuntos(puntos.slice(0, -1));
+                            setPoligonoCerrado(false);
+                          }
+                        }}
+                        disabled={puntos.length === 0}
+                      >
+                        ↶ Deshacer punto
+                      </button>
+                    </div>
+                  </li>
+
+                  {/* ===== PASO CONFIRMAR ===== */}
+                  <li>
+                    Al finalizar el trazado, presiona el botón <strong>Usar área</strong> para confirmar.
+
+                    {escala && (
+                      <div className="acciones-instruccion">
+                        <button
+                          className="btn-confirmar-area-dark"
+                          onClick={confirmarArea}
+                        >
+                          ✓ Usar esta área
+                        </button>
+                      </div>
+                    )}
+                  </li>
+
+                </ol>
+
+                {/* Navegación */}
+                <div className="instrucciones-navegacion">
+                  <strong>Navegación del plano</strong>
+                  <ul>
+                    <li>Scroll del mouse: zoom</li>
+                    <li>Tecla Z: zoom por selección</li>
+                    <li>Teclas Z + A: vista original</li>
+                    <li>Space + clic: pan</li>
+                  </ul>
                 </div>
-              )}
-
-              {escala && (
-                <button className="btn-confirmar-area-dark" onClick={confirmarArea}>
-                  ✓ Usar esta área
-                </button>
-              )}
+              </div> 
             </>
           )}
-        </div>
-      </div>
-    </div>
+        </div> 
+      </div> 
+    </div> 
   );
 };
 

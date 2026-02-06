@@ -2370,13 +2370,13 @@ select option:hover {
 .modal-overlay-area {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(14px);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.35s ease, backdrop-filter 0.35s ease;
   z-index: 9999;
 }
 
@@ -2386,36 +2386,40 @@ select option:hover {
 
 .modal-overlay-area.hide {
   opacity: 0;
+  backdrop-filter: blur(0px);
   pointer-events: none;
 }
 
 .modal-area-calc {
+  background: linear-gradient(135deg, rgba(15,23,42,.98), rgba(30,41,59,.98));
+  border: 1px solid rgba(148,163,184,.2);
+  border-radius: 14px;
   width: 1400px;
   max-width: 95vw;
   max-height: 92vh;
-
-  background: linear-gradient(
-    180deg,
-    #1b1e24,
-    #14161b
-  );
-
-  border: 1px solid rgba(148, 163, 184, 0.15);
-  border-radius: 14px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 
-  transform: scale(0.94) translateY(18px);
+  transform: scale(.9) translateY(40px);
   opacity: 0;
-  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.65);
+  transition:
+    transform .35s cubic-bezier(.16,1,.3,1),
+    opacity .35s ease;
+
+  box-shadow: 0 40px 80px rgba(0,0,0,.65);
 }
 
 .modal-area-calc.show {
-  transform: scale(1) translateY(0);
-  opacity: 1;
+  animation: modalPop .45s cubic-bezier(.34,1.56,.64,1);
+  animation-fill-mode: forwards;
+}
+
+@keyframes modalPop {
+  0% { transform: scale(.85) translateY(60px); opacity:0; }
+  70% { transform: scale(1.03) translateY(-5px); }
+  100% { transform: scale(1) translateY(0); opacity:1; }
 }
 
 /* Header */
@@ -2819,4 +2823,61 @@ select option:hover {
 
 .instrucciones-navegacion li {
   margin: 0.25rem 0;
+}
+
+.acciones-instruccion {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.escala-inline {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.instrucciones-area li {
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background .2s;
+}
+
+.instrucciones-area li:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.btn-link{
+  background: transparent;
+  border: none;
+
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+
+  color: #60a5fa;
+  cursor: pointer;
+
+  padding: 4px 2px;
+
+  transition:
+    color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.btn-link:hover{
+  color: #93c5fd;
+  transform: translateX(1px);
+}
+
+.callout-acciones{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.upload-zone.drag-activo .upload-label{
+  border-color: #38bdf8;
+  background: rgba(56,189,248,0.08);
 }
