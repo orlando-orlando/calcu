@@ -1,10 +1,7 @@
 export const filtrosArena = [
   {
     id: "carvin-ta60",
-
     tipoEquipo: "filtroArena",
-
-    fabricante: "Carvin Pool Equipment",
     marca: "Carvin",
     modelo: "TA-60",
 
@@ -28,10 +25,7 @@ export const filtrosArena = [
 
   {
     id: "hayward-s310t2",
-
     tipoEquipo: "filtroArena",
-
-    fabricante: "Hayward Holdings Inc.",
     marca: "Hayward",
     modelo: "S310T2",
 
@@ -55,10 +49,7 @@ export const filtrosArena = [
 
   {
     id: "pentair-tr100",
-
     tipoEquipo: "filtroArena",
-
-    fabricante: "Pentair Aquatic Systems",
     marca: "Pentair",
     modelo: "Triton TR100",
 

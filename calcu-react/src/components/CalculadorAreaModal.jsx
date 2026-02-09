@@ -46,6 +46,8 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
 
   const [dragActivo, setDragActivo] = useState(false);
 
+  const [cargando, setCargando] = useState(false);
+
   /* =====================
      Animación entrada/salida
      ===================== */
@@ -491,41 +493,53 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
     onClose();
   };
 
-    const procesarArchivo = async (file) => {
-      if (!file) return;
+const procesarArchivo = async (file) => {
+  if (!file) return;
 
-      if (file.size > 10 * 1024 * 1024) {
-        alert("El archivo supera el tamaño máximo de 10MB");
-        return;
-      }
+  if (file.size > 10 * 1024 * 1024) {
+    alert("El archivo supera el tamaño máximo de 10MB");
+    return;
+  }
 
-      if (file.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = () => setImagen(reader.result);
-        reader.readAsDataURL(file);
-      }
+  setCargando(true); // 🔥 INICIO CARGA
 
-      if (file.type === "application/pdf") {
-        const buffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
-        const page = await pdf.getPage(1);
+  try {
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagen(reader.result);
+        setCargando(false);
+      };
+      reader.readAsDataURL(file);
+    }
 
-        const containerWidth = 1400;
-        const unscaledViewport = page.getViewport({ scale: 1 });
+    if (file.type === "application/pdf") {
+      const buffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+      const page = await pdf.getPage(1);
 
-        const scale = containerWidth / unscaledViewport.width;
+      const containerWidth = 1400;
+      const unscaledViewport = page.getViewport({ scale: 1 });
+      const scale = containerWidth / unscaledViewport.width;
+      const viewport = page.getViewport({ scale });
 
-        const viewport = page.getViewport({ scale });
-        const c = document.createElement("canvas");
-        const ctx = c.getContext("2d");
+      const c = document.createElement("canvas");
+      const ctx = c.getContext("2d");
 
-        c.width = viewport.width;
-        c.height = viewport.height;
+      c.width = viewport.width;
+      c.height = viewport.height;
 
-        await page.render({ canvasContext: ctx, viewport }).promise;
-        setImagen(c.toDataURL());
-      }
-    };
+      await page.render({ canvasContext: ctx, viewport }).promise;
+
+      setImagen(c.toDataURL());
+      setCargando(false); // 🔥 FIN CARGA
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Error al procesar el archivo");
+    setCargando(false);
+  }
+};
 
     const cerrarModal = () => {
       setCerrando(true);
@@ -589,6 +603,12 @@ const CalculadorAreaModal = ({ open, onClose, onConfirm }) => {
             </div>
           )}
 
+          {cargando && (
+            <div className="loader-overlay">
+              <div className="spinner"></div>
+              <p>Procesando plano…</p>
+            </div>
+          )}
           {imagen && (
             <>
               <div className="canvas-container-area">

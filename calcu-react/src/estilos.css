@@ -644,7 +644,10 @@ body.no-scroll{ overflow:hidden !important; }
    =============================== */
 
 .seccion-resultados{
-  overflow: hidden; /* nunca scroll */
+  flex: 1;                    /* ocupa el espacio disponible */
+  overflow-y: auto;           /* ✅ scroll vertical REAL */
+  overflow-x: hidden;
+  padding-bottom: 12px;        /* 🔑 deja respirar el último dato */
 }
 
 .tabla-resultados{
@@ -2881,3 +2884,83 @@ select option:hover {
   border-color: #38bdf8;
   background: rgba(56,189,248,0.08);
 }
+
+.loader-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  color: #fff;
+  font-size: 14px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255,255,255,.3);
+  border-top-color: #00bcd4;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.tabla-resultados {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 4px;
+}
+
+.tabla-resultados tr {
+  background: rgba(255,255,255,0.02);
+  transition: background 0.2s ease;
+}
+
+.tabla-resultados tr:hover {
+  background: rgba(0,188,212,0.12);
+}
+
+.seccion-resultados {
+  max-height: 100%;
+  overflow-y: auto;
+  padding-right: 6px; /* espacio para scrollbar */
+}
+
+.seccion-resultados::-webkit-scrollbar{
+  width: 6px;
+}
+
+.seccion-resultados::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.seccion-resultados::-webkit-scrollbar-thumb{
+  background: rgba(96,165,250,0.35);
+  border-radius: 6px;
+}
+
+.seccion-resultados::-webkit-scrollbar-thumb:hover{
+  background: rgba(96,165,250,0.55);
+}
+
+.toggle-boton {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #1e1e1e;
+}
+
+.toggle-boton {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #1e1e1e;
+}
+
