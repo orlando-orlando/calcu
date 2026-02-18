@@ -1,10 +1,27 @@
 import "./estilos.css";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useMemo } from "react";
 import { Home, ChevronLeft, ChevronRight } from "lucide-react";
 
 import Dimensiones from "./pages/Dimensiones.jsx";
 import Calentamiento from "./pages/Calentamiento.jsx";
 import Equipamiento from "./pages/Equipamiento.jsx";
+
+// 🔹 IMPORT DEL VOLUMEN
+import { volumen } from "./utils/volumen";
+
+/* =====================================================
+   FUNCIÓN UNIFICADA: ÁREA TOTAL (SUMA DE CUERPOS)
+===================================================== */
+function areaTotal(datosSistema) {
+  if (!datosSistema || !Array.isArray(datosSistema.cuerpos)) return 0;
+
+  const total = datosSistema.cuerpos.reduce((acc, cuerpo) => {
+    const area = parseFloat(cuerpo.area);
+    return acc + (isNaN(area) ? 0 : area);
+  }, 0);
+
+  return parseFloat(total.toFixed(1));
+}
 
 export default function App() {
   const [seccion, setSeccion] = useState("dimensiones");
@@ -13,30 +30,47 @@ export default function App() {
   // 🔹 Datos globales por sistema
   const [datosPorSistema, setDatosPorSistema] = useState({});
 
-  // 🔹 Sistema activo (skimmer, desborde, jacuzzi, etc.)
+  // 🔹 Sistema activo
   const [sistemaActivo, setSistemaActivo] = useState(null);
 
-  // 🔹 Configuración final de motobombas
-const datosDim = datosPorSistema?.[sistemaActivo];
-
-const configBombas = {
-  filtrado: true,
-
-  calentamiento:
-    datosPorSistema?.calentamiento?.usarBombaCalentamiento === "si",
-
-  infinity:
-    datosDim?.usarBombaInfinity === "si" &&
-    (datosDim?.desborde === "infinity" || datosDim?.desborde === "ambos")
-};
-
-  // 🔹 Ref para resetear Dimensiones desde Home
+  // 🔹 Referencia a dimensiones
   const dimensionesRef = useRef(null);
 
   const handleHome = () => {
     setSeccion("dimensiones");
     setSistemaActivo(null);
     dimensionesRef.current?.resetDimensiones();
+  };
+
+  // 🔹 Datos del sistema activo
+  const datosDim = datosPorSistema?.[sistemaActivo];
+
+  // 🔹 Área total
+  const areaCalculada = areaTotal(datosDim);
+
+  // =====================================================
+  // 🔹 VOLUMEN TOTAL DEL SISTEMA (INTEGRADO CORRECTAMENTE)
+  // =====================================================
+  const volumenTotal = useMemo(() => {
+    if (!datosDim || !Array.isArray(datosDim.cuerpos)) return 0;
+
+    const total = datosDim.cuerpos.reduce((acc, cuerpo) => {
+      return acc + volumen(cuerpo, cuerpo.volumenCalculado ?? null);
+    }, 0);
+
+    return parseFloat(total.toFixed(1));
+  }, [datosDim]);
+
+  // 🔹 Configuración final de motobombas (SIN CAMBIOS)
+  const configBombas = {
+    filtrado: true,
+
+    calentamiento:
+      datosPorSistema?.calentamiento?.usarBombaCalentamiento === "si",
+
+    infinity:
+      datosDim?.usarBombaInfinity === "si" &&
+      (datosDim?.desborde === "infinity" || datosDim?.desborde === "ambos")
   };
 
   return (
@@ -100,37 +134,34 @@ const configBombas = {
           <div className="seccion-resultados">
             <table className="tabla-resultados">
               <tbody>
-                <tr><th>Área total:</th><td>128.5 m²</td></tr>
-                <tr><th>Profundidad promedio:</th><td>1.35 m</td></tr>
-                <tr><th>Volumen total:</th><td>173 m³</td></tr>
-                <tr><th>Flujo filtrado:</th><td>45 m³/h</td></tr>
-                <tr><th>Flujo panel solar:</th><td>32 m³/h</td></tr>
-                <tr><th>Flujo bomba de calor:</th><td>28 m³/h</td></tr>
-                <tr><th>Flujo caldera de gas:</th><td>24 m³/h</td></tr>
-                <tr><th>Flujo infinity:</th><td>12 m³/h</td></tr>
-                <tr><th>Flujo sanitizador:</th><td>8 m³/h</td></tr>
-                <tr><th>Flujo máximo:</th><td>65 m³/h</td></tr>
-                <tr><th>Pérdida calor:</th><td>89,000</td></tr>
-                <tr><th>Energía necesaria 1°C:</th><td>89,000</td></tr>
-                <tr><th>Temp. deseada:</th><td>30 °C</td></tr>
-                <tr><th>Tubería succión:</th><td>3”</td></tr>
-                <tr><th>Tubería descarga:</th><td>2.5”</td></tr>
-                <tr><th>Cloro necesario:</th><td>2.1 kg/día</td></tr>
-                <tr><th>Ozono necesario:</th><td>2.1 kg/día</td></tr>
-                <tr><th>Carga retorno:</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga dren de fondo:</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga dren canal:</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga desnatador:</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga barredora:</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga filtro:</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga prefiltro:</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga panel solar:</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga bomba de calor:</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga caldera:</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga ozonificador:</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga clorador:</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga total (ftHd):</th><td>0.0 ftHd</td></tr>
-                <tr><th>Carga total (psi):</th><td>0.0 psi</td></tr>
+                <tr>
+                  <th>Área total:</th>
+                  <td>{areaCalculada > 0 ? `${areaCalculada} m²` : "—"}</td>
+                </tr>
+
+                <tr>
+                  <th>Volumen total:</th>
+                  <td>{volumenTotal > 0 ? `${volumenTotal} m³` : "—"}</td>
+                </tr>
+
+                {/* 🔹 TODO LO DEMÁS SIGUE IGUAL */}
+                <tr><th>Profundidad promedio:</th><td>—</td></tr>
+                <tr><th>Flujo filtrado:</th><td>—</td></tr>
+                <tr><th>Flujo panel solar:</th><td>—</td></tr>
+                <tr><th>Flujo bomba de calor:</th><td>—</td></tr>
+                <tr><th>Flujo caldera de gas:</th><td>—</td></tr>
+                <tr><th>Flujo infinity:</th><td>—</td></tr>
+                <tr><th>Flujo sanitizador:</th><td>—</td></tr>
+                <tr><th>Flujo máximo:</th><td>—</td></tr>
+                <tr><th>Pérdida calor:</th><td>—</td></tr>
+                <tr><th>Energía necesaria 1°C:</th><td>—</td></tr>
+                <tr><th>Temp. deseada:</th><td>—</td></tr>
+                <tr><th>Tubería succión:</th><td>—</td></tr>
+                <tr><th>Tubería descarga:</th><td>—</td></tr>
+                <tr><th>Cloro necesario:</th><td>—</td></tr>
+                <tr><th>Ozono necesario:</th><td>—</td></tr>
+                <tr><th>Carga total (ftHd):</th><td>—</td></tr>
+                <tr><th>Carga total (psi):</th><td>—</td></tr>
               </tbody>
             </table>
           </div>
@@ -177,3 +208,4 @@ const configBombas = {
     </div>
   );
 }
+

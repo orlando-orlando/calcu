@@ -195,7 +195,7 @@ import CalculadorAreaModal from "../components/CalculadorAreaModal";
 
                 {cuerpo.areaCalculada && (
                   <span className="badge-ok">
-                    Calculada por plataforma
+                    ✔ Área calculada a través de la plataforma
                   </span>
                 )}
               </div>

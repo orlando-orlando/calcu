@@ -401,7 +401,7 @@ html,body{
   transition:box-shadow .25s ease, transform .25s ease;
   border:1px solid #d3deee;
 }
-.toggle-seccion:hover{ box-shadow:0 4px 12px rgba(0,0,0,.08); transform:translateY(-2px); }
+.toggle-seccion:hover{ box-shadow:0 4px 12px rgba(0,0,0,.08); }
 
 .toggle-boton{
   width:100%;
@@ -2964,3 +2964,15 @@ select option:hover {
   background: #1e1e1e;
 }
 
+.badge-ok {
+  display: inline-flex;        /* 🔹 cambia inline-block → inline-flex */
+  align-items: center;         /* 🔹 centra vertical */
+  justify-content: center;     /* 🔹 centra horizontal */
+  margin-top: 6px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #0b5ed7;
+  background: #e7f1ff;
+  border-radius: 6px;
+}
