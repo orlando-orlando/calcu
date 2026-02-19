@@ -8,6 +8,7 @@ import Equipamiento from "./pages/Equipamiento.jsx";
 
 // 🔹 IMPORT DEL VOLUMEN
 import { volumen } from "./utils/volumen";
+import { flujoVolumen } from "./utils/flujovolumen";
 
 /* =====================================================
    FUNCIÓN UNIFICADA: ÁREA TOTAL (SUMA DE CUERPOS)
@@ -60,6 +61,36 @@ export default function App() {
 
     return parseFloat(total.toFixed(1));
   }, [datosDim]);
+
+// =====================================================
+// 🔹 OBJETO VIRTUAL DEL SISTEMA (para flujoVolumen)
+// =====================================================
+const datosSistemaFlujo = useMemo(() => ({
+  tasaRotacion:
+    parseFloat(datosDim?.tasaRotacion) ||
+    parseFloat(datosPorSistema?.tasaRotacion) ||
+    6
+}), [datosDim, datosPorSistema]);
+
+// =====================================================
+// 🔹 FLUJO DE FILTRACIÓN (DESDE VOLUMEN TOTAL)
+// =====================================================
+const flujoFiltrado = useMemo(() => {
+  if (!volumenTotal || volumenTotal <= 0) return 0;
+
+  return flujoVolumen(datosSistemaFlujo, volumenTotal);
+}, [datosSistemaFlujo, volumenTotal]);
+
+// =====================================================
+// 🔹 PROFUNDIDAD PROMEDIO GLOBAL DEL SISTEMA
+//     (volumen total / área total)
+// =====================================================
+const profundidadPromedio = useMemo(() => {
+  if (areaCalculada > 0 && volumenTotal > 0) {
+    return parseFloat((volumenTotal / areaCalculada).toFixed(2));
+  }
+  return 0;
+}, [areaCalculada, volumenTotal]);
 
   // 🔹 Configuración final de motobombas (SIN CAMBIOS)
   const configBombas = {
@@ -144,9 +175,18 @@ export default function App() {
                   <td>{volumenTotal > 0 ? `${volumenTotal} m³` : "—"}</td>
                 </tr>
 
-                {/* 🔹 TODO LO DEMÁS SIGUE IGUAL */}
-                <tr><th>Profundidad promedio:</th><td>—</td></tr>
-                <tr><th>Flujo filtrado:</th><td>—</td></tr>
+                <tr>
+                  <th>Profundidad promedio:</th>
+                  <td>
+                    {profundidadPromedio > 0 ? `${profundidadPromedio} m` : "—"}
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>Flujo filtrado:</th>
+                  <td>{flujoFiltrado > 0 ? `${flujoFiltrado} gpm` : "—"}</td>
+                </tr>
+                
                 <tr><th>Flujo panel solar:</th><td>—</td></tr>
                 <tr><th>Flujo bomba de calor:</th><td>—</td></tr>
                 <tr><th>Flujo caldera de gas:</th><td>—</td></tr>
