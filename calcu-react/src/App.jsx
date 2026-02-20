@@ -9,6 +9,7 @@ import Equipamiento from "./pages/Equipamiento.jsx";
 // 🔹 IMPORT DEL VOLUMEN
 import { volumen } from "./utils/volumen";
 import { flujoVolumen } from "./utils/flujovolumen";
+import { flujoInfinity } from "./utils/flujoInfinity";
 
 /* =====================================================
    FUNCIÓN UNIFICADA: ÁREA TOTAL (SUMA DE CUERPOS)
@@ -80,6 +81,20 @@ const flujoFiltrado = useMemo(() => {
 
   return flujoVolumen(datosSistemaFlujo, volumenTotal);
 }, [datosSistemaFlujo, volumenTotal]);
+
+// =====================================================
+// 🔹 FLUJO INFINITY (SI EXISTE BORDE INFINITO)
+// =====================================================
+const flujoInfinitySistema = useMemo(() => {
+  if (
+    !datosDim ||
+    !(datosDim.desborde === "infinity" || datosDim.desborde === "ambos")
+  ) {
+    return 0;
+  }
+
+  return flujoInfinity(datosDim);
+}, [datosDim]);
 
 // =====================================================
 // 🔹 PROFUNDIDAD PROMEDIO GLOBAL DEL SISTEMA
@@ -187,10 +202,16 @@ const profundidadPromedio = useMemo(() => {
                   <td>{flujoFiltrado > 0 ? `${flujoFiltrado} gpm` : "—"}</td>
                 </tr>
                 
+                <tr>
+                  <th>Flujo infinity:</th>
+                  <td>
+                    {flujoInfinitySistema > 0 ? `${flujoInfinitySistema} gpm` : "—"}
+                  </td>
+                </tr>   
+
                 <tr><th>Flujo panel solar:</th><td>—</td></tr>
                 <tr><th>Flujo bomba de calor:</th><td>—</td></tr>
                 <tr><th>Flujo caldera de gas:</th><td>—</td></tr>
-                <tr><th>Flujo infinity:</th><td>—</td></tr>
                 <tr><th>Flujo sanitizador:</th><td>—</td></tr>
                 <tr><th>Flujo máximo:</th><td>—</td></tr>
                 <tr><th>Pérdida calor:</th><td>—</td></tr>

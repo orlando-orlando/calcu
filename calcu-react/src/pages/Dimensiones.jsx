@@ -67,7 +67,7 @@ import CalculadorAreaModal from "../components/CalculadorAreaModal";
     distCuarto: "Distancia entre el cuerpo de agua y el cuarto de máquinas",
     desborde: "Tipo de sistema de desborde del agua",
     largoInfinity: "Longitud total del borde infinity",
-    profCortina: "Altura de la cortina hidráulica",
+    profCortina: "Altura de la cortina hidráulica, recomendado 5mm",
     largoCanal: "Longitud del canal de desborde",
     usarBombaInfinity: "Define si el borde infinity contará con una motobomba dedicada"
   };
@@ -350,7 +350,7 @@ import CalculadorAreaModal from "../components/CalculadorAreaModal";
                     </div>
 
                     <div className="campo">
-                      <label>Prof. cortina (m)</label>
+                      <label>Prof. cortina (mm)</label>
                       <input
                         type="number"
                         value={datos.profCortina}
