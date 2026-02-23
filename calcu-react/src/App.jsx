@@ -119,6 +119,31 @@ const profundidadPromedio = useMemo(() => {
       (datosDim?.desborde === "infinity" || datosDim?.desborde === "ambos")
   };
 
+  // =====================================================
+  // 🔹 MOTOBOMBA INFINITY INDEPENDIENTE (SI / NO)
+  // =====================================================
+  const textoBombaInfinity = useMemo(() => {
+    if (
+      !datosDim ||
+      !(datosDim.desborde === "infinity" || datosDim.desborde === "ambos")
+    ) {
+      return "—";
+    }
+
+    if (datosDim.usarBombaInfinity === "si") return "Sí";
+    if (datosDim.usarBombaInfinity === "no") return "No";
+
+    return "—";
+  }, [datosDim]);
+
+  // =====================================================
+  // 🔹 FLUJO INFINITY EFECTIVO (SEGÚN BOMBA)
+  // =====================================================
+  const flujoInfinityEfectivo = useMemo(() => {
+    if (datosDim?.usarBombaInfinity !== "si") return 0;
+    return flujoInfinitySistema;
+  }, [datosDim, flujoInfinitySistema]);
+
   return (
     <div className="app-contenedor">
 
@@ -205,9 +230,16 @@ const profundidadPromedio = useMemo(() => {
                 <tr>
                   <th>Flujo infinity:</th>
                   <td>
-                    {flujoInfinitySistema > 0 ? `${flujoInfinitySistema} gpm` : "—"}
+                    {flujoInfinitySistema > 0
+                      ? `${flujoInfinitySistema} gpm`
+                      : "—"}
                   </td>
-                </tr>   
+                </tr>
+
+                <tr>
+                  <th>Motobomba infinity independiente:</th>
+                  <td>{textoBombaInfinity}</td>
+                </tr>
 
                 <tr><th>Flujo panel solar:</th><td>—</td></tr>
                 <tr><th>Flujo bomba de calor:</th><td>—</td></tr>

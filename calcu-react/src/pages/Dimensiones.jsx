@@ -35,7 +35,8 @@ import CalculadorAreaModal from "../components/CalculadorAreaModal";
     cuerpos: Array.from({ length: cuerpos }, () => ({
       area: "",
       profMin: "",
-      profMax: ""
+      profMax: "",
+      uso: ""
     })),
     distCuarto: "",
     desborde: "",
@@ -99,18 +100,73 @@ import CalculadorAreaModal from "../components/CalculadorAreaModal";
     parque: 4
   };
 
-  const sistemas = {
-    alberca: { img: "./img/alberca.jpg", cuerpos: 1, desborde: true, nombre: "Alberca" },
-    jacuzzi: { img: "./img/jacuzzi.jpg", cuerpos: 1, desborde: true, nombre: "Jacuzzi" },
-    chapoteadero: { img: "./img/chapoteadero.jpg", cuerpos: 1, desborde: true, nombre: "Chapoteadero" },
-    espejoAgua: { img: "./img/espejo.jpg", cuerpos: 1, desborde: true, nombre: "Espejo de agua" },
-    albercaJacuzzi1: { img: "./img/alberca+jacuzzi1C.jpg", cuerpos: 2, desborde: true, nombre: "Alberca + Jacuzzi (1 cuerpo)" },
-    albercaChapo1: { img: "./img/alberca+chapoteadero1C.jpg", cuerpos: 2, desborde: true, nombre: "Alberca + Chapoteadero (1 cuerpo)" },
-    jacuzziChapo1: { img: "./img/jacuzzi+chapoteadero1C.jpg", cuerpos: 2, desborde: true, nombre: "Jacuzzi + Chapoteadero (1 cuerpo)" },
-    albercaJacuzzi2: { img: "./img/alberca+jacuzzi2C.jpg", cuerpos: 2, desborde: true, nombre: "Alberca + Jacuzzi (2 cuerpos)" },
-    albercaChapo2: { img: "./img/alberca+chapoteadero2C.jpg", cuerpos: 2, desborde: true, nombre: "Alberca + Chapoteadero (2 cuerpos)" },
-    jacuzziChapo2: { img: "./img/jacuzzi+chapoteadero2C.jpg", cuerpos: 2, desborde: true, nombre: "Jacuzzi + Chapoteadero (2 cuerpos)" }
-  };
+const sistemas = {
+  // 🔹 Sistemas simples
+  alberca: {
+    img: "./img/alberca.jpg",
+    cuerpos: 1,
+    desborde: true,
+    nombre: "Alberca"
+  },
+  jacuzzi: {
+    img: "./img/jacuzzi.jpg",
+    cuerpos: 1,
+    desborde: true,
+    nombre: "Jacuzzi"
+  },
+  chapoteadero: {
+    img: "./img/chapoteadero.jpg",
+    cuerpos: 1,
+    desborde: true,
+    nombre: "Chapoteadero"
+  },
+  espejoAgua: {
+    img: "./img/espejo.jpg",
+    cuerpos: 1,
+    desborde: true,
+    nombre: "Espejo de agua"
+  },
+
+  // 🔹 Combinados (1 cuerpo hidráulico)
+  albercaJacuzzi1: {
+    img: "./img/alberca+jacuzzi1C.jpg",
+    cuerpos: 2,
+    desborde: true,
+    nombre: "Alberca + Jacuzzi (cuerpos de agua combinados)"
+  },
+  albercaChapo1: {
+    img: "./img/alberca+chapoteadero1C.jpg",
+    cuerpos: 2,
+    desborde: true,
+    nombre: "Alberca + Chapoteadero (cuerpos de agua combinados)"
+  },
+
+  // 🔹 NUEVOS – 3 cuerpos combinados
+  albercaJacuzziJacuzzi: {
+    img: "./img/alberca+2jacuzzis.jpg",
+    cuerpos: 3,
+    desborde: true,
+    nombre: "Alberca + Jacuzzi + Jacuzzi (cuerpos de agua combinados)"
+  },
+  albercaChapoAsoleadero: {
+    img: "./img/alberca+chapoteadero+asoleadero.jpg",
+    cuerpos: 3,
+    desborde: true,
+    nombre: "Alberca + Chapoteadero + Asoleadero (cuerpos de agua combinados)"
+  },
+  albercaJacuzziChapo: {
+    img: "./img/alberca+jacuzzi+chapoteadero.jpg",
+    cuerpos: 3,
+    desborde: true,
+    nombre: "Alberca + Jacuzzi + Chapoteadero (cuerpos de agua combinados)"
+  },
+  albercaAsoleaderoAsoleadero: {
+    img: "./img/alberca+2asoleaderos.jpg",
+    cuerpos: 3,
+    desborde: true,
+    nombre: "Alberca + Asoleadero + Asoleadero (cuerpos de agua combinados)"
+  }
+};
 
   const descripcionesSistemas = {
     alberca:
@@ -128,11 +184,19 @@ import CalculadorAreaModal from "../components/CalculadorAreaModal";
     jacuzziChapo1:
       "Sistema combinado de jacuzzi y chapoteadero en un solo cuerpo hidráulico",
     albercaJacuzzi2:
-      "Sistema combinado de alberca y jacuzzi en cuerpos hidráulicos independientes",
+      "Sistema combinado de alberca y jacuzzi en un solo cuerpo hidráulico",
     albercaChapo2:
-      "Sistema combinado de alberca y chapoteadero en cuerpos hidráulicos independientes",
+      "Sistema combinado de alberca y chapoteadero en un solo cuerpo hidráulico",
     jacuzziChapo2:
-      "Sistema combinado de jacuzzi y chapoteadero en cuerpos hidráulicos independientes"
+      "Sistema combinado de jacuzzi y chapoteadero en un solo cuerpo hidráulico",
+    albercaJacuzziJacuzzi:
+      "Sistema combinado con alberca principal y dos zonas de hidromasaje un solo cuerpo hidráulico",
+    albercaChapoAsoleadero:
+      "Sistema combinado para recreación familiar con área infantil y zona de descanso un solo cuerpo hidráulico",
+    albercaJacuzziChapo:
+      "Sistema mixto con alberca, hidromasaje y área infantil integrada un solo cuerpo hidráulico",
+    albercaAsoleaderoAsoleadero:
+      "Sistema con alberca principal y dos zonas someras tipo asoleadero un solo cuerpo hidráulico"
   };
 
   const config = tipoSeleccionado ? sistemas[tipoSeleccionado] : null;
