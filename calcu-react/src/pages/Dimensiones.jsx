@@ -92,16 +92,17 @@ const Dimensiones = forwardRef(({ setSeccion, sistemaActivo, setSistemaActivo, d
    * de tipoSeleccionado del closure.
    */
   const actualizarDatos = useCallback((patch) => {
-    setDatos((prev) => {
-      const nuevos = { ...prev, ...patch };
-      // Sincronizar con el mapa global usando el estado previo del mapa
-      setDatosPorSistema((mapa) => ({
-        ...mapa,
-        [sistemaActivo]: nuevos,
-      }));
-      return nuevos;
-    });
-  }, [sistemaActivo, setDatosPorSistema]);
+    setDatos((prev) => ({ ...prev, ...patch }));
+  }, []);
+
+  useEffect(() => {
+    if (!datos || !sistemaActivo) return;
+
+    setDatosPorSistema((prev) => ({
+      ...prev,
+      [sistemaActivo]: datos,
+    }));
+  }, [datos, sistemaActivo, setDatosPorSistema]);
 
   /* ── Reacción automática: cuando cambia usoGeneral → actualizar tasaGeneral ── */
   useEffect(() => {
@@ -111,14 +112,11 @@ const Dimensiones = forwardRef(({ setSeccion, sistemaActivo, setSistemaActivo, d
     if (sugerida !== undefined) {
       // Solo actualizar si la tasa actual NO es una de las válidas ya elegidas
       // (para no pisar si el usuario la cambió manualmente después)
-      setDatos((prev) => {
-        if (!prev) return prev;
-        // Si ya tiene una tasa válida manual, no sobreescribir
-        if (prev.tasaGeneral !== "" && prev.tasaGeneral !== sugerida) return prev;
-        const nuevos = { ...prev, tasaGeneral: sugerida };
-        setDatosPorSistema((mapa) => ({ ...mapa, [sistemaActivo]: nuevos }));
-        return nuevos;
-      });
+    setDatos((prev) => {
+      if (!prev) return prev;
+      if (prev.tasaGeneral !== "" && prev.tasaGeneral !== sugerida) return prev;
+      return { ...prev, tasaGeneral: sugerida };
+    });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datos?.usoGeneral]);
@@ -167,15 +165,15 @@ const Dimensiones = forwardRef(({ setSeccion, sistemaActivo, setSistemaActivo, d
 
   useEffect(() => {
     if (!sistemaActivo || !sistemas[sistemaActivo]) return;
+
     setTipoSeleccionado(sistemaActivo);
+
     const existente = datosPorSistema[sistemaActivo];
     if (existente) {
       setDatos(existente);
     } else {
       const tipoCuerpos = tipoCuerposPorSistema[sistemaActivo] ?? [];
-      const nuevo = crearDatosSistema(sistemas[sistemaActivo].cuerpos, tipoCuerpos);
-      setDatos(nuevo);
-      setDatosPorSistema((prev) => ({ ...prev, [sistemaActivo]: nuevo }));
+      setDatos(crearDatosSistema(sistemas[sistemaActivo].cuerpos, tipoCuerpos));
     }
   }, [sistemaActivo]);
 

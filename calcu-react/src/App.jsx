@@ -8,7 +8,7 @@ import Equipamiento from "./pages/Equipamiento.jsx";
 
 // 🔹 IMPORT DEL VOLUMEN
 import { volumen } from "./utils/volumen";
-import { flujoVolumen } from "./utils/flujovolumen";
+import { flujoFinal } from "./utils/flujoVolumen";
 import { flujoInfinity } from "./utils/flujoInfinity";
 
 /* =====================================================
@@ -76,11 +76,23 @@ const datosSistemaFlujo = useMemo(() => ({
 // =====================================================
 // 🔹 FLUJO DE FILTRACIÓN (DESDE VOLUMEN TOTAL)
 // =====================================================
-const flujoFiltrado = useMemo(() => {
-  if (!volumenTotal || volumenTotal <= 0) return 0;
+const datosFlujo = useMemo(() => {
+  if (!datosDim?.cuerpos) return null;
 
-  return flujoVolumen(datosSistemaFlujo, volumenTotal);
-}, [datosSistemaFlujo, volumenTotal]);
+  return {
+    tasaGeneral: datosDim.tasaGeneral,
+    tasaJacuzzi: datosDim.tasaJacuzzi,
+    cuerpos: datosDim.cuerpos.map(c => ({
+      tipo: c.tipoCuerpo,
+      volumen: volumen(c)
+    }))
+  };
+}, [datosDim]);
+
+const flujoFiltrado = useMemo(() => {
+  if (!datosFlujo) return 0;
+  return flujoFinal(datosFlujo);
+}, [datosFlujo]);
 
 // =====================================================
 // 🔹 FLUJO INFINITY (SI EXISTE BORDE INFINITO)
