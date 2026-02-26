@@ -7,17 +7,17 @@ export function volumenPorCircuito(cuerpos) {
     const v = Number(c.volumen);
     if (!Number.isFinite(v) || v <= 0) return;
 
+    // 🔹 TODO cuerpo aporta a la filtración general
+    volumenGeneral += v;
+
+    // 🔹 Jacuzzis además tienen circuito de hidromasaje
     if (c.tipo === "jacuzzi") {
-      // Cada jacuzzi es un circuito independiente
       jacuzzis.push(v);
-    } else {
-      // Alberca + chapoteadero + asoleadero se combinan
-      volumenGeneral += v;
     }
   });
 
   return {
-    general: volumenGeneral,   // un solo circuito
-    jacuzzis,                  // array de circuitos
+    general: parseFloat(volumenGeneral.toFixed(1)),
+    jacuzzis, // volúmenes individuales por jacuzzi
   };
 }

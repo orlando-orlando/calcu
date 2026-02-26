@@ -8,7 +8,7 @@ import Equipamiento from "./pages/Equipamiento.jsx";
 
 // 🔹 IMPORT DEL VOLUMEN
 import { volumen } from "./utils/volumen";
-import { flujoFinal } from "./utils/flujoVolumen";
+import { flujoFinal } from "./utils/flujoFinal";
 import { flujoInfinity } from "./utils/flujoInfinity";
 
 /* =====================================================
