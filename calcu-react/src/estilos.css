@@ -708,6 +708,7 @@ body.no-scroll{ overflow:hidden !important; }
 
 .panel-izquierdo{
   position: relative;
+  overflow-x: hidden;   /* 🔒 último seguro */
   width: 280px;
   min-width: 260px;
   height: 100vh;
@@ -1684,10 +1685,6 @@ select option:hover {
 
 .tabla-clima-wrapper:hover {
   opacity: 1;
-}
-
-.tabla-resultados {
-  font-size: 0.7rem;
 }
 
 /* ===============================
@@ -2914,8 +2911,29 @@ select option:hover {
 
 .tabla-resultados {
   width: 100%;
+  table-layout: fixed;          /* 🔒 CLAVE ABSOLUTA */
   border-collapse: separate;
   border-spacing: 0 4px;
+  font-size: 0.7rem;
+}
+
+.tabla-resultados th {
+  width: 65%;
+  text-align: left;
+  color: #94a3b8;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tabla-resultados td {
+  width: 35%;
+  text-align: right;
+  color: #e5e7eb;
+  font-weight: 500;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums; /* 👌 números estables */
 }
 
 .tabla-resultados tr {
@@ -2930,6 +2948,7 @@ select option:hover {
 .seccion-resultados {
   max-height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;   /* 🔒 EVITA que se salga */
   padding-right: 6px; /* espacio para scrollbar */
 }
 

@@ -156,6 +156,12 @@ const profundidadPromedio = useMemo(() => {
     return flujoInfinitySistema;
   }, [datosDim, flujoInfinitySistema]);
 
+  const perdidaTotalBTU =
+    datosPorSistema?.calentamiento?.perdidaTotalBTU ?? 0;
+
+  const perdidaEvaporacion =
+    datosPorSistema?.calentamiento?.perdidasBTU?.evaporacion ?? 0;
+
   return (
     <div className="app-contenedor">
 
@@ -249,9 +255,28 @@ const profundidadPromedio = useMemo(() => {
                 </tr>
 
                 <tr>
-                  <th>Motobomba infinity independiente:</th>
+                  <th>Motobomba para infinity:</th>
                   <td>{textoBombaInfinity}</td>
                 </tr>
+
+                <tr>
+                  <th>Pérdida por evaporación:</th>
+                  <td>
+                    {perdidaEvaporacion > 0
+                      ? `${perdidaEvaporacion.toFixed(0)} BTU/h`
+                      : "—"}
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>Pérdida total de calor:</th>
+                  <td>
+                    {perdidaTotalBTU > 0
+                      ? `${perdidaTotalBTU.toFixed(0)} BTU/h`
+                      : "—"}
+                  </td>
+                </tr>
+
 
                 <tr><th>Flujo panel solar:</th><td>—</td></tr>
                 <tr><th>Flujo bomba de calor:</th><td>—</td></tr>
@@ -296,6 +321,10 @@ const profundidadPromedio = useMemo(() => {
               tipoSistema={sistemaActivo}
               datosPorSistema={datosPorSistema}
               setDatosPorSistema={setDatosPorSistema}
+
+              areaTotal={areaCalculada}
+              volumenTotal={volumenTotal}
+              profundidadPromedio={profundidadPromedio}
             />
           )}
 

@@ -3,10 +3,20 @@ import "../estilos.css";
 import { getClimaMensual } from "../data/clima";
 import { Pie } from "react-chartjs-2";
 import {Chart as ChartJS, ArcElement, Tooltip, Legend} from "chart.js";
+import { qEvaporacion } from "../utils/qEvaporacion";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export default function Calentamiento({setSeccion, tipoSistema, datosPorSistema, setDatosPorSistema}) {
+export default function Calentamiento({
+  setSeccion,
+  tipoSistema,
+  datosPorSistema,
+  setDatosPorSistema,
+
+  areaTotal,
+  volumenTotal,
+  profundidadPromedio
+}) {
 
   const SISTEMAS_LABELS = {
     alberca: "Alberca",
@@ -163,9 +173,50 @@ const ciudadesMexico = [
     if (!seleccionados.length) return null;
 
     return seleccionados.reduce((frio, actual) =>
-      actual.tMin < frio.tMin ? actual : frio
+      actual.tProm < frio.tProm ? actual : frio
     );
   }, [clima, mesesCalentar]);
+
+  const datosTermicos = useMemo(() => ({
+    area: areaTotal,
+    volumen: volumenTotal,
+    profundidad: profundidadPromedio,
+
+    tempDeseada,
+    techada,
+    cubierta
+  }), [
+    areaTotal,
+    volumenTotal,
+    profundidadPromedio,
+    tempDeseada,
+    techada,
+    cubierta
+  ]);
+
+const perdidaEvaporacion = useMemo(() => {
+  if (!mesMasFrio || !tempDeseada || areaTotal <= 0) return 0;
+  return qEvaporacion(datosTermicos, mesMasFrio);
+}, [datosTermicos, mesMasFrio, tempDeseada, areaTotal]);
+
+const perdidasBTU = useMemo(() => ({
+  evaporacion: perdidaEvaporacion
+}), [perdidaEvaporacion]);
+
+const perdidaTotalBTU = useMemo(() => {
+  return Object.values(perdidasBTU).reduce((a, b) => a + b, 0);
+}, [perdidasBTU]);
+
+useEffect(() => {
+  setDatosPorSistema(prev => ({
+    ...prev,
+    calentamiento: {
+      ...prev.calentamiento,
+      perdidasBTU,
+      perdidaTotalBTU
+    }
+  }));
+}, [perdidasBTU, perdidaTotalBTU, setDatosPorSistema]);
 
   useEffect(() => {
     if (clima.length && Object.keys(mesesCalentar).length === 0) {
