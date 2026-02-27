@@ -11,6 +11,14 @@ import { volumen } from "./utils/volumen";
 import { flujoFinal } from "./utils/flujoFinal";
 import { flujoInfinity } from "./utils/flujoInfinity";
 
+import {
+  formatBTU,
+  formatM2,
+  formatM3,
+  formatMetro,
+  formatGPM
+} from "./utils/format";
+
 /* =====================================================
    FUNCIÓN UNIFICADA: ÁREA TOTAL (SUMA DE CUERPOS)
 ===================================================== */
@@ -119,6 +127,14 @@ const profundidadPromedio = useMemo(() => {
   return 0;
 }, [areaCalculada, volumenTotal]);
 
+// =====================================================
+// 🔹 SISTEMA LISTO PARA CÁLCULOS TÉRMICOS
+// =====================================================
+const sistemaListoCalor =
+  areaCalculada > 0 &&
+  volumenTotal > 0 &&
+  profundidadPromedio > 0;
+
   // 🔹 Configuración final de motobombas (SIN CAMBIOS)
   const configBombas = {
     filtrado: true,
@@ -225,33 +241,27 @@ const profundidadPromedio = useMemo(() => {
               <tbody>
                 <tr>
                   <th>Área total:</th>
-                  <td>{areaCalculada > 0 ? `${areaCalculada} m²` : "—"}</td>
+                  <td>{formatM2(areaCalculada)}</td>
                 </tr>
 
                 <tr>
                   <th>Volumen total:</th>
-                  <td>{volumenTotal > 0 ? `${volumenTotal} m³` : "—"}</td>
+                  <td>{formatM3(volumenTotal)}</td>
                 </tr>
 
                 <tr>
                   <th>Profundidad promedio:</th>
-                  <td>
-                    {profundidadPromedio > 0 ? `${profundidadPromedio} m` : "—"}
-                  </td>
+                  <td>{formatMetro(profundidadPromedio)}</td>
                 </tr>
 
                 <tr>
                   <th>Flujo filtrado:</th>
-                  <td>{flujoFiltrado > 0 ? `${flujoFiltrado} gpm` : "—"}</td>
+                  <td>{formatGPM(flujoFiltrado)}</td>
                 </tr>
                 
                 <tr>
                   <th>Flujo infinity:</th>
-                  <td>
-                    {flujoInfinitySistema > 0
-                      ? `${flujoInfinitySistema} gpm`
-                      : "—"}
-                  </td>
+                  <td>{formatGPM(flujoInfinitySistema)}</td>
                 </tr>
 
                 <tr>
@@ -262,8 +272,8 @@ const profundidadPromedio = useMemo(() => {
                 <tr>
                   <th>Pérdida por evaporación:</th>
                   <td>
-                    {perdidaEvaporacion > 0
-                      ? `${perdidaEvaporacion.toFixed(0)} BTU/h`
+                    {sistemaListoCalor
+                      ? formatBTU(perdidaEvaporacion)
                       : "—"}
                   </td>
                 </tr>
@@ -271,8 +281,8 @@ const profundidadPromedio = useMemo(() => {
                 <tr>
                   <th>Pérdida total de calor:</th>
                   <td>
-                    {perdidaTotalBTU > 0
-                      ? `${perdidaTotalBTU.toFixed(0)} BTU/h`
+                    {sistemaListoCalor
+                      ? formatBTU(perdidaTotalBTU)
                       : "—"}
                   </td>
                 </tr>
