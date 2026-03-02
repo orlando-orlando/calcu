@@ -4,6 +4,11 @@ import { getClimaMensual } from "../data/clima";
 import { Pie } from "react-chartjs-2";
 import {Chart as ChartJS, ArcElement, Tooltip, Legend} from "chart.js";
 import { qEvaporacion } from "../utils/qEvaporacion";
+import { qConveccion } from "../utils/qConveccion";
+import { qRadiacion } from "../utils/qRadiacion";
+import { qTransmision } from "../utils/qTransmision";
+import { qInfinity } from "../utils/qInfinity";
+import { qCanal } from "../utils/qCanal";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -18,19 +23,21 @@ export default function Calentamiento({
   profundidadPromedio
 }) {
 
+const sistemaActivo = datosPorSistema?.[tipoSistema];
+
   const SISTEMAS_LABELS = {
     alberca: "Alberca",
     jacuzzi: "Jacuzzi",
     chapoteadero: "Chapoteadero",
     espejoAgua: "Espejo de agua",
 
-    albercaJacuzzi1: "Alberca + Jacuzzi (1 cuerpo)",
-    albercaChapo1: "Alberca + Chapoteadero (1 cuerpo)",
-    jacuzziChapo1: "Jacuzzi + Chapoteadero (1 cuerpo)",
+    albercaJacuzzi1: "Alberca + Jacuzzi (2 cuerpos)",
+    albercaChapo1: "Alberca + Chapoteadero (2 cuerpos)",
+    albercaJacuzziJacuzzi: "Alberca + Jacuzzi + Jacuzzi (3 cuerpos)",
 
-    albercaJacuzzi2: "Alberca + Jacuzzi (2 cuerpos)",
-    albercaChapo2: "Alberca + Chapoteadero (2 cuerpos)",
-    jacuzziChapo2: "Jacuzzi + Chapoteadero (2 cuerpos)"
+    albercaChapoAsoleadero: "Alberca + Chapoteadero + Asoleadero (3 cuerpos)",
+    albercaJacuzziChapo: "Alberca + Jacuzzi + Chapoteadero (3 cuerpos)",
+    albercaAsoleaderoAsoleadero: "Alberca + Asoleadero + Asoleadero (3 cuerpos)"
   };
 
   const nombreSistema = SISTEMAS_LABELS[tipoSistema] || "Dimensiones";
@@ -194,14 +201,106 @@ const ciudadesMexico = [
     cubierta
   ]);
 
+const profMaxSistema = useMemo(() => {
+  if (!sistemaActivo?.cuerpos?.length) return 0;
+  return Math.max(
+    ...sistemaActivo.cuerpos.map(c => parseFloat(c.profMax) || 0)
+  );
+}, [sistemaActivo]);
+
 const perdidaEvaporacion = useMemo(() => {
   if (!mesMasFrio || !tempDeseada || areaTotal <= 0) return 0;
   return qEvaporacion(datosTermicos, mesMasFrio);
 }, [datosTermicos, mesMasFrio, tempDeseada, areaTotal]);
 
+const perdidaConveccion = useMemo(() => {
+  if (!mesMasFrio || !tempDeseada || areaTotal <= 0) return 0;
+  return qConveccion(datosTermicos, mesMasFrio);
+}, [datosTermicos, mesMasFrio, tempDeseada, areaTotal]);
+
+const perdidaRadiacion = useMemo(() => {
+  if (!mesMasFrio || !tempDeseada || areaTotal <= 0) return 0;
+  return qRadiacion(datosTermicos, mesMasFrio);
+}, [datosTermicos, mesMasFrio, tempDeseada, areaTotal]);
+
+const perdidaTransmision = useMemo(() => {
+  if (!mesMasFrio || !tempDeseada || areaTotal <= 0) return 0;
+  return qTransmision(
+    {
+      area: areaTotal,
+      profMax: profMaxSistema,
+      tempDeseada
+    },
+    mesMasFrio
+  );
+}, [mesMasFrio, tempDeseada, areaTotal, profMaxSistema]);
+
+const perdidaInfinity = useMemo(() => {
+  if (!mesMasFrio || !tempDeseada) return 0;
+  if (!sistemaActivo) return 0;
+  if (
+    sistemaActivo.desborde !== "infinity" &&
+    sistemaActivo.desborde !== "ambos"
+  ) {
+    return 0;
+  }
+  const largoInfinity = parseFloat(sistemaActivo.largoInfinity) || 0;
+  if (largoInfinity <= 0) return 0;
+  if (profMaxSistema <= 0) return 0;
+  return qInfinity(
+    {
+      profMin: 0,
+      profMax: profMaxSistema, // ✅ MISMA PROFUNDIDAD
+      largoInfinity,
+      tempDeseada
+    },
+    mesMasFrio
+  );
+}, [
+  mesMasFrio,
+  tempDeseada,
+  sistemaActivo,
+  profMaxSistema
+]);
+
+const perdidaCanal = useMemo(() => {
+  if (!mesMasFrio || !tempDeseada) return 0;
+  // 👉 aquí decides la condición lógica
+  // ajusta según tu modelo de datos real
+  const largoCanal =
+    datosPorSistema?.dimensiones?.largoCanal ||
+    sistemaActivo?.largoCanal ||
+    0;
+  if (largoCanal <= 0) return 0;
+  return qCanal(
+    {
+      largoCanal,
+      tempDeseada
+    },
+    mesMasFrio
+  );
+}, [
+  mesMasFrio,
+  tempDeseada,
+  datosPorSistema,
+  sistemaActivo
+]);
+
 const perdidasBTU = useMemo(() => ({
-  evaporacion: perdidaEvaporacion
-}), [perdidaEvaporacion]);
+  evaporacion: perdidaEvaporacion,
+  conveccion: perdidaConveccion,
+  radiacion: perdidaRadiacion,
+  transmision: perdidaTransmision,
+  infinity: perdidaInfinity,
+  canal: perdidaCanal
+}), [
+  perdidaEvaporacion,
+  perdidaConveccion,
+  perdidaRadiacion,
+  perdidaTransmision,
+  perdidaInfinity,
+  perdidaCanal
+]);
 
 const perdidaTotalBTU = useMemo(() => {
   return Object.values(perdidasBTU).reduce((a, b) => a + b, 0);
@@ -245,34 +344,34 @@ useEffect(() => {
   /* =========================
      DATA GRÁFICA
   ========================== */
-  const pieData = useMemo(() => ({
-    labels: [
-      "Evaporación",
-      "Convección",
-      "Radiación",
-      "Transmisión",
-      "Infinity",
-      "Canal",
-      "Tuberías"
-    ],
-    datasets: [
-      {
-        data: [30, 20, 15, 10, 10, 8, 7],
-        backgroundColor: [
-          "rgba(96,165,250,0.85)",
-          "rgba(56,189,248,0.85)",
-          "rgba(167,139,250,0.85)",
-          "rgba(251,191,36,0.85)",
-          "rgba(34,197,94,0.85)",
-          "rgba(244,114,182,0.85)",
-          "rgba(148,163,184,0.85)"
-        ],
-        borderColor: "rgba(15,23,42,0.8)",
-        borderWidth: 2,
-        hoverOffset: 10
-      }
-    ]
-  }), []);
+const pieData = useMemo(() => {
+  const total = perdidaTotalBTU || 1;
+
+  return {
+    labels: ["Evaporación", "Convección", "Radiación", "Transmisión", "Infinity", "Canal Perimetral"],
+    datasets: [{
+      data: [
+        perdidasBTU.evaporacion,
+        perdidasBTU.conveccion,
+        perdidasBTU.radiacion,
+        perdidasBTU.transmision,
+        perdidasBTU.infinity,
+        perdidasBTU.canal
+      ],
+      backgroundColor: [
+          "rgba(30,64,175,0.85)", // evaporacion
+          "rgba(56,189,248,0.85)",   // cian → convección
+          "rgba(251,113,133,0.85)",   // rojo/rosa → radiación)"
+          "rgba(163,163,163,0.85)",  // transmisión (gris técnico)
+          "rgba(34,197,94,0.85)",     // infinity (verde energético)
+          "rgba(96,165,250,0.85)"   // canal
+
+      ],
+      borderColor: "rgba(15,23,42,0.8)",
+      borderWidth: 2
+    }]
+  };
+}, [perdidasBTU, perdidaTotalBTU]);
 
   const pieOptions = {
     responsive: true,
@@ -301,7 +400,7 @@ useEffect(() => {
       tooltip: {
         callbacks: {
           label: function (context) {
-            return `${context.label}: ${context.parsed}%`;
+            return `${context.label}: ${context.parsed} BTU/h`;
           }
         }
       }

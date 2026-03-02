@@ -178,6 +178,21 @@ const sistemaListoCalor =
   const perdidaEvaporacion =
     datosPorSistema?.calentamiento?.perdidasBTU?.evaporacion ?? 0;
 
+  const perdidaConveccion =
+    datosPorSistema?.calentamiento?.perdidasBTU?.conveccion ?? 0;
+
+  const perdidaRadiacion =
+    datosPorSistema?.calentamiento?.perdidasBTU?.radiacion ?? 0;
+
+  const perdidaTransmision =
+    datosPorSistema?.calentamiento?.perdidasBTU?.transmision ?? 0;
+
+  const perdidaInfinity =
+    datosPorSistema?.calentamiento?.perdidasBTU?.infinity ?? 0;
+
+  const perdidaCanal =
+    datosPorSistema?.calentamiento?.perdidasBTU?.canal ?? 0;
+
   return (
     <div className="app-contenedor">
 
@@ -274,6 +289,51 @@ const sistemaListoCalor =
                   <td>
                     {sistemaListoCalor
                       ? formatBTU(perdidaEvaporacion)
+                      : "—"}
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>Pérdida por convección:</th>
+                  <td>
+                    {sistemaListoCalor
+                      ? formatBTU(perdidaConveccion)
+                      : "—"}
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>Pérdida por radiación:</th>
+                  <td>
+                    {sistemaListoCalor
+                      ? formatBTU(perdidaRadiacion)
+                      : "—"}
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>Pérdida por transmisión:</th>
+                  <td>
+                    {sistemaListoCalor
+                      ? formatBTU(perdidaTransmision)
+                      : "—"}
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>Pérdida por infinity:</th>
+                  <td>
+                    {sistemaListoCalor
+                      ? formatBTU(perdidaInfinity)
+                      : "—"}
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>Pérdida por canal perimetral:</th>
+                  <td>
+                    {sistemaListoCalor
+                      ? formatBTU(perdidaCanal)
                       : "—"}
                   </td>
                 </tr>
