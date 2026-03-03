@@ -2156,3 +2156,202 @@ select option:hover { background-color: #d1d5db; }
   background: #e7f1ff;
   border-radius: 6px;
 }
+
+/* ═══════════════════════════════════════════════
+   SISTEMAS DE CALENTAMIENTO — CSS adicional
+   Agrega esto a tu estilos.css o archivo global
+═══════════════════════════════════════════════ */
+
+/* Hint en el subtítulo */
+.selector-subtitulo-hint {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #94a3b8;
+  margin-left: 0.6rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Grid de tarjetas de selección (4 columnas) */
+.sistemas-calentamiento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 860px) {
+  .sistemas-calentamiento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tarjeta individual */
+.sistema-cal-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 1rem 0.75rem;
+  border-radius: 10px;
+  border: 1.5px solid rgba(56, 189, 248, 0.18);
+  background: rgba(15, 23, 42, 0.55);
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s, transform 0.14s;
+  user-select: none;
+}
+
+.sistema-cal-card:hover {
+  border-color: rgba(56, 189, 248, 0.45);
+  background: rgba(30, 64, 175, 0.18);
+  transform: translateY(-2px);
+}
+
+.sistema-cal-card.activo {
+  border-color: rgba(56, 189, 248, 0.85);
+  background: rgba(30, 64, 175, 0.28);
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2), 0 4px 16px rgba(30, 64, 175, 0.25);
+}
+
+.sistema-cal-card.card-error {
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+.sistema-cal-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.sistema-cal-label {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #cbd5e1;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.sistema-cal-card.activo .sistema-cal-label {
+  color: #e0f2fe;
+}
+
+.sistema-cal-check {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(56, 189, 248, 0.35);
+  font-size: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sistema-cal-check.checked {
+  background: rgba(56, 189, 248, 0.9);
+  border-color: transparent;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+/* ── Wrapper de detalle ── */
+.sistemas-detalle-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* Tarjeta de detalle por sistema */
+.sistema-detalle-card {
+  border-radius: 10px;
+  border: 1.5px solid rgba(56, 189, 248, 0.22);
+  background: rgba(15, 23, 42, 0.4);
+  padding: 1rem 1.1rem 1.1rem;
+  transition: border-color 0.15s;
+}
+
+.sistema-detalle-card.detalle-error {
+  border-color: rgba(239, 68, 68, 0.55);
+}
+
+.sistema-detalle-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.sistema-detalle-icon {
+  font-size: 1.15rem;
+}
+
+.sistema-detalle-titulo {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #7dd3fc;
+  letter-spacing: 0.02em;
+}
+
+/* Campos en fila */
+.sistema-detalle-campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* Tasa de elevación ocupa ancho completo */
+.campo-tasa-elevacion {
+  grid-column: 1 / -1;
+}
+
+/* Grid de botones de tasa */
+.tasa-elevacion-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.35rem;
+  padding: 0.55rem 0.6rem;
+  border-radius: 8px;
+  border: 1.5px solid rgba(56, 189, 248, 0.15);
+  background: rgba(15, 23, 42, 0.3);
+}
+
+.tasa-elevacion-grid.tasa-error {
+  border-color: rgba(239, 68, 68, 0.55);
+}
+
+.tasa-btn {
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  border: 1.5px solid rgba(56, 189, 248, 0.25);
+  background: rgba(15, 23, 42, 0.5);
+  color: #94a3b8;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.12s;
+}
+
+.tasa-btn:hover {
+  border-color: rgba(56, 189, 248, 0.55);
+  color: #e0f2fe;
+  transform: translateY(-1px);
+}
+
+.tasa-btn.tasa-activa {
+  border-color: rgba(56, 189, 248, 0.9);
+  background: rgba(30, 64, 175, 0.4);
+  color: #e0f2fe;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15);
+}
+
+/* Error en grupo completo */
+.grupo-error > .selector-subtitulo {
+  color: rgba(239, 68, 68, 0.85);
+}
