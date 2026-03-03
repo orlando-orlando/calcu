@@ -93,7 +93,7 @@ export function qInfinity(datos, mesMasFrio) {
     { tAire: 15.6, tAgua: 43.3, vel: 21.9, factor: 1600 },
     { tAire: 15.6, tAgua: 43.3, vel: 54.9, factor: 3300 },
 
-    { tAire: 10.0, tAgua: 26.7, vel: 0,    factor: 1060 },
+    { tAire: 10.0, tAgua: 26.7, vel: 0,    factor: 106 },
     { tAire: 10.0, tAgua: 26.7, vel: 0.5,  factor: 140  },
     { tAire: 10.0, tAgua: 26.7, vel: 1.1,  factor: 160  },
     { tAire: 10.0, tAgua: 26.7, vel: 2.2,  factor: 187  },
@@ -119,50 +119,91 @@ export function qInfinity(datos, mesMasFrio) {
     { tAire: 10.0, tAgua: 43.3, vel: 54.9, factor: 3500 }
   ];
 
-  // Listas únicas ordenadas
-  const tAireVals = [...new Set(factores.map(f => f.tAire))].sort((a, b) => a - b);
-  const tAguaVals = [...new Set(factores.map(f => f.tAgua))].sort((a, b) => a - b);
-  const velVals   = [...new Set(factores.map(f => f.vel))].sort((a, b) => a - b);
+// Listas únicas ordenadas
+const tAireVals = [...new Set(factores.map(f => f.tAire))].sort((a, b) => a - b);
+const tAguaVals = [...new Set(factores.map(f => f.tAgua))].sort((a, b) => a - b);
+const velVals   = [...new Set(factores.map(f => f.vel))].sort((a, b) => a - b);
 
-  // Umbral más alto que no exceda el target
-  const floorMatch = (target, arr) => {
-    const menores = arr.filter(v => v <= target);
-    return menores.length ? Math.max(...menores) : arr[0];
-  };
+// Umbral más alto que no exceda el target (modo conservador)
+const floorMatch = (target, arr) => {
+  const menores = arr.filter(v => v <= target);
+  return menores.length ? Math.max(...menores) : arr[0];
+};
 
-  const selectedTAire = floorMatch(tempProm,    tAireVals);
-  const selectedTAgua = floorMatch(tempDeseada, tAguaVals);
-  const selectedVel   = floorMatch(velViento,   velVals);
+const selectedTAire = floorMatch(tempProm, tAireVals);
+const selectedVel   = floorMatch(velViento, velVals);
 
-  // Buscar factor exacto
-  let factorObj = factores.find(f =>
-    f.tAire === selectedTAire &&
-    f.tAgua === selectedTAgua &&
-    f.vel   === selectedVel
-  );
+  // ======================================================
+  // 🔹 EXTRAPOLACIÓN HACIA ABAJO (< 26.7°C)
+  // ======================================================
+  if (tempDeseada < tAguaVals[0]) {
 
-  // Si no hay combinación exacta, buscar por vel más cercana dentro del tAire/tAgua seleccionados
-  if (!factorObj) {
-    const candidates = factores.filter(
-      f => f.tAire === selectedTAire && f.tAgua === selectedTAgua
+    const t1 = tAguaVals[0];
+    const t2 = tAguaVals[1];
+
+    const f1 = factores.find(f =>
+      f.tAire === selectedTAire &&
+      f.tAgua === t1 &&
+      f.vel   === selectedVel
     );
-    if (candidates.length) {
-      factorObj = candidates.reduce((best, f) =>
-        Math.abs(f.vel - velViento) < Math.abs(best.vel - velViento) ? f : best
-      , candidates[0]);
-    }
+
+    const f2 = factores.find(f =>
+      f.tAire === selectedTAire &&
+      f.tAgua === t2 &&
+      f.vel   === selectedVel
+    );
+
+    if (!f1 || !f2) return 0;
+
+    const pendiente = (f2.factor - f1.factor) / (t2 - t1);
+
+    const factor = f1.factor + pendiente * (tempDeseada - t1);
+
+    return Number((factor * areaCortina).toFixed(2));
   }
 
-  // Fallback robusto
-  if (!factorObj) {
-    factorObj = factores.reduce((best, curr) => {
-      const dBest = Math.abs(best.tAire - tempProm) + Math.abs(best.tAgua - tempDeseada) + Math.abs(best.vel - velViento);
-      const dCurr = Math.abs(curr.tAire - tempProm) + Math.abs(curr.tAgua - tempDeseada) + Math.abs(curr.vel - velViento);
-      return dCurr < dBest ? curr : best;
-    }, factores[0]);
-  }
+  // ======================================================
+  // 🔹 INTERPOLACIÓN NORMAL
+  // ======================================================
+  
+const lowerTAgua =
+  tAguaVals.filter(t => t <= tempDeseada).pop() ?? tAguaVals[0];
 
-  const Q_BTU_h = Number((factorObj.factor * areaCortina).toFixed(2));
+const upperTAgua =
+  tAguaVals.find(t => t >= tempDeseada) ??
+  tAguaVals[tAguaVals.length - 1];
 
-  return Q_BTU_h;
+// Obtener factores inferior y superior
+const factorLower = factores.find(f =>
+  f.tAire === selectedTAire &&
+  f.tAgua === lowerTAgua &&
+  f.vel   === selectedVel
+);
+
+const factorUpper = factores.find(f =>
+  f.tAire === selectedTAire &&
+  f.tAgua === upperTAgua &&
+  f.vel   === selectedVel
+);
+
+// Fallback de seguridad
+if (!factorLower && !factorUpper) return 0;
+
+let factor;
+
+// Si está exactamente en nodo de tabla
+if (lowerTAgua === upperTAgua || !factorUpper) {
+  factor = factorLower?.factor ?? factorUpper?.factor ?? 0;
+} else {
+  const ratio =
+    (tempDeseada - lowerTAgua) / (upperTAgua - lowerTAgua);
+
+  factor =
+    factorLower.factor +
+    ratio * (factorUpper.factor - factorLower.factor);
+}
+
+const Q_BTU_h = Number((factor * areaCortina).toFixed(2));
+
+return Q_BTU_h;
 }

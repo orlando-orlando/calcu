@@ -660,7 +660,6 @@ const sistemaActivo = datosPorSistema?.[tipoSistema];
             {hoveredField ? descripcionesCampos[hoveredField] : descripcionesCampos.default}
           </span>
         </div>
-
       </div>
     </div>
   );
