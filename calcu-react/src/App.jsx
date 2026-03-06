@@ -1,5 +1,5 @@
 import "./estilos.css";
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
 import { Home, ChevronLeft, ChevronRight } from "lucide-react";
 
 import Dimensiones from "./pages/Dimensiones.jsx";
@@ -51,6 +51,12 @@ export default function App() {
     setSistemaActivo(null);
     dimensionesRef.current?.resetDimensiones();
   };
+
+  const [temaOscuro, setTemaOscuro] = useState(true);
+
+  useEffect(() => {
+    document.body.className = temaOscuro ? "tema-oscuro" : "tema-claro";
+  }, [temaOscuro]);
 
   // 🔹 Datos del sistema activo
   const datosDim = datosPorSistema?.[sistemaActivo];
@@ -194,7 +200,7 @@ const sistemaListoCalor =
     datosPorSistema?.calentamiento?.perdidasBTU?.canal ?? 0;
 
   return (
-    <div className="app-contenedor">
+      <div className={`app-contenedor ${temaOscuro ? "tema-oscuro" : "tema-claro"}`}>
 
       {/* =========================
           PANEL IZQUIERDO
@@ -206,6 +212,15 @@ const sistemaListoCalor =
           {!panelColapsado && (
             <button className="icon-btn" title="Inicio" onClick={handleHome}>
               <Home size={20} />
+            </button>
+          )}
+
+          {!panelColapsado && (
+            <button
+              className={`boton-tema ${temaOscuro ? "tema-claro-btn" : "tema-oscuro-btn"}`}
+              onClick={() => setTemaOscuro(!temaOscuro)}
+            >
+              {temaOscuro ? "☀️ Modo claro" : "🌙 Modo oscuro"}
             </button>
           )}
 

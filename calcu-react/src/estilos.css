@@ -29,6 +29,14 @@ html,body{
   line-height:1.5;
 }
 
+body.tema-oscuro {
+  background-color: #0f172a !important;
+}
+
+body.tema-claro {
+  background-color: #ecedf0 !important;
+}
+
 /* ==========================================================
    🧩 Layout general
    ========================================================== */
@@ -72,7 +80,7 @@ html,body{
   display: flex;
   flex-direction: column;
 
-  background: #f8fbff;
+  background: #ecedf0;
 
   height: 100vh;
   overflow: hidden;
@@ -2354,4 +2362,68 @@ select option:hover { background-color: #d1d5db; }
 /* Error en grupo completo */
 .grupo-error > .selector-subtitulo {
   color: rgba(239, 68, 68, 0.85);
+}
+
+/* ── Transición de sección: fade sin flash blanco ── */
+.seccion-fade {
+  transition: opacity 0.16s ease;
+}
+.fade-in  { opacity: 1; }
+.fade-out { opacity: 0; }
+
+/* ── Fondo del panel derecho oscuro para que no flashee ── */
+/* MODO OSCURO */
+.tema-oscuro .panel-derecho {
+  background: #0f172a !important;
+}
+
+/* MODO CLARO */
+.tema-claro .panel-derecho {
+  background: #ecedf0 !important;
+}
+
+.boton-tema{
+  padding:6px 10px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+  font-size:12px;
+  transition:all .2s ease;
+}
+
+.tema-claro-btn{
+  background:#888883;
+  color:#f1f5f9;
+  border:1px solid #1e293b;
+}
+
+.tema-oscuro-btn{
+  background:#0f172a;
+  color:#f1f5f9;
+  border:1px solid #1e293b;
+}
+
+/* ── Bloqueo del formulario de calentamiento ── */
+.calentamiento-bloqueado {
+  pointer-events: none;
+  opacity: 0.22;
+  user-select: none;
+  filter: blur(1.5px);
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+/* ── Título detalle sistema en blanco ── */
+.sistema-detalle-titulo {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+/* ── Icono SVG en detalle card ── */
+.sistema-detalle-icon-svg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
