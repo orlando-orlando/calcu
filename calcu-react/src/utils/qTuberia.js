@@ -1,6 +1,11 @@
+// utils/qTuberia.js
+
 export function qTuberia(resumenTramosR = {}, resumenDisparosR = {}, datos, mesMasFrio) {
-  // Combinar los resúmenes de tramos y disparos
-  const resumenMateriales = { ...(resumenTramosR || {}) };
+  // Deep copy para evitar mutar los objetos originales entre llamadas
+  const resumenMateriales = {};
+  for (const [diam, info] of Object.entries(resumenTramosR || {})) {
+    resumenMateriales[diam] = { ...info };
+  }
 
   for (const [diam, info] of Object.entries(resumenDisparosR || {})) {
     if (!resumenMateriales[diam]) {
@@ -21,9 +26,9 @@ export function qTuberia(resumenTramosR = {}, resumenDisparosR = {}, datos, mesM
   if (!mesMasFrio?.tProm) return { porDiametro: {}, total_BTU_h: 0 };
 
   // Constantes
-  const INCH_TO_M      = 0.0254;
-  const KCALH_TO_BTUH  = 3.96832;
-  const k_kcal_m_h_C   = 0.22;
+  const INCH_TO_M     = 0.0254;
+  const KCALH_TO_BTUH = 3.96832;
+  const k_kcal_m_h_C  = 0.22;
 
   const T2     = mesMasFrio.tProm;
   const T1     = parseFloat(datos.tempDeseada) || 0;
@@ -41,7 +46,7 @@ export function qTuberia(resumenTramosR = {}, resumenDisparosR = {}, datos, mesM
     "tuberia 12.00": { OD_m: 12.75 * INCH_TO_M, ID_m: 11.89 * INCH_TO_M },
     "tuberia 14.00": { OD_m: 14.00 * INCH_TO_M, ID_m: 13.13 * INCH_TO_M },
     "tuberia 16.00": { OD_m: 16.00 * INCH_TO_M, ID_m: 14.94 * INCH_TO_M },
-    "tuberia 18.00": { OD_m: 18.00 * INCH_TO_M, ID_m: 16.81 * INCH_TO_M }
+    "tuberia 18.00": { OD_m: 18.00 * INCH_TO_M, ID_m: 16.81 * INCH_TO_M },
   };
 
   const qTub = { porDiametro: {}, total_BTU_h: 0 };
@@ -69,13 +74,21 @@ export function qTuberia(resumenTramosR = {}, resumenDisparosR = {}, datos, mesM
 
     qTub.porDiametro[diamNom] = {
       length_m,
-      Q_BTU_h: Number(Q_BTU_h.toFixed(2))
+      Q_BTU_h: Number(Q_BTU_h.toFixed(2)),
     };
+
+    console.log(`✅ Tubería ${diamNom} | Longitud: ${length_m} m | Pérdida: ${Q_BTU_h.toFixed(2)} BTU/h`);
 
     qTub.total_BTU_h += Q_BTU_h;
   }
 
   qTub.total_BTU_h = Number(qTub.total_BTU_h.toFixed(2));
+
+  console.log(`👉 Pérdida total en tubería = ${qTub.total_BTU_h} BTU/h`);
+  console.log(`   ΔT usado: T1(deseada)=${T1}°C − T2(mesMasFrio.tProm)=${T2}°C = ${deltaT}°C`);
+  console.log(`   resumenTramosR:`, resumenTramosR);
+  console.log(`   resumenDisparosR:`, resumenDisparosR);
+  console.log(`   resumenMateriales combinado:`, resumenMateriales);
 
   return qTub;
 }

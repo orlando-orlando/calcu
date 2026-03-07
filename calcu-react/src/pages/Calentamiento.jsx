@@ -2,40 +2,41 @@ import { useState, useMemo, useEffect } from "react";
 import "../estilos.css";
 import { getClimaMensual } from "../data/clima";
 import { Pie } from "react-chartjs-2";
-import {Chart as ChartJS, ArcElement, Tooltip, Legend} from "chart.js";
-import { qEvaporacion } from "../utils/qEvaporacion";
-import { qConveccion } from "../utils/qConveccion";
-import { qRadiacion } from "../utils/qRadiacion";
-import { qTransmision } from "../utils/qTransmision";
-import { qInfinity } from "../utils/qInfinity";
-import { qCanal } from "../utils/qCanal";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { qEvaporacion }  from "../utils/qEvaporacion";
+import { qConveccion }   from "../utils/qConveccion";
+import { qRadiacion }    from "../utils/qRadiacion";
+import { qTransmision }  from "../utils/qTransmision";
+import { qInfinity }     from "../utils/qInfinity";
+import { qCanal }        from "../utils/qCanal";
+import { qTuberia }      from "../utils/qTuberia";          // ← NUEVO
+import { retorno }       from "../utils/retorno";            // ← NUEVO
+import { volumen }       from "../utils/volumen";            // ← NUEVO
+import { flujoFinal }   from "../utils/flujoFinal";
+import { flujoMaximo }  from "../utils/flujoMaximo";
+import { flujoInfinity } from "../utils/flujoInfinity";
+import { volumenPorGrupo } from "../utils/volumenPorGrupo";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 /* ─── SVG Icons técnicos reales ─── */
 const IconoBombaCalor = () => (
   <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Carcasa unidad exterior */}
     <rect x="3" y="14" width="22" height="20" rx="2" stroke="#7dd3fc" strokeWidth="1.5" fill="rgba(30,64,175,0.15)"/>
-    {/* Rejillas ventilación */}
     <line x1="7" y1="18" x2="7" y2="30" stroke="#7dd3fc" strokeWidth="1" opacity="0.7"/>
     <line x1="10" y1="18" x2="10" y2="30" stroke="#7dd3fc" strokeWidth="1" opacity="0.7"/>
     <line x1="13" y1="18" x2="13" y2="30" stroke="#7dd3fc" strokeWidth="1" opacity="0.7"/>
-    {/* Ventilador */}
     <circle cx="19" cy="24" r="4" stroke="#38bdf8" strokeWidth="1.5" fill="none"/>
     <line x1="19" y1="20" x2="19" y2="28" stroke="#38bdf8" strokeWidth="1" opacity="0.8"/>
     <line x1="15" y1="24" x2="23" y2="24" stroke="#38bdf8" strokeWidth="1" opacity="0.8"/>
-    {/* Tuberías conexión */}
     <path d="M25 20 L32 20 L32 17 L38 17" stroke="#94a3b8" strokeWidth="1.5" fill="none"/>
     <path d="M25 28 L32 28 L32 31 L38 31" stroke="#94a3b8" strokeWidth="1.5" fill="none"/>
-    {/* Unidad interior / intercambiador */}
     <rect x="38" y="13" width="7" height="22" rx="1.5" stroke="#7dd3fc" strokeWidth="1.5" fill="rgba(30,64,175,0.15)"/>
     <line x1="40" y1="17" x2="43" y2="17" stroke="#38bdf8" strokeWidth="1" opacity="0.7"/>
     <line x1="40" y1="20" x2="43" y2="20" stroke="#38bdf8" strokeWidth="1" opacity="0.7"/>
     <line x1="40" y1="23" x2="43" y2="23" stroke="#38bdf8" strokeWidth="1" opacity="0.7"/>
     <line x1="40" y1="26" x2="43" y2="26" stroke="#38bdf8" strokeWidth="1" opacity="0.7"/>
     <line x1="40" y1="29" x2="43" y2="29" stroke="#38bdf8" strokeWidth="1" opacity="0.7"/>
-    {/* Flechas calor */}
     <path d="M16 10 Q18 7 20 10 Q22 13 24 10" stroke="#fb923c" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
     <path d="M20 10 L19 7 M20 10 L22 8" stroke="#fb923c" strokeWidth="1" strokeLinecap="round"/>
   </svg>
@@ -43,55 +44,38 @@ const IconoBombaCalor = () => (
 
 const IconoCaldera = () => (
   <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Cuerpo caldera mural */}
     <rect x="10" y="10" width="20" height="26" rx="3" stroke="#7dd3fc" strokeWidth="1.5" fill="rgba(30,64,175,0.15)"/>
-    {/* Panel frontal */}
     <rect x="13" y="13" width="14" height="9" rx="1" stroke="#38bdf8" strokeWidth="1" fill="rgba(56,189,248,0.08)"/>
-    {/* Display */}
     <rect x="15" y="14.5" width="5" height="3" rx="0.5" fill="#38bdf8" opacity="0.6"/>
-    {/* Botón */}
     <circle cx="23" cy="16" r="1.2" stroke="#38bdf8" strokeWidth="1" fill="none"/>
-    {/* Llama quemador */}
     <path d="M17 28 Q18 25 19 27 Q20 24 21 27 Q22 25 23 28" stroke="#fb923c" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-    {/* Tubería agua fría */}
     <path d="M30 16 L36 16" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round"/>
     <text x="36.5" y="15.5" fill="#64748b" fontSize="5" fontFamily="monospace">F</text>
-    {/* Tubería agua caliente */}
     <path d="M30 30 L36 30" stroke="#fb923c" strokeWidth="1.5" strokeLinecap="round"/>
     <text x="36.5" y="29.5" fill="#fb923c" fontSize="5" fontFamily="monospace">C</text>
-    {/* Chimenea */}
     <rect x="16" y="6" width="8" height="4" rx="1" stroke="#94a3b8" strokeWidth="1" fill="rgba(15,23,42,0.4)"/>
     <path d="M18 6 L18 4 M20 6 L20 3.5 M22 6 L22 4" stroke="#94a3b8" strokeWidth="1" opacity="0.6" strokeLinecap="round"/>
-    {/* Base */}
     <rect x="8" y="36" width="24" height="3" rx="1" fill="rgba(148,163,184,0.2)" stroke="#475569" strokeWidth="1"/>
   </svg>
 );
 
 const IconoPanelSolar = () => (
   <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Marco panel uniplaca */}
     <rect x="4" y="12" width="34" height="22" rx="1.5" stroke="#7dd3fc" strokeWidth="1.5" fill="rgba(15,40,80,0.6)"/>
-    {/* Manifold superior */}
     <rect x="4" y="14" width="34" height="2.5" rx="0.5" fill="rgba(56,189,248,0.3)" stroke="#38bdf8" strokeWidth="0.8"/>
-    {/* Manifold inferior */}
     <rect x="4" y="29.5" width="34" height="2.5" rx="0.5" fill="rgba(56,189,248,0.3)" stroke="#38bdf8" strokeWidth="0.8"/>
-    {/* Tubos absorbedores */}
     <line x1="9"  y1="16.5" x2="9"  y2="29.5" stroke="#38bdf8" strokeWidth="1.2" opacity="0.8"/>
     <line x1="14" y1="16.5" x2="14" y2="29.5" stroke="#38bdf8" strokeWidth="1.2" opacity="0.8"/>
     <line x1="19" y1="16.5" x2="19" y2="29.5" stroke="#38bdf8" strokeWidth="1.2" opacity="0.8"/>
     <line x1="24" y1="16.5" x2="24" y2="29.5" stroke="#38bdf8" strokeWidth="1.2" opacity="0.8"/>
     <line x1="29" y1="16.5" x2="29" y2="29.5" stroke="#38bdf8" strokeWidth="1.2" opacity="0.8"/>
     <line x1="34" y1="16.5" x2="34" y2="29.5" stroke="#38bdf8" strokeWidth="1.2" opacity="0.8"/>
-    {/* Vidrio — reflejo sutil */}
     <rect x="4" y="12" width="34" height="22" rx="1.5" fill="rgba(56,189,248,0.04)" stroke="rgba(56,189,248,0.3)" strokeWidth="0.5"/>
-    {/* Conexiones tubería */}
     <path d="M38 16 L44 16 L44 32 L38 32" stroke="#94a3b8" strokeWidth="1.2" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
-    {/* Sol */}
     <circle cx="42" cy="6" r="3" fill="#fbbf24" opacity="0.9"/>
     <line x1="42" y1="1.5" x2="42" y2="3" stroke="#fbbf24" strokeWidth="1" strokeLinecap="round"/>
     <line x1="45.5" y1="2.5" x2="44.5" y2="3.5" stroke="#fbbf24" strokeWidth="1" strokeLinecap="round"/>
     <line x1="46.5" y1="6" x2="45" y2="6" stroke="#fbbf24" strokeWidth="1" strokeLinecap="round"/>
-    {/* Soporte inclinado */}
     <line x1="10" y1="34" x2="10" y2="40" stroke="#475569" strokeWidth="1.5" strokeLinecap="round"/>
     <line x1="30" y1="34" x2="30" y2="40" stroke="#475569" strokeWidth="1.5" strokeLinecap="round"/>
     <line x1="8"  y1="40" x2="32" y2="40" stroke="#475569" strokeWidth="1.5" strokeLinecap="round"/>
@@ -100,25 +84,18 @@ const IconoPanelSolar = () => (
 
 const IconoCalentadorElectrico = () => (
   <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Tanque cilíndrico */}
     <ellipse cx="22" cy="11" rx="10" ry="3" stroke="#7dd3fc" strokeWidth="1.5" fill="rgba(30,64,175,0.2)"/>
     <rect x="12" y="11" width="20" height="24" stroke="#7dd3fc" strokeWidth="1.5" fill="rgba(30,64,175,0.15)"/>
     <ellipse cx="22" cy="35" rx="10" ry="3" stroke="#7dd3fc" strokeWidth="1.5" fill="rgba(30,64,175,0.2)"/>
-    {/* Resistencia eléctrica */}
     <path d="M17 20 L17 26 Q17 28 19 28 L25 28 Q27 28 27 26 L27 20" stroke="#fb923c" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
     <line x1="17" y1="20" x2="27" y2="20" stroke="#fb923c" strokeWidth="1.5" strokeLinecap="round"/>
-    {/* Rayo eléctrico */}
     <path d="M21 14 L19 18 L22 18 L20 22 L25 17 L22 17 L24 14 Z" fill="#fbbf24" opacity="0.9"/>
-    {/* Tubería entrada fría */}
     <path d="M32 32 L38 32 L38 38" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
     <text x="36" y="44" fill="#64748b" fontSize="5" fontFamily="monospace">F</text>
-    {/* Tubería salida caliente */}
     <path d="M32 14 L38 14 L38 8" stroke="#fb923c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
     <text x="36" y="7" fill="#fb923c" fontSize="5" fontFamily="monospace">C</text>
-    {/* Termostato */}
     <circle cx="22" cy="31" r="2.5" stroke="#38bdf8" strokeWidth="1" fill="none"/>
     <circle cx="22" cy="31" r="1" fill="#38bdf8" opacity="0.6"/>
-    {/* Aislamiento punteado */}
     <rect x="12" y="11" width="20" height="24" stroke="#475569" strokeWidth="2.5" fill="none" strokeDasharray="2 3" opacity="0.4"/>
   </svg>
 );
@@ -139,6 +116,42 @@ const SISTEMA_DEFAULTS = () => ({
   tasaElevacion: null,
 });
 
+/* ─────────────────────────────────────────────────────────────────
+   HELPERS para derivar flujo máximo desde los datos del sistema
+   ───────────────────────────────────────────────────────────────── */
+
+/**
+ * Enriquece los cuerpos del sistemaActivo con c.volumen y c.tipo,
+ * que son los campos que necesitan volumenPorCircuito / flujoFinal.
+ */
+function enriquecerCuerpos(cuerpos = []) {
+  return cuerpos.map((c) => ({
+    ...c,
+    volumen: volumen(c),          // m³ calculado desde area/profMin/profMax
+    tipo: c.tipoCuerpo ?? "alberca", // volumenPorCircuito necesita c.tipo
+  }));
+}
+
+/**
+ * Calcula el flujoMaximo (GPM) a partir de los datos del sistema activo.
+ * tipoRetorno es "1.5" por defecto; se puede sobreescribir desde equipamiento.
+ */
+function calcularFlujoMaximo(sistemaActivo) {
+  if (!sistemaActivo?.cuerpos?.length) return 0;
+
+  // Enriquecer cuerpos con volumen y tipo antes de pasarlos a flujoFinal
+  const cuerposEnriquecidos = enriquecerCuerpos(sistemaActivo.cuerpos);
+  const datosEnriquecidos = { ...sistemaActivo, cuerpos: cuerposEnriquecidos };
+
+  const flujoVol = flujoFinal(datosEnriquecidos);
+  const flujoInf = flujoInfinity(sistemaActivo); // usa largoInfinity y profCortina del sistema
+
+  return flujoMaximo(flujoVol, flujoInf);
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   COMPONENTE PRINCIPAL
+   ───────────────────────────────────────────────────────────────── */
 export default function Calentamiento({
   setSeccion,
   tipoSistema,
@@ -146,7 +159,9 @@ export default function Calentamiento({
   setDatosPorSistema,
   areaTotal,
   volumenTotal,
-  profundidadPromedio
+  profundidadPromedio,
+  // tipoRetorno puede venir desde equipamiento en el futuro; default "1.5"
+  tipoRetornoExterno,
 }) {
 
   const sistemaActivo = datosPorSistema?.[tipoSistema];
@@ -168,20 +183,18 @@ export default function Calentamiento({
 
   const datosPrevios = datosPorSistema?.calentamiento || {};
   const [usarBombaCalentamiento, setUsarBombaCalentamiento] = useState(datosPrevios.usarBombaCalentamiento ?? null);
-  const [ciudad, setCiudad] = useState(datosPrevios.ciudad || "");
-  const [tempDeseada, setTempDeseada] = useState(datosPrevios.tempDeseada ?? null);
-  const [tempDeseadaInput, setTempDeseadaInput] = useState(datosPrevios.tempDeseada != null ? String(datosPrevios.tempDeseada) : "");
-  const [cubierta, setCubierta] = useState(datosPrevios.cubierta ?? null);
-  const [techada, setTechada] = useState(datosPrevios.techada ?? null);
-  const [mesesCalentar, setMesesCalentar] = useState(datosPrevios.mesesCalentar || {});
-  const [hoveredField, setHoveredField] = useState(null);
-  const [animandoSalida, setAnimandoSalida] = useState(false);
-  const [mostrarErrores, setMostrarErrores] = useState(false);
-  const [mostrarAviso, setMostrarAviso] = useState(false);
-  const [decision, setDecision] = useState(datosPrevios.decision ?? null);
-  const [sistemasSeleccionados, setSistemasSeleccionados] = useState(
-    datosPrevios.sistemasSeleccionados || {}
-  );
+  const [ciudad, setCiudad]                                 = useState(datosPrevios.ciudad || "");
+  const [tempDeseada, setTempDeseada]                       = useState(datosPrevios.tempDeseada ?? null);
+  const [tempDeseadaInput, setTempDeseadaInput]             = useState(datosPrevios.tempDeseada != null ? String(datosPrevios.tempDeseada) : "");
+  const [cubierta, setCubierta]                             = useState(datosPrevios.cubierta ?? null);
+  const [techada, setTechada]                               = useState(datosPrevios.techada ?? null);
+  const [mesesCalentar, setMesesCalentar]                   = useState(datosPrevios.mesesCalentar || {});
+  const [hoveredField, setHoveredField]                     = useState(null);
+  const [animandoSalida, setAnimandoSalida]                 = useState(false);
+  const [mostrarErrores, setMostrarErrores]                 = useState(false);
+  const [mostrarAviso, setMostrarAviso]                     = useState(false);
+  const [decision, setDecision]                             = useState(datosPrevios.decision ?? null);
+  const [sistemasSeleccionados, setSistemasSeleccionados]   = useState(datosPrevios.sistemasSeleccionados || {});
 
   const toggleSistema = (key) => {
     setSistemasSeleccionados(prev => {
@@ -273,9 +286,10 @@ export default function Calentamiento({
     return Math.max(...sistemaActivo.cuerpos.map(c => Math.max(parseFloat(c.profMin) || 0, parseFloat(c.profMax) || 0)));
   }, [sistemaActivo]);
 
-  const perdidaEvaporacion  = useMemo(() => (!mesMasFrio || !tempDeseada || areaTotal <= 0) ? 0 : qEvaporacion(datosTermicos, mesMasFrio), [datosTermicos, mesMasFrio, tempDeseada, areaTotal]);
-  const perdidaConveccion   = useMemo(() => (!mesMasFrio || !tempDeseada || areaTotal <= 0) ? 0 : qConveccion(datosTermicos, mesMasFrio), [datosTermicos, mesMasFrio, tempDeseada, areaTotal]);
-  const perdidaRadiacion    = useMemo(() => (!mesMasFrio || !tempDeseada || areaTotal <= 0) ? 0 : qRadiacion(datosTermicos, mesMasFrio), [datosTermicos, mesMasFrio, tempDeseada, areaTotal]);
+  // ─── Pérdidas térmicas clásicas ───────────────────────────────
+  const perdidaEvaporacion  = useMemo(() => (!mesMasFrio || !tempDeseada || areaTotal <= 0) ? 0 : qEvaporacion(datosTermicos, mesMasFrio),  [datosTermicos, mesMasFrio, tempDeseada, areaTotal]);
+  const perdidaConveccion   = useMemo(() => (!mesMasFrio || !tempDeseada || areaTotal <= 0) ? 0 : qConveccion(datosTermicos, mesMasFrio),   [datosTermicos, mesMasFrio, tempDeseada, areaTotal]);
+  const perdidaRadiacion    = useMemo(() => (!mesMasFrio || !tempDeseada || areaTotal <= 0) ? 0 : qRadiacion(datosTermicos, mesMasFrio),    [datosTermicos, mesMasFrio, tempDeseada, areaTotal]);
   const perdidaTransmision  = useMemo(() => (!mesMasFrio || !tempDeseada || areaTotal <= 0) ? 0 : qTransmision({ area: areaTotal, profMax: profMaxSistema, tempDeseada }, mesMasFrio), [mesMasFrio, tempDeseada, areaTotal, profMaxSistema]);
 
   const perdidaInfinity = useMemo(() => {
@@ -294,11 +308,71 @@ export default function Calentamiento({
     return qCanal({ largoCanal, tempDeseada }, mesMasFrio);
   }, [mesMasFrio, tempDeseada, sistemaActivo]);
 
+  // ─── NUEVO: Pérdida de calor por tubería (retornos) ──────────
+  // tipoRetorno: por defecto "1.5"; cuando equipamiento lo exponga, usar tipoRetornoExterno
+  const tipoRetorno = tipoRetornoExterno ?? "1.5";
+
+  /**
+   * Calculamos resumenTramosR y resumenDisparosR usando retorno().
+   * retorno() necesita:
+   *   - flujoMaximo (GPM)
+   *   - tipoRetorno ("1.5" | "2.0")
+   *   - datos: objeto con { area, profMin, profMax, distCuarto }
+   *
+   * Como el sistema puede tener múltiples cuerpos, usamos el cuerpo
+   * con mayor volumen como representativo para el sizing de retornos
+   * (igual que hace el sizing de bombas en la mayoría de casos).
+   *
+   * Si necesitas sumar retornos por cuerpo en una iteración futura,
+   * el patrón está aquí para extenderlo.
+   */
+  const resultadoRetorno = useMemo(() => {
+    if (!sistemaActivo?.cuerpos?.length) return null;
+    if (!tempDeseada || !mesMasFrio) return null;
+
+    const flujoMax = calcularFlujoMaximo(sistemaActivo);
+    if (flujoMax <= 0) return null;
+
+    // Datos del sistema completo que necesita retorno()
+    // (area total, profMax máximo, distCuarto del sistema)
+    const datosParaRetorno = {
+      area:       areaTotal,
+      profMin:    Math.min(...sistemaActivo.cuerpos.map(c => parseFloat(c.profMin) || 0)),
+      profMax:    profMaxSistema,
+      distCuarto: parseFloat(sistemaActivo.distCuarto) || 0,
+    };
+
+    try {
+      const resultado = retorno(flujoMax, tipoRetorno, datosParaRetorno);
+      // Deep copy para evitar que renders sucesivos acumulen valores
+      return {
+        ...resultado,
+        resumenTramosR: JSON.parse(JSON.stringify(resultado.resumenTramosR ?? {})),
+        resumenDisparosR: JSON.parse(JSON.stringify(resultado.resumenDisparosR ?? {})),
+      };
+    } catch (e) {
+      console.error("Error en retorno():", e);
+      return null;
+    }
+  }, [sistemaActivo, areaTotal, profMaxSistema, tipoRetorno, tempDeseada, mesMasFrio]);
+
+  const perdidaTuberia = useMemo(() => {
+    if (!resultadoRetorno || !mesMasFrio || !tempDeseada) return 0;
+    const { resumenTramosR, resumenDisparosR } = resultadoRetorno;
+    const resultado = qTuberia(resumenTramosR, resumenDisparosR, { tempDeseada }, mesMasFrio);
+    return resultado.total_BTU_h ?? 0;
+  }, [resultadoRetorno, mesMasFrio, tempDeseada]);
+
+  // ─── Objeto consolidado de pérdidas ──────────────────────────
   const perdidasBTU = useMemo(() => ({
-    evaporacion: perdidaEvaporacion, conveccion: perdidaConveccion,
-    radiacion: perdidaRadiacion, transmision: perdidaTransmision,
-    infinity: perdidaInfinity, canal: perdidaCanal
-  }), [perdidaEvaporacion, perdidaConveccion, perdidaRadiacion, perdidaTransmision, perdidaInfinity, perdidaCanal]);
+    evaporacion:  perdidaEvaporacion,
+    conveccion:   perdidaConveccion,
+    radiacion:    perdidaRadiacion,
+    transmision:  perdidaTransmision,
+    infinity:     perdidaInfinity,
+    canal:        perdidaCanal,
+    tuberia:      perdidaTuberia,       // ← NUEVO
+  }), [perdidaEvaporacion, perdidaConveccion, perdidaRadiacion, perdidaTransmision, perdidaInfinity, perdidaCanal, perdidaTuberia]);
 
   const perdidaTotalBTU = useMemo(() => Object.values(perdidasBTU).reduce((a, b) => a + b, 0), [perdidasBTU]);
 
@@ -307,10 +381,15 @@ export default function Calentamiento({
       ...prev,
       calentamiento: {
         decision, usarBombaCalentamiento, ciudad, tempDeseada, cubierta, techada,
-        mesesCalentar, perdidasBTU, perdidaTotalBTU, sistemasSeleccionados
+        mesesCalentar, perdidasBTU, perdidaTotalBTU, sistemasSeleccionados,
+        // Exponer resúmenes de retorno para que equipamiento pueda recalcular con otro tipoRetorno
+        resumenTramosR:    resultadoRetorno?.resumenTramosR    ?? {},
+        resumenDisparosR:  resultadoRetorno?.resumenDisparosR  ?? {},
       }
     }));
-  }, [decision, usarBombaCalentamiento, ciudad, tempDeseada, cubierta, techada, mesesCalentar, perdidasBTU, perdidaTotalBTU, sistemasSeleccionados, setDatosPorSistema]);
+  }, [decision, usarBombaCalentamiento, ciudad, tempDeseada, cubierta, techada,
+      mesesCalentar, perdidasBTU, perdidaTotalBTU, sistemasSeleccionados,
+      resultadoRetorno, setDatosPorSistema]);
 
   useEffect(() => {
     if (clima.length && Object.keys(mesesCalentar).length === 0) {
@@ -321,23 +400,41 @@ export default function Calentamiento({
   }, [clima]);
 
   const descripcionesCampos = {
-    ciudad: "Ubicación geográfica del proyecto para obtener datos climáticos",
-    tempDeseada: "Temperatura objetivo del agua durante la operación",
-    cubierta: "La cubierta térmica reduce significativamente pérdidas por evaporación",
-    techada: "Un cuerpo de agua techado reduce convección y radiación",
-    meses: "Meses del año en los que el sistema deberá aportar energía térmica",
-    grafica: "Distribución porcentual de las pérdidas energéticas del sistema",
-    usarBombaCalentamiento: "Define si el sistema de calentamiento contará con una motobomba independiente",
-    sistemasCalentamiento: "Tipo(s) de fuente de calor. Selecciona uno o varios; cada uno requiere distancia y altura respecto al espejo de agua",
-    default: "Configuración térmica del sistema"
+    ciudad:                  "Ubicación geográfica del proyecto para obtener datos climáticos",
+    tempDeseada:             "Temperatura objetivo del agua durante la operación",
+    cubierta:                "La cubierta térmica reduce significativamente pérdidas por evaporación",
+    techada:                 "Un cuerpo de agua techado reduce convección y radiación",
+    meses:                   "Meses del año en los que el sistema deberá aportar energía térmica",
+    grafica:                 "Distribución porcentual de las pérdidas energéticas del sistema",
+    usarBombaCalentamiento:  "Define si el sistema de calentamiento contará con una motobomba independiente",
+    sistemasCalentamiento:   "Tipo(s) de fuente de calor. Selecciona uno o varios; cada uno requiere distancia y altura respecto al espejo de agua",
+    default:                 "Configuración térmica del sistema"
   };
 
+  // ─── Gráfica de pie — ahora incluye tubería ──────────────────
   const pieData = useMemo(() => ({
-    labels: ["Evaporación", "Convección", "Radiación", "Transmisión", "Infinity", "Canal Perimetral"],
+    labels: ["Evaporación", "Convección", "Radiación", "Transmisión", "Infinity", "Canal Perimetral", "Tubería"],
     datasets: [{
-      data: [perdidasBTU.evaporacion, perdidasBTU.conveccion, perdidasBTU.radiacion, perdidasBTU.transmision, perdidasBTU.infinity, perdidasBTU.canal],
-      backgroundColor: ["rgba(30,64,175,0.85)","rgba(56,189,248,0.85)","rgba(251,113,133,0.85)","rgba(163,163,163,0.85)","rgba(34,197,94,0.85)","rgba(96,165,250,0.85)"],
-      borderColor: "rgba(15,23,42,0.8)", borderWidth: 2
+      data: [
+        perdidasBTU.evaporacion,
+        perdidasBTU.conveccion,
+        perdidasBTU.radiacion,
+        perdidasBTU.transmision,
+        perdidasBTU.infinity,
+        perdidasBTU.canal,
+        perdidasBTU.tuberia,     // ← NUEVO
+      ],
+      backgroundColor: [
+        "rgba(30,64,175,0.85)",
+        "rgba(56,189,248,0.85)",
+        "rgba(251,113,133,0.85)",
+        "rgba(163,163,163,0.85)",
+        "rgba(34,197,94,0.85)",
+        "rgba(96,165,250,0.85)",
+        "rgba(251,191,36,0.85)",  // ← amarillo para tubería
+      ],
+      borderColor: "rgba(15,23,42,0.8)",
+      borderWidth: 2,
     }]
   }), [perdidasBTU]);
 
@@ -345,8 +442,11 @@ export default function Calentamiento({
     responsive: true, maintainAspectRatio: false,
     layout: { padding: { top: 18, bottom: 18, left: 18, right: 18 } },
     plugins: {
-      legend: { position: "right", labels: { color: "#e5e7eb", font: { size: 13, weight: "500" }, padding: 14, boxWidth: 14 } },
-      tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed} BTU/h` } }
+      legend: {
+        position: "right",
+        labels: { color: "#e5e7eb", font: { size: 13, weight: "500" }, padding: 14, boxWidth: 14 }
+      },
+      tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed.toFixed(0)} BTU/h` } }
     }
   };
 
@@ -362,7 +462,7 @@ export default function Calentamiento({
           <div className="selector-subtitulo-tecnico">Análisis térmico y condiciones climáticas</div>
         </div>
 
-        {/* ACCIONES — siempre operables */}
+        {/* ACCIONES */}
         <div className="selector-acciones">
           <button className="btn-secundario" onClick={() => cambiarSeccionConAnimacion("dimensiones")}>
             ← Volver a {nombreSistema}
@@ -394,7 +494,9 @@ export default function Calentamiento({
             </button>
             {mostrarAviso && (
               <div className="aviso-validacion">
-                {decision === null ? "Elige si deseas configurar o omitir el calentamiento" : "Llena toda la información solicitada"}
+                {decision === null
+                  ? "Elige si deseas configurar o omitir el calentamiento"
+                  : "Llena toda la información solicitada"}
               </div>
             )}
           </div>
@@ -418,7 +520,7 @@ export default function Calentamiento({
           </div>
         )}
 
-        {/* CALLOUT — ya omitió, opción de revertir */}
+        {/* CALLOUT — ya omitió */}
         {decision === "omitir" && (
           <div className="callout-omitir-calentamiento">
             <div className="callout-texto">
@@ -433,10 +535,10 @@ export default function Calentamiento({
           </div>
         )}
 
-        {/* CONTENIDO — bloqueado hasta decidir */}
+        {/* CONTENIDO */}
         <div className={`selector-contenido ${animandoSalida ? "salida" : "entrada"} ${formularioBloqueado ? "calentamiento-bloqueado" : ""}`}>
 
-          {/* ── SISTEMAS DE CALENTAMIENTO — PRIMERO ── */}
+          {/* ── SISTEMAS DE CALENTAMIENTO ── */}
           <div
             className={`selector-grupo ${mostrarErrores && errores.sistemasCalentamiento ? "grupo-error" : ""}`}
             onMouseEnter={() => !formularioBloqueado && setHoveredField("sistemasCalentamiento")}
@@ -523,33 +625,51 @@ export default function Calentamiento({
           <div className="selector-grupo">
             <div className="selector-subtitulo">Datos generales del proyecto</div>
             <div className="selector-grid">
-              <div className="campo" onMouseEnter={() => !formularioBloqueado && setHoveredField("ciudad")} onMouseLeave={() => setHoveredField(null)}>
+              <div className="campo"
+                onMouseEnter={() => !formularioBloqueado && setHoveredField("ciudad")}
+                onMouseLeave={() => setHoveredField(null)}>
                 <label>Ubicación del proyecto</label>
-                <select className={`input-azul ${mostrarErrores && errores.ciudad ? "input-error" : ""}`} value={ciudad} onChange={e => setCiudad(e.target.value)}>
+                <select
+                  className={`input-azul ${mostrarErrores && errores.ciudad ? "input-error" : ""}`}
+                  value={ciudad}
+                  onChange={e => setCiudad(e.target.value)}
+                >
                   <option value="">Selecciona ciudad</option>
                   {ciudadesMexico.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
                 </select>
               </div>
-              <div className="campo" onMouseEnter={() => !formularioBloqueado && setHoveredField("tempDeseada")} onMouseLeave={() => setHoveredField(null)}>
+              <div className="campo"
+                onMouseEnter={() => !formularioBloqueado && setHoveredField("tempDeseada")}
+                onMouseLeave={() => setHoveredField(null)}>
                 <label>Temperatura deseada (°C)</label>
                 <input type="number"
                   className={`input-azul ${mostrarErrores && errores.tempDeseada ? "input-error" : ""}`}
                   value={tempDeseadaInput}
-                  onChange={e => { const val = e.target.value; setTempDeseadaInput(val); setTempDeseada(val === "" ? null : Number(val)); }}
+                  onChange={e => {
+                    const val = e.target.value;
+                    setTempDeseadaInput(val);
+                    setTempDeseada(val === "" ? null : Number(val));
+                  }}
                 />
               </div>
             </div>
             <div className="selector-radios">
-              <div className={`grupo-radio ${mostrarErrores && errores.cubierta ? "grupo-radio-error" : ""}`}
-                onMouseEnter={() => !formularioBloqueado && setHoveredField("cubierta")} onMouseLeave={() => setHoveredField(null)}>
+              <div
+                className={`grupo-radio ${mostrarErrores && errores.cubierta ? "grupo-radio-error" : ""}`}
+                onMouseEnter={() => !formularioBloqueado && setHoveredField("cubierta")}
+                onMouseLeave={() => setHoveredField(null)}
+              >
                 <span>¿Cuenta con cubierta térmica?</span>
-                <label><input type="radio" checked={cubierta === true} onChange={() => setCubierta(true)} /> Sí</label>
+                <label><input type="radio" checked={cubierta === true}  onChange={() => setCubierta(true)}  /> Sí</label>
                 <label><input type="radio" checked={cubierta === false} onChange={() => setCubierta(false)} /> No</label>
               </div>
-              <div className={`grupo-radio ${mostrarErrores && errores.techada ? "grupo-radio-error" : ""}`}
-                onMouseEnter={() => !formularioBloqueado && setHoveredField("techada")} onMouseLeave={() => setHoveredField(null)}>
+              <div
+                className={`grupo-radio ${mostrarErrores && errores.techada ? "grupo-radio-error" : ""}`}
+                onMouseEnter={() => !formularioBloqueado && setHoveredField("techada")}
+                onMouseLeave={() => setHoveredField(null)}
+              >
                 <span>¿El cuerpo de agua está techado?</span>
-                <label><input type="radio" checked={techada === true} onChange={() => setTechada(true)} /> Sí</label>
+                <label><input type="radio" checked={techada === true}  onChange={() => setTechada(true)}  /> Sí</label>
                 <label><input type="radio" checked={techada === false} onChange={() => setTechada(false)} /> No</label>
               </div>
             </div>
@@ -557,22 +677,36 @@ export default function Calentamiento({
 
           {/* ── CLIMA + GRÁFICA ── */}
           <div className="selector-grupo">
-            <div className="selector-subtitulo fila-header-clima"><span>Análisis climático y pérdidas energéticas</span></div>
+            <div className="selector-subtitulo fila-header-clima">
+              <span>Análisis climático y pérdidas energéticas</span>
+            </div>
             <div className="layout-clima-grafica">
-              <div className="grafica-mini" onMouseEnter={() => !formularioBloqueado && setHoveredField("grafica")} onMouseLeave={() => setHoveredField(null)}>
+              <div className="grafica-mini"
+                onMouseEnter={() => !formularioBloqueado && setHoveredField("grafica")}
+                onMouseLeave={() => setHoveredField(null)}>
                 <Pie data={pieData} options={pieOptions} />
               </div>
-              <div className="tabla-clima-card" onMouseEnter={() => !formularioBloqueado && setHoveredField("meses")} onMouseLeave={() => setHoveredField(null)}>
+              <div className="tabla-clima-card"
+                onMouseEnter={() => !formularioBloqueado && setHoveredField("meses")}
+                onMouseLeave={() => setHoveredField(null)}>
                 <table className="tabla-clima-pro">
                   <thead>
                     <tr>
-                      <th>Mes</th><th>Temp Min (°C)</th><th>Temp Prom (°C)</th>
-                      <th>Temp Max (°C)</th><th>Humedad (%)</th><th>Viento</th>
+                      <th>Mes</th>
+                      <th>Temp Min (°C)</th>
+                      <th>Temp Prom (°C)</th>
+                      <th>Temp Max (°C)</th>
+                      <th>Humedad (%)</th>
+                      <th>Viento</th>
                       <th className="th-calentar">
                         <label className="checkbox-columna">
                           <input type="checkbox"
                             checked={clima.length && clima.every(m => mesesCalentar[m.mes])}
-                            onChange={e => { const n = {}; clima.forEach(m => { n[m.mes] = e.target.checked; }); setMesesCalentar(n); }}
+                            onChange={e => {
+                              const n = {};
+                              clima.forEach(m => { n[m.mes] = e.target.checked; });
+                              setMesesCalentar(n);
+                            }}
                           />
                           <span>Seleccionar todo</span>
                         </label>
@@ -583,9 +717,18 @@ export default function Calentamiento({
                   <tbody>
                     {clima.map(m => (
                       <tr key={m.mes}>
-                        <td>{m.mes}</td><td>{m.tMin}</td><td>{m.tProm}</td>
-                        <td>{m.tMax}</td><td>{m.humedad}</td><td>{m.viento}</td>
-                        <td><input type="checkbox" checked={mesesCalentar[m.mes] || false} onChange={() => setMesesCalentar(prev => ({ ...prev, [m.mes]: !prev[m.mes] }))} /></td>
+                        <td>{m.mes}</td>
+                        <td>{m.tMin}</td>
+                        <td>{m.tProm}</td>
+                        <td>{m.tMax}</td>
+                        <td>{m.humedad}</td>
+                        <td>{m.viento}</td>
+                        <td>
+                          <input type="checkbox"
+                            checked={mesesCalentar[m.mes] || false}
+                            onChange={() => setMesesCalentar(prev => ({ ...prev, [m.mes]: !prev[m.mes] }))}
+                          />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -594,12 +737,28 @@ export default function Calentamiento({
                   <div className="resumen-titulo">Mes más frío seleccionado</div>
                   <table className="tabla-clima-pro resumen">
                     <thead>
-                      <tr><th>Mes</th><th>Temp Min (°C)</th><th>Temp Prom (°C)</th><th>Viento Máx</th><th>Humedad (%)</th></tr>
+                      <tr>
+                        <th>Mes</th>
+                        <th>Temp Min (°C)</th>
+                        <th>Temp Prom (°C)</th>
+                        <th>Viento Máx</th>
+                        <th>Humedad (%)</th>
+                      </tr>
                     </thead>
                     <tbody>
                       {mesMasFrio
-                        ? <tr><td>{mesMasFrio.mes}</td><td>{mesMasFrio.tMin}</td><td>{mesMasFrio.tProm}</td><td>{mesMasFrio.viento}</td><td>{mesMasFrio.humedad}</td></tr>
-                        : <tr><td colSpan={5} className="resumen-placeholder">Selecciona meses para ver el resumen</td></tr>
+                        ? <tr>
+                            <td>{mesMasFrio.mes}</td>
+                            <td>{mesMasFrio.tMin}</td>
+                            <td>{mesMasFrio.tProm}</td>
+                            <td>{mesMasFrio.viento}</td>
+                            <td>{mesMasFrio.humedad}</td>
+                          </tr>
+                        : <tr>
+                            <td colSpan={5} className="resumen-placeholder">
+                              Selecciona meses para ver el resumen
+                            </td>
+                          </tr>
                       }
                     </tbody>
                   </table>
@@ -616,8 +775,14 @@ export default function Calentamiento({
               onMouseEnter={() => !formularioBloqueado && setHoveredField("usarBombaCalentamiento")}
               onMouseLeave={() => setHoveredField(null)}
             >
-              <label><input type="radio" checked={usarBombaCalentamiento === "si"} onChange={() => setUsarBombaCalentamiento("si")} /> Sí, motobomba independiente</label>
-              <label><input type="radio" checked={usarBombaCalentamiento === "no"} onChange={() => setUsarBombaCalentamiento("no")} /> No, comparte motobomba de filtrado</label>
+              <label>
+                <input type="radio" checked={usarBombaCalentamiento === "si"} onChange={() => setUsarBombaCalentamiento("si")} />
+                Sí, motobomba independiente
+              </label>
+              <label>
+                <input type="radio" checked={usarBombaCalentamiento === "no"} onChange={() => setUsarBombaCalentamiento("no")} />
+                No, comparte motobomba de filtrado
+              </label>
             </div>
           </div>
 
@@ -630,6 +795,7 @@ export default function Calentamiento({
             {hoveredField ? descripcionesCampos[hoveredField] : descripcionesCampos.default}
           </span>
         </div>
+
       </div>
     </div>
   );
