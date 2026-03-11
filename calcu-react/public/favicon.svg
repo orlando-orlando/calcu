@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 108" fill="none">
+  <defs>
+    <linearGradient id="s" x1="0" y1="0" x2="90" y2="108" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#003a8a"/>
+      <stop offset="100%" stop-color="#0088cc"/>
+    </linearGradient>
+    <clipPath id="drop">
+      <path d="M45 4C45 4 9 46 9 68A36 36 0 0 0 81 68C81 46 45 4 45 4Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- drop outline -->
+  <path d="M45 4C45 4 9 46 9 68A36 36 0 0 0 81 68C81 46 45 4 45 4Z"
+        fill="none" stroke="url(#s)" stroke-width="5"/>
+
+  <g clip-path="url(#drop)">
+    <!-- horizontal pipe -->
+    <line x1="14" y1="64" x2="76" y2="64" stroke="#003a8a" stroke-width="7" stroke-linecap="round"/>
+
+    <!-- flow arrows -->
+    <polygon points="36,64 28,57 28,71" fill="#0077cc"/>
+    <polygon points="60,64 52,57 52,71" fill="#0077cc"/>
+
+    <!-- sensor tap line -->
+    <line x1="45" y1="64" x2="45" y2="46" stroke="#0077cc" stroke-width="2.5"
+          stroke-dasharray="3 2.5" stroke-linecap="round" opacity="0.7"/>
+
+    <!-- sensor circle with T -->
+    <circle cx="45" cy="40" r="8" fill="#ffffff" stroke="#003a8a" stroke-width="2.5"/>
+    <line x1="40" y1="37.5" x2="50" y2="37.5" stroke="#003a8a" stroke-width="2" stroke-linecap="round"/>
+    <line x1="45" y1="37.5" x2="45" y2="44" stroke="#003a8a" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- center measurement node -->
+    <circle cx="45" cy="64" r="6" fill="#0077cc"/>
+    <circle cx="45" cy="64" r="11" fill="#0077cc" fill-opacity="0.18"/>
+  </g>
+</svg>
