@@ -9,13 +9,14 @@ import { qRadiacion }    from "../utils/qRadiacion";
 import { qTransmision }  from "../utils/qTransmision";
 import { qInfinity }     from "../utils/qInfinity";
 import { qCanal }        from "../utils/qCanal";
-import { qTuberia }      from "../utils/qTuberia";          // ← NUEVO
-import { retorno }       from "../utils/retorno";            // ← NUEVO
-import { volumen }       from "../utils/volumen";            // ← NUEVO
+import { qTuberia }      from "../utils/qTuberia";
+import { retorno }       from "../utils/retorno";
+import { volumen }       from "../utils/volumen";
 import { flujoFinal }   from "../utils/flujoFinal";
 import { flujoMaximo }  from "../utils/flujoMaximo";
 import { flujoInfinity } from "../utils/flujoInfinity";
 import { volumenPorGrupo } from "../utils/volumenPorGrupo";
+import { bombaDeCalor }  from "../utils/bombaDeCalor";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -100,7 +101,21 @@ const IconoCalentadorElectrico = () => (
   </svg>
 );
 
-/* ─── Catálogo de sistemas de calentamiento ─── */
+const IconoBDCMini = () => (
+  <svg width="28" height="28" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="14" width="22" height="20" rx="2" stroke="#7dd3fc" strokeWidth="1.5" fill="rgba(30,64,175,0.15)"/>
+    <line x1="7" y1="18" x2="7" y2="30" stroke="#7dd3fc" strokeWidth="1" opacity="0.7"/>
+    <line x1="10" y1="18" x2="10" y2="30" stroke="#7dd3fc" strokeWidth="1" opacity="0.7"/>
+    <line x1="13" y1="18" x2="13" y2="30" stroke="#7dd3fc" strokeWidth="1" opacity="0.7"/>
+    <circle cx="19" cy="24" r="4" stroke="#38bdf8" strokeWidth="1.5" fill="none"/>
+    <line x1="19" y1="20" x2="19" y2="28" stroke="#38bdf8" strokeWidth="1" opacity="0.8"/>
+    <line x1="15" y1="24" x2="23" y2="24" stroke="#38bdf8" strokeWidth="1" opacity="0.8"/>
+    <path d="M25 20 L32 20 L32 17 L38 17" stroke="#94a3b8" strokeWidth="1.5" fill="none"/>
+    <path d="M25 28 L32 28 L32 31 L38 31" stroke="#94a3b8" strokeWidth="1.5" fill="none"/>
+    <rect x="38" y="13" width="7" height="22" rx="1.5" stroke="#7dd3fc" strokeWidth="1.5" fill="rgba(30,64,175,0.15)"/>
+  </svg>
+);
+
 const SISTEMAS_CALENTAMIENTO = [
   { key: "bombaCalor",          label: "Bomba de calor",        Icon: IconoBombaCalor },
   { key: "caldera",             label: "Caldera",               Icon: IconoCaldera },
@@ -116,42 +131,23 @@ const SISTEMA_DEFAULTS = () => ({
   tasaElevacion: null,
 });
 
-/* ─────────────────────────────────────────────────────────────────
-   HELPERS para derivar flujo máximo desde los datos del sistema
-   ───────────────────────────────────────────────────────────────── */
-
-/**
- * Enriquece los cuerpos del sistemaActivo con c.volumen y c.tipo,
- * que son los campos que necesitan volumenPorCircuito / flujoFinal.
- */
 function enriquecerCuerpos(cuerpos = []) {
   return cuerpos.map((c) => ({
     ...c,
-    volumen: volumen(c),          // m³ calculado desde area/profMin/profMax
-    tipo: c.tipoCuerpo ?? "alberca", // volumenPorCircuito necesita c.tipo
+    volumen: volumen(c),
+    tipo: c.tipoCuerpo ?? "alberca",
   }));
 }
 
-/**
- * Calcula el flujoMaximo (GPM) a partir de los datos del sistema activo.
- * tipoRetorno es "1.5" por defecto; se puede sobreescribir desde equipamiento.
- */
 function calcularFlujoMaximo(sistemaActivo) {
   if (!sistemaActivo?.cuerpos?.length) return 0;
-
-  // Enriquecer cuerpos con volumen y tipo antes de pasarlos a flujoFinal
   const cuerposEnriquecidos = enriquecerCuerpos(sistemaActivo.cuerpos);
   const datosEnriquecidos = { ...sistemaActivo, cuerpos: cuerposEnriquecidos };
-
   const flujoVol = flujoFinal(datosEnriquecidos);
-  const flujoInf = flujoInfinity(sistemaActivo); // usa largoInfinity y profCortina del sistema
-
+  const flujoInf = flujoInfinity(sistemaActivo);
   return flujoMaximo(flujoVol, flujoInf);
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   COMPONENTE PRINCIPAL
-   ───────────────────────────────────────────────────────────────── */
 export default function Calentamiento({
   setSeccion,
   tipoSistema,
@@ -160,7 +156,6 @@ export default function Calentamiento({
   areaTotal,
   volumenTotal,
   profundidadPromedio,
-  // tipoRetorno puede venir desde equipamiento en el futuro; default "1.5"
   tipoRetornoExterno,
 }) {
 
@@ -286,7 +281,6 @@ export default function Calentamiento({
     return Math.max(...sistemaActivo.cuerpos.map(c => Math.max(parseFloat(c.profMin) || 0, parseFloat(c.profMax) || 0)));
   }, [sistemaActivo]);
 
-  // ─── Pérdidas térmicas clásicas ───────────────────────────────
   const perdidaEvaporacion  = useMemo(() => (!mesMasFrio || !tempDeseada || areaTotal <= 0) ? 0 : qEvaporacion(datosTermicos, mesMasFrio),  [datosTermicos, mesMasFrio, tempDeseada, areaTotal]);
   const perdidaConveccion   = useMemo(() => (!mesMasFrio || !tempDeseada || areaTotal <= 0) ? 0 : qConveccion(datosTermicos, mesMasFrio),   [datosTermicos, mesMasFrio, tempDeseada, areaTotal]);
   const perdidaRadiacion    = useMemo(() => (!mesMasFrio || !tempDeseada || areaTotal <= 0) ? 0 : qRadiacion(datosTermicos, mesMasFrio),    [datosTermicos, mesMasFrio, tempDeseada, areaTotal]);
@@ -308,46 +302,24 @@ export default function Calentamiento({
     return qCanal({ largoCanal, tempDeseada }, mesMasFrio);
   }, [mesMasFrio, tempDeseada, sistemaActivo]);
 
-  // ─── NUEVO: Pérdida de calor por tubería (retornos) ──────────
-  // tipoRetorno: por defecto "1.5"; cuando equipamiento lo exponga, usar tipoRetornoExterno
   const tipoRetorno = tipoRetornoExterno ?? "1.5";
 
-  /**
-   * Calculamos resumenTramosR y resumenDisparosR usando retorno().
-   * retorno() necesita:
-   *   - flujoMaximo (GPM)
-   *   - tipoRetorno ("1.5" | "2.0")
-   *   - datos: objeto con { area, profMin, profMax, distCuarto }
-   *
-   * Como el sistema puede tener múltiples cuerpos, usamos el cuerpo
-   * con mayor volumen como representativo para el sizing de retornos
-   * (igual que hace el sizing de bombas en la mayoría de casos).
-   *
-   * Si necesitas sumar retornos por cuerpo en una iteración futura,
-   * el patrón está aquí para extenderlo.
-   */
   const resultadoRetorno = useMemo(() => {
     if (!sistemaActivo?.cuerpos?.length) return null;
     if (!tempDeseada || !mesMasFrio) return null;
-
     const flujoMax = calcularFlujoMaximo(sistemaActivo);
     if (flujoMax <= 0) return null;
-
-    // Datos del sistema completo que necesita retorno()
-    // (area total, profMax máximo, distCuarto del sistema)
     const datosParaRetorno = {
       area:       areaTotal,
       profMin:    Math.min(...sistemaActivo.cuerpos.map(c => parseFloat(c.profMin) || 0)),
       profMax:    profMaxSistema,
       distCuarto: parseFloat(sistemaActivo.distCuarto) || 0,
     };
-
     try {
       const resultado = retorno(flujoMax, tipoRetorno, datosParaRetorno);
-      // Deep copy para evitar que renders sucesivos acumulen valores
       return {
         ...resultado,
-        resumenTramosR: JSON.parse(JSON.stringify(resultado.resumenTramosR ?? {})),
+        resumenTramosR:   JSON.parse(JSON.stringify(resultado.resumenTramosR ?? {})),
         resumenDisparosR: JSON.parse(JSON.stringify(resultado.resumenDisparosR ?? {})),
       };
     } catch (e) {
@@ -356,14 +328,68 @@ export default function Calentamiento({
     }
   }, [sistemaActivo, areaTotal, profMaxSistema, tipoRetorno, tempDeseada, mesMasFrio]);
 
-  const perdidaTuberia = useMemo(() => {
+  /* ══════════════════════════════════════════════════════════════
+     CÁLCULO EN 2 PASOS PARA EVITAR CIRCULARIDAD
+     ══════════════════════════════════════════════════════════════
+     PASO 1: pérdida tubería sin BDC → BDC preliminar →
+             resumenMaterialesTuberia (solo CM + altura, sin tramos entre BDC)
+     PASO 2: pérdida tubería con BDC → pérdida total real → BDC final
+  ══════════════════════════════════════════════════════════════ */
+
+  // ── PASO 1: pérdida tubería solo con retorno (sin BDC) ──
+  const perdidaTuberiaBase = useMemo(() => {
     if (!resultadoRetorno || !mesMasFrio || !tempDeseada) return 0;
     const { resumenTramosR, resumenDisparosR } = resultadoRetorno;
-    const resultado = qTuberia(resumenTramosR, resumenDisparosR, { tempDeseada }, mesMasFrio);
+    const resultado = qTuberia(resumenTramosR, resumenDisparosR, {}, { tempDeseada }, mesMasFrio);
     return resultado.total_BTU_h ?? 0;
   }, [resultadoRetorno, mesMasFrio, tempDeseada]);
 
-  // ─── Objeto consolidado de pérdidas ──────────────────────────
+  // ── PASO 1: pérdida total preliminar ──
+  const perdidaTotalPaso1 = useMemo(() =>
+    perdidaEvaporacion + perdidaConveccion + perdidaRadiacion +
+    perdidaTransmision + perdidaInfinity   + perdidaCanal    + perdidaTuberiaBase,
+  [perdidaEvaporacion, perdidaConveccion, perdidaRadiacion,
+   perdidaTransmision, perdidaInfinity,   perdidaCanal,    perdidaTuberiaBase]);
+
+  // ── PASO 1: BDC preliminar → obtenemos resumenMaterialesTuberia ──
+  const bdcPaso1 = useMemo(() => {
+    if (!sistemasSeleccionados.bombaCalor) return null;
+    if (perdidaTotalPaso1 <= 0) return null;
+    const distancia      = parseFloat(sistemasSeleccionados.bombaCalor.distancia)      || 0;
+    const alturaVertical = parseFloat(sistemasSeleccionados.bombaCalor.alturaVertical) || 0;
+    try {
+      return bombaDeCalor(perdidaTotalPaso1, distancia, alturaVertical);
+    } catch (e) {
+      console.error("Error en bombaDeCalor() paso 1:", e);
+      return null;
+    }
+  }, [sistemasSeleccionados, perdidaTotalPaso1]);
+
+  // ── PASO 1: resumenBDCR usa resumenMaterialesTuberia (sin tramos entre BDC) ──
+  const resumenBDCR = useMemo(() => {
+    if (!bdcPaso1?.resumenMaterialesTuberia) return {};
+    return Object.fromEntries(
+      bdcPaso1.resumenMaterialesTuberia.map(({ tuberia, tuberia_m, tees, codos, reducciones }) => [
+        tuberia,
+        {
+          tuberia_m:   parseFloat(tuberia_m) || 0,
+          tees:        Number(tees)          || 0,
+          codos:       Number(codos)         || 0,
+          reducciones: Number(reducciones)   || 0,
+        }
+      ])
+    );
+  }, [bdcPaso1]);
+
+  // ── PASO 2: pérdida tubería con retorno + tubería BDC (CM + altura) ──
+  const perdidaTuberia = useMemo(() => {
+    if (!resultadoRetorno || !mesMasFrio || !tempDeseada) return 0;
+    const { resumenTramosR, resumenDisparosR } = resultadoRetorno;
+    const resultado = qTuberia(resumenTramosR, resumenDisparosR, resumenBDCR, { tempDeseada }, mesMasFrio);
+    return resultado.total_BTU_h ?? 0;
+  }, [resultadoRetorno, resumenBDCR, mesMasFrio, tempDeseada]);
+
+  // ── PASO 2: pérdidas y total final ──
   const perdidasBTU = useMemo(() => ({
     evaporacion:  perdidaEvaporacion,
     conveccion:   perdidaConveccion,
@@ -371,10 +397,27 @@ export default function Calentamiento({
     transmision:  perdidaTransmision,
     infinity:     perdidaInfinity,
     canal:        perdidaCanal,
-    tuberia:      perdidaTuberia,       // ← NUEVO
-  }), [perdidaEvaporacion, perdidaConveccion, perdidaRadiacion, perdidaTransmision, perdidaInfinity, perdidaCanal, perdidaTuberia]);
+    tuberia:      perdidaTuberia,
+  }), [perdidaEvaporacion, perdidaConveccion, perdidaRadiacion,
+       perdidaTransmision, perdidaInfinity,   perdidaCanal, perdidaTuberia]);
 
-  const perdidaTotalBTU = useMemo(() => Object.values(perdidasBTU).reduce((a, b) => a + b, 0), [perdidasBTU]);
+  const perdidaTotalBTU = useMemo(() =>
+    Object.values(perdidasBTU).reduce((a, b) => a + b, 0),
+  [perdidasBTU]);
+
+  // ── PASO 2: BDC final con pérdida total real ──
+  const bdcSeleccionada = useMemo(() => {
+    if (!sistemasSeleccionados.bombaCalor) return null;
+    if (perdidaTotalBTU <= 0) return null;
+    const distancia      = parseFloat(sistemasSeleccionados.bombaCalor.distancia)      || 0;
+    const alturaVertical = parseFloat(sistemasSeleccionados.bombaCalor.alturaVertical) || 0;
+    try {
+      return bombaDeCalor(perdidaTotalBTU, distancia, alturaVertical);
+    } catch (e) {
+      console.error("Error en bombaDeCalor() paso 2:", e);
+      return null;
+    }
+  }, [sistemasSeleccionados, perdidaTotalBTU]);
 
   useEffect(() => {
     setDatosPorSistema(prev => ({
@@ -382,14 +425,14 @@ export default function Calentamiento({
       calentamiento: {
         decision, usarBombaCalentamiento, ciudad, tempDeseada, cubierta, techada,
         mesesCalentar, perdidasBTU, perdidaTotalBTU, sistemasSeleccionados,
-        // Exponer resúmenes de retorno para que equipamiento pueda recalcular con otro tipoRetorno
         resumenTramosR:    resultadoRetorno?.resumenTramosR    ?? {},
         resumenDisparosR:  resultadoRetorno?.resumenDisparosR  ?? {},
+        bdcSeleccionada,
       }
     }));
   }, [decision, usarBombaCalentamiento, ciudad, tempDeseada, cubierta, techada,
       mesesCalentar, perdidasBTU, perdidaTotalBTU, sistemasSeleccionados,
-      resultadoRetorno, setDatosPorSistema]);
+      resultadoRetorno, bdcSeleccionada, setDatosPorSistema]);
 
   useEffect(() => {
     if (clima.length && Object.keys(mesesCalentar).length === 0) {
@@ -411,7 +454,6 @@ export default function Calentamiento({
     default:                 "Configuración térmica del sistema"
   };
 
-  // ─── Gráfica de pie — ahora incluye tubería ──────────────────
   const pieData = useMemo(() => ({
     labels: ["Evaporación", "Convección", "Radiación", "Transmisión", "Infinity", "Canal Perimetral", "Tubería"],
     datasets: [{
@@ -422,7 +464,7 @@ export default function Calentamiento({
         perdidasBTU.transmision,
         perdidasBTU.infinity,
         perdidasBTU.canal,
-        perdidasBTU.tuberia,     // ← NUEVO
+        perdidasBTU.tuberia,
       ],
       backgroundColor: [
         "rgba(30,64,175,0.85)",
@@ -431,7 +473,7 @@ export default function Calentamiento({
         "rgba(163,163,163,0.85)",
         "rgba(34,197,94,0.85)",
         "rgba(96,165,250,0.85)",
-        "rgba(251,191,36,0.85)",  // ← amarillo para tubería
+        "rgba(251,191,36,0.85)",
       ],
       borderColor: "rgba(15,23,42,0.8)",
       borderWidth: 2,
@@ -450,24 +492,22 @@ export default function Calentamiento({
     }
   };
 
+  const fmtBTU = (v) => Math.round(v).toLocaleString("es-MX");
   const formularioBloqueado = decision === null;
 
   return (
     <div className="form-section hero-wrapper calentamiento">
       <div className="selector-tecnico modo-experto">
 
-        {/* HEADER */}
         <div className="selector-header">
           <div className="selector-titulo">Calentamiento del sistema</div>
           <div className="selector-subtitulo-tecnico">Análisis térmico y condiciones climáticas</div>
         </div>
 
-        {/* ACCIONES */}
         <div className="selector-acciones">
           <button className="btn-secundario" onClick={() => cambiarSeccionConAnimacion("dimensiones")}>
             ← Volver a {nombreSistema}
           </button>
-
           <div className="aviso-wrapper">
             <button
               className={`btn-primario ${mostrarAviso ? "error" : ""}`}
@@ -502,7 +542,6 @@ export default function Calentamiento({
           </div>
         </div>
 
-        {/* CALLOUT — no ha decidido */}
         {decision === null && (
           <div className="callout-omitir-calentamiento">
             <div className="callout-texto">
@@ -520,7 +559,6 @@ export default function Calentamiento({
           </div>
         )}
 
-        {/* CALLOUT — ya omitió */}
         {decision === "omitir" && (
           <div className="callout-omitir-calentamiento">
             <div className="callout-texto">
@@ -535,7 +573,6 @@ export default function Calentamiento({
           </div>
         )}
 
-        {/* CONTENIDO */}
         <div className={`selector-contenido ${animandoSalida ? "salida" : "entrada"} ${formularioBloqueado ? "calentamiento-bloqueado" : ""}`}>
 
           {/* ── SISTEMAS DE CALENTAMIENTO ── */}
@@ -548,7 +585,6 @@ export default function Calentamiento({
               Sistema(s) de calentamiento
               <span className="selector-subtitulo-hint">Selecciona uno o más</span>
             </div>
-
             <div className="sistemas-calentamiento-grid">
               {SISTEMAS_CALENTAMIENTO.map(({ key, label, Icon }) => {
                 const activo = !!sistemasSeleccionados[key];
@@ -565,7 +601,6 @@ export default function Calentamiento({
                 );
               })}
             </div>
-
             {Object.keys(sistemasSeleccionados).length > 0 && (
               <div className="sistemas-detalle-wrapper">
                 {SISTEMAS_CALENTAMIENTO.filter(s => sistemasSeleccionados[s.key]).map(({ key, label, Icon }) => {
@@ -675,17 +710,80 @@ export default function Calentamiento({
             </div>
           </div>
 
-          {/* ── CLIMA + GRÁFICA ── */}
+          {/* ── CLIMA + GRÁFICA + TARJETA BDC ── */}
           <div className="selector-grupo">
             <div className="selector-subtitulo fila-header-clima">
               <span>Análisis climático y pérdidas energéticas</span>
             </div>
             <div className="layout-clima-grafica">
-              <div className="grafica-mini"
-                onMouseEnter={() => !formularioBloqueado && setHoveredField("grafica")}
-                onMouseLeave={() => setHoveredField(null)}>
-                <Pie data={pieData} options={pieOptions} />
+              <div className="columna-grafica-bdc">
+                <div className="grafica-mini"
+                  onMouseEnter={() => !formularioBloqueado && setHoveredField("grafica")}
+                  onMouseLeave={() => setHoveredField(null)}>
+                  <Pie data={pieData} options={pieOptions} />
+                </div>
+
+                {bdcSeleccionada && !bdcSeleccionada.error && (
+                  <div className="bdc-recomendada-card">
+                    <div className="bdc-rec-header">
+                      <IconoBDCMini />
+                      <div className="bdc-rec-titulo">
+                        <span className="bdc-rec-label">Bomba de calor recomendada</span>
+                        <span className="bdc-rec-modelo">
+                          {bdcSeleccionada.seleccion.marca} · {bdcSeleccionada.seleccion.modelo}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="bdc-rec-stats">
+                      <div className="bdc-stat">
+                        <span className="bdc-stat-valor">{bdcSeleccionada.seleccion.cantidad}</span>
+                        <span className="bdc-stat-label">equipos</span>
+                      </div>
+                      <div className="bdc-stat-sep" />
+                      <div className="bdc-stat">
+                        <span className="bdc-stat-valor">{fmtBTU(bdcSeleccionada.seleccion.capUnitaria)}</span>
+                        <span className="bdc-stat-label">BTU/h c/u</span>
+                      </div>
+                      <div className="bdc-stat-sep" />
+                      <div className="bdc-stat">
+                        <span className="bdc-stat-valor">{fmtBTU(bdcSeleccionada.seleccion.capTotal)}</span>
+                        <span className="bdc-stat-label">BTU/h total</span>
+                      </div>
+                    </div>
+                    <div className="bdc-rec-demanda">
+                      <div className="bdc-demanda-fila">
+                        <span className="bdc-demanda-label">Demanda del sistema</span>
+                        <span className="bdc-demanda-valor">{fmtBTU(perdidaTotalBTU)} BTU/h</span>
+                      </div>
+                      <div className="bdc-demanda-fila">
+                        <span className="bdc-demanda-label">Capacidad instalada</span>
+                        <span className="bdc-demanda-valor bdc-ok">{fmtBTU(bdcSeleccionada.seleccion.capTotal)} BTU/h</span>
+                      </div>
+                      <div className="bdc-demanda-fila">
+                        <span className="bdc-demanda-label">Exceso de capacidad</span>
+                        <span className="bdc-demanda-valor bdc-exceso">+{fmtBTU(bdcSeleccionada.seleccion.exceso)} BTU/h</span>
+                      </div>
+                    </div>
+                    <div className="bdc-rec-hidraulica">
+                      <span className="bdc-hid-label">Carga hidráulica total</span>
+                      <span className="bdc-hid-valor">{bdcSeleccionada.cargaTotal} ft · {bdcSeleccionada.cargaTotalPSI} PSI</span>
+                    </div>
+                  </div>
+                )}
+
+                {sistemasSeleccionados.bombaCalor && (!bdcSeleccionada || bdcSeleccionada?.error) && perdidaTotalBTU <= 0 && (
+                  <div className="bdc-recomendada-card bdc-pendiente">
+                    <div className="bdc-rec-header">
+                      <IconoBDCMini />
+                      <div className="bdc-rec-titulo">
+                        <span className="bdc-rec-label">Bomba de calor recomendada</span>
+                        <span className="bdc-rec-modelo bdc-pendiente-txt">Completa los datos térmicos para ver la recomendación</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
+
               <div className="tabla-clima-card"
                 onMouseEnter={() => !formularioBloqueado && setHoveredField("meses")}
                 onMouseLeave={() => setHoveredField(null)}>
@@ -786,9 +884,8 @@ export default function Calentamiento({
             </div>
           </div>
 
-        </div>{/* /selector-contenido */}
+        </div>
 
-        {/* FOOTER */}
         <div className="selector-footer fijo calentamiento">
           <span>Modo ingeniería · Calentamiento</span>
           <span className="footer-highlight">

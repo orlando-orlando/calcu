@@ -1,6 +1,6 @@
 // utils/qTuberia.js
 
-export function qTuberia(resumenTramosR = {}, resumenDisparosR = {}, datos, mesMasFrio) {
+export function qTuberia(resumenTramosR = {}, resumenDisparosR = {}, resumenBDCR = {}, datos, mesMasFrio) {
   // Deep copy para evitar mutar los objetos originales entre llamadas
   const resumenMateriales = {};
   for (const [diam, info] of Object.entries(resumenTramosR || {})) {
@@ -8,6 +8,17 @@ export function qTuberia(resumenTramosR = {}, resumenDisparosR = {}, datos, mesM
   }
 
   for (const [diam, info] of Object.entries(resumenDisparosR || {})) {
+    if (!resumenMateriales[diam]) {
+      resumenMateriales[diam] = { ...info };
+    } else {
+      resumenMateriales[diam].tuberia_m   += info.tuberia_m   || 0;
+      resumenMateriales[diam].tees        += info.tees        || 0;
+      resumenMateriales[diam].codos       += info.codos       || 0;
+      resumenMateriales[diam].reducciones += info.reducciones || 0;
+    }
+  }
+
+  for (const [diam, info] of Object.entries(resumenBDCR || {})) {
     if (!resumenMateriales[diam]) {
       resumenMateriales[diam] = { ...info };
     } else {
@@ -88,6 +99,7 @@ export function qTuberia(resumenTramosR = {}, resumenDisparosR = {}, datos, mesM
   console.log(`   ΔT usado: T1(deseada)=${T1}°C − T2(mesMasFrio.tProm)=${T2}°C = ${deltaT}°C`);
   console.log(`   resumenTramosR:`, resumenTramosR);
   console.log(`   resumenDisparosR:`, resumenDisparosR);
+  console.log(`   resumenBDCR:`, resumenBDCR);
   console.log(`   resumenMateriales combinado:`, resumenMateriales);
 
   return qTub;

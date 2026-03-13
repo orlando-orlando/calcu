@@ -293,12 +293,17 @@ body.tema-claro  { background-color: #ecedf0 !important; }
 }
 .toggle-seccion:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
 
+/* ✅ CAMBIO 1: flex para que crezca y permita scroll interno */
 .panel-izquierdo .toggle-seccion.unida {
   margin-left: calc(-1rem + 1mm);
   margin-right: calc(-1rem + 1mm);
   border-radius: 8px;
   border: 1px solid rgba(255,255,255,0.06);
   overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 .toggle-seccion.unida { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); box-shadow: none; }
 
@@ -518,8 +523,9 @@ body.no-scroll { overflow: hidden !important; }
    🧩 Panel bottom — logo + engrane
    ========================================================== */
 
+/* ✅ CAMBIO 3: margin-top: 0 en lugar de auto para no comprimir la tabla */
 .panel-bottom {
-  margin-top: auto;
+  margin-top: 0;
   padding-top: 0.6rem;
   border-top: 1px solid rgba(255,255,255,0.08);
   flex-shrink: 0;
@@ -890,7 +896,8 @@ select option:hover { background-color: #d1d5db; }
    🧩 Misc
    ========================================================== */
 
-.seccion-resultados { max-height: 100%; overflow-y: auto; overflow-x: hidden; padding: 0 4px 0 8px; }
+/* ✅ CAMBIO 2: flex: 1 + min-height: 0 para scroll completo */
+.seccion-resultados { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 0 4px 0 8px; }
 .seccion-resultados::-webkit-scrollbar { width: 6px; }
 .seccion-resultados::-webkit-scrollbar-track { background: transparent; }
 .seccion-resultados::-webkit-scrollbar-thumb { background: rgba(96,165,250,0.35); border-radius: 6px; }
@@ -940,3 +947,167 @@ select option:hover { background-color: #d1d5db; }
 .sistema-detalle-icon-svg { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 
 .calentamiento-bloqueado { pointer-events: none; opacity: 0.22; user-select: none; filter: blur(1.5px); transition: opacity 0.3s ease, filter 0.3s ease; }
+
+/* ================================================================
+   TARJETA BOMBA DE CALOR RECOMENDADA
+   ================================================================ */
+
+.columna-grafica-bdc {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.bdc-recomendada-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: border-color 0.2s;
+}
+
+.bdc-recomendada-card:hover {
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+.bdc-recomendada-card.bdc-pendiente {
+  border-color: rgba(100, 116, 139, 0.3);
+  opacity: 0.7;
+}
+
+/* Header: icono + título + modelo */
+.bdc-rec-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.bdc-rec-titulo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.bdc-rec-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.bdc-rec-modelo {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #7dd3fc;
+}
+
+.bdc-pendiente-txt {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #475569;
+}
+
+/* Stats: cantidad · BTU/h unitario · BTU/h total */
+.bdc-rec-stats {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(30, 64, 175, 0.12);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+}
+
+.bdc-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  gap: 0.1rem;
+}
+
+.bdc-stat-valor {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  font-variant-numeric: tabular-nums;
+}
+
+.bdc-stat-label {
+  font-size: 0.65rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bdc-stat-sep {
+  width: 1px;
+  height: 28px;
+  background: rgba(100, 116, 139, 0.3);
+  margin: 0 0.5rem;
+}
+
+/* Filas demanda / capacidad / exceso */
+.bdc-rec-demanda {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  border-top: 1px solid rgba(100, 116, 139, 0.15);
+  padding-top: 0.6rem;
+}
+
+.bdc-demanda-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.bdc-demanda-label {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.bdc-demanda-valor {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #94a3b8;
+  font-variant-numeric: tabular-nums;
+}
+
+.bdc-demanda-valor.bdc-ok {
+  color: #34d399;
+}
+
+.bdc-demanda-valor.bdc-exceso {
+  color: #60a5fa;
+}
+
+/* Carga hidráulica */
+.bdc-rec-hidraulica {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(30, 64, 175, 0.08);
+  border-radius: 6px;
+  padding: 0.4rem 0.65rem;
+  border-top: 1px solid rgba(100, 116, 139, 0.15);
+}
+
+.bdc-hid-label {
+  font-size: 0.7rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.bdc-hid-valor {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #7dd3fc;
+  font-variant-numeric: tabular-nums;
+}

@@ -1,6 +1,6 @@
 import "./estilos.css";
 import { useState, useRef, useMemo, useEffect } from "react";
-import { Home, ChevronLeft, ChevronRight, Settings, CreditCard, Palette, HelpCircle, LogOut, Plus, Sun, Moon } from "lucide-react";
+import { Home, ChevronLeft, ChevronRight, Settings, CreditCard, Palette, HelpCircle, LogOut, Plus, Sun, Moon, Ruler, Flame, Wrench, BarChart2 } from "lucide-react";
 
 import Dimensiones from "./pages/Dimensiones.jsx";
 import Calentamiento from "./pages/Calentamiento.jsx";
@@ -46,7 +46,6 @@ function MenuUsuario({ abierto, onCerrar, panelColapsado, temaOscuro, setTemaOsc
       ref={menuRef}
       className={`menu-usuario-popup ${panelColapsado ? "menu-usuario-colapsado" : ""}`}
     >
-      {/* Cuenta */}
       <div className="menu-usuario-cuenta">
         <div className="menu-usuario-avatar">OS</div>
         <div className="menu-usuario-info">
@@ -73,7 +72,6 @@ function MenuUsuario({ abierto, onCerrar, panelColapsado, temaOscuro, setTemaOsc
         <Settings size={15} /><span>Configuración</span>
       </button>
 
-      {/* Tema dentro del menú */}
       <button
         className="menu-usuario-item menu-usuario-item-tema"
         onClick={() => { setTemaOscuro(!temaOscuro); onCerrar(); }}
@@ -298,15 +296,15 @@ export default function App() {
         {/* NAV */}
         <div className="nav-vertical">
           <button className={`nav-item ${seccion === "dimensiones" ? "activo" : ""}`} onClick={handleHome}>
-            <span className="nav-icon">📐</span>
+            <span className="nav-icon"><Ruler size={16} strokeWidth={1.5} /></span>
             {!panelColapsado && <span className="nav-text">Dimensiones</span>}
           </button>
           <button className={`nav-item ${seccion === "calentamiento" ? "activo" : ""}`} onClick={() => setSeccion("calentamiento")}>
-            <span className="nav-icon">🔥</span>
+            <span className="nav-icon"><Flame size={16} strokeWidth={1.5} /></span>
             {!panelColapsado && <span className="nav-text">Calentamiento</span>}
           </button>
           <button className={`nav-item ${seccion === "equipamiento" ? "activo" : ""}`} onClick={() => setSeccion("equipamiento")}>
-            <span className="nav-icon">⚙️</span>
+            <span className="nav-icon"><Wrench size={16} strokeWidth={1.5} /></span>
             {!panelColapsado && <span className="nav-text">Equipamiento</span>}
           </button>
         </div>
@@ -314,7 +312,10 @@ export default function App() {
         {/* RESULTADOS */}
         <div className="toggle-seccion unida">
           <div className="toggle-boton activo">
-            <h3>📊 Resultados generales</h3>
+            <h3 style={{ display: "flex", alignItems: "center", gap: "7px" }}>
+              <BarChart2 size={14} strokeWidth={1.5} style={{ color: "#60a5fa", flexShrink: 0 }} />
+              Resultados generales
+            </h3>
           </div>
           <div className="seccion-resultados">
             <table className="tabla-resultados">
@@ -415,6 +416,7 @@ export default function App() {
           )}
         </div>
       </div>
+
     </div>
   );
 }
